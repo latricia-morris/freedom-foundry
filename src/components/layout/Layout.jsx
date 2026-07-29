@@ -11,8 +11,16 @@ export default function Layout() {
       <WarmGradientDefs />
       <header className="sticky top-0 z-30 flex items-center justify-between gap-3 px-4 lg:px-8 py-5 border-b border-white/5 bg-[#0f0f1a]/95 backdrop-blur">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full border forged-border flex items-center justify-center">
-            <span className="font-heading text-sm font-medium molten-text">TBR</span>
+          <div
+            className="w-10 h-10 rounded-full flex items-center justify-center"
+            style={{
+              background: 'linear-gradient(131deg, #b3232c, #d9622c, #f0d9b5)',
+              boxShadow: '0 0 14px rgba(217, 98, 44, 0.45), 0 0 3px rgba(179, 35, 44, 0.7)'
+            }}
+          >
+            <div className="w-[34px] h-[34px] rounded-full bg-[#0f0f1a] flex items-center justify-center">
+              <span className="font-heading text-sm font-medium molten-text">TBR</span>
+            </div>
           </div>
           <div className="flex flex-col leading-tight">
             <span className="font-heading text-xl lg:text-2xl font-medium text-[#f7f2ea] tracking-[0.04em]">FREEDOM FOUNDRY

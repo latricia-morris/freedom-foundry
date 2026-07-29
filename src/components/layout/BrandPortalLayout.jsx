@@ -23,7 +23,7 @@ export default function BrandPortalLayout() {
               className={({ isActive }) =>
                 `bp-nav-item text-sm lg:text-base transition-colors duration-200 ${
                   isActive 
-                    ? 'font-medium bg-gradient-to-r from-[#b3232c] via-[#d9622c] to-[#f0d9b5] bg-clip-text text-transparent' 
+                    ? 'font-medium bg-[linear-gradient(131deg,#b3232c,#d9622c,#f0d9b5)] bg-clip-text text-transparent' 
                     : 'text-[#f7f2ea] hover:opacity-80'
                 }`
               }
