@@ -1,0 +1,29 @@
+{
+  "name": "ShareLink",
+  "type": "object",
+  "properties": {
+    "token": {
+      "type": "string"
+    },
+    "profile_type": {
+      "type": "string",
+      "enum": [
+        "personal",
+        "corporate",
+        "media_kit"
+      ],
+      "default": "personal"
+    },
+    "profile_id": {
+      "type": "string"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "token",
+    "profile_type"
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "name": "CourseLesson",
+  "type": "object",
+  "properties": {
+    "module_id": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "order": {
+      "type": "number",
+      "default": 0
+    },
+    "video_url": {
+      "type": "string"
+    },
+    "rich_text_body": {
+      "type": "string"
+    },
+    "linked_workbook_id": {
+      "type": "string"
+    },
+    "download_files": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "published",
+        "draft"
+      ],
+      "default": "draft"
+    },
+    "duration_minutes": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "module_id",
+    "title"
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "name": "BugReport",
+  "type": "object",
+  "properties": {
+    "description": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "open",
+        "reviewing",
+        "resolved",
+        "wont_fix"
+      ],
+      "default": "open"
+    }
+  },
+  "required": [
+    "description"
+  ]
+}

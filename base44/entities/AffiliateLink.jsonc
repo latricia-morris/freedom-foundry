@@ -1,0 +1,29 @@
+{
+  "name": "AffiliateLink",
+  "type": "object",
+  "properties": {
+    "label": {
+      "type": "string"
+    },
+    "url": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "placement_tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "active": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "label",
+    "url"
+  ]
+}

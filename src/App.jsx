@@ -7,6 +7,18 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
 // Add page imports here
+import Layout from '@/components/layout/Layout';
+import Dashboard from './pages/Dashboard';
+import Vault from './pages/Vault';
+import VaultItemDetail from './pages/VaultItemDetail';
+import Workbooks from './pages/Workbooks';
+import WorkbookPage from './pages/WorkbookPage';
+import Settings from './pages/Settings';
+import ServiceHub from './pages/ServiceHub';
+import ServiceRequest from './pages/ServiceRequest';
+import Contact from './pages/Contact';
+import Podcast from './pages/Podcast';
+import Billing from './pages/Billing';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -35,6 +47,19 @@ const AuthenticatedApp = () => {
   return (
     <Routes>
       {/* Add your page Route elements here */}
+      <Route element={<Layout />}>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/vault" element={<Vault />} />
+        <Route path="/vault/:id" element={<VaultItemDetail />} />
+        <Route path="/workbooks" element={<Workbooks />} />
+        <Route path="/workbooks/:id" element={<WorkbookPage />} />
+        <Route path="/services" element={<ServiceHub />} />
+        <Route path="/services/:type" element={<ServiceRequest />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/podcast" element={<Podcast />} />
+        <Route path="/settings" element={<Settings />} />
+        <Route path="/billing" element={<Billing />} />
+      </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

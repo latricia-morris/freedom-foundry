@@ -59,35 +59,52 @@ module.exports = {
   				'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
   				border: 'hsl(var(--sidebar-border))',
   				ring: 'hsl(var(--sidebar-ring))'
-  			}
+  			},
+  			copper: 'hsl(var(--copper))',
+  			brass: 'hsl(var(--brass))',
+  			ember: 'hsl(var(--ember))',
+  			oxblood: 'hsl(var(--oxblood))'
   		},
   		fontFamily: {
-  			heading: ['var(--font-heading)'],
-  			body: ['var(--font-body)'],
-  			display: ['var(--font-display)'],
+  			heading: ['Cormorant Garamond', 'serif'],
+  			body: ['Urbanist', 'sans-serif'],
+  			display: ['Cormorant Garamond', 'serif'],
   			mono: ['var(--font-mono)']
   		},
   		keyframes: {
   			'accordion-down': {
-  				from: {
-  					height: '0'
-  				},
-  				to: {
-  					height: 'var(--radix-accordion-content-height)'
-  				}
+  				from: { height: '0' },
+  				to: { height: 'var(--radix-accordion-content-height)' }
   			},
   			'accordion-up': {
-  				from: {
-  					height: 'var(--radix-accordion-content-height)'
-  				},
-  				to: {
-  					height: '0'
-  				}
+  				from: { height: 'var(--radix-accordion-content-height)' },
+  				to: { height: '0' }
+  			},
+  			'ember-pulse': {
+  				'0%, 100%': { opacity: '1' },
+  				'50%': { opacity: '0.5' }
+  			},
+  			'forge-glow': {
+  				'0%': { boxShadow: '0 0 5px rgba(255, 77, 0, 0.2)' },
+  				'50%': { boxShadow: '0 0 25px rgba(255, 77, 0, 0.5)' },
+  				'100%': { boxShadow: '0 0 5px rgba(255, 77, 0, 0.2)' }
+  			},
+  			'fade-in': {
+  				from: { opacity: '0', transform: 'translateY(10px)' },
+  				to: { opacity: '1', transform: 'translateY(0)' }
+  			},
+  			'slide-in': {
+  				from: { opacity: '0', transform: 'translateX(-20px)' },
+  				to: { opacity: '1', transform: 'translateX(0)' }
   			}
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
-  			'accordion-up': 'accordion-up 0.2s ease-out'
+  			'accordion-up': 'accordion-up 0.2s ease-out',
+  			'ember-pulse': 'ember-pulse 2s ease-in-out infinite',
+  			'forge-glow': 'forge-glow 3s ease-in-out infinite',
+  			'fade-in': 'fade-in 0.4s ease-out',
+  			'slide-in': 'slide-in 0.3s ease-out'
   		}
   	}
   },

@@ -1,0 +1,28 @@
+{
+  "name": "CourseModule",
+  "type": "object",
+  "properties": {
+    "vault_item_id": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "order": {
+      "type": "number",
+      "default": 0
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "published",
+        "draft"
+      ],
+      "default": "draft"
+    }
+  },
+  "required": [
+    "vault_item_id",
+    "title"
+  ]
+}
