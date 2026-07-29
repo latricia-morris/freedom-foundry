@@ -5,6 +5,11 @@ export default function ProgressRing({ percentage = 0, size = 220, strokeWidth =
   const circumference = radius * 2 * Math.PI;
   const offset = circumference - (percentage / 100) * circumference;
 
+  // Specular highlight — bright glare spot on the ring at ~30° from top (upper right)
+  const hotspotAngle = Math.PI * 0.17;
+  const hotspotX = size / 2 + radius * Math.sin(hotspotAngle);
+  const hotspotY = size / 2 - radius * Math.cos(hotspotAngle);
+
   return (
     <div className="relative flex items-center justify-center" style={{ width: size, height: size }}>
       <svg width={size} height={size} className="transform -rotate-90">
@@ -45,6 +50,7 @@ export default function ProgressRing({ percentage = 0, size = 220, strokeWidth =
           className="transition-all duration-1000 ease-out"
         />
       </svg>
+      <div className="ring-hotspot" style={{ left: hotspotX - 24, top: hotspotY - 24 }} />
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
         <span className="font-heading text-4xl font-light text-[#f7f2ea]">{percentage}%</span>
         {label && <span className="font-heading text-xl font-light text-[#f7f2ea] mt-1">{label}</span>}
