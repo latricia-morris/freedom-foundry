@@ -10,7 +10,7 @@ export default function ServiceRequestsCard({ requests = [] }) {
   const items = requests.length > 0 ? requests : defaultRequests;
 
   return (
-    <div className="forged-border rounded-2xl bg-card p-6 h-full">
+    <div className="rounded-2xl bg-card p-6 h-full border border-[#f7f2ea]/[0.04]">
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-2">
           <ClipboardList className="w-4 h-4 text-primary" strokeWidth={1.5} />

@@ -5,7 +5,7 @@ export default function MissionCard({ completedCount = 0, totalCount = 0 }) {
   const percentage = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
   return (
-    <div className="relative rounded-2xl overflow-hidden h-full forged-border bg-[#15151f]">
+    <div className="relative rounded-2xl overflow-hidden h-full bg-[#15151f] border border-[#f7f2ea]/[0.04]">
       <div className="p-8 lg:p-12 flex flex-col lg:flex-row-reverse items-center lg:items-start justify-between gap-8">
         <div className="flex-shrink-0 relative">
           <div className="absolute -inset-12 ember-glow-bg opacity-90" />
