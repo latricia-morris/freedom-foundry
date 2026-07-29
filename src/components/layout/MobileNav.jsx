@@ -4,6 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 const navItems = [
   { label: 'Home', path: '/' },
   { label: 'Vault', path: '/vault' },
+  { label: 'Workbooks', path: '/workbooks' },
   { label: 'Brand Portal', path: '/brand-portal' },
   { label: 'Collaborations', path: '/services' },
 ];
