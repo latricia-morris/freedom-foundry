@@ -5,7 +5,7 @@ export default function ActivityCard({ activities = [] }) {
   const items = activities;
 
   return (
-    <div className="dashboard-card p-6 h-full">
+    <div className="dashboard-card p-6 h-full bg-[hsl(var(--foreground))]">
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-2">
           <ActivityIcon className="w-4 h-4 icon-warm" strokeWidth={1.5} />
@@ -25,10 +25,10 @@ export default function ActivityCard({ activities = [] }) {
                 <p className="text-sm text-foreground">{item.description}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">{item.time}</p>
               </div>
-            </div>
-          );
+            </div>);
+
         })}
       </div>
-    </div>
-  );
+    </div>);
+
 }
