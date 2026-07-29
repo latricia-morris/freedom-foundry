@@ -13,7 +13,7 @@ export default function MissionCard({ completedCount = 0, totalCount = 0 }) {
             <ProgressRing percentage={percentage} size={220} strokeWidth={10} />
           </div>
           <p className="relative z-10 text-center text-sm text-[#f7f2ea]/90 mt-3">
-            {completedCount} / {totalCount} Workbooks Completed
+            {completedCount} / {totalCount} Brand Work Completed
           </p>
         </div>
         <div className="flex-1 text-center lg:text-left">
