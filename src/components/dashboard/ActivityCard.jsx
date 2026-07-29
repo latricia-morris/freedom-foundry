@@ -5,7 +5,7 @@ export default function ActivityCard({ activities = [] }) {
   const items = activities;
 
   return (
-    <div className="dashboard-card p-6 h-full bg-[hsl(var(--foreground))]">
+    <div className="dashboard-card p-6 h-full bg-[hsl(var(--foreground))] text-[hsl(var(--background))]">
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-2">
           <ActivityIcon className="w-4 h-4 icon-warm" strokeWidth={1.5} />
