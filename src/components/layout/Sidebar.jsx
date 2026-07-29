@@ -22,8 +22,9 @@ export default function Sidebar() {
     <aside className="hidden lg:flex fixed left-0 top-0 h-full w-64 flex-col bg-sidebar border-r border-sidebar-border z-40">
       <div className="p-6 border-b border-sidebar-border">
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-full border border-border flex items-center justify-center bg-card">
-            <span className="font-heading text-base font-medium molten-text">TBR</span>
+          <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(131deg, #b3232c, #d9622c, #f0d9b5)', boxShadow: '0 0 7px rgba(217, 98, 44, 0.45), 0 0 3px rgba(179, 35, 44, 0.7)' }}>
+            <div className="w-[30px] h-[30px] rounded-full bg-sidebar flex items-center justify-center">
+  <span className="font-heading text-base font-medium molten-text">TBR</span></div>
           </div>
           <div>
             <p className="font-heading text-sm tracking-wider text-foreground">FREEDOM FOUNDRY</p>
