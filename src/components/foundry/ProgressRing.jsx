@@ -5,38 +5,33 @@ export default function ProgressRing({ percentage = 0, size = 220, strokeWidth =
   const circumference = radius * 2 * Math.PI;
   const offset = circumference - (percentage / 100) * circumference;
 
-  // Reflection hotspot — ~12° arc near the brightest gradient point (~80% around)
-  const reflectionLength = (12 / 360) * circumference;
-  const reflectionOffset = -((80 / 360) * circumference);
+  // Hotspot position — on the ring at ~30° from top (brightest gradient area)
+  const hotspotAngle = Math.PI * 0.17;
+  const hotspotX = size / 2 + radius * Math.sin(hotspotAngle);
+  const hotspotY = size / 2 - radius * Math.cos(hotspotAngle);
 
   return (
     <div className="relative flex items-center justify-center" style={{ width: size, height: size }}>
       <svg width={size} height={size} className="transform -rotate-90">
         <defs>
           <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#4a1518" />
+            <stop offset="0%" stopColor="#4a0404" />
+            <stop offset="20%" stopColor="#840a1a" />
             <stop offset="45%" stopColor="#b3232c" />
-            <stop offset="80%" stopColor="#d9622c" />
-            <stop offset="100%" stopColor="#f5c88a" />
+            <stop offset="65%" stopColor="#d9622c" />
+            <stop offset="85%" stopColor="#f0d9b5" />
+            <stop offset="100%" stopColor="#4a0404" />
           </linearGradient>
           <filter id="ring-glow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="6" result="coloredBlur" />
+            <feGaussianBlur in="SourceGraphic" stdDeviation="0.5" result="softStroke" />
+            <feGaussianBlur in="softStroke" stdDeviation="6" result="coloredBlur" />
             <feMerge>
               <feMergeNode in="coloredBlur" />
-              <feMergeNode in="SourceGraphic" />
+              <feMergeNode in="softStroke" />
             </feMerge>
           </filter>
         </defs>
-        {/* Track */}
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          fill="none"
-          stroke="rgba(255,255,255,0.06)"
-          strokeWidth={strokeWidth}
-        />
-        {/* Progress */}
+        <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={strokeWidth} />
         <circle
           cx={size / 2}
           cy={size / 2}
@@ -50,20 +45,9 @@ export default function ProgressRing({ percentage = 0, size = 220, strokeWidth =
           filter="url(#ring-glow)"
           className="transition-all duration-1000 ease-out"
         />
-        {/* Reflection hotspot */}
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          fill="none"
-          stroke="rgba(255,245,220,0.85)"
-          strokeWidth={strokeWidth}
-          strokeDasharray={`${reflectionLength} ${circumference - reflectionLength}`}
-          strokeDashoffset={reflectionOffset}
-          strokeLinecap="round"
-        />
       </svg>
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
+      <div className="ring-hotspot" style={{ left: hotspotX - 20, top: hotspotY - 20 }} />
+      <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
         {label && <span className="font-heading text-3xl font-light text-foreground">{label}</span>}
         {sublabel && <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground mt-1">{sublabel}</span>}
       </div>

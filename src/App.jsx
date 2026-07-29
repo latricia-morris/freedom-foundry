@@ -20,6 +20,7 @@ import Contact from './pages/Contact';
 import Podcast from './pages/Podcast';
 import Billing from './pages/Billing';
 import BrandPortal from './pages/BrandPortal';
+import BrandPortalLayout from '@/components/layout/BrandPortalLayout';
 import PersonalBrandProfile from './pages/PersonalBrandProfile';
 import CorporateBrandProfile from './pages/CorporateBrandProfile';
 import BigPicture from './pages/BigPicture';
@@ -69,11 +70,13 @@ const AuthenticatedApp = () => {
         <Route path="/podcast" element={<Podcast />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/billing" element={<Billing />} />
-        <Route path="/brand-portal" element={<BrandPortal />} />
-        <Route path="/brand-portal/personal" element={<PersonalBrandProfile />} />
-        <Route path="/brand-portal/corporate" element={<CorporateBrandProfile />} />
-        <Route path="/big-picture" element={<BigPicture />} />
-        <Route path="/media-kit" element={<MediaKit />} />
+        <Route element={<BrandPortalLayout />}>
+          <Route path="/brand-portal" element={<BrandPortal />} />
+          <Route path="/brand-portal/personal" element={<PersonalBrandProfile />} />
+          <Route path="/brand-portal/corporate" element={<CorporateBrandProfile />} />
+          <Route path="/big-picture" element={<BigPicture />} />
+          <Route path="/media-kit" element={<MediaKit />} />
+        </Route>
         <Route path="/share/:token" element={<SharePage />} />
         <Route path="/admin/users" element={<AdminUsers />} />
         <Route path="/admin/users/:id" element={<AdminUserDetail />} />

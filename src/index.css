@@ -88,7 +88,7 @@
   }
 
   .forged-gradient {
-    background: linear-gradient(135deg, #6e1f24, #b3232c);
+    background: linear-gradient(131deg, #6e1f24, #b3232c, #d9622c);
   }
 
   .ember-glow {
@@ -241,6 +241,70 @@
   /* Warm gradient stroke for SVG icons */
   .icon-warm {
     stroke: url(#warmGradient);
+  }
+
+  /* Warm gradient text for dark backgrounds */
+  .text-warm {
+    background: linear-gradient(131deg, #b3232c 0%, #d9622c 55%, #f0d9b5 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  /* Dashboard cards — dark glass with gradient border */
+  .dashboard-card {
+    background: rgba(15, 15, 26, 0.6);
+    border: 1px solid;
+    border-image: linear-gradient(131deg, #4a0404, #840a1a, #d9622c, #f0d9b5) 1;
+    border-radius: 14px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Progress ring hotspot — light reflection on metal */
+  .ring-hotspot {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 240, 210, 0.9) 0%, rgba(255, 240, 210, 0) 70%);
+    mix-blend-mode: screen;
+    filter: blur(6px);
+    opacity: 0.5;
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  /* Molten gradient progress bar */
+  .molten-bar {
+    background: linear-gradient(131deg, #b3232c 0%, #d9622c 55%, #f0d9b5 100%);
+  }
+
+  /* Brand portal navigation — text only, cloudbone inactive, gradient active */
+  .bp-nav-item {
+    color: #f7f2ea;
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+    text-decoration: none;
+    display: block;
+    padding: 8px 0;
+    font-size: 0.875rem;
+    letter-spacing: 0.02em;
+  }
+
+  .bp-nav-item:hover {
+    opacity: 0.8;
+  }
+
+  .bp-nav-item--active {
+    background: linear-gradient(131deg, #b3232c 0%, #d9622c 55%, #f0d9b5 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    opacity: 1;
   }
 
   /* Ember glow — radial warmth behind focal elements */

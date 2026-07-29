@@ -8,7 +8,7 @@ const navItems = [
   { label: 'Brand Power Moves', path: '/workbooks', icon: BookOpen },
   { label: 'Brand Portal', path: '/brand-portal', icon: Palette },
   { label: 'Big Picture', path: '/big-picture', icon: Target },
-  { label: 'Services', path: '/services', icon: ClipboardList },
+  { label: 'Collaborations', path: '/services', icon: ClipboardList },
   { label: 'Podcast', path: '/podcast', icon: Mic },
   { label: 'Contact', path: '/contact', icon: Mail },
   { label: 'Settings', path: '/settings', icon: SettingsIcon },
@@ -40,10 +40,10 @@ export default function Sidebar() {
               key={item.path}
               to={item.path}
               className={`relative flex items-center gap-3 px-6 py-3 text-sm transition-all duration-200 ${
-                isActive ? 'text-primary bg-sidebar-accent' : 'text-muted-foreground hover:text-foreground hover:bg-sidebar-accent/50'
+                isActive ? 'text-warm bg-sidebar-accent' : 'text-[#f7f2ea]/50 hover:text-[#f7f2ea] hover:bg-sidebar-accent/50'
               }`}
             >
-              {isActive && <span className="absolute left-0 top-0 h-full w-0.5 bg-primary" />}
+              {isActive && <span className="absolute left-0 top-0 h-full w-0.5" style={{ background: 'linear-gradient(131deg, #b3232c, #d9622c, #f0d9b5)' }} />}
               <Icon className="w-4 h-4" strokeWidth={1.5} />
               <span className="tracking-wide">{item.label}</span>
             </Link>

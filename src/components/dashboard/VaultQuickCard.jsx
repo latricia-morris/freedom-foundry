@@ -6,7 +6,7 @@ export default function VaultQuickCard({ vaultItems = [] }) {
   const items = vaultItems.slice(0, 4);
 
   return (
-    <div className="forged-border rounded-2xl bg-card p-6 h-full">
+    <div className="dashboard-card p-6 h-full">
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-2">
           <Lock className="w-4 h-4 icon-warm" strokeWidth={1.5} />

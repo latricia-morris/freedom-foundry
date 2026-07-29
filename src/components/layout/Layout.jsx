@@ -4,10 +4,12 @@ import { Bell } from 'lucide-react';
 import Sidebar from './Sidebar';
 import MobileNav from './MobileNav';
 import UserAvatar from './UserAvatar';
+import WarmGradientDefs from '@/components/shared/WarmGradientDefs';
 
 export default function Layout() {
   return (
     <div className="min-h-screen">
+      <WarmGradientDefs />
       <Sidebar />
       <div className="lg:pl-64">
         <header className="sticky top-0 z-30 flex items-center justify-between px-4 lg:px-8 py-4 bg-background/80 backdrop-blur-md border-b border-border">
