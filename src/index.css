@@ -83,6 +83,8 @@
     background: linear-gradient(131deg, #b3232c, #d9622c, #f0d9b5);
     -webkit-background-clip: text;
     background-clip: text;
+  font-size: inherit;
+  line-height: inherit;
     -webkit-text-fill-color: transparent;
     color: transparent;
   }
