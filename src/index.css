@@ -4,7 +4,6 @@
 
 @layer base {
   :root {
-    /* Freedom Foundry — Ink Shell + Cloudbone */
     --background: 240 27% 8%;
     --foreground: 0 9% 96%;
     --card: 252 20% 9%;
@@ -100,19 +99,28 @@
     box-shadow: 0 4px 24px rgba(179, 35, 44, 0.15);
   }
 
-  .editorial-container {
-    background: #f7f5f5;
+  /* Editorial cards — warm cream with layered depth */
+  .editorial-container,
+  .editorial-card {
+    background: #f7f2ea;
     color: #1a1420;
-    border-radius: 12px;
-    padding: 32px 28px;
-    box-shadow: 0 4px 24px rgba(15, 15, 26, 0.35);
-    border: 1px solid rgba(15, 15, 26, 0.06);
+    border-radius: 16px;
+    padding: 28px 24px;
+    box-shadow:
+      0 1px 2px rgba(15, 15, 26, 0.04),
+      0 8px 24px rgba(15, 15, 26, 0.10),
+      inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(15, 15, 26, 0.05);
   }
 
   .editorial-container h1,
   .editorial-container h2,
   .editorial-container h3,
-  .editorial-container h4 {
+  .editorial-container h4,
+  .editorial-card h1,
+  .editorial-card h2,
+  .editorial-card h3,
+  .editorial-card h4 {
     font-family: 'Cormorant Garamond', serif;
     color: #1a1420;
     font-weight: 500;
@@ -121,19 +129,28 @@
   .editorial-container p,
   .editorial-container li,
   .editorial-container label,
-  .editorial-container span {
+  .editorial-container span,
+  .editorial-card p,
+  .editorial-card li,
+  .editorial-card label,
+  .editorial-card span {
     font-family: 'Urbanist', sans-serif;
     color: #2c2c33;
   }
 
   .editorial-container p,
-  .editorial-container li {
+  .editorial-container li,
+  .editorial-card p,
+  .editorial-card li {
     line-height: 1.6;
   }
 
   .editorial-container input,
   .editorial-container textarea,
-  .editorial-container select {
+  .editorial-container select,
+  .editorial-card input,
+  .editorial-card textarea,
+  .editorial-card select {
     background: #ffffff;
     color: #1a1420;
     border: 1px solid rgba(15, 15, 26, 0.1);
@@ -146,13 +163,151 @@
 
   .editorial-container input:focus,
   .editorial-container textarea:focus,
-  .editorial-container select:focus {
+  .editorial-container select:focus,
+  .editorial-card input:focus,
+  .editorial-card textarea:focus,
+  .editorial-card select:focus {
     border-color: #b3232c;
     outline: none;
   }
 
-  .editorial-container button {
+  .editorial-container button,
+  .editorial-card button {
     font-family: 'Urbanist', sans-serif;
+  }
+
+  /* Vault cards — portrait 9/16 with gradient stroke at 131deg */
+  .vault-card {
+    aspect-ratio: 9 / 16;
+    width: 100%;
+    border-radius: 14px;
+    border: 1px solid transparent;
+    background:
+      linear-gradient(#0f0f1a, #0f0f1a) padding-box,
+      linear-gradient(131deg, #b3232c 0%, #d9622c 50%, #f0d9b5 100%) border-box;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: box-shadow 0.3s ease;
+  }
+
+  .vault-card:hover {
+    box-shadow: 0 4px 24px rgba(179, 35, 44, 0.15);
+  }
+
+  .vault-card__image-wrapper {
+    position: relative;
+    width: 100%;
+    flex: 1;
+    overflow: hidden;
+    border-radius: 10px 10px 0 0;
+  }
+
+  .vault-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+
+  .vault-card:hover .vault-card__image {
+    transform: scale(1.05);
+  }
+
+  .vault-card__body {
+    padding: 10px 4px 4px;
+  }
+
+  /* Warm gradient text links — red → orange → champagne at 131deg */
+  .link-warm {
+    background: linear-gradient(131deg, #b3232c 0%, #d9622c 55%, #f0d9b5 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    transition: opacity 0.2s ease;
+    text-decoration: none;
+  }
+
+  .link-warm:hover {
+    opacity: 0.8;
+  }
+
+  /* Warm gradient stroke for SVG icons */
+  .icon-warm {
+    stroke: url(#warmGradient);
+  }
+
+  /* Ember glow — radial warmth behind focal elements */
+  .ember-glow-bg {
+    background: radial-gradient(circle, rgba(217, 98, 44, 0.25) 0%, transparent 70%);
+    filter: blur(60px);
+    pointer-events: none;
+  }
+
+  /* Icon tile — dark rounded square with warm edge */
+  .icon-tile {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    background: #0f0f1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(217, 98, 44, 0.25);
+    flex-shrink: 0;
+  }
+
+  /* Contact cards — warm cream on dark shell */
+  .contact-card {
+    background: #f7f2ea;
+    color: #1a1420;
+    border-radius: 16px;
+    padding: 32px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow:
+      0 1px 2px rgba(15, 15, 26, 0.04),
+      0 8px 24px rgba(15, 15, 26, 0.10),
+      inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(15, 15, 26, 0.05);
+  }
+
+  .contact-card__logo {
+    height: 48px;
+    width: auto;
+    object-fit: contain;
+    margin-bottom: 8px;
+  }
+
+  .contact-card__descriptor {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #6e1f24;
+  }
+
+  .contact-card__button {
+    align-self: flex-start;
+    padding: 12px 24px;
+    border-radius: 8px;
+    border: 1px solid rgba(179, 35, 44, 0.4);
+    background: transparent;
+    color: #1a1420;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+
+  .contact-card__button:hover {
+    background: rgba(179, 35, 44, 0.08);
+    border-color: rgba(179, 35, 44, 0.6);
   }
 
   .brand-portal-page {
@@ -160,7 +315,7 @@
   }
 
   .brand-portal-page.light-mode {
-    background: #f7f5f5;
+    background: #f7f2ea;
     color: #1a1420;
   }
 

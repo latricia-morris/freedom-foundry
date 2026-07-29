@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Lock, ArrowRight } from 'lucide-react';
+import { Lock } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
 export default function Vault() {
@@ -26,7 +26,9 @@ export default function Vault() {
       {loading ? (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {[...Array(8)].map((_, i) => (
-            <div key={i} className="aspect-[3/4] rounded-xl bg-card animate-pulse" />
+            <div key={i} className="vault-card" style={{ aspectRatio: '9/16' }}>
+              <div className="w-full h-full bg-card animate-pulse rounded-xl" />
+            </div>
           ))}
         </div>
       ) : items.length === 0 ? (
@@ -37,16 +39,12 @@ export default function Vault() {
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {items.map((item) => (
-            <Link
-              key={item.id}
-              to={`/vault/${item.id}`}
-              className="group forged-border rounded-xl bg-card overflow-hidden transition-all duration-300 hover:ember-glow-strong"
-            >
-              <div className="aspect-[3/4] relative overflow-hidden">
+            <Link key={item.id} to={`/vault/${item.id}`} className="vault-card group">
+              <div className="vault-card__image-wrapper">
                 {item.featured_image_url ? (
-                  <img src={item.featured_image_url} alt={item.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                  <img src={item.featured_image_url} alt={item.title} className="vault-card__image" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-card to-background">
+                  <div className="vault-card__image flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #1a161d, #0f0f1a)' }}>
                     <span className="font-heading text-5xl molten-text opacity-30">{item.title?.[0]}</span>
                   </div>
                 )}
@@ -56,13 +54,12 @@ export default function Vault() {
                   </div>
                 )}
               </div>
-              <div className="p-4">
+              <div className="vault-card__body">
                 <span className="text-[10px] uppercase tracking-widest text-primary">{item.type}</span>
                 <h3 className="font-heading text-base text-foreground mt-1 mb-1 line-clamp-2">{item.title}</h3>
                 <p className="text-xs text-muted-foreground line-clamp-2">{item.description}</p>
                 <div className="flex items-center justify-between mt-3">
                   <span className="text-xs text-muted-foreground">{item.is_free ? 'FREE' : `$${item.price}`}</span>
-                  <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" strokeWidth={1.5} />
                 </div>
               </div>
             </Link>
