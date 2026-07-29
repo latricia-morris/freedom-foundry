@@ -1,40 +1,40 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { Bell } from 'lucide-react';
-import Sidebar from './Sidebar';
 import MobileNav from './MobileNav';
 import UserAvatar from './UserAvatar';
 import WarmGradientDefs from '@/components/shared/WarmGradientDefs';
 
 export default function Layout() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-[#0f0f1a]">
       <WarmGradientDefs />
-      <Sidebar />
-      <div className="lg:pl-64">
-        <header className="sticky top-0 z-30 flex items-center justify-between px-4 lg:px-8 py-4 bg-background/80 backdrop-blur-md border-b border-border">
-          <div className="flex items-center gap-3">
-            <div className="lg:hidden flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full forged-border flex items-center justify-center bg-card">
-                <span className="font-heading text-xs font-medium molten-text">TBR</span>
-              </div>
-            </div>
-            <h2 className="font-heading text-lg lg:text-xl text-foreground hidden sm:block">
-              Welcome back, <span className="italic molten-text">Revivalist</span>
-            </h2>
+      <header className="sticky top-0 z-30 flex items-center justify-between gap-3 px-4 lg:px-8 py-5 border-b border-white/5 bg-[#0f0f1a]/95 backdrop-blur">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full border forged-border flex items-center justify-center">
+            <span className="font-heading text-sm font-medium molten-text">TBR</span>
           </div>
-          <div className="flex items-center gap-4">
-            <button className="relative p-2 text-muted-foreground hover:text-foreground transition-colors">
-              <Bell className="w-5 h-5" strokeWidth={1.5} />
-            </button>
-            <UserAvatar />
+          <div className="flex flex-col leading-tight">
+            <span className="font-heading text-xl lg:text-2xl font-medium text-[#f7f2ea] tracking-[0.04em]">
+              Freedom Foundry
+            </span>
+            <span className="text-[10px] uppercase tracking-[0.25em] text-[#d9c9a3]">
+              By The Brand Revivalist
+            </span>
           </div>
-        </header>
+        </div>
+        <div className="flex items-center gap-4">
+          <button className="relative p-2 text-[#f7f2ea]/70 hover:text-[#f7f2ea] transition-colors">
+            <Bell className="w-5 h-5" strokeWidth={1.5} />
+          </button>
+          <UserAvatar />
+        </div>
+      </header>
 
-        <main className="px-4 lg:px-8 py-6 pb-24 lg:pb-12">
-          <Outlet />
-        </main>
-      </div>
+      <main className="px-4 lg:px-8 py-6 lg:py-10 pb-28 lg:pb-24">
+        <Outlet />
+      </main>
+
       <MobileNav />
     </div>
   );
