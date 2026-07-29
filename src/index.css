@@ -15,7 +15,7 @@
     --secondary: 240 15% 12%;
     --secondary-foreground: 0 9% 96%;
     --muted: 240 15% 10%;
-    --muted-foreground: 240 5% 55%;
+        --muted-foreground: 40 20% 88%;
     --accent: 357 56% 19%;
     --accent-foreground: 0 9% 96%;
     --destructive: 0 72% 51%;
@@ -422,4 +422,26 @@
 
 html {
   scroll-behavior: smooth;
+}
+
+/* Freedom Foundry global readability fixes */
+body {
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+p, li, span, label {
+  font-size: 1rem;
+}
+
+.text-sm {
+  font-size: 0.95rem !important;
+}
+
+.text-xs {
+  font-size: 0.8rem !important;
+}
+
+.text-muted-foreground {
+  color: rgba(247, 242, 234, 0.75) !important;
 }
