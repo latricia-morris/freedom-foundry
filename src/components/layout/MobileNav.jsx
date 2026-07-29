@@ -1,13 +1,13 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home as HomeIcon, BookOpen, FolderOpen, Users, User as UserIcon } from 'lucide-react';
+import { Home as HomeIcon, Vault as VaultIcon, BookOpen, ClipboardList, User as UserIcon } from 'lucide-react';
 
 const navItems = [
-  { label: 'Dashboard', path: '/', icon: HomeIcon },
-  { label: 'Workbooks', path: '/workbooks', icon: BookOpen },
-  { label: 'Resources', path: '/resources', icon: FolderOpen },
-  { label: 'Community', path: '/community', icon: Users },
-  { label: 'Profile', path: '/settings', icon: UserIcon },
+  { label: 'Home', path: '/', icon: HomeIcon },
+  { label: 'Vault', path: '/vault', icon: VaultIcon },
+  { label: 'Power Moves', path: '/workbooks', icon: BookOpen },
+  { label: 'Services', path: '/services', icon: ClipboardList },
+  { label: 'Settings', path: '/settings', icon: UserIcon },
 ];
 
 export default function MobileNav() {

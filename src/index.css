@@ -4,48 +4,50 @@
 
 @layer base {
   :root {
-    /* The Foundry Palette — Molten Precision */
-    --background: 240 6% 3.5%;
-    --foreground: 60 20% 95%;
-    --card: 240 5% 8%;
-    --card-foreground: 60 20% 95%;
-    --popover: 240 6% 5%;
-    --popover-foreground: 60 20% 95%;
-    --primary: 16 100% 50%;
-    --primary-foreground: 60 20% 95%;
-    --secondary: 240 5% 12%;
-    --secondary-foreground: 60 20% 95%;
-    --muted: 240 5% 10%;
-    --muted-foreground: 240 4% 63%;
-    --accent: 0 100% 20%;
-    --accent-foreground: 60 20% 95%;
+    /* Freedom Foundry — Ink Shell + Cloudbone */
+    --background: 240 27% 8%;
+    --foreground: 0 9% 96%;
+    --card: 252 20% 9%;
+    --card-foreground: 0 9% 96%;
+    --popover: 240 27% 6%;
+    --popover-foreground: 0 9% 96%;
+    --primary: 356 67% 42%;
+    --primary-foreground: 0 9% 96%;
+    --secondary: 240 15% 12%;
+    --secondary-foreground: 0 9% 96%;
+    --muted: 240 15% 10%;
+    --muted-foreground: 240 5% 55%;
+    --accent: 357 56% 19%;
+    --accent-foreground: 0 9% 96%;
     --destructive: 0 72% 51%;
-    --destructive-foreground: 60 20% 95%;
-    --border: 240 5% 15%;
-    --input: 240 5% 15%;
-    --ring: 16 100% 50%;
-    --copper: 18 47% 59%;
+    --destructive-foreground: 0 9% 96%;
+    --border: 240 10% 14%;
+    --input: 240 10% 14%;
+    --ring: 356 67% 42%;
+    --copper: 28 47% 59%;
     --brass: 43 30% 57%;
-    --ember: 16 100% 50%;
-    --oxblood: 0 100% 20%;
-    --chart-1: 16 100% 50%;
-    --chart-2: 0 100% 20%;
-    --chart-3: 18 47% 59%;
+    --ember: 356 67% 42%;
+    --oxblood: 357 56% 19%;
+    --merlot: 357 56% 28%;
+    --cloudbone: 0 9% 96%;
+    --chart-1: 356 67% 42%;
+    --chart-2: 357 56% 19%;
+    --chart-3: 28 47% 59%;
     --chart-4: 43 30% 57%;
-    --chart-5: 240 4% 63%;
+    --chart-5: 240 5% 55%;
     --radius: 0.5rem;
     --font-heading: 'Cormorant Garamond', serif;
     --font-body: 'Urbanist', sans-serif;
     --font-display: 'Cormorant Garamond', serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    --sidebar-background: 240 6% 3.5%;
-    --sidebar-foreground: 60 20% 95%;
-    --sidebar-primary: 16 100% 50%;
-    --sidebar-primary-foreground: 60 20% 95%;
-    --sidebar-accent: 240 5% 8%;
-    --sidebar-accent-foreground: 60 20% 95%;
-    --sidebar-border: 240 5% 12%;
-    --sidebar-ring: 16 100% 50%;
+    --sidebar-background: 240 27% 8%;
+    --sidebar-foreground: 0 9% 96%;
+    --sidebar-primary: 356 67% 42%;
+    --sidebar-primary-foreground: 0 9% 96%;
+    --sidebar-accent: 252 20% 9%;
+    --sidebar-accent-foreground: 0 9% 96%;
+    --sidebar-border: 240 15% 12%;
+    --sidebar-ring: 356 67% 42%;
   }
 }
 
@@ -55,7 +57,9 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    background: linear-gradient(131deg, #0f0f1a 0%, #1a1420 45%, #2b0f14 100%);
+    background-attachment: fixed;
+    color: hsl(var(--foreground));
     font-family: var(--font-body);
     line-height: 1.6;
   }
@@ -67,24 +71,7 @@
 
 @layer components {
   .forged-border {
-    position: relative;
-  }
-  .forged-border::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    padding: 1px;
-    background: linear-gradient(135deg, #660000, #FF4D00, #C88062, #B5A36F);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    pointer-events: none;
-    z-index: 0;
-  }
-  .forged-border > * {
-    position: relative;
-    z-index: 1;
+    border: 1px solid hsl(var(--border));
   }
 
   .smoked-glass {
@@ -94,7 +81,7 @@
   }
 
   .molten-text {
-    background: linear-gradient(135deg, #B5A36F, #C88062, #FF4D00);
+    background: linear-gradient(135deg, #B5A36F, #C88062);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -102,15 +89,96 @@
   }
 
   .forged-gradient {
-    background: linear-gradient(135deg, #660000, #FF4D00, #C88062, #B5A36F);
+    background: linear-gradient(135deg, #6e1f24, #b3232c);
   }
 
   .ember-glow {
-    box-shadow: 0 0 20px rgba(255, 77, 0, 0.15);
+    box-shadow: 0 2px 20px rgba(179, 35, 44, 0.08);
   }
 
   .ember-glow-strong {
-    box-shadow: 0 0 30px rgba(255, 77, 0, 0.35);
+    box-shadow: 0 4px 24px rgba(179, 35, 44, 0.15);
+  }
+
+  .editorial-container {
+    background: #f7f5f5;
+    color: #1a1420;
+    border-radius: 12px;
+    padding: 32px 28px;
+    box-shadow: 0 4px 24px rgba(15, 15, 26, 0.35);
+    border: 1px solid rgba(15, 15, 26, 0.06);
+  }
+
+  .editorial-container h1,
+  .editorial-container h2,
+  .editorial-container h3,
+  .editorial-container h4 {
+    font-family: 'Cormorant Garamond', serif;
+    color: #1a1420;
+    font-weight: 500;
+  }
+
+  .editorial-container p,
+  .editorial-container li,
+  .editorial-container label,
+  .editorial-container span {
+    font-family: 'Urbanist', sans-serif;
+    color: #2c2c33;
+  }
+
+  .editorial-container p,
+  .editorial-container li {
+    line-height: 1.6;
+  }
+
+  .editorial-container input,
+  .editorial-container textarea,
+  .editorial-container select {
+    background: #ffffff;
+    color: #1a1420;
+    border: 1px solid rgba(15, 15, 26, 0.1);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-family: 'Urbanist', sans-serif;
+    width: 100%;
+    transition: border-color 0.2s;
+  }
+
+  .editorial-container input:focus,
+  .editorial-container textarea:focus,
+  .editorial-container select:focus {
+    border-color: #b3232c;
+    outline: none;
+  }
+
+  .editorial-container button {
+    font-family: 'Urbanist', sans-serif;
+  }
+
+  .brand-portal-page {
+    background: linear-gradient(131deg, #0f0f1a 0%, #1a1420 45%, #2b0f14 100%);
+  }
+
+  .brand-portal-page.light-mode {
+    background: #f7f5f5;
+    color: #1a1420;
+  }
+
+  .brand-portal-toggle {
+    position: absolute;
+    top: 20px;
+    right: 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+    color: rgba(247, 245, 245, 0.6);
+    z-index: 10;
+    cursor: pointer;
+  }
+
+  .brand-portal-page.light-mode .brand-portal-toggle {
+    color: rgba(26, 20, 32, 0.5);
   }
 }
 
@@ -119,14 +187,14 @@
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: hsl(240 6% 3.5%);
+  background: #0f0f1a;
 }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #660000, #FF4D00);
+  background: #2b0f14;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #FF4D00, #C88062);
+  background: #4a1518;
 }
 
 html {

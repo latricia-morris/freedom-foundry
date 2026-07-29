@@ -63,7 +63,9 @@ module.exports = {
   			copper: 'hsl(var(--copper))',
   			brass: 'hsl(var(--brass))',
   			ember: 'hsl(var(--ember))',
-  			oxblood: 'hsl(var(--oxblood))'
+  			oxblood: 'hsl(var(--oxblood))',
+  			merlot: 'hsl(var(--merlot))',
+  			cloudbone: 'hsl(var(--cloudbone))'
   		},
   		fontFamily: {
   			heading: ['Cormorant Garamond', 'serif'],

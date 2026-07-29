@@ -18,9 +18,9 @@ export default function Workbooks() {
     <div className="max-w-5xl mx-auto animate-fade-in">
       <div className="mb-8">
         <h1 className="font-heading text-3xl lg:text-4xl font-light text-foreground mb-2">
-          <span className="molten-text italic">Workbooks</span>
+          <span className="molten-text italic">Brand Power Moves</span>
         </h1>
-        <p className="text-sm text-muted-foreground">Your strategic pillars. Your transformation. Answer the prompts, save your progress, and assemble AI-ready prompts.</p>
+        <p className="text-sm text-muted-foreground">Your strategic workbooks. Answer the prompts, save your progress, and download when ready.</p>
       </div>
 
       {loading ? (

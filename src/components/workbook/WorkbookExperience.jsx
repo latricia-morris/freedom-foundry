@@ -41,12 +41,12 @@ export default function WorkbookExperience({ workbook }) {
   };
 
   const handleCopyPrompt = () => {
-    let prompt = `# ${workbook.title}\n\nYou are a brand strategist AI. Use the following brand workbook responses to provide strategic guidance.\n\n`;
+    let prompt = `${workbook.title}\n\n`;
     pages.forEach(page => {
-      prompt += `## ${page.title}\n\n`;
+      prompt += `${page.title}\n\n`;
       page.fields?.forEach(field => {
         const val = responses[field.field_id]?.value || '[Not yet answered]';
-        prompt += `### ${field.label}\n${val}\n\n`;
+        prompt += `${field.label}\n${val}\n\n`;
       });
     });
     navigator.clipboard.writeText(prompt);
@@ -56,9 +56,9 @@ export default function WorkbookExperience({ workbook }) {
 
   if (loading) return <div className="flex justify-center py-20"><div className="w-8 h-8 border-2 border-border border-t-primary rounded-full animate-spin" /></div>;
   if (!pages.length) return (
-    <div className="forged-border rounded-2xl bg-card p-12 text-center">
-      <h3 className="font-heading text-xl text-foreground mb-2">Workbook content coming soon</h3>
-      <p className="text-sm text-muted-foreground">This workbook is being forged. Check back shortly.</p>
+    <div className="editorial-container text-center">
+      <h3 className="text-xl mb-2">Workbook content coming soon</h3>
+      <p className="text-sm">This workbook is being prepared. Check back shortly.</p>
     </div>
   );
 
@@ -69,10 +69,10 @@ export default function WorkbookExperience({ workbook }) {
         <p className="text-sm text-muted-foreground">{workbook.description}</p>
       </div>
       <div className="flex flex-wrap items-center gap-3 mb-6">
-        <button onClick={handleCopyPrompt} className="flex items-center gap-2 px-4 py-2 forged-border rounded-lg bg-card text-xs uppercase tracking-widest text-foreground hover:text-primary transition-colors">
-          {copied ? <Check className="w-4 h-4 text-primary" /> : <Copy className="w-4 h-4" />} {copied ? 'Copied!' : 'Copy AI Prompt'}
+        <button onClick={handleCopyPrompt} className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg bg-card text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors">
+          {copied ? <Check className="w-4 h-4 text-primary" /> : <Copy className="w-4 h-4" />} {copied ? 'Copied!' : 'Copy Responses'}
         </button>
-        <button onClick={() => window.print()} className="flex items-center gap-2 px-4 py-2 forged-border rounded-lg bg-card text-xs uppercase tracking-widest text-foreground hover:text-primary transition-colors">
+        <button onClick={() => window.print()} className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg bg-card text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors">
           <Printer className="w-4 h-4" /> Printer-Friendly Download
         </button>
       </div>
@@ -82,23 +82,20 @@ export default function WorkbookExperience({ workbook }) {
         ))}
       </div>
       {activePage && (
-        <div className="forged-border rounded-2xl bg-card p-6 lg:p-8">
-          <div className="relative pl-6">
-            <div className="absolute left-0 top-0 bottom-0 w-0.5 forged-gradient opacity-50" />
-            <h2 className="font-heading text-xl text-foreground mb-6">{activePage.title}</h2>
-            <div className="space-y-6">
-              {activePage.fields?.map(field => (
-                <div key={field.field_id}>
-                  <label className="block text-sm text-foreground mb-1">{field.label}{field.required && <span className="text-primary ml-1">*</span>}</label>
-                  {field.helper_text && <p className="text-xs text-muted-foreground mb-2">{field.helper_text}</p>}
-                  {field.type === 'text_short' && <input type="text" maxLength={field.character_limit} value={responses[field.field_id]?.value || ''} onChange={e => handleFieldChange(field.field_id, e.target.value)} className="w-full bg-background border border-border rounded-lg px-4 py-3 text-sm text-foreground focus:border-primary focus:outline-none transition-colors" />}
-                  {field.type === 'text_long' && <textarea maxLength={field.character_limit} value={responses[field.field_id]?.value || ''} onChange={e => handleFieldChange(field.field_id, e.target.value)} rows={5} className="w-full bg-background border border-border rounded-lg px-4 py-3 text-sm text-foreground focus:border-primary focus:outline-none transition-colors resize-none" />}
-                  {field.type === 'currency' && <input type="number" value={responses[field.field_id]?.value || ''} onChange={e => handleFieldChange(field.field_id, e.target.value)} className="w-full bg-background border border-border rounded-lg px-4 py-3 text-sm text-foreground focus:border-primary focus:outline-none transition-colors" />}
-                  {field.type === 'select' && <select value={responses[field.field_id]?.value || ''} onChange={e => handleFieldChange(field.field_id, e.target.value)} className="w-full bg-background border border-border rounded-lg px-4 py-3 text-sm text-foreground focus:border-primary focus:outline-none transition-colors"><option value="">Select an option...</option>{field.options?.map(opt => <option key={opt} value={opt}>{opt}</option>)}</select>}
-                  {field.character_limit && <p className="text-xs text-muted-foreground mt-1 text-right">{(responses[field.field_id]?.value || '').length} / {field.character_limit}</p>}
-                </div>
-              ))}
-            </div>
+        <div className="editorial-container">
+          <h2 className="text-xl mb-6">{activePage.title}</h2>
+          <div className="space-y-6">
+            {activePage.fields?.map(field => (
+              <div key={field.field_id}>
+                <label className="block text-sm mb-1">{field.label}{field.required && <span className="text-primary ml-1">*</span>}</label>
+                {field.helper_text && <p className="text-xs mb-2 opacity-70">{field.helper_text}</p>}
+                {field.type === 'text_short' && <input type="text" maxLength={field.character_limit} value={responses[field.field_id]?.value || ''} onChange={e => handleFieldChange(field.field_id, e.target.value)} />}
+                {field.type === 'text_long' && <textarea maxLength={field.character_limit} value={responses[field.field_id]?.value || ''} onChange={e => handleFieldChange(field.field_id, e.target.value)} rows={5} />}
+                {field.type === 'currency' && <input type="number" value={responses[field.field_id]?.value || ''} onChange={e => handleFieldChange(field.field_id, e.target.value)} />}
+                {field.type === 'select' && <select value={responses[field.field_id]?.value || ''} onChange={e => handleFieldChange(field.field_id, e.target.value)}><option value="">Select an option...</option>{field.options?.map(opt => <option key={opt} value={opt}>{opt}</option>)}</select>}
+                {field.character_limit && <p className="text-xs mt-1 text-right opacity-50">{(responses[field.field_id]?.value || '').length} / {field.character_limit}</p>}
+              </div>
+            ))}
           </div>
         </div>
       )}

@@ -13,12 +13,11 @@ export default function MissionCard({ completedCount = 0, totalCount = 0 }) {
             <Anvil className="w-4 h-4 text-primary" strokeWidth={1.5} />
             <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground">The Mission</span>
           </div>
-          <h1 className="font-heading text-3xl lg:text-5xl font-light leading-tight text-foreground mb-4">
-            You're building freedom.<br />
-            <span className="molten-text italic">We're forging legacy.</span>
+          <h1 className="font-heading text-3xl lg:text-4xl font-light leading-tight text-foreground mb-3">
+            Your <span className="molten-text italic">Progress</span>
           </h1>
-          <p className="text-sm lg:text-base text-muted-foreground max-w-md leading-relaxed mx-auto lg:mx-0">
-            Track your progress, access your resources, and activate your brand at every level.
+          <p className="text-sm text-muted-foreground max-w-md leading-relaxed mx-auto lg:mx-0">
+            Track your workbook completion and resource activity.
           </p>
         </div>
         <div className="flex-shrink-0">

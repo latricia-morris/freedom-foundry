@@ -20,7 +20,7 @@ export default function Vault() {
         <h1 className="font-heading text-3xl lg:text-4xl font-light text-foreground mb-2">
           The <span className="molten-text italic">Vault</span>
         </h1>
-        <p className="text-sm text-muted-foreground">Your core brand assets. Secured. Organized. Always at hand.</p>
+        <p className="text-sm text-muted-foreground">Your resource library — courses, tools, and digital workbooks.</p>
       </div>
 
       {loading ? (

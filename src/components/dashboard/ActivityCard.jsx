@@ -1,9 +1,7 @@
 import React from 'react';
 import { Activity as ActivityIcon, CheckCircle2, FolderOpen, Send } from 'lucide-react';
 
-const defaultActivities = [
-  { description: 'Welcome to Freedom Foundry', time: 'Just now', icon: ActivityIcon },
-];
+const defaultActivities = [];
 
 export default function ActivityCard({ activities = [] }) {
   const items = activities.length > 0 ? activities : defaultActivities;
@@ -17,6 +15,7 @@ export default function ActivityCard({ activities = [] }) {
         </div>
       </div>
       <div className="space-y-4">
+        {items.length === 0 && <p className="text-sm text-muted-foreground">No recent activity.</p>}
         {items.map((item, i) => {
           const Icon = item.icon || ActivityIcon;
           return (

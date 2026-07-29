@@ -7,7 +7,7 @@ import UserAvatar from './UserAvatar';
 
 export default function Layout() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <Sidebar />
       <div className="lg:pl-64">
         <header className="sticky top-0 z-30 flex items-center justify-between px-4 lg:px-8 py-4 bg-background/80 backdrop-blur-md border-b border-border">

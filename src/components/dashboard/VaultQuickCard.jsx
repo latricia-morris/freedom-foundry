@@ -2,12 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Lock } from 'lucide-react';
 
-const defaultCategories = [
-  { name: 'Brand Identity', count: 0 },
-  { name: 'Messaging & Positioning', count: 0 },
-  { name: 'Visual Assets', count: 0 },
-  { name: 'Templates & Frameworks', count: 0 },
-];
+const defaultCategories = [];
 
 export default function VaultQuickCard({ vaultItems = [] }) {
   const categories = vaultItems.length > 0
@@ -23,7 +18,7 @@ export default function VaultQuickCard({ vaultItems = [] }) {
         </div>
         <Link to="/vault" className="text-xs uppercase tracking-widest text-primary hover:text-copper transition-colors">View All →</Link>
       </div>
-      <p className="text-sm text-muted-foreground mb-5">Your core brand assets. Secured. Organized. Always at hand.</p>
+      <p className="text-sm text-muted-foreground mb-5">Your resource library — courses, tools, and workbooks.</p>
       <div className="space-y-3 mb-6">
         {categories.map((cat, i) => (
           <div key={i} className="flex items-center justify-between py-2 border-b border-border/50">
