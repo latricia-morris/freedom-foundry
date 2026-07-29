@@ -88,7 +88,7 @@
   }
 
   .forged-gradient {
-    background: linear-gradient(131deg, #6e1f24, #b3232c, #d9622c);
+    background: linear-gradient(41deg, #4a0404 0%, #7a1f1f 25%, #b3232c 50%, #d9622c 75%, #f0d9b5 100%);
   }
 
   .ember-glow {
@@ -184,7 +184,7 @@
     border: 1px solid transparent;
     background:
       linear-gradient(#0f0f1a, #0f0f1a) padding-box,
-      linear-gradient(131deg, #b3232c 0%, #d9622c 50%, #f0d9b5 100%) border-box;
+      linear-gradient(41deg, #4a0404 0%, #7a1f1f 25%, #b3232c 50%, #d9622c 75%, #f0d9b5 100%) border-box;
     padding: 10px;
     display: flex;
     flex-direction: column;
@@ -221,7 +221,7 @@
 
   /* Warm gradient text links — red → orange → champagne at 131deg */
   .link-warm {
-    background: linear-gradient(131deg, #b3232c 0%, #d9622c 55%, #f0d9b5 100%);
+    background: linear-gradient(41deg, #4a0404 0%, #7a1f1f 25%, #b3232c 50%, #d9622c 75%, #f0d9b5 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -245,7 +245,7 @@
 
   /* Warm gradient text for dark backgrounds */
   .text-warm {
-    background: linear-gradient(131deg, #b3232c 0%, #d9622c 55%, #f0d9b5 100%);
+    background: linear-gradient(41deg, #4a0404 0%, #7a1f1f 25%, #b3232c 50%, #d9622c 75%, #f0d9b5 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -255,9 +255,13 @@
   /* Dashboard cards — dark glass with gradient border */
   .dashboard-card {
     background: rgba(15, 15, 26, 0.6);
-    border: 1px solid;
-    border-image: linear-gradient(131deg, #4a0404, #840a1a, #d9622c, #f0d9b5) 1;
+    border: 1px solid transparent;
     border-radius: 14px;
+    background-image:
+      linear-gradient(#0f0f1a, #0f0f1a),
+      linear-gradient(41deg, #4a0404 0%, #7a1f1f 25%, #b3232c 50%, #d9622c 75%, #f0d9b5 100%);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 4px 20px rgba(0, 0, 0, 0.3);
@@ -279,7 +283,7 @@
 
   /* Molten gradient progress bar */
   .molten-bar {
-    background: linear-gradient(131deg, #b3232c 0%, #d9622c 55%, #f0d9b5 100%);
+    background: linear-gradient(41deg, #4a0404 0%, #7a1f1f 25%, #b3232c 50%, #d9622c 75%, #f0d9b5 100%);
   }
 
   /* Brand portal navigation — text only, cloudbone inactive, gradient active */
@@ -299,7 +303,7 @@
   }
 
   .bp-nav-item--active {
-    background: linear-gradient(131deg, #b3232c 0%, #d9622c 55%, #f0d9b5 100%);
+    background: linear-gradient(41deg, #4a0404 0%, #7a1f1f 25%, #b3232c 50%, #d9622c 75%, #f0d9b5 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;

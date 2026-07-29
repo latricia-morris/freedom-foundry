@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Vault as VaultIcon, BookOpen, Palette, Target, ClipboardList, Mic, Mail, Settings as SettingsIcon } from 'lucide-react';
+import { LayoutDashboard, Vault as VaultIcon, BookOpen, Palette, Target, ClipboardList, Mic, Mail, CreditCard, Settings as SettingsIcon } from 'lucide-react';
 
 const navItems = [
   { label: 'Dashboard', path: '/', icon: LayoutDashboard },
@@ -9,6 +9,7 @@ const navItems = [
   { label: 'Brand Portal', path: '/brand-portal', icon: Palette },
   { label: 'Big Picture', path: '/big-picture', icon: Target },
   { label: 'Collaborations', path: '/services', icon: ClipboardList },
+  { label: 'Billing', path: '/billing', icon: CreditCard },
   { label: 'Podcast', path: '/podcast', icon: Mic },
   { label: 'Contact', path: '/contact', icon: Mail },
   { label: 'Settings', path: '/settings', icon: SettingsIcon },
@@ -43,7 +44,7 @@ export default function Sidebar() {
                 isActive ? 'text-warm bg-sidebar-accent' : 'text-[#f7f2ea]/50 hover:text-[#f7f2ea] hover:bg-sidebar-accent/50'
               }`}
             >
-              {isActive && <span className="absolute left-0 top-0 h-full w-0.5" style={{ background: 'linear-gradient(131deg, #b3232c, #d9622c, #f0d9b5)' }} />}
+              {isActive && <span className="absolute left-0 top-0 h-full w-0.5" style={{ background: 'linear-gradient(41deg, #4a0404, #7a1f1f, #b3232c, #d9622c, #f0d9b5)' }} />}
               <Icon className="w-4 h-4" strokeWidth={1.5} />
               <span className="tracking-wide">{item.label}</span>
             </Link>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
+import MissionCard from '@/components/dashboard/MissionCard';
 import VaultQuickCard from '@/components/dashboard/VaultQuickCard';
 import BrandPowerCard from '@/components/dashboard/BrandPowerCard';
 import ActivityCard from '@/components/dashboard/ActivityCard';
@@ -20,12 +21,17 @@ export default function Dashboard() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-6 animate-fade-in">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <BrandPowerCard workbooks={workbooks} />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 h-full">
+          <MissionCard completedCount={0} totalCount={workbooks.length} />
+        </div>
         <VaultQuickCard vaultItems={vaultItems} />
       </div>
 
-      <ActivityCard />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <BrandPowerCard workbooks={workbooks} />
+        <ActivityCard />
+      </div>
 
       <div className="flex items-center justify-center gap-3 py-6">
         <div className="h-px w-12 bg-border" />
