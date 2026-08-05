@@ -30,6 +30,11 @@ import AdminUsers from './pages/AdminUsers';
 import AdminUserDetail from './pages/AdminUserDetail';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
+import OAuthConsent from './pages/OAuthConsent';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -57,6 +62,12 @@ const AuthenticatedApp = () => {
   // Render the main app
   return (
     <Routes>
+      {/* Auth routes — standalone (no main Layout), outside any auth guard */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/oauth/consent" element={<OAuthConsent />} />
       {/* Add your page Route elements here */}
       <Route element={<Layout />}>
         <Route path="/" element={<Dashboard />} />
