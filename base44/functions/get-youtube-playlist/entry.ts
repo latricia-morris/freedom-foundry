@@ -11,7 +11,7 @@ export default async function(req: Request): Promise<Response> {
 
     // Extract video IDs from the page JSON
 
-    const videoBlocks = html.match(/"playlistVideoRenderer":\{[\s\S]{0,3000}?\}\}\}\}/g) || [];
+    const videoBlocks = html.split('"playlistVideoRenderer":{').slice(1);
     const seen = new Set();
     const videos = [];
 
