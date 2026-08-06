@@ -20,12 +20,18 @@ export default async function(req: Request): Promise<Response> {
       seen.add(videoId);
 
       // Try to find a title near this videoId in the JSON
-      const afterMatch = html.substring(m.index, m.index + 2000);
-      let title = '';
+      const afterMatch = html.substring(m.index, m.index + 4000);
+    const beforeMatch = html.substring(Math.max(0, m.index - 1500), m.index);
+    let title = '';
       const simpleTitle = afterMatch.match(/"title":\{"simpleText":"([^"]+)"/);
-      const runsTitle = afterMatch.match(/"title":\{"runs":\[\{"text":"([^"]+)"/);
-      if (simpleTitle) title = simpleTitle[1];
-      else if (runsTitle) title = runsTitle[1];
+    const runsTitle = afterMatch.match(/"title":\{"runs":\[\{"text":"([^"]+)"/);
+    const beforeSimple = beforeMatch.match(/"title":\{"simpleText":"([^"]+)"(?![\s\S]*"title")/);
+    const beforeRuns = beforeMatch.match(/"title":\{"runs":\[\{"text":"([^"]+)"(?![\s\S]*"title")/);
+    if (simpleTitle) title = simpleTitle[1];
+    else if (runsTitle) title = runsTitle[1];
+    else if (beforeSimple) title = beforeSimple[1];
+    else if (beforeRuns) title = beforeRuns[1];
+    title = title.replace(/\\u0026/g, '&').replace(/\\"/g, '"');
 
       videos.push({ video_id: videoId, title: title || `Episode ${videos.length + 1}` });
     }
