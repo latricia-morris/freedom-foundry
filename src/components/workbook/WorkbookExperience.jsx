@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Copy, Printer, Check, ChevronLeft, ChevronRight } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import WorkbookField from '@/components/workbook/WorkbookField';
 
 export default function WorkbookExperience({ workbook }) {
   const [responses, setResponses] = useState({});
@@ -78,23 +79,21 @@ export default function WorkbookExperience({ workbook }) {
       </div>
       <div className="flex items-center gap-2 mb-6">
         {pages.map((page, i) => (
-          <button key={page.page_id} onClick={() => setActivePageIndex(i)} className={`px-3 py-1.5 rounded text-xs uppercase tracking-wider transition-all ${i === activePageIndex ? 'forged-gradient text-white' : 'bg-card text-muted-foreground hover:text-foreground'}`}>{i + 1}</button>
+          <button key={page.page_id || i} onClick={() => setActivePageIndex(i)} className={`px-3 py-1.5 rounded text-xs uppercase tracking-wider transition-all ${i === activePageIndex ? 'forged-gradient text-white' : 'bg-card text-muted-foreground hover:text-foreground'}`}>{i + 1}</button>
         ))}
       </div>
       {activePage && (
         <div className="editorial-container">
-          <h2 className="text-xl mb-6">{activePage.title}</h2>
+          <h2 className="text-xl mb-4">{activePage.title}</h2>
+          {activePage.content && <p className="text-sm mb-6 opacity-80 leading-relaxed">{activePage.content}</p>}
           <div className="space-y-6">
             {activePage.fields?.map(field => (
-              <div key={field.field_id}>
-                <label className="block text-sm mb-1">{field.label}{field.required && <span className="text-primary ml-1">*</span>}</label>
-                {field.helper_text && <p className="text-xs mb-2 opacity-70">{field.helper_text}</p>}
-                {field.type === 'text_short' && <input type="text" maxLength={field.character_limit} value={responses[field.field_id]?.value || ''} onChange={e => handleFieldChange(field.field_id, e.target.value)} />}
-                {field.type === 'text_long' && <textarea maxLength={field.character_limit} value={responses[field.field_id]?.value || ''} onChange={e => handleFieldChange(field.field_id, e.target.value)} rows={5} />}
-                {field.type === 'currency' && <input type="number" value={responses[field.field_id]?.value || ''} onChange={e => handleFieldChange(field.field_id, e.target.value)} />}
-                {field.type === 'select' && <select value={responses[field.field_id]?.value || ''} onChange={e => handleFieldChange(field.field_id, e.target.value)}><option value="">Select an option...</option>{field.options?.map(opt => <option key={opt} value={opt}>{opt}</option>)}</select>}
-                {field.character_limit && <p className="text-xs mt-1 text-right opacity-50">{(responses[field.field_id]?.value || '').length} / {field.character_limit}</p>}
-              </div>
+              <WorkbookField
+                key={field.field_id}
+                field={field}
+                value={responses[field.field_id]?.value || ''}
+                onChange={(v) => handleFieldChange(field.field_id, v)}
+              />
             ))}
           </div>
         </div>
