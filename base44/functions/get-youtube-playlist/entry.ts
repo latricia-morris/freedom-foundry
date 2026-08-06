@@ -2,91 +2,51 @@ export default async function (req: Request): Promise<Response> {
   try {
     const playlistId = 'PLwrUeO4tzLBiAP_b_74-5WdAnccdHNvJp';
 
-    const innertubeBody = {
-      context: {
-        client: {
-          clientName: 'WEB',
-          clientVersion: '2.20240101.00.00',
-        },
-      },
-      browseId: `VL${playlistId}`,
-    };
+    // YouTube's public playlist RSS feed is a stable, documented endpoint that
+    // returns clean XML with video IDs and titles (no scraping / no internal
+    // renderer JSON needed). Note: RSS feeds cap at the 15 most recent items,
+    // so we also fetch the channel-uploads style feed is NOT needed here since
+    // we only need the playlist's items.
+    const feedUrl = `https://www.youtube.com/feeds/videos.xml?playlist_id=${playlistId}`;
 
-    const response = await fetch('https://www.youtube.com/youtubei/v1/browse', {
-      method: 'POST',
+    const response = await fetch(feedUrl, {
       headers: {
-        'Content-Type': 'application/json',
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
       },
-      body: JSON.stringify(innertubeBody),
     });
 
-let data: any = {};
-    try {
-      const raw = await response.text();
-      data = JSON.parse(raw);
-    } catch {
-      data = {};
-    }
+    const xml = await response.text();
+
     const videos: { video_id: string; title: string }[] = [];
     const seen = new Set<string>();
 
-    // Renderer-agnostic walk: YouTube changes renderer key names over time.
-
-    // TEMP DIAGNOSTIC: find first raw node containing a videoId and dump its keys/shape
-    let diagSample: any = null;
-    (function findSample(node: any) {
-      if (diagSample || !node || typeof node !== 'object') return;
-      if (!Array.isArray(node) && typeof node.videoId === 'string' && node.videoId.length === 11) {
-        diagSample = node;
-        return;
-      }
-      for (const key in node) {
-        findSample(node[key]);
-        if (diagSample) return;
-      }
-    })(data);
-    console.log('DIAG SAMPLE NODE:', JSON.stringify(diagSample)?.slice(0, 2000));
-    // Instead of matching a specific renderer name, walk every object node and
-    // treat it as a video entry whenever it has BOTH a videoId and a title
-    // (either { runs: [{ text }] } or { simpleText }) as sibling fields.
-    function extractTitle(node: any): string {
-      const t = node?.title;
-      if (!t) return '';
-      if (typeof t === 'string') return t;
-      if (t.simpleText) return t.simpleText;
-      if (Array.isArray(t.runs) && t.runs[0]?.text) {
-        return t.runs.map((r: any) => r.text).join('');
-      }
-      return '';
-    }
-
-    function walk(node: any) {
-      if (!node || typeof node !== 'object') return;
-
-      if (Array.isArray(node)) {
-        for (const item of node) walk(item);
-        return;
-      }
-
-      const videoId = node.videoId;
-      if (typeof videoId === 'string' && videoId.length === 11 && !seen.has(videoId)) {
-        const title = extractTitle(node);
-        if (title) {
+    // Each <entry> block contains <yt:videoId>ID</yt:videoId> and <title>TEXT</title>
+    const entryRegex = /<entry>([\s\S]*?)<\/entry>/g;
+    let entryMatch;
+    while ((entryMatch = entryRegex.exec(xml)) !== null) {
+      const block = entryMatch[1];
+      const idMatch = block.match(/<yt:videoId>([^<]+)<\/yt:videoId>/);
+      const titleMatch = block.match(/<title>([^<]+)<\/title>/);
+      if (idMatch && titleMatch) {
+        const videoId = idMatch[1].trim();
+        const title = titleMatch[1]
+          .replace(/&amp;/g, '&')
+          .replace(/&lt;/g, '<')
+          .replace(/&gt;/g, '>')
+          .replace(/&quot;/g, '"')
+          .replace(/&#39;/g, "'")
+          .trim();
+        if (!seen.has(videoId)) {
           seen.add(videoId);
           videos.push({ video_id: videoId, title });
         }
       }
-
-      for (const key in node) {
-        walk(node[key]);
-      }
     }
 
-    walk(data);
-
-    // Fallback: if innertube returned nothing usable, scrape the raw playlist
-    // page and pull ytInitialData out of it, then run the same renderer-agnostic walk.
+    // Fallback: if the RSS feed is empty (unlikely, but playlists >15 items
+    // won't fully appear via RSS), scrape the raw playlist HTML page for
+    // videoId + nearby title text as a best-effort backup so the page never
+    // shows a totally empty state.
     if (videos.length === 0) {
       const pageResponse = await fetch(`https://www.youtube.com/playlist?list=${playlistId}`, {
         headers: {
@@ -96,37 +56,6 @@ let data: any = {};
       });
       const html = await pageResponse.text();
 
-      // Robustly extract the full ytInitialData JSON blob (balanced-brace scan,
-      // since a non-greedy regex truncates large JSON).
-      const marker = 'var ytInitialData = ';
-      const startIdx = html.indexOf(marker);
-      if (startIdx !== -1) {
-        const jsonStart = startIdx + marker.length;
-        let depth = 0;
-        let endIdx = -1;
-        for (let i = jsonStart; i < html.length; i++) {
-          const ch = html[i];
-          if (ch === '{') depth++;
-          else if (ch === '}') {
-            depth--;
-            if (depth === 0) {
-              endIdx = i + 1;
-              break;
-            }
-          }
-        }
-        if (endIdx !== -1) {
-          try {
-            const initialData = JSON.parse(html.slice(jsonStart, endIdx));
-            walk(initialData);
-          } catch (e) {
-            console.error('Failed to parse ytInitialData:', (e as Error).message);
-          }
-        }
-      }
-
-      // Last resort: regex scan raw HTML for videoId + nearby title text pairs.
-    if (videos.length === 0) {
       const idRegex = /"videoId":"([a-zA-Z0-9_-]{11})"/g;
       let match;
       while ((match = idRegex.exec(html)) !== null) {
@@ -144,10 +73,9 @@ let data: any = {};
             if (am) title = am[1];
           }
           seen.add(videoId);
-          videos.push({ video_id: videoId, title: title || `Episode` });
+          videos.push({ video_id: videoId, title: title || 'Episode' });
         }
       }
-    }
     }
 
     console.log('YouTube playlist videos found:', videos.length);
