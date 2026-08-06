@@ -10,30 +10,23 @@ export default async function(req: Request): Promise<Response> {
     const html = await response.text();
 
     // Extract video IDs from the page JSON
-    const videoIdMatches = [...html.matchAll(/"videoId":"([a-zA-Z0-9_-]{11})"/g)];
+
+    const videoBlocks = html.match(/"playlistVideoRenderer":\{[\s\S]{0,3000}?\}\}\}\}/g) || [];
     const seen = new Set();
     const videos = [];
 
-    for (const m of videoIdMatches) {
-      const videoId = m[1];
+    for (const block of videoBlocks) {
+      const idMatch = block.match(/"videoId":"([a-zA-Z0-9_-]{11})"/);
+      if (!idMatch) continue;
+      const videoId = idMatch[1];
       if (seen.has(videoId)) continue;
       seen.add(videoId);
 
-      // Try to find a title near this videoId in the JSON
-      const afterMatch = html.substring(m.index, m.index + 4000);
-    const beforeMatch = html.substring(Math.max(0, m.index - 1500), m.index);
-    let title = '';
-      const simpleTitle = afterMatch.match(/"title":\{"simpleText":"([^"]+)"/);
-    const runsTitle = afterMatch.match(/"title":\{"runs":\[\{"text":"([^"]+)"/);
-    const beforeSimple = beforeMatch.match(/"title":\{"simpleText":"([^"]+)"(?![\s\S]*"title")/);
-    const beforeRuns = beforeMatch.match(/"title":\{"runs":\[\{"text":"([^"]+)"(?![\s\S]*"title")/);
-    if (simpleTitle) title = simpleTitle[1];
-    else if (runsTitle) title = runsTitle[1];
-    else if (beforeSimple) title = beforeSimple[1];
-    else if (beforeRuns) title = beforeRuns[1];
-    title = title.replace(/\\u0026/g, '&').replace(/\\"/g, '"');
+      let title = '';
+      const simpleTitle = block.match(/"title":\{"runs":\[\{"text":"([^"]+)"/) || block.match(/"title":\{"simpleText":"([^"]+)"/);
+      if (simpleTitle) title = simpleTitle[1];
+      title = title.replace(/\\u0026/g, '&').replace(/\\"/g, '"');
 
-    if (!title && videos.length < 2) console.log('DEBUG_SNIPPET:', afterMatch.substring(0, 1000));
       videos.push({ video_id: videoId, title: title || `Episode ${videos.length + 1}` });
     }
 
