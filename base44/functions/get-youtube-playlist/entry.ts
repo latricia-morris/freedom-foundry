@@ -28,7 +28,6 @@ let data: any = {};
     } catch {
       data = {};
     }
-
     const videos: { video_id: string; title: string }[] = [];
     const seen = new Set<string>();
 
