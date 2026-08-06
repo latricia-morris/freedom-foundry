@@ -11,6 +11,7 @@ export default async function(req: Request): Promise<Response> {
 
     // Extract video IDs from the page JSON
 
+    console.log('DEBUG html.length=', html.length, 'includes playlistVideoRenderer=', html.includes('playlistVideoRenderer'));
     const videoBlocks = html.split('"playlistVideoRenderer":{').slice(1);
     const seen = new Set();
     const videos = [];
