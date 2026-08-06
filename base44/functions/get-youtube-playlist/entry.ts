@@ -12,7 +12,7 @@ export default async function (req: Request): Promise<Response> {
       browseId: `VL${playlistId}`,
     };
 
-    const response = await fetch('https://www.youtube.com/youtubei/v1/browse?key=AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8', {
+    const response = await fetch('https://www.youtube.com/youtubei/v1/browse', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -26,35 +26,47 @@ export default async function (req: Request): Promise<Response> {
     const videos: { video_id: string; title: string }[] = [];
     const seen = new Set<string>();
 
-    // Recursively walk the JSON tree looking for playlistVideoRenderer nodes
+    // Renderer-agnostic walk: YouTube changes renderer key names over time.
+    // Instead of matching a specific renderer name, walk every object node and
+    // treat it as a video entry whenever it has BOTH a videoId and a title
+    // (either { runs: [{ text }] } or { simpleText }) as sibling fields.
+    function extractTitle(node: any): string {
+      const t = node?.title;
+      if (!t) return '';
+      if (typeof t === 'string') return t;
+      if (t.simpleText) return t.simpleText;
+      if (Array.isArray(t.runs) && t.runs[0]?.text) {
+        return t.runs.map((r: any) => r.text).join('');
+      }
+      return '';
+    }
+
     function walk(node: any) {
       if (!node || typeof node !== 'object') return;
 
-      if (node.playlistVideoRenderer) {
-        const r = node.playlistVideoRenderer;
-        const videoId = r.videoId;
-        let title = '';
-        if (r.title?.runs?.[0]?.text) title = r.title.runs[0].text;
-        else if (r.title?.simpleText) title = r.title.simpleText;
-        if (videoId && !seen.has(videoId)) {
+      if (Array.isArray(node)) {
+        for (const item of node) walk(item);
+        return;
+      }
+
+      const videoId = node.videoId;
+      if (typeof videoId === 'string' && videoId.length === 11 && !seen.has(videoId)) {
+        const title = extractTitle(node);
+        if (title) {
           seen.add(videoId);
-          videos.push({ video_id: videoId, title: title || `Episode` });
+          videos.push({ video_id: videoId, title });
         }
       }
 
       for (const key in node) {
-        const child = node[key];
-        if (Array.isArray(child)) {
-          for (const item of child) walk(item);
-        } else if (child && typeof child === 'object') {
-          walk(child);
-        }
+        walk(node[key]);
       }
     }
 
     walk(data);
 
-    // Fallback: if innertube API returned nothing, scrape the raw playlist page
+    // Fallback: if innertube returned nothing usable, scrape the raw playlist
+    // page and pull ytInitialData out of it, then run the same renderer-agnostic walk.
     if (videos.length === 0) {
       const pageResponse = await fetch(`https://www.youtube.com/playlist?list=${playlistId}`, {
         headers: {
@@ -64,25 +76,48 @@ export default async function (req: Request): Promise<Response> {
       });
       const html = await pageResponse.text();
 
-      const scriptMatch = html.match(/var ytInitialData = (\{.*?\});/s);
-      if (scriptMatch) {
-        try {
-          const initialData = JSON.parse(scriptMatch[1]);
-          walk(initialData);
-        } catch (e) {
-          console.error('Failed to parse ytInitialData:', e.message);
+      // Robustly extract the full ytInitialData JSON blob (balanced-brace scan,
+      // since a non-greedy regex truncates large JSON).
+      const marker = 'var ytInitialData = ';
+      const startIdx = html.indexOf(marker);
+      if (startIdx !== -1) {
+        const jsonStart = startIdx + marker.length;
+        let depth = 0;
+        let endIdx = -1;
+        for (let i = jsonStart; i < html.length; i++) {
+          const ch = html[i];
+          if (ch === '{') depth++;
+          else if (ch === '}') {
+            depth--;
+            if (depth === 0) {
+              endIdx = i + 1;
+              break;
+            }
+          }
+        }
+        if (endIdx !== -1) {
+          try {
+            const initialData = JSON.parse(html.slice(jsonStart, endIdx));
+            walk(initialData);
+          } catch (e) {
+            console.error('Failed to parse ytInitialData:', (e as Error).message);
+          }
         }
       }
 
-      // Last resort: regex scan raw HTML for videoId + title pairs
+      // Last resort: regex scan raw HTML for videoId + nearby title text pairs.
       if (videos.length === 0) {
         const idRegex = /"videoId":"([a-zA-Z0-9_-]{11})"/g;
         let match;
         while ((match = idRegex.exec(html)) !== null) {
           const videoId = match[1];
           if (!seen.has(videoId)) {
+            const windowStart = match.index;
+            const windowText = html.slice(windowStart, windowStart + 600);
+            const titleMatch = windowText.match(/"text":"([^"]{3,120})"/) || windowText.match(/"simpleText":"([^"]{3,120})"/);
+            const title = titleMatch ? titleMatch[1] : `Episode`;
             seen.add(videoId);
-            videos.push({ video_id: videoId, title: `Episode` });
+            videos.push({ video_id: videoId, title });
           }
         }
       }
@@ -92,7 +127,7 @@ export default async function (req: Request): Promise<Response> {
 
     return Response.json({ videos });
   } catch (error) {
-    console.error('YouTube playlist fetch error:', error.message);
-    return Response.json({ videos: [], error: error.message });
+    console.error('YouTube playlist fetch error:', (error as Error).message);
+    return Response.json({ videos: [], error: (error as Error).message });
   }
 }
