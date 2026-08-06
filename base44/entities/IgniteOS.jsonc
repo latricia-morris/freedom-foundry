@@ -1,0 +1,43 @@
+{
+  "name": "IgniteOS",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "phase": {
+      "type": "string"
+    },
+    "activation_goals": {
+      "type": "string"
+    },
+    "brand_strategy": {
+      "type": "string"
+    },
+    "action_items": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "milestones": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "notes": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "paused",
+        "complete"
+      ],
+      "default": "active"
+    }
+  },
+  "required": []
+}

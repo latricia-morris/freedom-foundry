@@ -2,6 +2,9 @@
   "name": "CorporateBrandProfile",
   "type": "object",
   "properties": {
+    "user_id": {
+      "type": "string"
+    },
     "company_name": {
       "type": "string"
     },
@@ -11,14 +14,23 @@
     "mission_statement": {
       "type": "string"
     },
+    "heading_font": {
+      "type": "string"
+    },
+    "subheading_font": {
+      "type": "string"
+    },
+    "body_font": {
+      "type": "string"
+    },
+    "accent_font": {
+      "type": "string"
+    },
     "colors": {
       "type": "array",
       "items": {
         "type": "object"
       }
-    },
-    "typography": {
-      "type": "string"
     },
     "logo_urls": {
       "type": "array",
@@ -35,8 +47,24 @@
     "brand_voice": {
       "type": "string"
     },
+    "brand_tonality": {
+      "type": "string"
+    },
     "brand_personality": {
       "type": "string"
+    },
+    "brand_prompts": {
+      "type": "string"
+    },
+    "brand_specs": {
+      "type": "string"
+    },
+    "positioning": {
+      "type": "string"
+    },
+    "target_audience": {
+      "type": "string"
     }
-  }
+  },
+  "required": []
 }

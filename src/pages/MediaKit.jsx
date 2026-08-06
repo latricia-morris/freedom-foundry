@@ -1,111 +1,248 @@
 import React, { useState, useEffect } from 'react';
-import { Download, Share2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import { Upload, Plus, X, Check, Copy, Share2, ExternalLink } from 'lucide-react';
+import { toast } from '@/components/ui/use-toast';
 
 export default function MediaKit() {
   const [personal, setPersonal] = useState(null);
-  const [corporate, setCorporate] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [shareLink, setShareLink] = useState(null);
+  const [generatingShare, setGeneratingShare] = useState(false);
+
+  const init = {
+    short_bio: '', long_bio: '', headshot_urls: [], social_links: [], website: '',
+    feature_links: [], speaker_one_sheet_url: '', first_name: '', last_name: ''
+  };
+  const [form, setForm] = useState(init);
 
   useEffect(() => {
-    Promise.all([
-      base44.entities.PersonalBrandProfile.filter({}, '-created_date', 1).catch(() => []),
-      base44.entities.CorporateBrandProfile.filter({}, '-created_date', 1).catch(() => []),
-    ]).then(([p, c]) => {
-      setPersonal(p?.[0] || null);
-      setCorporate(c?.[0] || null);
-    }).finally(() => setLoading(false));
+    base44.entities.PersonalBrandProfile.filter({}, '-created_date', 1)
+      .then(p => {
+        const r = p?.[0] || null;
+        setPersonal(r);
+        if (r) setForm({ ...init, ...r });
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
+
+  const update = (k, v) => setForm(prev => ({ ...prev, [k]: v }));
+  const updateItem = (k, i, f, v) => setForm(prev => ({ ...prev, [k]: prev[k].map((item, idx) => idx === i ? { ...item, [f]: v } : item) }));
+  const addItem = (k, obj) => setForm(prev => ({ ...prev, [k]: [...prev[k], obj] }));
+  const removeItem = (k, i) => setForm(prev => ({ ...prev, [k]: prev[k].filter((_, idx) => idx !== i) }));
+
+  const handleUpload = async (key, file) => {
+    const { file_url } = await base44.integrations.Core.UploadFile({ file });
+    setForm(prev => ({ ...prev, [key]: [...(prev[key] || []), file_url] }));
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      if (personal?.id) {
+        await base44.entities.PersonalBrandProfile.update(personal.id, form);
+      } else {
+        const created = await base44.entities.PersonalBrandProfile.create(form);
+        setPersonal(created);
+      }
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch (_) {}
+    setSaving(false);
+  };
+
+  const handleGenerateShare = async () => {
+    setGeneratingShare(true);
+    try {
+      const token = Math.random().toString(36).slice(2) + Date.now().toString(36);
+      const link = await base44.entities.ShareLink.create({
+        token,
+        profile_type: 'media_kit',
+        profile_id: personal?.id || '',
+        is_active: true
+      });
+      const url = `${window.location.origin}/share/${token}`;
+      setShareLink(url);
+      await navigator.clipboard.writeText(url);
+      toast({ title: "Share link copied!", description: "Your media kit link is ready to share." });
+    } catch (_) {}
+    setGeneratingShare(false);
+  };
+
+  const copyText = (text) => {
+    navigator.clipboard.writeText(text);
+    toast({ title: "Copied!" });
+  };
 
   if (loading) return <div className="flex justify-center py-20"><div className="w-8 h-8 border-2 border-border border-t-primary rounded-full animate-spin" /></div>;
 
+  const inputClass = "w-full rounded-xl px-4 py-2.5 text-sm text-[#1a1420] bg-white border border-black/10 placeholder:text-black/30 outline-none focus:border-[#b3232c] transition-colors";
+  const textareaClass = "w-full rounded-xl px-4 py-3 text-sm text-[#1a1420] bg-white border border-black/10 placeholder:text-black/30 outline-none focus:border-[#b3232c] transition-colors resize-none";
+
   return (
-    <div className="max-w-3xl mx-auto animate-fade-in">
-      <div className="mb-6">
-        <h1 className="font-heading text-3xl font-light text-foreground mb-2">Media <span className="molten-text italic">Kit</span></h1>
-        <p className="text-sm text-muted-foreground">Your brand assets, compiled for press and partnerships.</p>
+    <div className="max-w-3xl animate-fade-in">
+      <div className="mb-6 flex items-start justify-between flex-wrap gap-3">
+        <div>
+          <span className="text-[10px] uppercase tracking-[0.3em] text-[#d9c9a3]">Brand Portal</span>
+          <h1 className="font-heading text-3xl font-light text-[#f7f2ea] mt-1 mb-1">Media <span className="molten-text italic">Kit</span></h1>
+          <p className="text-sm text-[#f7f2ea]/60">Press-ready bios, headshots, and contact info.</p>
+        </div>
+        <button
+          onClick={handleGenerateShare}
+          disabled={generatingShare || !personal?.id}
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 text-sm text-[#f7f2ea]/70 hover:text-[#f7f2ea] hover:border-white/20 transition-colors disabled:opacity-40"
+        >
+          <Share2 className="w-4 h-4" />
+          {generatingShare ? 'Generating...' : 'Share Media Kit'}
+        </button>
       </div>
 
+      {shareLink && (
+        <div className="mb-6 p-4 rounded-xl border border-white/10 bg-white/[0.03] flex items-center gap-3">
+          <span className="text-sm text-[#f7f2ea]/70 flex-1 truncate">{shareLink}</span>
+          <button onClick={() => copyText(shareLink)} className="flex items-center gap-1.5 text-xs text-[#f7f2ea]/50 hover:text-[#f7f2ea] transition-colors"><Copy className="w-3.5 h-3.5" /> Copy</button>
+          <a href={shareLink} target="_blank" rel="noopener noreferrer" className="text-[#f7f2ea]/50 hover:text-[#f7f2ea] transition-colors"><ExternalLink className="w-3.5 h-3.5" /></a>
+        </div>
+      )}
+
       <div className="editorial-container space-y-8">
-        {personal ? (
-          <>
-            {(personal.first_name || personal.last_name) && (
-              <h2 className="text-2xl">{personal.first_name} {personal.last_name}</h2>
-            )}
-            {personal.short_bio && <p className="text-sm italic opacity-70">{personal.short_bio}</p>}
-            {personal.long_bio && (
-              <div>
-                <h3 className="text-base mb-2">Bio</h3>
-                <p>{personal.long_bio}</p>
+
+        {/* Name */}
+        <section>
+          <h2 className="font-heading text-lg mb-4">Name</h2>
+          <div className="grid grid-cols-2 gap-4">
+            <div><label className="block text-xs uppercase tracking-wider text-[#1a1420]/50 mb-1.5">First Name</label><input className={inputClass} value={form.first_name} onChange={e => update('first_name', e.target.value)} /></div>
+            <div><label className="block text-xs uppercase tracking-wider text-[#1a1420]/50 mb-1.5">Last Name</label><input className={inputClass} value={form.last_name} onChange={e => update('last_name', e.target.value)} /></div>
+          </div>
+        </section>
+
+        <div className="h-px bg-black/10" />
+
+        {/* Bios */}
+        <section>
+          <h2 className="font-heading text-lg mb-4">Bios</h2>
+          <div className="space-y-4">
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-xs uppercase tracking-wider text-[#1a1420]/50">Short Bio</label>
+                {form.short_bio && <button onClick={() => copyText(form.short_bio)} className="text-xs text-[#b3232c] flex items-center gap-1"><Copy className="w-3 h-3" /> Copy</button>}
               </div>
-            )}
-
-            {personal.headshot_urls?.length > 0 && (
-              <div>
-                <h3 className="text-base mb-3">Headshots</h3>
-                <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
-                  {personal.headshot_urls.map((url, i) => (
-                    <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="block aspect-square rounded-lg overflow-hidden border border-black/10 hover:opacity-80 transition-opacity">
-                      <img src={url} alt="" className="w-full h-full object-cover" />
-                    </a>
-                  ))}
-                </div>
+              <input className={inputClass} value={form.short_bio} onChange={e => update('short_bio', e.target.value)} placeholder="One or two sentence bio..." />
+            </div>
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-xs uppercase tracking-wider text-[#1a1420]/50">Long Bio</label>
+                {form.long_bio && <button onClick={() => copyText(form.long_bio)} className="text-xs text-[#b3232c] flex items-center gap-1"><Copy className="w-3 h-3" /> Copy</button>}
               </div>
-            )}
-          </>
-        ) : null}
-
-        {corporate ? (
-          <>
-            {corporate.company_name && <h2 className="text-2xl">{corporate.company_name}</h2>}
-            {corporate.tagline && <p className="text-sm italic opacity-70">{corporate.tagline}</p>}
-
-            {corporate.logo_urls?.length > 0 && (
-              <div>
-                <h3 className="text-base mb-3">Logos</h3>
-                <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
-                  {corporate.logo_urls.map((url, i) => (
-                    <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="block aspect-square rounded-lg overflow-hidden border border-black/10 bg-white p-2 hover:opacity-80 transition-opacity">
-                      <img src={url} alt="" className="w-full h-full object-contain" />
-                    </a>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {corporate.colors?.length > 0 && (
-              <div>
-                <h3 className="text-base mb-3">Brand Colors</h3>
-                <div className="flex flex-wrap gap-3">
-                  {corporate.colors.map((color, i) => (
-                    <div key={i} className="text-center">
-                      <div className="w-16 h-16 rounded-lg border border-black/10" style={{ background: color.hex }} />
-                      <p className="text-xs mt-1 opacity-70">{color.name || color.hex}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </>
-        ) : null}
-
-        {(personal?.email || personal?.phone || personal?.website) && (
-          <div>
-            <h3 className="text-base mb-3">Contact</h3>
-            <div className="space-y-1">
-              {personal?.email && <p className="text-sm">{personal.email}</p>}
-              {personal?.phone && <p className="text-sm">{personal.phone}</p>}
-              {personal?.website && <p className="text-sm">{personal.website}</p>}
+              <textarea className={textareaClass} rows={6} value={form.long_bio} onChange={e => update('long_bio', e.target.value)} placeholder="Full bio for press, speaking, and partnerships..." />
             </div>
           </div>
-        )}
+        </section>
 
-        {!personal && !corporate && (
-          <div className="text-center py-12">
-            <h3 className="text-lg mb-2">No media kit content yet</h3>
-            <p className="text-sm opacity-70">Fill in your brand profiles to generate your media kit.</p>
+        <div className="h-px bg-black/10" />
+
+        {/* Headshots — up to 12 */}
+        <section>
+          <h2 className="font-heading text-lg mb-4">Headshots <span className="font-body text-sm text-[#1a1420]/40 font-normal">(up to 12)</span></h2>
+          <div className="flex flex-wrap gap-3">
+            {form.headshot_urls.map((url, i) => (
+              <div key={i} className="relative w-20 h-20 rounded-xl overflow-hidden border border-black/10 group">
+                <img src={url} alt="" className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
+                  <a href={url} download className="w-6 h-6 rounded-full bg-white/90 flex items-center justify-center"><ExternalLink className="w-3 h-3 text-[#1a1420]" /></a>
+                  <button onClick={() => removeItem('headshot_urls', i)} className="w-6 h-6 rounded-full bg-white/90 flex items-center justify-center"><X className="w-3 h-3 text-red-700" /></button>
+                </div>
+              </div>
+            ))}
+            {form.headshot_urls.length < 12 && (
+              <label className="w-20 h-20 rounded-xl border border-dashed border-black/20 flex items-center justify-center cursor-pointer hover:border-[#b3232c] transition-colors">
+                <Upload className="w-4 h-4 opacity-40" />
+                <input type="file" accept="image/*" className="hidden" onChange={e => e.target.files[0] && handleUpload('headshot_urls', e.target.files[0])} />
+              </label>
+            )}
           </div>
-        )}
+        </section>
+
+        <div className="h-px bg-black/10" />
+
+        {/* Website */}
+        <section>
+          <h2 className="font-heading text-lg mb-4">Website</h2>
+          <div className="flex gap-2">
+            <input className={`${inputClass} flex-1`} value={form.website} onChange={e => update('website', e.target.value)} placeholder="https://" />
+            {form.website && <button onClick={() => copyText(form.website)} className="px-3 rounded-xl border border-black/10 text-[#1a1420]/40 hover:text-[#1a1420] transition-colors"><Copy className="w-4 h-4" /></button>}
+          </div>
+        </section>
+
+        <div className="h-px bg-black/10" />
+
+        {/* Social Links */}
+        <section>
+          <h2 className="font-heading text-lg mb-4">Social Links</h2>
+          <div className="space-y-2">
+            {form.social_links.map((link, i) => (
+              <div key={i} className="flex gap-2">
+                <input className={`${inputClass} flex-1`} value={link.platform || ''} onChange={e => updateItem('social_links', i, 'platform', e.target.value)} placeholder="Platform" />
+                <input className={`${inputClass} flex-[2]`} value={link.url || ''} onChange={e => updateItem('social_links', i, 'url', e.target.value)} placeholder="URL or handle" />
+                {link.url && <button onClick={() => copyText(link.url)} className="px-2 text-[#1a1420]/30 hover:text-[#1a1420]/60"><Copy className="w-3.5 h-3.5" /></button>}
+                <button onClick={() => removeItem('social_links', i)} className="px-2 text-[#1a1420]/30 hover:text-[#1a1420]/60"><X className="w-4 h-4" /></button>
+              </div>
+            ))}
+            <button onClick={() => addItem('social_links', { platform: '', url: '' })} className="flex items-center gap-1.5 text-sm text-[#b3232c] hover:opacity-80 transition-opacity"><Plus className="w-4 h-4" /> Add Social</button>
+          </div>
+        </section>
+
+        <div className="h-px bg-black/10" />
+
+        {/* Custom Links — up to 5 */}
+        <section>
+          <h2 className="font-heading text-lg mb-4">Custom Links <span className="font-body text-sm text-[#1a1420]/40 font-normal">(up to 5)</span></h2>
+          <div className="space-y-2">
+            {form.feature_links.map((link, i) => (
+              <div key={i} className="flex gap-2">
+                <input className={`${inputClass} flex-1`} value={link.label || ''} onChange={e => updateItem('feature_links', i, 'label', e.target.value)} placeholder="Label" />
+                <input className={`${inputClass} flex-[2]`} value={link.url || ''} onChange={e => updateItem('feature_links', i, 'url', e.target.value)} placeholder="URL" />
+                {link.url && <button onClick={() => copyText(link.url)} className="px-2 text-[#1a1420]/30 hover:text-[#1a1420]/60"><Copy className="w-3.5 h-3.5" /></button>}
+                <button onClick={() => removeItem('feature_links', i)} className="px-2 text-[#1a1420]/30 hover:text-[#1a1420]/60"><X className="w-4 h-4" /></button>
+              </div>
+            ))}
+            {form.feature_links.length < 5 && (
+              <button onClick={() => addItem('feature_links', { label: '', url: '' })} className="flex items-center gap-1.5 text-sm text-[#b3232c] hover:opacity-80 transition-opacity"><Plus className="w-4 h-4" /> Add Link</button>
+            )}
+          </div>
+        </section>
+
+        <div className="h-px bg-black/10" />
+
+        {/* Speaker One Sheet */}
+        <section>
+          <h2 className="font-heading text-lg mb-3">Speaker One Sheet</h2>
+          {form.speaker_one_sheet_url ? (
+            <div className="flex items-center gap-3">
+              <a href={form.speaker_one_sheet_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-black/10 text-sm text-[#1a1420] hover:border-[#b3232c] transition-colors">
+                <ExternalLink className="w-4 h-4 opacity-60" /> Speaker One Sheet
+              </a>
+              <button onClick={() => update('speaker_one_sheet_url', '')} className="text-xs text-red-700/50 hover:text-red-700 transition-colors">Remove</button>
+            </div>
+          ) : (
+            <label className="cursor-pointer flex items-center gap-2 px-4 py-2.5 rounded-xl border border-dashed border-black/20 text-sm text-[#1a1420]/50 hover:border-[#b3232c] hover:text-[#1a1420]/80 transition-colors w-fit">
+              <Upload className="w-4 h-4" /> Upload Speaker One Sheet
+              <input type="file" accept=".pdf,image/*" className="hidden" onChange={async e => { if (e.target.files[0]) { const { file_url } = await base44.integrations.Core.UploadFile({ file: e.target.files[0] }); update('speaker_one_sheet_url', file_url); }}} />
+            </label>
+          )}
+        </section>
+
+        <button
+          onClick={handleSave}
+          disabled={saving}
+          className="flex items-center gap-2 px-6 py-2.5 rounded-lg text-xs uppercase tracking-widest text-white disabled:opacity-50"
+          style={{ background: 'linear-gradient(131deg, #b3232c, #d9622c, #f0d9b5)' }}
+        >
+          {saved ? <Check className="w-4 h-4" /> : null}
+          {saving ? 'Saving...' : saved ? 'Saved!' : 'Save Media Kit'}
+        </button>
       </div>
     </div>
   );

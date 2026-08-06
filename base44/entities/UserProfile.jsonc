@@ -1,0 +1,61 @@
+{
+  "name": "UserProfile",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "first_name": {
+      "type": "string"
+    },
+    "last_name": {
+      "type": "string"
+    },
+    "business_name": {
+      "type": "string"
+    },
+    "website": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "headshot_url": {
+      "type": "string"
+    },
+    "account_type": {
+      "type": "string",
+      "enum": [
+        "free",
+        "premium",
+        "client",
+        "premium_client"
+      ],
+      "default": "free"
+    },
+    "brand_power_moves_unlocked": {
+      "type": "boolean",
+      "default": false
+    },
+    "brand_power_moves_unlocked_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "unlock_method": {
+      "type": "string",
+      "enum": [
+        "code",
+        "purchase",
+        "admin"
+      ],
+      "default": "code"
+    },
+    "active_program_id": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": []
+}

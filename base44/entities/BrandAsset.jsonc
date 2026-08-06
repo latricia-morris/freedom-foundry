@@ -1,0 +1,43 @@
+{
+  "name": "BrandAsset",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "file_url": {
+      "type": "string"
+    },
+    "file_type": {
+      "type": "string",
+      "enum": [
+        "logo",
+        "design_asset",
+        "print_collateral",
+        "digital_asset",
+        "deliverable",
+        "other"
+      ],
+      "default": "other"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "uploaded_by": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "title",
+    "file_url"
+  ]
+}

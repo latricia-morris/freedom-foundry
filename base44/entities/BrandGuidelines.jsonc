@@ -1,0 +1,43 @@
+{
+  "name": "BrandGuidelines",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "heading_font": {
+      "type": "string"
+    },
+    "subheading_font": {
+      "type": "string"
+    },
+    "body_font": {
+      "type": "string"
+    },
+    "accent_font": {
+      "type": "string"
+    },
+    "logo_usage_notes": {
+      "type": "string"
+    },
+    "color_usage_notes": {
+      "type": "string"
+    },
+    "typography_notes": {
+      "type": "string"
+    },
+    "photography_style": {
+      "type": "string"
+    },
+    "tone_notes": {
+      "type": "string"
+    },
+    "brand_dont_list": {
+      "type": "string"
+    },
+    "additional_standards": {
+      "type": "string"
+    }
+  },
+  "required": []
+}

@@ -1,43 +1,71 @@
 import React from 'react';
 import { Outlet, NavLink } from 'react-router-dom';
+import { Flame } from 'lucide-react';
+import WarmGradientDefs from '@/components/shared/WarmGradientDefs';
 
 const navItems = [
+  { name: 'Overview', path: '/brand-portal', end: true },
   { name: 'Big Picture', path: '/brand-portal/big-picture' },
-  { name: 'Overview', path: '/brand-portal' },
   { name: 'Personal Brand', path: '/brand-portal/personal' },
   { name: 'Corporate Brand', path: '/brand-portal/corporate' },
-  { name: 'Media Kit', path: '/brand-portal/media-kit' }
+  { name: 'Brand Guidelines', path: '/brand-portal/guidelines' },
+  { name: 'Brand Assets', path: '/brand-portal/assets' },
+  { name: 'Media Kit', path: '/brand-portal/media-kit' },
+  { name: 'Ignite OS', path: '/brand-portal/ignite', icon: 'flame' },
 ];
 
 export default function BrandPortalLayout() {
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen bg-[#0f0f1a]">
-      <aside className="lg:w-64 border-b lg:border-b-0 lg:border-r border-white/10 px-4 py-6 lg:p-8">
-        <p className="text-[11px] uppercase tracking-[0.2em] text-[#d9c9a3] mb-4 lg:mb-6">
+    <div className="flex flex-col lg:flex-row min-h-[calc(100vh-80px)]">
+      <WarmGradientDefs />
+      <aside className="lg:w-56 border-b lg:border-b-0 lg:border-r border-white/5 px-4 py-5 lg:px-6 lg:py-8 flex-shrink-0">
+        <p className="text-[10px] uppercase tracking-[0.25em] text-[#d9c9a3] mb-5 hidden lg:block">
           Brand Portal
         </p>
-        <nav className="flex flex-row lg:flex-col gap-3 lg:gap-4 flex-wrap">
+        <nav className="flex flex-row lg:flex-col gap-2 lg:gap-1 flex-wrap overflow-x-auto lg:overflow-visible pb-1 lg:pb-0">
           {navItems.map((item) => (
             <NavLink
               key={item.path}
               to={item.path}
-              end={item.path === '/brand-portal'}
+              end={item.end}
               className={({ isActive }) =>
-                `text-sm lg:text-base transition-colors duration-200 pl-4 block ${
+                `flex items-center justify-between text-sm py-2 px-0 lg:py-2.5 transition-all duration-200 whitespace-nowrap lg:whitespace-normal ${
                   isActive
-                    ? 'font-medium bg-[linear-gradient(131deg,#b3232c,#d9622c,#f0d9b5)] bg-clip-text text-transparent border-l-2 border-[#d9622c]'
-                    : 'text-[#f7f2ea] opacity-70 hover:opacity-100 border-l-2 border-transparent'
+                    ? 'font-semibold'
+                    : 'text-[#f7f2ea] opacity-60 hover:opacity-90'
                 }`
               }
             >
-              {item.name}
+              {({ isActive }) => (
+                <>
+                  <span
+                    style={isActive ? {
+                      background: 'linear-gradient(131deg, #b3232c, #d9622c, #f0d9b5)',
+                      WebkitBackgroundClip: 'text',
+                      backgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      color: 'transparent',
+                    } : {}}
+                  >
+                    {item.name}
+                  </span>
+                  {item.icon === 'flame' && (
+                    <Flame
+                      className="w-4 h-4 flex-shrink-0 ml-2"
+                      strokeWidth={1.5}
+                      style={{
+                        stroke: 'url(#warmGradientSvg)',
+                      }}
+                    />
+                  )}
+                </>
+              )}
             </NavLink>
           ))}
         </nav>
       </aside>
 
-      {/* Main Content Area */}
-      <main className="flex-1 p-6 lg:p-12 overflow-y-auto">
+      <main className="flex-1 p-6 lg:p-10 overflow-y-auto">
         <Outlet />
       </main>
     </div>

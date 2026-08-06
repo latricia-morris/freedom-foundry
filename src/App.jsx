@@ -25,6 +25,9 @@ import PersonalBrandProfile from './pages/PersonalBrandProfile';
 import CorporateBrandProfile from './pages/CorporateBrandProfile';
 import BigPicture from './pages/BigPicture';
 import MediaKit from './pages/MediaKit';
+import BrandGuidelines from './pages/BrandGuidelines';
+import BrandAssets from './pages/BrandAssets';
+import IgniteOS from './pages/IgniteOS';
 import SharePage from './pages/SharePage';
 import AdminUsers from './pages/AdminUsers';
 import AdminUserDetail from './pages/AdminUserDetail';
@@ -83,12 +86,16 @@ const AuthenticatedApp = () => {
         <Route path="/billing" element={<Billing />} />
         <Route element={<BrandPortalLayout />}>
           <Route path="/brand-portal" element={<BrandPortal />} />
+          <Route path="/brand-portal/big-picture" element={<BigPicture />} />
           <Route path="/brand-portal/personal" element={<PersonalBrandProfile />} />
           <Route path="/brand-portal/corporate" element={<CorporateBrandProfile />} />
-          <Route path="/big-picture" element={<BigPicture />} />
-          <Route path="/media-kit" element={<MediaKit />} />
+          <Route path="/brand-portal/guidelines" element={<BrandGuidelines />} />
+          <Route path="/brand-portal/assets" element={<BrandAssets />} />
+          <Route path="/brand-portal/media-kit" element={<MediaKit />} />
+          <Route path="/brand-portal/ignite" element={<IgniteOS />} />
         </Route>
         <Route path="/share/:token" element={<SharePage />} />
+        {/* Legacy redirect paths kept for compatibility */}
         <Route path="/admin/users" element={<AdminUsers />} />
         <Route path="/admin/users/:id" element={<AdminUserDetail />} />
         <Route path="/terms" element={<Terms />} />
