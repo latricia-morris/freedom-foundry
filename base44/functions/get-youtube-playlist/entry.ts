@@ -21,7 +21,13 @@ export default async function (req: Request): Promise<Response> {
       body: JSON.stringify(innertubeBody),
     });
 
-    const data = await response.json();
+let data: any = {};
+    try {
+      const raw = await response.text();
+      data = JSON.parse(raw);
+    } catch {
+      data = {};
+    }
 
     const videos: { video_id: string; title: string }[] = [];
     const seen = new Set<string>();
