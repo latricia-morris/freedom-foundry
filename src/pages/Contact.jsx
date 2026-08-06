@@ -12,7 +12,8 @@ const socialLinks = [
 const TBR_LOGO = 'https://media.base44.com/images/public/6a6982f0647238bf2b5d67bf/b99a4000c_60TBRMakersMark_1300x.png';
 const OX_IRON_LOGO = 'https://media.base44.com/images/public/6a6982f0647238bf2b5d67bf/7e5b337a9_BlackWideNoBorder-100.jpg';
 
-const LOREM = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.';
+const BRAND_REVIVALIST_DESC = 'Brand strategy, positioning, and messaging for founders ready to own their market. From full brand builds to targeted repositioning, we help you become the obvious choice.';
+const OX_IRON_DESC = 'Full-service design and creative direction for brands that refuse to blend in. Identity systems, print collateral, and digital design built to last.';
 
 export default function Contact() {
   const [showMediaForm, setShowMediaForm] = useState(false);
@@ -39,7 +40,7 @@ export default function Contact() {
             <h3 className="font-heading text-xl text-[#1a1420] mb-1">TheBrandRevivalist.com</h3>
             <p className="contact-card__descriptor">Brand Consulting</p>
           </div>
-          <p className="text-sm leading-relaxed text-[#2c2c33]">{LOREM}</p>
+          <p className="text-sm leading-relaxed text-[#2c2c33]">{BRAND_REVIVALIST_DESC}</p>
           <a href="https://thebrandrevivalist.com" target="_blank" rel="noopener noreferrer" className="contact-card__button">
             Get in Touch
           </a>
@@ -57,7 +58,7 @@ export default function Contact() {
             <h3 className="font-heading text-xl text-[#1a1420] mb-1">Ox &amp; Iron, LLC</h3>
             <p className="contact-card__descriptor">Design Agency</p>
           </div>
-          <p className="text-sm leading-relaxed text-[#2c2c33]">{LOREM}</p>
+          <p className="text-sm leading-relaxed text-[#2c2c33]">{OX_IRON_DESC}</p>
           <a href="https://oxandiron.co" target="_blank" rel="noopener noreferrer" className="contact-card__button">
             Get in Touch
           </a>
