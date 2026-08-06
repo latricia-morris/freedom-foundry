@@ -27,6 +27,21 @@ export default async function (req: Request): Promise<Response> {
     const seen = new Set<string>();
 
     // Renderer-agnostic walk: YouTube changes renderer key names over time.
+
+    // TEMP DIAGNOSTIC: find first raw node containing a videoId and dump its keys/shape
+    let diagSample: any = null;
+    (function findSample(node: any) {
+      if (diagSample || !node || typeof node !== 'object') return;
+      if (!Array.isArray(node) && typeof node.videoId === 'string' && node.videoId.length === 11) {
+        diagSample = node;
+        return;
+      }
+      for (const key in node) {
+        findSample(node[key]);
+        if (diagSample) return;
+      }
+    })(data);
+    console.log('DIAG SAMPLE NODE:', JSON.stringify(diagSample)?.slice(0, 2000));
     // Instead of matching a specific renderer name, walk every object node and
     // treat it as a video entry whenever it has BOTH a videoId and a title
     // (either { runs: [{ text }] } or { simpleText }) as sibling fields.
