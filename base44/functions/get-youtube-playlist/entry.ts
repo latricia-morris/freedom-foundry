@@ -33,6 +33,7 @@ export default async function(req: Request): Promise<Response> {
     else if (beforeRuns) title = beforeRuns[1];
     title = title.replace(/\\u0026/g, '&').replace(/\\"/g, '"');
 
+    if (!title && videos.length < 2) console.log('DEBUG_SNIPPET:', afterMatch.substring(0, 1000));
       videos.push({ video_id: videoId, title: title || `Episode ${videos.length + 1}` });
     }
 
