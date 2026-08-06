@@ -106,21 +106,28 @@ export default async function (req: Request): Promise<Response> {
       }
 
       // Last resort: regex scan raw HTML for videoId + nearby title text pairs.
-      if (videos.length === 0) {
-        const idRegex = /"videoId":"([a-zA-Z0-9_-]{11})"/g;
-        let match;
-        while ((match = idRegex.exec(html)) !== null) {
-          const videoId = match[1];
-          if (!seen.has(videoId)) {
-            const windowStart = match.index;
-            const windowText = html.slice(windowStart, windowStart + 600);
-            const titleMatch = windowText.match(/"text":"([^"]{3,120})"/) || windowText.match(/"simpleText":"([^"]{3,120})"/);
-            const title = titleMatch ? titleMatch[1] : `Episode`;
-            seen.add(videoId);
-            videos.push({ video_id: videoId, title });
+    if (videos.length === 0) {
+      const idRegex = /"videoId":"([a-zA-Z0-9_-]{11})"/g;
+      let match;
+      while ((match = idRegex.exec(html)) !== null) {
+        const videoId = match[1];
+        if (!seen.has(videoId)) {
+          const idx = match.index;
+          const before = html.slice(Math.max(0, idx - 700), idx);
+          const after = html.slice(idx, idx + 700);
+          const titleRegex = /"(?:text|simpleText)":"([^"]{3,150})"/g;
+          let title = '';
+          let m;
+          while ((m = titleRegex.exec(before)) !== null) title = m[1];
+          if (!title) {
+            const am = titleRegex.exec(after);
+            if (am) title = am[1];
           }
+          seen.add(videoId);
+          videos.push({ video_id: videoId, title: title || `Episode` });
         }
       }
+    }
     }
 
     console.log('YouTube playlist videos found:', videos.length);
