@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Upload, Plus, X, Check } from 'lucide-react';
+import PrivacyNote from '@/components/brand/PrivacyNote';
+import AssetPreview from '@/components/brand/AssetPreview';
+import BookLinks from '@/components/brand/BookLinks';
+
+const FILE_ACCEPT = ".png,.jpg,.jpeg,.pdf,.ai,.eps,.webp";
 
 export default function PersonalBrandProfile() {
   const [profile, setProfile] = useState(null);
@@ -9,10 +14,12 @@ export default function PersonalBrandProfile() {
   const [saved, setSaved] = useState(false);
 
   const init = {
-    first_name: '', last_name: '', headshot_urls: [], short_bio: '', long_bio: '',
-    logo_urls: [], speaker_one_sheet_url: '', feature_links: [], phone: '', email: '',
-    website: '', social_links: [], heading_font: '', subheading_font: '', body_font: '',
-    accent_font: '', brand_voice: '', brand_tonality: '', brand_prompts: '', brand_specs: '', positioning: ''
+    first_name: '', last_name: '', business_name: '', headshot_urls: [], short_bio: '', long_bio: '',
+    logo_urls: [], feature_links: [], phone: '', email: '', website: '',
+    social_links: [], location_city: '', location_state: '', location_country: '',
+    has_books: false, book_links: [],
+    heading_font: '', subheading_font: '', body_font: '', accent_font: '',
+    brand_voice: '', brand_tonality: '', brand_prompts: '', brand_specs: '', positioning: ''
   };
   const [form, setForm] = useState(init);
 
@@ -36,11 +43,6 @@ export default function PersonalBrandProfile() {
     setForm(prev => ({ ...prev, [key]: [...(prev[key] || []), file_url] }));
   };
 
-  const handleOneSheetUpload = async (file) => {
-    const { file_url } = await base44.integrations.Core.UploadFile({ file });
-    update('speaker_one_sheet_url', file_url);
-  };
-
   const handleSave = async () => {
     setSaving(true);
     try {
@@ -59,7 +61,7 @@ export default function PersonalBrandProfile() {
   if (loading) return <div className="flex justify-center py-20"><div className="w-8 h-8 border-2 border-border border-t-primary rounded-full animate-spin" /></div>;
 
   const inputClass = "w-full rounded-xl px-4 py-2.5 text-sm text-[#1a1420] bg-white border border-black/10 placeholder:text-black/30 outline-none focus:border-[#b3232c] transition-colors";
-  const textareaClass = "w-full rounded-xl px-4 py-3 text-sm text-[#1a1420] bg-white border border-black/10 placeholder:text-black/30 outline-none focus:border-[#b3232c] transition-colors resize-none";
+  const textareaClass = "w-full rounded-xl px-4 py-3 text-sm text-[#1a1420] bg-white border border-black/10 placeholder:text-black/30 outline-none focus:border-[#b3232c] transition-colors resize-y";
 
   return (
     <div className="max-w-3xl animate-fade-in">
@@ -69,9 +71,11 @@ export default function PersonalBrandProfile() {
         <p className="text-sm text-[#f7f2ea]/60">Your personal identity, bio, fonts, voice, and assets.</p>
       </div>
 
+      <PrivacyNote />
+
       <div className="editorial-container space-y-8">
 
-        {/* Basics */}
+        {/* Identity */}
         <section>
           <h2 className="font-heading text-lg mb-4">Identity</h2>
           <div className="space-y-4">
@@ -79,11 +83,26 @@ export default function PersonalBrandProfile() {
               <div><label className="block text-xs uppercase tracking-wider text-[#1a1420]/50 mb-1.5">First Name</label><input className={inputClass} value={form.first_name} onChange={e => update('first_name', e.target.value)} /></div>
               <div><label className="block text-xs uppercase tracking-wider text-[#1a1420]/50 mb-1.5">Last Name</label><input className={inputClass} value={form.last_name} onChange={e => update('last_name', e.target.value)} /></div>
             </div>
+            <div><label className="block text-xs uppercase tracking-wider text-[#1a1420]/50 mb-1.5">Business Name</label><input className={inputClass} value={form.business_name} onChange={e => update('business_name', e.target.value)} placeholder="Your business or practice name" /></div>
+          </div>
+        </section>
+
+        <div className="h-px bg-black/10" />
+
+        {/* Contact */}
+        <section>
+          <h2 className="font-heading text-lg mb-4">Contact</h2>
+          <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div><label className="block text-xs uppercase tracking-wider text-[#1a1420]/50 mb-1.5">Email</label><input className={inputClass} value={form.email} onChange={e => update('email', e.target.value)} /></div>
-              <div><label className="block text-xs uppercase tracking-wider text-[#1a1420]/50 mb-1.5">Phone</label><input className={inputClass} value={form.phone} onChange={e => update('phone', e.target.value)} /></div>
+              <div><label className="block text-xs uppercase tracking-wider text-[#1a1420]/50 mb-1.5">Phone (with country code)</label><input className={inputClass} value={form.phone} onChange={e => update('phone', e.target.value)} placeholder="+1 555-555-5555" /></div>
             </div>
             <div><label className="block text-xs uppercase tracking-wider text-[#1a1420]/50 mb-1.5">Website</label><input className={inputClass} value={form.website} onChange={e => update('website', e.target.value)} placeholder="https://" /></div>
+            <div className="grid grid-cols-3 gap-4">
+              <div><label className="block text-xs uppercase tracking-wider text-[#1a1420]/50 mb-1.5">City</label><input className={inputClass} value={form.location_city} onChange={e => update('location_city', e.target.value)} /></div>
+              <div><label className="block text-xs uppercase tracking-wider text-[#1a1420]/50 mb-1.5">State / Region</label><input className={inputClass} value={form.location_state} onChange={e => update('location_state', e.target.value)} /></div>
+              <div><label className="block text-xs uppercase tracking-wider text-[#1a1420]/50 mb-1.5">Country</label><input className={inputClass} value={form.location_country} onChange={e => update('location_country', e.target.value)} /></div>
+            </div>
           </div>
         </section>
 
@@ -120,67 +139,60 @@ export default function PersonalBrandProfile() {
         <section>
           <h2 className="font-heading text-lg mb-4">Bios</h2>
           <div className="space-y-4">
-            <div><label className="block text-xs uppercase tracking-wider text-[#1a1420]/50 mb-1.5">Short Bio</label><input className={inputClass} value={form.short_bio} onChange={e => update('short_bio', e.target.value)} placeholder="One or two sentence bio..." /></div>
-            <div><label className="block text-xs uppercase tracking-wider text-[#1a1420]/50 mb-1.5">Long Bio</label><textarea className={textareaClass} rows={6} value={form.long_bio} onChange={e => update('long_bio', e.target.value)} placeholder="Full bio for press kits, speaking introductions, etc." /></div>
+            <div><label className="block text-xs uppercase tracking-wider text-[#1a1420]/50 mb-1.5">Short Bio</label><textarea className={textareaClass} rows={3} value={form.short_bio} onChange={e => update('short_bio', e.target.value)} placeholder="One or two sentence bio..." /></div>
+            <div><label className="block text-xs uppercase tracking-wider text-[#1a1420]/50 mb-1.5">Long Bio</label><textarea className={textareaClass} rows={8} value={form.long_bio} onChange={e => update('long_bio', e.target.value)} placeholder="Full bio for press kits, speaking introductions, etc." /></div>
           </div>
         </section>
 
         <div className="h-px bg-black/10" />
 
-        {/* Headshots */}
+        {/* Headshots — up to 12 */}
         <section>
-          <h2 className="font-heading text-lg mb-4">Headshots</h2>
+          <h2 className="font-heading text-lg mb-4">Headshots <span className="font-body text-sm text-[#1a1420]/40 font-normal">(up to 12)</span></h2>
           <div className="flex flex-wrap gap-3">
             {form.headshot_urls.map((url, i) => (
-              <div key={i} className="relative w-20 h-20 rounded-xl overflow-hidden border border-black/10">
-                <img src={url} alt="" className="w-full h-full object-cover" />
-                <button onClick={() => removeItem('headshot_urls', i)} className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/60 text-white flex items-center justify-center"><X className="w-3 h-3" /></button>
-              </div>
+              <AssetPreview key={i} url={url} size="md" onRemove={() => removeItem('headshot_urls', i)} />
             ))}
-            <label className="w-20 h-20 rounded-xl border border-dashed border-black/20 flex items-center justify-center cursor-pointer hover:border-[#b3232c] transition-colors">
-              <Upload className="w-4 h-4 opacity-40" />
-              <input type="file" accept="image/*" className="hidden" onChange={e => e.target.files[0] && handleUpload('headshot_urls', e.target.files[0])} />
-            </label>
+            {form.headshot_urls.length < 12 && (
+              <label className="w-20 h-20 rounded-xl border border-dashed border-black/20 flex items-center justify-center cursor-pointer hover:border-[#b3232c] transition-colors">
+                <Upload className="w-4 h-4 opacity-40" />
+                <input type="file" accept={FILE_ACCEPT} className="hidden" onChange={e => e.target.files[0] && handleUpload('headshot_urls', e.target.files[0])} />
+              </label>
+            )}
           </div>
         </section>
 
         <div className="h-px bg-black/10" />
 
-        {/* Logos */}
+        {/* Logos — up to 12 */}
         <section>
-          <h2 className="font-heading text-lg mb-4">Logos</h2>
+          <h2 className="font-heading text-lg mb-4">Logos <span className="font-body text-sm text-[#1a1420]/40 font-normal">(up to 12)</span></h2>
           <div className="flex flex-wrap gap-3">
             {form.logo_urls.map((url, i) => (
-              <div key={i} className="relative w-20 h-20 rounded-xl overflow-hidden border border-black/10 bg-white">
-                <img src={url} alt="" className="w-full h-full object-contain p-1" />
-                <button onClick={() => removeItem('logo_urls', i)} className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/60 text-white flex items-center justify-center"><X className="w-3 h-3" /></button>
-              </div>
+              <AssetPreview key={i} url={url} size="md" contain onRemove={() => removeItem('logo_urls', i)} />
             ))}
-            <label className="w-20 h-20 rounded-xl border border-dashed border-black/20 flex items-center justify-center cursor-pointer hover:border-[#b3232c] transition-colors">
-              <Upload className="w-4 h-4 opacity-40" />
-              <input type="file" accept="image/*" className="hidden" onChange={e => e.target.files[0] && handleUpload('logo_urls', e.target.files[0])} />
-            </label>
+            {form.logo_urls.length < 12 && (
+              <label className="w-20 h-20 rounded-xl border border-dashed border-black/20 flex items-center justify-center cursor-pointer hover:border-[#b3232c] transition-colors">
+                <Upload className="w-4 h-4 opacity-40" />
+                <input type="file" accept={FILE_ACCEPT} className="hidden" onChange={e => e.target.files[0] && handleUpload('logo_urls', e.target.files[0])} />
+              </label>
+            )}
           </div>
         </section>
 
         <div className="h-px bg-black/10" />
 
-        {/* Speaker One Sheet */}
+        {/* Books */}
         <section>
-          <h2 className="font-heading text-lg mb-2">Speaker One Sheet</h2>
-          {form.speaker_one_sheet_url ? (
-            <div className="flex items-center gap-3">
-              <a href={form.speaker_one_sheet_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-4 py-2 rounded-lg border border-black/10 text-sm text-[#1a1420] hover:border-[#b3232c] transition-colors">
-                View Speaker One Sheet
-              </a>
-              <button onClick={() => update('speaker_one_sheet_url', '')} className="text-xs text-red-700/60 hover:text-red-700 transition-colors">Remove</button>
-            </div>
-          ) : (
-            <label className="cursor-pointer flex items-center gap-2 px-4 py-2.5 rounded-xl border border-dashed border-black/20 text-sm text-[#1a1420]/50 hover:border-[#b3232c] hover:text-[#1a1420]/80 transition-colors w-fit">
-              <Upload className="w-4 h-4" /> Upload Speaker One Sheet
-              <input type="file" accept=".pdf,image/*" className="hidden" onChange={e => e.target.files[0] && handleOneSheetUpload(e.target.files[0])} />
-            </label>
-          )}
+          <h2 className="font-heading text-lg mb-4">Published Books</h2>
+          <BookLinks
+            hasBooks={form.has_books}
+            bookLinks={form.book_links}
+            onToggle={v => update('has_books', v)}
+            onUpdate={(i, f, v) => updateItem('book_links', i, f, v)}
+            onAdd={() => addItem('book_links', { title: '', url: '' })}
+            onRemove={i => removeItem('book_links', i)}
+          />
         </section>
 
         <div className="h-px bg-black/10" />
@@ -202,7 +214,7 @@ export default function PersonalBrandProfile() {
 
         <div className="h-px bg-black/10" />
 
-        {/* Feature Links */}
+        {/* Custom Links */}
         <section>
           <h2 className="font-heading text-lg mb-4">Custom Links</h2>
           <div className="space-y-2">

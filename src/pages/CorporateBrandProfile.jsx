@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Upload, Plus, X, Check, Sun, Moon } from 'lucide-react';
+import PrivacyNote from '@/components/brand/PrivacyNote';
+import AssetPreview from '@/components/brand/AssetPreview';
+import BookLinks from '@/components/brand/BookLinks';
+
+const FILE_ACCEPT = ".png,.jpg,.jpeg,.pdf,.ai,.eps,.webp";
 
 export default function CorporateBrandProfile() {
   const [profile, setProfile] = useState(null);
@@ -10,8 +15,11 @@ export default function CorporateBrandProfile() {
   const [lightMode, setLightMode] = useState(false);
 
   const init = {
-    company_name: '', tagline: '', mission_statement: '', heading_font: '', subheading_font: '',
-    body_font: '', accent_font: '', colors: [], logo_urls: [], moodboard_urls: [],
+    company_name: '', tagline: '', mission_statement: '', phone: '', email: '', website: '',
+    location_city: '', location_state: '', location_country: '',
+    has_books: false, book_links: [],
+    heading_font: '', subheading_font: '', body_font: '', accent_font: '',
+    colors: [], logo_urls: [], moodboard_urls: [],
     brand_voice: '', brand_tonality: '', brand_personality: '', brand_prompts: '',
     brand_specs: '', positioning: '', target_audience: ''
   };
@@ -55,7 +63,7 @@ export default function CorporateBrandProfile() {
   if (loading) return <div className="flex justify-center py-20"><div className="w-8 h-8 border-2 border-border border-t-primary rounded-full animate-spin" /></div>;
 
   const inputClass = "w-full rounded-xl px-4 py-2.5 text-sm text-[#1a1420] bg-white border border-black/10 placeholder:text-black/30 outline-none focus:border-[#b3232c] transition-colors";
-  const textareaClass = "w-full rounded-xl px-4 py-3 text-sm text-[#1a1420] bg-white border border-black/10 placeholder:text-black/30 outline-none focus:border-[#b3232c] transition-colors resize-none";
+  const textareaClass = "w-full rounded-xl px-4 py-3 text-sm text-[#1a1420] bg-white border border-black/10 placeholder:text-black/30 outline-none focus:border-[#b3232c] transition-colors resize-y";
 
   return (
     <div className="max-w-3xl animate-fade-in">
@@ -71,7 +79,9 @@ export default function CorporateBrandProfile() {
         </button>
       </div>
 
-      <div className={`editorial-container space-y-8 ${lightMode ? '' : ''}`}>
+      <PrivacyNote />
+
+      <div className="editorial-container space-y-8">
 
         {/* Company Identity */}
         <section>
@@ -81,6 +91,25 @@ export default function CorporateBrandProfile() {
             <div><label className="block text-xs uppercase tracking-wider text-[#1a1420]/50 mb-1.5">Tagline</label><input className={inputClass} value={form.tagline} onChange={e => update('tagline', e.target.value)} /></div>
             <div><label className="block text-xs uppercase tracking-wider text-[#1a1420]/50 mb-1.5">Mission Statement</label><textarea className={textareaClass} rows={3} value={form.mission_statement} onChange={e => update('mission_statement', e.target.value)} /></div>
             <div><label className="block text-xs uppercase tracking-wider text-[#1a1420]/50 mb-1.5">Target Audience</label><textarea className={textareaClass} rows={3} value={form.target_audience} onChange={e => update('target_audience', e.target.value)} placeholder="Who does this brand serve?" /></div>
+          </div>
+        </section>
+
+        <div className="h-px bg-black/10" />
+
+        {/* Contact */}
+        <section>
+          <h2 className="font-heading text-lg mb-4">Contact</h2>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div><label className="block text-xs uppercase tracking-wider text-[#1a1420]/50 mb-1.5">Email</label><input className={inputClass} value={form.email} onChange={e => update('email', e.target.value)} /></div>
+              <div><label className="block text-xs uppercase tracking-wider text-[#1a1420]/50 mb-1.5">Phone (with country code)</label><input className={inputClass} value={form.phone} onChange={e => update('phone', e.target.value)} placeholder="+1 555-555-5555" /></div>
+            </div>
+            <div><label className="block text-xs uppercase tracking-wider text-[#1a1420]/50 mb-1.5">Website</label><input className={inputClass} value={form.website} onChange={e => update('website', e.target.value)} placeholder="https://" /></div>
+            <div className="grid grid-cols-3 gap-4">
+              <div><label className="block text-xs uppercase tracking-wider text-[#1a1420]/50 mb-1.5">City</label><input className={inputClass} value={form.location_city} onChange={e => update('location_city', e.target.value)} /></div>
+              <div><label className="block text-xs uppercase tracking-wider text-[#1a1420]/50 mb-1.5">State / Region</label><input className={inputClass} value={form.location_state} onChange={e => update('location_state', e.target.value)} /></div>
+              <div><label className="block text-xs uppercase tracking-wider text-[#1a1420]/50 mb-1.5">Country</label><input className={inputClass} value={form.location_country} onChange={e => update('location_country', e.target.value)} /></div>
+            </div>
           </div>
         </section>
 
@@ -132,20 +161,19 @@ export default function CorporateBrandProfile() {
 
         <div className="h-px bg-black/10" />
 
-        {/* Logos */}
+        {/* Logos — up to 12 */}
         <section>
-          <h2 className="font-heading text-lg mb-4">Logos</h2>
+          <h2 className="font-heading text-lg mb-4">Logos <span className="font-body text-sm text-[#1a1420]/40 font-normal">(up to 12)</span></h2>
           <div className="flex flex-wrap gap-3">
             {form.logo_urls.map((url, i) => (
-              <div key={i} className="relative w-20 h-20 rounded-xl overflow-hidden border border-black/10 bg-white">
-                <img src={url} alt="" className="w-full h-full object-contain p-1" />
-                <button onClick={() => removeItem('logo_urls', i)} className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/60 text-white flex items-center justify-center"><X className="w-3 h-3" /></button>
-              </div>
+              <AssetPreview key={i} url={url} size="md" contain onRemove={() => removeItem('logo_urls', i)} />
             ))}
-            <label className="w-20 h-20 rounded-xl border border-dashed border-black/20 flex items-center justify-center cursor-pointer hover:border-[#b3232c] transition-colors">
-              <Upload className="w-4 h-4 opacity-40" />
-              <input type="file" accept="image/*" className="hidden" onChange={e => e.target.files[0] && handleUpload('logo_urls', e.target.files[0])} />
-            </label>
+            {form.logo_urls.length < 12 && (
+              <label className="w-20 h-20 rounded-xl border border-dashed border-black/20 flex items-center justify-center cursor-pointer hover:border-[#b3232c] transition-colors">
+                <Upload className="w-4 h-4 opacity-40" />
+                <input type="file" accept={FILE_ACCEPT} className="hidden" onChange={e => e.target.files[0] && handleUpload('logo_urls', e.target.files[0])} />
+              </label>
+            )}
           </div>
         </section>
 
@@ -156,16 +184,28 @@ export default function CorporateBrandProfile() {
           <h2 className="font-heading text-lg mb-4">Mood Board</h2>
           <div className="flex flex-wrap gap-3">
             {form.moodboard_urls.map((url, i) => (
-              <div key={i} className="relative w-24 h-24 rounded-xl overflow-hidden border border-black/10">
-                <img src={url} alt="" className="w-full h-full object-cover" />
-                <button onClick={() => removeItem('moodboard_urls', i)} className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/60 text-white flex items-center justify-center"><X className="w-3 h-3" /></button>
-              </div>
+              <AssetPreview key={i} url={url} size="lg" onRemove={() => removeItem('moodboard_urls', i)} />
             ))}
             <label className="w-24 h-24 rounded-xl border border-dashed border-black/20 flex items-center justify-center cursor-pointer hover:border-[#b3232c] transition-colors">
               <Upload className="w-4 h-4 opacity-40" />
-              <input type="file" accept="image/*" className="hidden" onChange={e => e.target.files[0] && handleUpload('moodboard_urls', e.target.files[0])} />
+              <input type="file" accept={FILE_ACCEPT} className="hidden" onChange={e => e.target.files[0] && handleUpload('moodboard_urls', e.target.files[0])} />
             </label>
           </div>
+        </section>
+
+        <div className="h-px bg-black/10" />
+
+        {/* Books */}
+        <section>
+          <h2 className="font-heading text-lg mb-4">Published Books</h2>
+          <BookLinks
+            hasBooks={form.has_books}
+            bookLinks={form.book_links}
+            onToggle={v => update('has_books', v)}
+            onUpdate={(i, f, v) => updateItem('book_links', i, f, v)}
+            onAdd={() => addItem('book_links', { title: '', url: '' })}
+            onRemove={i => removeItem('book_links', i)}
+          />
         </section>
 
         <button

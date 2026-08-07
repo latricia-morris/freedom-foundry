@@ -94,7 +94,7 @@ export default function Vault() {
                     <h2 className="font-heading text-2xl lg:text-3xl font-light text-[#f7f2ea] mt-1 mb-2">{bpmItem.title}</h2>
                     <p className="text-sm text-[#f7f2ea]/60 mb-4 max-w-lg">{bpmItem.description}</p>
                     {isBpmUnlocked ? (
-                      <Link to={`/vault/${bpmItem.id}`} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-white text-sm font-semibold" style={{ background: 'linear-gradient(131deg, #b3232c, #d9622c, #f0d9b5)' }}>
+                      <Link to="/workbooks" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-white text-sm font-semibold" style={{ background: 'linear-gradient(131deg, #b3232c, #d9622c, #f0d9b5)' }}>
                         Open
                       </Link>
                     ) : (

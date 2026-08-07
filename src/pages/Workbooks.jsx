@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { BookOpen, ArrowRight } from 'lucide-react';
+import { BookOpen, ArrowRight, Lock } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import { useMembership } from '@/lib/useMembership';
+import BrandPowerMovesUnlock from './BrandPowerMovesUnlock';
 
 export default function Workbooks() {
   const [workbooks, setWorkbooks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { isBpmUnlocked, loading: memberLoading, refreshProfile } = useMembership();
 
   useEffect(() => {
     base44.entities.WorkbookDefinition.filter({ status: 'published' }, 'order', 50)
@@ -13,6 +16,19 @@ export default function Workbooks() {
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
+
+  if (loading || memberLoading) return (
+    <div className="flex justify-center py-20"><div className="w-8 h-8 border-2 border-border border-t-primary rounded-full animate-spin" /></div>
+  );
+
+  // Gate: if Brand Power Moves is not unlocked, show the unlock flow
+  if (!isBpmUnlocked) {
+    return (
+      <div className="animate-fade-in">
+        <BrandPowerMovesUnlock onUnlocked={refreshProfile} />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-5xl mx-auto animate-fade-in">
@@ -23,11 +39,7 @@ export default function Workbooks() {
         <p className="text-sm text-muted-foreground">Your strategic workbooks. Answer the prompts, save your progress, and download when ready.</p>
       </div>
 
-      {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {[...Array(4)].map((_, i) => <div key={i} className="h-40 rounded-xl bg-card animate-pulse" />)}
-        </div>
-      ) : workbooks.length === 0 ? (
+      {workbooks.length === 0 ? (
         <div className="forged-border rounded-2xl bg-card p-12 text-center">
           <h3 className="font-heading text-xl text-foreground mb-2">Workbooks coming soon</h3>
           <p className="text-sm text-muted-foreground">Check back shortly for premium workbook experiences.</p>
