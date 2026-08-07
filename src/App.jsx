@@ -95,6 +95,7 @@ const AuthenticatedApp = () => {
           <Route path="/brand-portal/ignite" element={<IgniteOS />} />
         </Route>
         <Route path="/share/:token" element={<SharePage />} />
+        <Route path="/member/:brandSlug/:profileType" element={<SharePage />} />
         {/* Legacy redirect paths kept for compatibility */}
         <Route path="/admin/users" element={<AdminUsers />} />
         <Route path="/admin/users/:id" element={<AdminUserDetail />} />

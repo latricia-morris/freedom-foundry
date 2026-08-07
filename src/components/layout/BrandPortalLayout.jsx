@@ -3,16 +3,56 @@ import { Outlet, NavLink } from 'react-router-dom';
 import { Flame } from 'lucide-react';
 import WarmGradientDefs from '@/components/shared/WarmGradientDefs';
 
-const navItems = [
+const mainNav = [
   { name: 'Overview', path: '/brand-portal', end: true },
   { name: 'Big Picture', path: '/brand-portal/big-picture' },
   { name: 'Personal Brand', path: '/brand-portal/personal' },
   { name: 'Corporate Brand', path: '/brand-portal/corporate' },
+  { name: 'Media Kit', path: '/brand-portal/media-kit' },
+];
+
+const systemNav = [
   { name: 'Brand Guidelines', path: '/brand-portal/guidelines' },
   { name: 'Brand Assets', path: '/brand-portal/assets' },
-  { name: 'Media Kit', path: '/brand-portal/media-kit' },
   { name: 'Ignite OS', path: '/brand-portal/ignite', icon: 'flame' },
 ];
+
+function NavItem({ item, muted }) {
+  return (
+    <NavLink
+      to={item.path}
+      end={item.end}
+      className={({ isActive }) =>
+        `flex items-center justify-between text-sm py-2 px-0 lg:py-2.5 transition-all duration-200 whitespace-nowrap lg:whitespace-normal ${
+          muted ? 'opacity-40 hover:opacity-70' : isActive ? 'font-semibold' : 'opacity-60 hover:opacity-90'
+        }`
+      }
+    >
+      {({ isActive }) => (
+        <>
+          <span
+            style={isActive ? {
+              background: 'linear-gradient(131deg, #b3232c, #d9622c, #f0d9b5)',
+              WebkitBackgroundClip: 'text',
+              backgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              color: 'transparent',
+            } : {}}
+          >
+            {item.name}
+          </span>
+          {item.icon === 'flame' && (
+            <Flame
+              className="w-4 h-4 flex-shrink-0 ml-2"
+              strokeWidth={1.5}
+              style={{ stroke: 'url(#warmGradientSvg)' }}
+            />
+          )}
+        </>
+      )}
+    </NavLink>
+  );
+}
 
 export default function BrandPortalLayout() {
   return (
@@ -23,45 +63,15 @@ export default function BrandPortalLayout() {
           Brand Portal
         </p>
         <nav className="flex flex-row lg:flex-col gap-2 lg:gap-1 flex-wrap overflow-x-auto lg:overflow-visible pb-1 lg:pb-0">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              end={item.end}
-              className={({ isActive }) =>
-                `flex items-center justify-between text-sm py-2 px-0 lg:py-2.5 transition-all duration-200 whitespace-nowrap lg:whitespace-normal ${
-                  isActive
-                    ? 'font-semibold'
-                    : 'text-[#f7f2ea] opacity-60 hover:opacity-90'
-                }`
-              }
-            >
-              {({ isActive }) => (
-                <>
-                  <span
-                    style={isActive ? {
-                      background: 'linear-gradient(131deg, #b3232c, #d9622c, #f0d9b5)',
-                      WebkitBackgroundClip: 'text',
-                      backgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                      color: 'transparent',
-                    } : {}}
-                  >
-                    {item.name}
-                  </span>
-                  {item.icon === 'flame' && (
-                    <Flame
-                      className="w-4 h-4 flex-shrink-0 ml-2"
-                      strokeWidth={1.5}
-                      style={{
-                        stroke: 'url(#warmGradientSvg)',
-                      }}
-                    />
-                  )}
-                </>
-              )}
-            </NavLink>
+          {mainNav.map((item) => (
+            <NavItem key={item.path} item={item} />
           ))}
+          <div className="hidden lg:block w-full border-t border-white/5 my-3" />
+          <div className="lg:border-t lg:border-white/5 lg:pt-3 lg:mt-1 w-full">
+            {systemNav.map((item) => (
+              <NavItem key={item.path} item={item} muted />
+            ))}
+          </div>
         </nav>
       </aside>
 

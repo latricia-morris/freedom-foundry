@@ -21,7 +21,7 @@ export default function ServiceRequest() {
   if (!config) return (
     <div className="editorial-container text-center">
       <h3 className="text-xl mb-2">Service not found</h3>
-      <Link to="/services" className="link-warm">Back to Collaborations</Link>
+      <Link to="/services" className="link-warm">Back to Resources Hub</Link>
     </div>
   );
 
@@ -33,7 +33,7 @@ export default function ServiceRequest() {
   return (
     <div className="max-w-3xl mx-auto animate-fade-in">
       <Link to="/services" className="inline-flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors mb-6">
-        <ArrowLeft className="w-4 h-4" /> Back to Collaborations
+        <ArrowLeft className="w-4 h-4" /> Back to Resources Hub
       </Link>
       <h1 className="font-heading text-3xl font-light text-foreground mb-2">{config.title}</h1>
       <p className="text-sm text-muted-foreground mb-8">Fill out the form below and we'll be in touch soon.</p>

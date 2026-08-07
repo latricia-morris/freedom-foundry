@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
-import { Upload, Plus, X, Check } from 'lucide-react';
+import { Upload, Plus, X, Check, Share2 } from 'lucide-react';
+import { toast } from '@/components/ui/use-toast';
+import { createShareLink } from '@/lib/shareUtils';
 import PrivacyNote from '@/components/brand/PrivacyNote';
 import AssetPreview from '@/components/brand/AssetPreview';
 import BookLinks from '@/components/brand/BookLinks';
@@ -12,6 +14,8 @@ export default function PersonalBrandProfile() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [shareLink, setShareLink] = useState(null);
+  const [generatingShare, setGeneratingShare] = useState(false);
 
   const init = {
     first_name: '', last_name: '', business_name: '', headshot_urls: [], short_bio: '', long_bio: '',
@@ -58,6 +62,18 @@ export default function PersonalBrandProfile() {
     setSaving(false);
   };
 
+  const handleShare = async () => {
+    setGeneratingShare(true);
+    try {
+      const brandName = form.business_name || `${form.first_name} ${form.last_name}`.trim() || 'member';
+      const url = await createShareLink('personal', profile.id, brandName);
+      setShareLink(url);
+      try { await navigator.clipboard.writeText(url); } catch (_) {}
+      toast({ title: 'Share link copied!', description: 'Your personal brand link is ready.' });
+    } catch (_) { toast({ title: 'Could not generate link', variant: 'destructive' }); }
+    setGeneratingShare(false);
+  };
+
   if (loading) return <div className="flex justify-center py-20"><div className="w-8 h-8 border-2 border-border border-t-primary rounded-full animate-spin" /></div>;
 
   const inputClass = "w-full rounded-xl px-4 py-2.5 text-sm text-[#1a1420] bg-white border border-black/10 placeholder:text-black/30 outline-none focus:border-[#b3232c] transition-colors";
@@ -65,11 +81,25 @@ export default function PersonalBrandProfile() {
 
   return (
     <div className="max-w-3xl animate-fade-in">
-      <div className="mb-6">
-        <span className="text-[10px] uppercase tracking-[0.3em] text-[#d9c9a3]">Brand Portal</span>
-        <h1 className="font-heading text-3xl font-light text-[#f7f2ea] mt-1 mb-1">Personal <span className="molten-text italic">Brand</span></h1>
-        <p className="text-sm text-[#f7f2ea]/60">Your personal identity, bio, fonts, voice, and assets.</p>
+      <div className="mb-6 flex items-start justify-between flex-wrap gap-3">
+        <div>
+          <span className="text-[10px] uppercase tracking-[0.3em] text-[#d9c9a3]">Brand Portal</span>
+          <h1 className="font-heading text-3xl font-light text-[#f7f2ea] mt-1 mb-1">Personal <span className="molten-text italic">Brand</span></h1>
+          <p className="text-sm text-[#f7f2ea]/60">Your personal identity, bio, fonts, voice, and assets.</p>
+        </div>
+        {profile?.id && (
+          <button onClick={handleShare} disabled={generatingShare} className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 text-sm text-[#f7f2ea]/70 hover:text-[#f7f2ea] hover:border-white/20 transition-colors disabled:opacity-40 whitespace-nowrap">
+            <Share2 className="w-4 h-4" /> {generatingShare ? 'Generating...' : 'Share Profile'}
+          </button>
+        )}
       </div>
+
+      {shareLink && (
+        <div className="mb-6 p-4 rounded-xl border border-white/10 bg-white/[0.03] flex items-center gap-3">
+          <span className="text-sm text-[#f7f2ea]/70 flex-1 truncate">{shareLink}</span>
+          <button onClick={() => { navigator.clipboard.writeText(shareLink); toast({ title: 'Copied!' }); }} className="text-xs text-[#f7f2ea]/50 hover:text-[#f7f2ea] transition-colors">Copy</button>
+        </div>
+      )}
 
       <PrivacyNote />
 

@@ -5,6 +5,8 @@ import { toast } from '@/components/ui/use-toast';
 import PrivacyNote from '@/components/brand/PrivacyNote';
 import AssetPreview from '@/components/brand/AssetPreview';
 import BookLinks from '@/components/brand/BookLinks';
+import PodcastLinks from '@/components/brand/PodcastLinks';
+import { createShareLink } from '@/lib/shareUtils';
 
 const FILE_ACCEPT = ".png,.jpg,.jpeg,.pdf,.ai,.eps,.webp";
 
@@ -22,7 +24,8 @@ export default function MediaKit() {
     headshot_urls: [], logo_urls: [], phone: '', email: '', website: '',
     social_links: [], feature_links: [],
     location_city: '', location_state: '', location_country: '',
-    has_books: false, book_links: []
+    has_books: false, book_links: [],
+    podcast_links: []
   };
   const [form, setForm] = useState(init);
 
@@ -98,20 +101,15 @@ export default function MediaKit() {
   };
 
   const handleGenerateShare = async () => {
+    if (!kit?.id) return;
     setGeneratingShare(true);
     try {
-      const token = Math.random().toString(36).slice(2) + Date.now().toString(36);
-      await base44.entities.ShareLink.create({
-        token,
-        profile_type: 'media_kit',
-        profile_id: kit?.id || '',
-        is_active: true
-      });
-      const url = `${window.location.origin}/share/${token}`;
+      const brandName = form.business_name || `${form.first_name} ${form.last_name}`.trim() || 'member';
+      const url = await createShareLink('media_kit', kit.id, brandName);
       setShareLink(url);
-      await navigator.clipboard.writeText(url);
+      try { await navigator.clipboard.writeText(url); } catch (_) {}
       toast({ title: "Share link copied!", description: "Your media kit link is ready to share." });
-    } catch (_) {}
+    } catch (_) { toast({ title: "Could not generate link", variant: "destructive" }); }
     setGeneratingShare(false);
   };
 
@@ -310,6 +308,19 @@ export default function MediaKit() {
             onUpdate={(i, f, v) => updateItem('book_links', i, f, v)}
             onAdd={() => addItem('book_links', { title: '', url: '' })}
             onRemove={i => removeItem('book_links', i)}
+          />
+        </section>
+
+        <div className="h-px bg-black/10" />
+
+        {/* Podcasts */}
+        <section>
+          <h2 className="font-heading text-lg mb-4">Podcast Channels</h2>
+          <PodcastLinks
+            podcastLinks={form.podcast_links}
+            onUpdate={(i, f, v) => updateItem('podcast_links', i, f, v)}
+            onAdd={() => addItem('podcast_links', { platform: '', url: '' })}
+            onRemove={i => removeItem('podcast_links', i)}
           />
         </section>
 

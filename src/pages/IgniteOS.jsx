@@ -1,18 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useMembership } from '@/lib/useMembership';
-import { Lock, Check, Plus, X } from 'lucide-react';
+import { Lock, Check, Plus, X, Flame } from 'lucide-react';
 
 function ClientGate() {
   return (
-    <div className="max-w-lg mx-auto py-16 text-center animate-fade-in">
-      <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6" style={{ background: 'linear-gradient(131deg, rgba(179,35,44,0.12), rgba(217,98,44,0.08))' }}>
-        <Lock className="w-7 h-7 text-[#d9c9a3]" strokeWidth={1} />
+    <div className="max-w-2xl mx-auto py-16 animate-fade-in">
+      <div className="mb-8">
+        <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-6" style={{ background: 'linear-gradient(131deg, rgba(179,35,44,0.12), rgba(217,98,44,0.08))' }}>
+          <Flame className="w-6 h-6 text-[#d9c9a3]" strokeWidth={1.5} />
+        </div>
+        <h2 className="font-heading text-2xl font-light text-[#f7f2ea] mb-4 text-center">Ignite OS</h2>
+        <div className="editorial-container space-y-4">
+          <p className="text-sm text-[#2c2c33] leading-relaxed">
+            Ignite OS is our proprietary brand activation system. This is where we take a brand from
+            development to deployment, helping take your new brand or rebrand to the market with
+            optimal efficacy.
+          </p>
+          <p className="text-sm text-[#2c2c33] leading-relaxed">
+            It's a structured operating system that turns strategy into momentum — aligning your
+            identity, messaging, and experience into a coordinated launch so your brand doesn't
+            just enter the market, it lands with impact.
+          </p>
+        </div>
       </div>
-      <h2 className="font-heading text-2xl font-light text-[#f7f2ea] mb-3">Client Feature</h2>
-      <p className="text-sm text-[#f7f2ea]/60 leading-relaxed max-w-sm mx-auto">
-        This feature is reserved for clients working directly with The Brand Revivalist and/or her agency, Ox & Iron.
-      </p>
+      <div className="text-center">
+        <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'linear-gradient(131deg, rgba(179,35,44,0.08), rgba(217,98,44,0.04))' }}>
+          <Lock className="w-5 h-5 text-[#d9c9a3]" strokeWidth={1} />
+        </div>
+        <h3 className="font-heading text-xl font-light text-[#f7f2ea] mb-2">Client Feature</h3>
+        <p className="text-sm text-[#f7f2ea]/60 leading-relaxed max-w-sm mx-auto">
+          Ignite OS is reserved for clients working directly with The Brand Revivalist and/or Ox &amp; Iron.
+        </p>
+      </div>
     </div>
   );
 }
@@ -69,23 +89,12 @@ export default function IgniteOS() {
 
   return (
     <div className="max-w-3xl animate-fade-in">
-      <div className="mb-6 flex items-start justify-between">
-        <div>
-          <span className="text-[10px] uppercase tracking-[0.3em] text-[#d9c9a3]">Brand Portal</span>
-          <h1 className="font-heading text-3xl font-light text-[#f7f2ea] mt-1 mb-1">
-            Ignite <span className="molten-text italic">OS</span>
-          </h1>
-          <p className="text-sm text-[#f7f2ea]/60">Your brand activation operating system.</p>
-        </div>
-        <svg width="0" height="0" className="absolute">
-          <defs>
-            <linearGradient id="flameGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#b3232c" />
-              <stop offset="55%" stopColor="#d9622c" />
-              <stop offset="100%" stopColor="#f0d9b5" />
-            </linearGradient>
-          </defs>
-        </svg>
+      <div className="mb-6">
+        <span className="text-[10px] uppercase tracking-[0.3em] text-[#d9c9a3]">Brand Portal</span>
+        <h1 className="font-heading text-3xl font-light text-[#f7f2ea] mt-1 mb-1">
+          Ignite <span className="molten-text italic">OS</span>
+        </h1>
+        <p className="text-sm text-[#f7f2ea]/60">Your brand activation operating system — from development to deployment.</p>
       </div>
 
       <div className="editorial-container space-y-6">

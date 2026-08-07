@@ -5,10 +5,8 @@ const navItems = [
   { label: 'Home', path: '/' },
   { label: 'Vault', path: '/vault' },
   { label: 'Brand Portal', path: '/brand-portal' },
-  { label: 'Collaborations', path: '/services' },
+  { label: 'Resources Hub', path: '/services' },
 ];
-
-// tighter mobile footer nav — no icons, text-only, wrapping prevention handled via font-size
 
 export default function MobileNav() {
   const location = useLocation();

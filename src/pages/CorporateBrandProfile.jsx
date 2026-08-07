@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
-import { Upload, Plus, X, Check, Sun, Moon } from 'lucide-react';
+import { Upload, Plus, X, Check, Sun, Moon, Share2 } from 'lucide-react';
+import { toast } from '@/components/ui/use-toast';
+import { createShareLink } from '@/lib/shareUtils';
 import PrivacyNote from '@/components/brand/PrivacyNote';
 import AssetPreview from '@/components/brand/AssetPreview';
 import BookLinks from '@/components/brand/BookLinks';
@@ -13,6 +15,8 @@ export default function CorporateBrandProfile() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [lightMode, setLightMode] = useState(false);
+  const [shareLink, setShareLink] = useState(null);
+  const [generatingShare, setGeneratingShare] = useState(false);
 
   const init = {
     company_name: '', tagline: '', mission_statement: '', phone: '', email: '', website: '',
@@ -60,6 +64,18 @@ export default function CorporateBrandProfile() {
     setSaving(false);
   };
 
+  const handleShare = async () => {
+    setGeneratingShare(true);
+    try {
+      const brandName = form.company_name || 'member';
+      const url = await createShareLink('corporate', profile.id, brandName);
+      setShareLink(url);
+      try { await navigator.clipboard.writeText(url); } catch (_) {}
+      toast({ title: 'Share link copied!', description: 'Your corporate brand link is ready.' });
+    } catch (_) { toast({ title: 'Could not generate link', variant: 'destructive' }); }
+    setGeneratingShare(false);
+  };
+
   if (loading) return <div className="flex justify-center py-20"><div className="w-8 h-8 border-2 border-border border-t-primary rounded-full animate-spin" /></div>;
 
   const inputClass = "w-full rounded-xl px-4 py-2.5 text-sm text-[#1a1420] bg-white border border-black/10 placeholder:text-black/30 outline-none focus:border-[#b3232c] transition-colors";
@@ -73,11 +89,25 @@ export default function CorporateBrandProfile() {
           <h1 className="font-heading text-3xl font-light text-[#f7f2ea] mt-1 mb-1">Corporate <span className="molten-text italic">Brand</span></h1>
           <p className="text-sm text-[#f7f2ea]/60">Company identity, colors, typography, and brand strategy.</p>
         </div>
-        <button onClick={() => setLightMode(!lightMode)} className="flex items-center gap-1.5 text-xs text-[#f7f2ea]/40 hover:text-[#f7f2ea]/70 transition-colors mt-1">
-          {lightMode ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
-          <span className="hidden sm:inline">{lightMode ? 'Dark' : 'Light'}</span>
-        </button>
+        <div className="flex items-center gap-3 mt-1">
+          {profile?.id && (
+            <button onClick={handleShare} disabled={generatingShare} className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 text-sm text-[#f7f2ea]/70 hover:text-[#f7f2ea] hover:border-white/20 transition-colors disabled:opacity-40 whitespace-nowrap">
+              <Share2 className="w-4 h-4" /> {generatingShare ? 'Generating...' : 'Share'}
+            </button>
+          )}
+          <button onClick={() => setLightMode(!lightMode)} className="flex items-center gap-1.5 text-xs text-[#f7f2ea]/40 hover:text-[#f7f2ea]/70 transition-colors">
+            {lightMode ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+            <span className="hidden sm:inline">{lightMode ? 'Dark' : 'Light'}</span>
+          </button>
+        </div>
       </div>
+
+      {shareLink && (
+        <div className="mb-6 p-4 rounded-xl border border-white/10 bg-white/[0.03] flex items-center gap-3">
+          <span className="text-sm text-[#f7f2ea]/70 flex-1 truncate">{shareLink}</span>
+          <button onClick={() => { navigator.clipboard.writeText(shareLink); toast({ title: 'Copied!' }); }} className="text-xs text-[#f7f2ea]/50 hover:text-[#f7f2ea] transition-colors">Copy</button>
+        </div>
+      )}
 
       <PrivacyNote />
 

@@ -71,6 +71,12 @@
       "items": {
         "type": "object"
       }
+    },
+    "podcast_links": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
     }
   },
   "required": []

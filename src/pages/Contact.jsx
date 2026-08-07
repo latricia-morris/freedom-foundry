@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Mic, Facebook, Instagram, Linkedin, Youtube } from 'lucide-react';
+import Testimonials from '@/components/shared/Testimonials';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 const socialLinks = [
@@ -109,6 +110,8 @@ export default function Contact() {
           })}
         </div>
       </div>
+
+      <Testimonials />
     </div>
   );
 }
