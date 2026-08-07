@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Copy, Printer, Check, ChevronLeft, ChevronRight } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import WorkbookField from '@/components/workbook/WorkbookField';
+import openPrintFriendly from '@/components/workbook/openPrintFriendly';
 
 export default function WorkbookExperience({ workbook }) {
   const [responses, setResponses] = useState({});
@@ -73,7 +74,7 @@ export default function WorkbookExperience({ workbook }) {
         <button onClick={handleCopyPrompt} className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg bg-card text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors">
           {copied ? <Check className="w-4 h-4 text-primary" /> : <Copy className="w-4 h-4" />} {copied ? 'Copied!' : 'Copy Responses'}
         </button>
-        <button onClick={() => window.print()} className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg bg-card text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors">
+        <button onClick={() => openPrintFriendly(workbook)} className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg bg-card text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors">
           <Printer className="w-4 h-4" /> Printer-Friendly Download
         </button>
       </div>
