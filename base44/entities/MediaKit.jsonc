@@ -1,5 +1,5 @@
 {
-  "name": "PersonalBrandProfile",
+  "name": "MediaKit",
   "type": "object",
   "properties": {
     "user_id": {
@@ -14,28 +14,22 @@
     "business_name": {
       "type": "string"
     },
-    "headshot_urls": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
     "short_bio": {
       "type": "string"
     },
     "long_bio": {
       "type": "string"
     },
-    "logo_urls": {
+    "headshot_urls": {
       "type": "array",
       "items": {
         "type": "string"
       }
     },
-    "feature_links": {
+    "logo_urls": {
       "type": "array",
       "items": {
-        "type": "object"
+        "type": "string"
       }
     },
     "phone": {
@@ -48,6 +42,12 @@
       "type": "string"
     },
     "social_links": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "feature_links": {
       "type": "array",
       "items": {
         "type": "object"
@@ -71,33 +71,6 @@
       "items": {
         "type": "object"
       }
-    },
-    "heading_font": {
-      "type": "string"
-    },
-    "subheading_font": {
-      "type": "string"
-    },
-    "body_font": {
-      "type": "string"
-    },
-    "accent_font": {
-      "type": "string"
-    },
-    "brand_voice": {
-      "type": "string"
-    },
-    "brand_tonality": {
-      "type": "string"
-    },
-    "brand_prompts": {
-      "type": "string"
-    },
-    "brand_specs": {
-      "type": "string"
-    },
-    "positioning": {
-      "type": "string"
     }
   },
   "required": []

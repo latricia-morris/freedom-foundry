@@ -14,6 +14,34 @@
     "mission_statement": {
       "type": "string"
     },
+    "phone": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "website": {
+      "type": "string"
+    },
+    "location_city": {
+      "type": "string"
+    },
+    "location_state": {
+      "type": "string"
+    },
+    "location_country": {
+      "type": "string"
+    },
+    "has_books": {
+      "type": "boolean",
+      "default": false
+    },
+    "book_links": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
     "heading_font": {
       "type": "string"
     },

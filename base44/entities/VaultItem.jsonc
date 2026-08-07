@@ -27,6 +27,9 @@
     "featured_image_url": {
       "type": "string"
     },
+    "download_url": {
+      "type": "string"
+    },
     "tags": {
       "type": "array",
       "items": {

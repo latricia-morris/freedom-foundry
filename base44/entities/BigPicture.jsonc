@@ -1,0 +1,100 @@
+{
+  "name": "BigPicture",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "word_for_the_year": {
+      "type": "string"
+    },
+    "end_of_year_goal": {
+      "type": "string"
+    },
+    "secondary_goal": {
+      "type": "string"
+    },
+    "annual_revenue": {
+      "type": "string"
+    },
+    "monthly_revenue": {
+      "type": "string"
+    },
+    "weekly_revenue": {
+      "type": "string"
+    },
+    "pricing_strategy_month": {
+      "type": "string"
+    },
+    "client_booking_target": {
+      "type": "string"
+    },
+    "clients_per_week": {
+      "type": "string"
+    },
+    "travel_goals": {
+      "type": "string"
+    },
+    "learning_goals": {
+      "type": "string"
+    },
+    "meeting_goals": {
+      "type": "string"
+    },
+    "impact_statement": {
+      "type": "string"
+    },
+    "legacy_statement": {
+      "type": "string"
+    },
+    "planning_checklist": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "vision_health": {
+      "type": "string"
+    },
+    "vision_career": {
+      "type": "string"
+    },
+    "vision_family": {
+      "type": "string"
+    },
+    "vision_money": {
+      "type": "string"
+    },
+    "vision_travels": {
+      "type": "string"
+    },
+    "vision_hobbies": {
+      "type": "string"
+    },
+    "vision_relationships": {
+      "type": "string"
+    },
+    "breakdown_goal": {
+      "type": "string"
+    },
+    "breakdown_components": {
+      "type": "string"
+    },
+    "breakdown_priorities": {
+      "type": "string"
+    },
+    "breakdown_monthly_target": {
+      "type": "string"
+    },
+    "breakdown_weekly_tasks": {
+      "type": "string"
+    },
+    "breakdown_daily_step": {
+      "type": "string"
+    },
+    "breakdown_weekly_review": {
+      "type": "string"
+    }
+  },
+  "required": []
+}
