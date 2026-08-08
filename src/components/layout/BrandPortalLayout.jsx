@@ -5,9 +5,10 @@ import WarmGradientDefs from '@/components/shared/WarmGradientDefs';
 
 const mainNav = [
   { name: 'Overview', path: '/brand-portal', end: true },
+  { name: 'Brand Up', path: '/brand-portal/brand-up' },
   { name: 'Big Picture', path: '/brand-portal/big-picture' },
-  { name: 'Personal Brand', path: '/brand-portal/personal' },
   { name: 'Corporate Brand', path: '/brand-portal/corporate' },
+  { name: 'Personal Brand', path: '/brand-portal/personal' },
   { name: 'Media Kit', path: '/brand-portal/media-kit' },
 ];
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Upload, Plus, X, Check, Copy, Share2, ExternalLink, Sparkles } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
@@ -7,6 +7,7 @@ import AssetPreview from '@/components/brand/AssetPreview';
 import BookLinks from '@/components/brand/BookLinks';
 import PodcastLinks from '@/components/brand/PodcastLinks';
 import { createShareLink } from '@/lib/shareUtils';
+import SetupTaskFooter from '@/components/brand/SetupTaskFooter';
 
 const FILE_ACCEPT = ".png,.jpg,.jpeg,.pdf,.ai,.eps,.webp";
 
@@ -117,6 +118,25 @@ export default function MediaKit() {
     navigator.clipboard.writeText(text);
     toast({ title: "Copied!" });
   };
+
+  const kitRef = useRef(kit);
+  kitRef.current = kit;
+  const isInitialLoad = useRef(true);
+  useEffect(() => {
+    if (loading) return;
+    if (isInitialLoad.current) { isInitialLoad.current = false; return; }
+    const timer = setTimeout(async () => {
+      try {
+        if (kitRef.current?.id) {
+          await base44.entities.MediaKit.update(kitRef.current.id, form);
+        } else {
+          const created = await base44.entities.MediaKit.create(form);
+          setKit(created);
+        }
+      } catch (_) {}
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, [form, loading]);
 
   if (loading) return <div className="flex justify-center py-20"><div className="w-8 h-8 border-2 border-border border-t-primary rounded-full animate-spin" /></div>;
 
@@ -333,6 +353,8 @@ export default function MediaKit() {
           {saved ? <Check className="w-4 h-4" /> : null}
           {saving ? 'Saving...' : saved ? 'Saved!' : 'Save Media Kit'}
         </button>
+
+        <SetupTaskFooter taskKey="media_kit" form={form} onSave={handleSave} />
       </div>
     </div>
   );

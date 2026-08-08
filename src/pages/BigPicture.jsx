@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Target, Check } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import PrivacyNote from '@/components/brand/PrivacyNote';
+import SetupTaskFooter from '@/components/brand/SetupTaskFooter';
 
 const PLANNING_ITEMS = [
   'LAUNCH/REBRAND MY BUSINESS',
@@ -82,6 +83,25 @@ export default function BigPicture() {
     } catch (_) {}
     setSaving(false);
   };
+
+  const recordRef = useRef(record);
+  recordRef.current = record;
+  const isInitialLoad = useRef(true);
+  useEffect(() => {
+    if (loading) return;
+    if (isInitialLoad.current) { isInitialLoad.current = false; return; }
+    const timer = setTimeout(async () => {
+      try {
+        if (recordRef.current?.id) {
+          await base44.entities.BigPicture.update(recordRef.current.id, form);
+        } else {
+          const created = await base44.entities.BigPicture.create(form);
+          setRecord(created);
+        }
+      } catch (_) {}
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, [form, loading]);
 
   if (loading) return <div className="flex justify-center py-20"><div className="w-8 h-8 border-2 border-border border-t-primary rounded-full animate-spin" /></div>;
 
@@ -200,6 +220,8 @@ export default function BigPicture() {
           {saved ? <Check className="w-4 h-4" /> : null}
           {saving ? 'Saving...' : saved ? 'Saved!' : 'Save Big Picture'}
         </button>
+
+        <SetupTaskFooter taskKey="big_picture" form={form} onSave={handleSave} />
       </div>
     </div>
   );

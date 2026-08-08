@@ -1,7 +1,7 @@
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
@@ -38,6 +38,8 @@ import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import OAuthConsent from './pages/OAuthConsent';
+import ProtectedRoute from '@/components/ProtectedRoute';
+import BrandUp from './pages/BrandUp';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -71,9 +73,14 @@ const AuthenticatedApp = () => {
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/oauth/consent" element={<OAuthConsent />} />
-      {/* Add your page Route elements here */}
-      <Route element={<Layout />}>
-        <Route path="/" element={<Dashboard />} />
+      {/* Public share pages — no auth required */}
+      <Route path="/share/:token" element={<SharePage />} />
+      <Route path="/member/:brandSlug/:profileType" element={<SharePage />} />
+
+      {/* Protected routes */}
+      <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
+        <Route element={<Layout />}>
+          <Route path="/" element={<Dashboard />} />
         <Route path="/vault" element={<Vault />} />
         <Route path="/vault/:id" element={<VaultItemDetail />} />
         <Route path="/workbooks" element={<Workbooks />} />
@@ -93,14 +100,14 @@ const AuthenticatedApp = () => {
           <Route path="/brand-portal/assets" element={<BrandAssets />} />
           <Route path="/brand-portal/media-kit" element={<MediaKit />} />
           <Route path="/brand-portal/ignite" element={<IgniteOS />} />
+          <Route path="/brand-portal/brand-up" element={<BrandUp />} />
         </Route>
-        <Route path="/share/:token" element={<SharePage />} />
-        <Route path="/member/:brandSlug/:profileType" element={<SharePage />} />
         {/* Legacy redirect paths kept for compatibility */}
         <Route path="/admin/users" element={<AdminUsers />} />
         <Route path="/admin/users/:id" element={<AdminUserDetail />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/privacy" element={<Privacy />} />
+        </Route>
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

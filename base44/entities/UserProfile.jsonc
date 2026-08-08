@@ -55,6 +55,9 @@
     },
     "notes": {
       "type": "string"
+    },
+    "setup_status": {
+      "type": "object"
     }
   },
   "required": []
