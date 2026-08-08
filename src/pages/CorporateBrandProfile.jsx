@@ -117,7 +117,7 @@ export default function CorporateBrandProfile() {
           <p className={`text-sm ${lightMode ? 'text-[#1a1420]/60' : 'text-[#f7f2ea]/60'}`}>Company identity, colors, typography, and brand strategy.</p>
         </div>
         <div className="flex items-center gap-3 mt-1">
-          <button onClick={handleShare} disabled={generatingShare} className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 text-sm text-[#f7f2ea]/70 hover:text-[#f7f2ea] hover:border-white/20 transition-colors disabled:opacity-40 whitespace-nowrap">
+          <button onClick={handleShare} disabled={generatingShare} className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm transition-colors disabled:opacity-40 whitespace-nowrap ${lightMode ? 'border-black/10 text-[#1a1420]/70 hover:text-[#1a1420] hover:border-black/20' : 'border-white/10 text-[#f7f2ea]/70 hover:text-[#f7f2ea] hover:border-white/20'}`}>
             <Share2 className="w-4 h-4" /> {generatingShare ? 'Generating...' : 'Share'}
           </button>
           <button onClick={() => setLightMode(!lightMode)} className={`flex items-center gap-1.5 text-xs ${lightMode ? 'text-[#1a1420]/50 hover:text-[#1a1420]/80' : 'text-[#f7f2ea]/40 hover:text-[#f7f2ea]/70'} transition-colors`}>
