@@ -63,13 +63,17 @@ export default function BrandUpCard() {
             <h2 className="font-heading text-2xl lg:text-3xl font-light text-[#f7f2ea] leading-tight mb-6">
               {currentPrompt.prompt_text}
             </h2>
-            <textarea
-              value={response}
-              onChange={e => setResponse(e.target.value)}
-              placeholder="Your response..."
-              rows={3}
-              className="w-full rounded-xl bg-[#0f0f1a] border border-[#f7f2ea]/10 px-4 py-3 text-sm text-[#f7f2ea] placeholder:text-[#f7f2ea]/30 outline-none focus:border-[#d9622c] transition-colors resize-none mb-4"
-            />
+            {currentPrompt.type === 'note' ? (
+              <p className="text-sm text-[#f7f2ea]/40 italic mb-4">A note from The Brand Revivalist team.</p>
+            ) : (
+              <textarea
+                value={response}
+                onChange={e => setResponse(e.target.value)}
+                placeholder="Your response..."
+                rows={3}
+                className="w-full rounded-xl bg-[#0f0f1a] border border-[#f7f2ea]/10 px-4 py-3 text-sm text-[#f7f2ea] placeholder:text-[#f7f2ea]/30 outline-none focus:border-[#d9622c] transition-colors resize-none mb-4"
+              />
+            )}
             <div className="flex items-center gap-3">
               <button
                 onClick={handleShuffle}
@@ -77,14 +81,16 @@ export default function BrandUpCard() {
               >
                 <Shuffle className="w-4 h-4" /> Shuffle
               </button>
-              <button
-                onClick={handleSave}
-                disabled={saving || !response.trim()}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-xs uppercase tracking-widest text-white disabled:opacity-30"
-                style={{ background: 'linear-gradient(131deg, #b3232c, #d9622c, #f0d9b5)' }}
-              >
-                <Save className="w-4 h-4" /> {saved ? 'Saved!' : saving ? 'Saving...' : 'Save Response'}
-              </button>
+              {currentPrompt.type !== 'note' && (
+                <button
+                  onClick={handleSave}
+                  disabled={saving || !response.trim()}
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-xs uppercase tracking-widest text-white disabled:opacity-30"
+                  style={{ background: 'linear-gradient(131deg, #b3232c, #d9622c, #f0d9b5)' }}
+                >
+                  <Save className="w-4 h-4" /> {saved ? 'Saved!' : saving ? 'Saving...' : 'Save Response'}
+                </button>
+              )}
             </div>
           </>
         )}

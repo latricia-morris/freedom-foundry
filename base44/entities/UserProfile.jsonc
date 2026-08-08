@@ -58,6 +58,14 @@
     },
     "setup_status": {
       "type": "object"
+    },
+    "marketing_consent": {
+      "type": "boolean",
+      "default": false
+    },
+    "consent_date": {
+      "type": "string",
+      "format": "date-time"
     }
   },
   "required": []

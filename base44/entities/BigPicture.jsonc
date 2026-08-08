@@ -94,6 +94,18 @@
     },
     "breakdown_weekly_review": {
       "type": "string"
+    },
+    "long_term_goal_3yr": {
+      "type": "string"
+    },
+    "long_term_goal_5yr": {
+      "type": "string"
+    },
+    "long_term_revenue": {
+      "type": "string"
+    },
+    "long_term_positioning": {
+      "type": "string"
     }
   },
   "required": []

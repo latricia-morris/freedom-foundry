@@ -73,13 +73,17 @@ export default function BrandUp() {
       {currentPrompt && (
         <div className="editorial-container mb-8">
           <h2 className="font-heading text-xl text-[#1a1420] mb-4 leading-relaxed">{currentPrompt.prompt_text}</h2>
-          <textarea
-            value={response}
-            onChange={e => setResponse(e.target.value)}
-            placeholder="Your response..."
-            rows={4}
-            className="w-full rounded-xl bg-white border border-black/10 px-4 py-3 text-sm text-[#1a1420] placeholder:text-black/30 outline-none focus:border-[#b3232c] transition-colors resize-y mb-4"
-          />
+          {currentPrompt.type === 'note' ? (
+            <p className="text-sm text-[#1a1420]/50 italic mb-4">A note from The Brand Revivalist team.</p>
+          ) : (
+            <textarea
+              value={response}
+              onChange={e => setResponse(e.target.value)}
+              placeholder="Your response..."
+              rows={4}
+              className="w-full rounded-xl bg-white border border-black/10 px-4 py-3 text-sm text-[#1a1420] placeholder:text-black/30 outline-none focus:border-[#b3232c] transition-colors resize-y mb-4"
+            />
+          )}
           <div className="flex items-center gap-3">
             <button
               onClick={handleShuffle}
@@ -87,14 +91,16 @@ export default function BrandUp() {
             >
               <Shuffle className="w-4 h-4" /> Shuffle
             </button>
-            <button
-              onClick={handleSave}
-              disabled={saving || !response.trim()}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-xs uppercase tracking-widest text-white disabled:opacity-30"
-              style={{ background: 'linear-gradient(131deg, #b3232c, #d9622c, #f0d9b5)' }}
-            >
-              <Save className="w-4 h-4" /> {saved ? 'Saved!' : saving ? 'Saving...' : 'Save Response'}
-            </button>
+            {currentPrompt.type !== 'note' && (
+              <button
+                onClick={handleSave}
+                disabled={saving || !response.trim()}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-xs uppercase tracking-widest text-white disabled:opacity-30"
+                style={{ background: 'linear-gradient(131deg, #b3232c, #d9622c, #f0d9b5)' }}
+              >
+                <Save className="w-4 h-4" /> {saved ? 'Saved!' : saving ? 'Saving...' : 'Save Response'}
+              </button>
+            )}
           </div>
         </div>
       )}

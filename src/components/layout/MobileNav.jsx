@@ -21,15 +21,14 @@ export default function MobileNav() {
       className="fixed bottom-0 left-0 right-0 z-50 bg-[#0f0f1a]/95 backdrop-blur-md border-t border-[#f7f2ea]/10"
       style={{ pointerEvents: 'auto' }}
     >
-      <div className="flex items-center justify-center gap-2 py-3 max-w-3xl mx-auto px-3">
+      <div className="grid grid-cols-4 gap-1 py-3 px-2">
         {navItems.map((item) => {
           const active = isActive(item.path);
           return (
             <Link
               key={item.path}
               to={item.path}
-              className="flex-1 text-center"
-              style={{ maxWidth: '130px' }}
+              className="text-center"
             >
               <span
                 className="block px-3 py-1.5 text-[9px] uppercase tracking-[0.06em] font-medium whitespace-nowrap transition-opacity duration-200"

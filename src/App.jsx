@@ -40,6 +40,9 @@ import ResetPassword from './pages/ResetPassword';
 import OAuthConsent from './pages/OAuthConsent';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import BrandUp from './pages/BrandUp';
+import BrandChecklist from './pages/BrandChecklist';
+import RequestServices from './pages/RequestServices';
+import BrandUpAdmin from './pages/BrandUpAdmin';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -101,10 +104,13 @@ const AuthenticatedApp = () => {
           <Route path="/brand-portal/media-kit" element={<MediaKit />} />
           <Route path="/brand-portal/ignite" element={<IgniteOS />} />
           <Route path="/brand-portal/brand-up" element={<BrandUp />} />
+          <Route path="/brand-portal/checklist" element={<BrandChecklist />} />
+          <Route path="/brand-portal/request-services" element={<RequestServices />} />
         </Route>
         {/* Legacy redirect paths kept for compatibility */}
         <Route path="/admin/users" element={<AdminUsers />} />
         <Route path="/admin/users/:id" element={<AdminUserDetail />} />
+        <Route path="/admin/brand-up" element={<BrandUpAdmin />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/privacy" element={<Privacy />} />
         </Route>

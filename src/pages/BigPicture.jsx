@@ -30,6 +30,7 @@ const VISION_CATEGORIES = [
 
 const TABS = [
   { key: 'short', label: 'Short Term' },
+  { key: 'year', label: 'The Year' },
   { key: 'long', label: 'Long Term' },
   { key: 'legacy', label: 'Life & Legacy' },
 ];
@@ -52,7 +53,8 @@ export default function BigPicture() {
     vision_travels: '', vision_hobbies: '', vision_relationships: '',
     breakdown_goal: '', breakdown_components: '', breakdown_priorities: '',
     breakdown_monthly_target: '', breakdown_weekly_tasks: '',
-    breakdown_daily_step: '', breakdown_weekly_review: ''
+    breakdown_daily_step: '', breakdown_weekly_review: '',
+    long_term_goal_3yr: '', long_term_goal_5yr: '', long_term_revenue: '', long_term_positioning: ''
   };
   const [form, setForm] = useState(init);
 
@@ -168,8 +170,8 @@ export default function BigPicture() {
               </>
             )}
 
-            {/* LONG TERM */}
-            {activeTab === 'long' && (
+            {/* THE YEAR */}
+            {activeTab === 'year' && (
               <>
                 <div><label className={labelClass}>My word for the year is</label><input className={inputClass} value={form.word_for_the_year} onChange={e => update('word_for_the_year', e.target.value)} placeholder="One guiding word..." /></div>
                 <div><label className={labelClass}>By the end of the year I will have</label><textarea className={textareaClass} rows={2} value={form.end_of_year_goal} onChange={e => update('end_of_year_goal', e.target.value)} /></div>
@@ -213,6 +215,17 @@ export default function BigPicture() {
                     })}
                   </div>
                 </div>
+              </>
+            )}
+
+            {/* LONG TERM (3-5 Years) */}
+            {activeTab === 'long' && (
+              <>
+                <p className="text-sm text-[#1a1420]/60 italic mb-4">Where do you see your brand in 3-5 years?</p>
+                <div><label className={labelClass}>In 3 years, my brand will have achieved</label><textarea className={textareaClass} rows={3} value={form.long_term_goal_3yr} onChange={e => update('long_term_goal_3yr', e.target.value)} placeholder="Define your 3-year milestones..." /></div>
+                <div><label className={labelClass}>In 5 years, my brand will be</label><textarea className={textareaClass} rows={3} value={form.long_term_goal_5yr} onChange={e => update('long_term_goal_5yr', e.target.value)} placeholder="Describe your 5-year vision..." /></div>
+                <div><label className={labelClass}>Target revenue in 3-5 years</label><input className={inputClass} value={form.long_term_revenue} onChange={e => update('long_term_revenue', e.target.value)} placeholder="e.g. $500K/year" /></div>
+                <div><label className={labelClass}>Where I want my brand positioned in the market</label><textarea className={textareaClass} rows={3} value={form.long_term_positioning} onChange={e => update('long_term_positioning', e.target.value)} placeholder="Describe your desired market position..." /></div>
               </>
             )}
 

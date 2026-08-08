@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User as UserIcon, Bug, Trash2, AlertTriangle, Upload, Check } from 'lucide-react';
+import { User as UserIcon, Bug, Trash2, AlertTriangle, Upload, Check, Mail } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -18,6 +18,10 @@ export default function Settings() {
   const [bugSubmitted, setBugSubmitted] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [deleteText, setDeleteText] = useState('');
+  const [marketingConsent, setMarketingConsent] = useState(false);
+  const [profileRecord, setProfileRecord] = useState(null);
+  const [consentSaving, setConsentSaving] = useState(false);
+  const [consentSaved, setConsentSaved] = useState(false);
 
   useEffect(() => {
     base44.auth.me().then(u => {
@@ -26,8 +30,31 @@ export default function Settings() {
       setLastName(u.last_name || '');
       setPhone(u.phone || '');
       setHeadshotUrl(u.headshot_image_url || '');
+      base44.entities.UserProfile.filter({}, '-created_date', 1).then(profiles => {
+        const p = profiles?.[0] || null;
+        setProfileRecord(p);
+        setMarketingConsent(p?.marketing_consent || false);
+      }).catch(() => {});
     }).catch(() => {});
   }, []);
+
+  const handleConsentToggle = async () => {
+    setConsentSaving(true);
+    try {
+      const newConsent = !marketingConsent;
+      setMarketingConsent(newConsent);
+      const data = { marketing_consent: newConsent, consent_date: newConsent ? new Date().toISOString() : null };
+      if (profileRecord?.id) {
+        await base44.entities.UserProfile.update(profileRecord.id, data);
+      } else {
+        const created = await base44.entities.UserProfile.create(data);
+        setProfileRecord(created);
+      }
+      setConsentSaved(true);
+      setTimeout(() => setConsentSaved(false), 2000);
+    } catch (_) {}
+    setConsentSaving(false);
+  };
 
   const handleSave = async () => {
     setSaving(true);
@@ -85,6 +112,33 @@ export default function Settings() {
           <button onClick={handleSave} disabled={saving} className="flex items-center gap-2 px-6 py-2.5 forged-gradient rounded-lg text-xs uppercase tracking-widest text-white disabled:opacity-50">
             {saved ? <Check className="w-4 h-4" /> : null}{saving ? 'Saving...' : saved ? 'Saved!' : 'Save Changes'}
           </button>
+        </section>
+
+        <div className="h-px bg-black/10" />
+
+        {/* Email Preferences */}
+        <section className="space-y-5">
+          <div className="flex items-center gap-2">
+            <Mail className="w-4 h-4 text-merlot" strokeWidth={1.5} />
+            <h2 className="font-heading text-lg">Email Preferences</h2>
+          </div>
+          <div className="flex items-center justify-between p-4 rounded-xl border border-black/10">
+            <div>
+              <p className="text-sm font-medium text-[#1a1420]">Resource Updates</p>
+              <p className="text-xs text-[#1a1420]/50 mt-0.5">Receive occasional emails about new resources and content. Unsubscribe at any time.</p>
+            </div>
+            <button
+              onClick={handleConsentToggle}
+              disabled={consentSaving}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg text-xs uppercase tracking-widest transition-colors"
+              style={marketingConsent
+                ? { background: 'linear-gradient(131deg, #b3232c, #d9622c, #f0d9b5)', color: '#fff' }
+                : { border: '1px solid rgba(0,0,0,0.1)', color: 'rgba(26,20,32,0.5)' }}
+            >
+              {consentSaved && <Check className="w-3.5 h-3.5" />}
+              {consentSaving ? 'Saving...' : consentSaved ? 'Saved!' : marketingConsent ? 'Subscribed' : 'Unsubscribed'}
+            </button>
+          </div>
         </section>
 
         <div className="h-px bg-black/10" />

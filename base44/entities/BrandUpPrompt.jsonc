@@ -5,6 +5,14 @@
     "prompt_text": {
       "type": "string"
     },
+    "type": {
+      "type": "string",
+      "enum": [
+        "prompt",
+        "note"
+      ],
+      "default": "prompt"
+    },
     "category": {
       "type": "string"
     },

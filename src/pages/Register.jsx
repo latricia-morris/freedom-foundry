@@ -42,12 +42,14 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [showOtp, setShowOtp] = useState(false);
   const [otpCode, setOtpCode] = useState("");
+  const [marketingConsent, setMarketingConsent] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     if (!firstName.trim() || !lastName.trim()) { setError("First and last name are required"); return; }
     if (password !== confirmPassword) { setError("Passwords do not match"); return; }
+    if (!marketingConsent) { setError("Please consent to receive occasional resource emails to continue"); return; }
     setLoading(true);
     try {
       await base44.auth.register({ email, password, first_name: firstName, last_name: lastName });
@@ -70,16 +72,16 @@ export default function Register() {
       // Save optional profile fields
       try {
         await base44.auth.updateMe({ first_name: firstName, last_name: lastName });
-        if (businessName || website) {
-          await base44.entities.UserProfile.create({
-            user_id: result?.user?.id || '',
-            first_name: firstName,
-            last_name: lastName,
-            business_name: businessName,
-            website: website,
-            account_type: 'free'
-          });
-        }
+        await base44.entities.UserProfile.create({
+          user_id: result?.user?.id || '',
+          first_name: firstName,
+          last_name: lastName,
+          business_name: businessName,
+          website: website,
+          account_type: 'free',
+          marketing_consent: marketingConsent,
+          consent_date: new Date().toISOString()
+        });
       } catch (_) {}
       window.location.href = safeReturnTo();
     } catch (err) {
@@ -222,6 +224,18 @@ export default function Register() {
               <label className="block text-xs uppercase tracking-[0.15em] text-[#f7f2ea]/50 mb-2">Confirm Password <span className="text-red-400">*</span></label>
               <GlassInput icon={Lock} type="password" autoComplete="new-password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} placeholder="••••••••" required />
             </div>
+            <label className="flex items-start gap-3 cursor-pointer pt-2">
+              <input
+                type="checkbox"
+                checked={marketingConsent}
+                onChange={e => setMarketingConsent(e.target.checked)}
+                className="mt-1 w-4 h-4 rounded border-white/20 bg-white/5 text-[#b3232c] focus:ring-[#b3232c] flex-shrink-0"
+                required
+              />
+              <span className="text-xs text-[#f7f2ea]/50 leading-relaxed">
+                I agree to receive occasional emails about new resources and content. I can unsubscribe at any time. <span className="text-red-400">*</span>
+              </span>
+            </label>
             <button
               type="submit"
               disabled={loading}

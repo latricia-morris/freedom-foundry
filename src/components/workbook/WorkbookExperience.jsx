@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Copy, Printer, Check, ChevronLeft, ChevronRight } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import WorkbookField from '@/components/workbook/WorkbookField';
+import ChecklistAddBox from '@/components/workbook/ChecklistAddBox';
 import openPrintFriendly from '@/components/workbook/openPrintFriendly';
 
 export default function WorkbookExperience({ workbook }) {
@@ -89,12 +90,14 @@ export default function WorkbookExperience({ workbook }) {
           {activePage.content && <p className="text-sm mb-6 opacity-80 leading-relaxed">{activePage.content}</p>}
           <div className="space-y-6">
             {activePage.fields?.map(field => (
-              <WorkbookField
-                key={field.field_id}
-                field={field}
-                value={responses[field.field_id]?.value || ''}
-                onChange={(v) => handleFieldChange(field.field_id, v)}
-              />
+              <div key={field.field_id}>
+                <WorkbookField
+                  field={field}
+                  value={responses[field.field_id]?.value || ''}
+                  onChange={(v) => handleFieldChange(field.field_id, v)}
+                />
+                <ChecklistAddBox workbookTitle={workbook.title} />
+              </div>
             ))}
           </div>
         </div>
