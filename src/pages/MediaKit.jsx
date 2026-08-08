@@ -102,11 +102,16 @@ export default function MediaKit() {
   };
 
   const handleGenerateShare = async () => {
-    if (!kit?.id) return;
     setGeneratingShare(true);
     try {
+      let kitId = kit?.id;
+      if (!kitId) {
+        const created = await base44.entities.MediaKit.create(form);
+        setKit(created);
+        kitId = created.id;
+      }
       const brandName = form.business_name || `${form.first_name} ${form.last_name}`.trim() || 'member';
-      const url = await createShareLink('media_kit', kit.id, brandName);
+      const url = await createShareLink('media_kit', kitId, brandName);
       setShareLink(url);
       try { await navigator.clipboard.writeText(url); } catch (_) {}
       toast({ title: "Share link copied!", description: "Your media kit link is ready to share." });
@@ -153,7 +158,7 @@ export default function MediaKit() {
         </div>
         <button
           onClick={handleGenerateShare}
-          disabled={generatingShare || !kit?.id}
+          disabled={generatingShare}
           className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 text-sm text-[#f7f2ea]/70 hover:text-[#f7f2ea] hover:border-white/20 transition-colors disabled:opacity-40"
         >
           <Share2 className="w-4 h-4" />
@@ -228,14 +233,14 @@ export default function MediaKit() {
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <label className="text-xs uppercase tracking-wider text-[#1a1420]/50">Short Bio</label>
-                {form.short_bio && <button onClick={() => copyText(form.short_bio)} className="text-xs text-[#b3232c] flex items-center gap-1"><Copy className="w-3 h-3" /> Copy</button>}
+                {form.short_bio && <button onClick={() => copyText(form.short_bio)} className="text-xs flex items-center gap-1"><Copy className="w-3 h-3" style={{ stroke: '#d9622c' }} /> <span className="link-molten">Copy</span></button>}
               </div>
               <textarea className={textareaClass} rows={3} value={form.short_bio} onChange={e => update('short_bio', e.target.value)} placeholder="One or two sentence bio..." />
             </div>
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <label className="text-xs uppercase tracking-wider text-[#1a1420]/50">Long Bio</label>
-                {form.long_bio && <button onClick={() => copyText(form.long_bio)} className="text-xs text-[#b3232c] flex items-center gap-1"><Copy className="w-3 h-3" /> Copy</button>}
+                {form.long_bio && <button onClick={() => copyText(form.long_bio)} className="text-xs flex items-center gap-1"><Copy className="w-3 h-3" style={{ stroke: '#d9622c' }} /> <span className="link-molten">Copy</span></button>}
               </div>
               <textarea className={textareaClass} rows={8} value={form.long_bio} onChange={e => update('long_bio', e.target.value)} placeholder="Full bio for press, speaking, and partnerships..." />
             </div>
@@ -292,7 +297,7 @@ export default function MediaKit() {
                 <button onClick={() => removeItem('social_links', i)} className="px-2 text-[#1a1420]/30 hover:text-[#1a1420]/60"><X className="w-4 h-4" /></button>
               </div>
             ))}
-            <button onClick={() => addItem('social_links', { platform: '', url: '' })} className="flex items-center gap-1.5 text-sm text-[#b3232c] hover:opacity-80 transition-opacity"><Plus className="w-4 h-4" /> Add Social</button>
+            <button onClick={() => addItem('social_links', { platform: '', url: '' })} className="flex items-center gap-1.5 text-sm link-molten hover:opacity-80 transition-opacity"><Plus className="w-4 h-4" style={{ stroke: '#d9622c' }} /> Add Social</button>
           </div>
         </section>
 
@@ -311,7 +316,7 @@ export default function MediaKit() {
               </div>
             ))}
             {form.feature_links.length < 5 && (
-              <button onClick={() => addItem('feature_links', { label: '', url: '' })} className="flex items-center gap-1.5 text-sm text-[#b3232c] hover:opacity-80 transition-opacity"><Plus className="w-4 h-4" /> Add Link</button>
+              <button onClick={() => addItem('feature_links', { label: '', url: '' })} className="flex items-center gap-1.5 text-sm link-molten hover:opacity-80 transition-opacity"><Plus className="w-4 h-4" style={{ stroke: '#d9622c' }} /> Add Link</button>
             )}
           </div>
         </section>

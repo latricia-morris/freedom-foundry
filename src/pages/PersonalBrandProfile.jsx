@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
-import { Upload, Plus, X, Check, Share2 } from 'lucide-react';
+import { Upload, Plus, X, Check, Share2, Sun, Moon } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import { createShareLink } from '@/lib/shareUtils';
 import PrivacyNote from '@/components/brand/PrivacyNote';
@@ -17,6 +17,7 @@ export default function PersonalBrandProfile() {
   const [saved, setSaved] = useState(false);
   const [shareLink, setShareLink] = useState(null);
   const [generatingShare, setGeneratingShare] = useState(false);
+  const [lightMode, setLightMode] = useState(false);
 
   const init = {
     first_name: '', last_name: '', business_name: '', headshot_urls: [], short_bio: '', long_bio: '',
@@ -66,8 +67,14 @@ export default function PersonalBrandProfile() {
   const handleShare = async () => {
     setGeneratingShare(true);
     try {
+      let profileId = profile?.id;
+      if (!profileId) {
+        const created = await base44.entities.PersonalBrandProfile.create(form);
+        setProfile(created);
+        profileId = created.id;
+      }
       const brandName = form.business_name || `${form.first_name} ${form.last_name}`.trim() || 'member';
-      const url = await createShareLink('personal', profile.id, brandName);
+      const url = await createShareLink('personal', profileId, brandName);
       setShareLink(url);
       try { await navigator.clipboard.writeText(url); } catch (_) {}
       toast({ title: 'Share link copied!', description: 'Your personal brand link is ready.' });
@@ -100,24 +107,29 @@ export default function PersonalBrandProfile() {
   const textareaClass = "w-full rounded-xl px-4 py-3 text-sm text-[#1a1420] bg-white border border-black/10 placeholder:text-black/30 outline-none focus:border-[#b3232c] transition-colors resize-y";
 
   return (
+    <div className={`brand-portal-page ${lightMode ? 'light-mode' : ''} -mx-6 lg:-mx-10 -my-6 lg:-my-10 px-6 lg:px-10 py-6 lg:py-10 min-h-[calc(100vh-160px)]`}>
     <div className="max-w-3xl animate-fade-in">
       <div className="mb-6 flex items-start justify-between flex-wrap gap-3">
         <div>
           <span className="text-[10px] uppercase tracking-[0.3em] text-[#d9c9a3]">Brand Portal</span>
-          <h1 className="font-heading text-3xl font-light text-[#f7f2ea] mt-1 mb-1">Personal <span className="molten-text italic">Brand</span></h1>
-          <p className="text-sm text-[#f7f2ea]/60">Your personal identity, bio, fonts, voice, and assets.</p>
+          <h1 className={`font-heading text-3xl font-light ${lightMode ? 'text-[#1a1420]' : 'text-[#f7f2ea]'} mt-1 mb-1`}>Personal <span className="molten-text italic">Brand</span></h1>
+          <p className={`text-sm ${lightMode ? 'text-[#1a1420]/60' : 'text-[#f7f2ea]/60'}`}>Your personal identity, bio, fonts, voice, and assets.</p>
         </div>
-        {profile?.id && (
+        <div className="flex items-center gap-3 mt-1">
           <button onClick={handleShare} disabled={generatingShare} className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 text-sm text-[#f7f2ea]/70 hover:text-[#f7f2ea] hover:border-white/20 transition-colors disabled:opacity-40 whitespace-nowrap">
             <Share2 className="w-4 h-4" /> {generatingShare ? 'Generating...' : 'Share Profile'}
           </button>
-        )}
+          <button onClick={() => setLightMode(!lightMode)} className={`flex items-center gap-1.5 text-xs ${lightMode ? 'text-[#1a1420]/50 hover:text-[#1a1420]/80' : 'text-[#f7f2ea]/40 hover:text-[#f7f2ea]/70'} transition-colors`}>
+            {lightMode ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+            <span className="hidden sm:inline">{lightMode ? 'Dark' : 'Light'}</span>
+          </button>
+        </div>
       </div>
 
       {shareLink && (
-        <div className="mb-6 p-4 rounded-xl border border-white/10 bg-white/[0.03] flex items-center gap-3">
-          <span className="text-sm text-[#f7f2ea]/70 flex-1 truncate">{shareLink}</span>
-          <button onClick={() => { navigator.clipboard.writeText(shareLink); toast({ title: 'Copied!' }); }} className="text-xs text-[#f7f2ea]/50 hover:text-[#f7f2ea] transition-colors">Copy</button>
+        <div className={`mb-6 p-4 rounded-xl border ${lightMode ? 'border-black/10 bg-black/[0.03]' : 'border-white/10 bg-white/[0.03]'} flex items-center gap-3`}>
+          <span className={`text-sm ${lightMode ? 'text-[#1a1420]/70' : 'text-[#f7f2ea]/70'} flex-1 truncate`}>{shareLink}</span>
+          <button onClick={() => { navigator.clipboard.writeText(shareLink); toast({ title: 'Copied!' }); }} className={`text-xs ${lightMode ? 'text-[#1a1420]/50 hover:text-[#1a1420]' : 'text-[#f7f2ea]/50 hover:text-[#f7f2ea]'} transition-colors`}>Copy</button>
         </div>
       )}
 
@@ -258,7 +270,7 @@ export default function PersonalBrandProfile() {
                 <button onClick={() => removeItem('social_links', i)} className="px-2 text-black/30 hover:text-black/60"><X className="w-4 h-4" /></button>
               </div>
             ))}
-            <button onClick={() => addItem('social_links', { platform: '', url: '' })} className="flex items-center gap-1.5 text-sm text-[#b3232c] hover:opacity-80 transition-opacity"><Plus className="w-4 h-4" /> Add Social</button>
+            <button onClick={() => addItem('social_links', { platform: '', url: '' })} className="flex items-center gap-1.5 text-sm link-molten hover:opacity-80 transition-opacity"><Plus className="w-4 h-4" style={{ stroke: '#d9622c' }} /> Add Social</button>
           </div>
         </section>
 
@@ -276,7 +288,7 @@ export default function PersonalBrandProfile() {
               </div>
             ))}
             {form.feature_links.length < 5 && (
-              <button onClick={() => addItem('feature_links', { label: '', url: '' })} className="flex items-center gap-1.5 text-sm text-[#b3232c] hover:opacity-80 transition-opacity"><Plus className="w-4 h-4" /> Add Link</button>
+              <button onClick={() => addItem('feature_links', { label: '', url: '' })} className="flex items-center gap-1.5 text-sm link-molten hover:opacity-80 transition-opacity"><Plus className="w-4 h-4" style={{ stroke: '#d9622c' }} /> Add Link</button>
             )}
           </div>
         </section>
@@ -293,6 +305,7 @@ export default function PersonalBrandProfile() {
 
         <SetupTaskFooter taskKey="personal" form={form} onSave={handleSave} />
       </div>
+    </div>
     </div>
   );
 }

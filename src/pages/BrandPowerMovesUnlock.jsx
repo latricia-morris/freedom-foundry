@@ -84,7 +84,7 @@ export default function BrandPowerMovesUnlock({ onUnlocked }) {
               onChange={e => setCode(e.target.value.toUpperCase())}
               maxLength={20}
             />
-            {error && <p className="text-sm text-red-700">{error}</p>}
+            {error && <p className="text-sm link-molten">{error}</p>}
             <button
               onClick={handleUnlock}
               disabled={!code.trim() || submitting}
@@ -96,7 +96,7 @@ export default function BrandPowerMovesUnlock({ onUnlocked }) {
           </div>
           <div className="mt-6 pt-6 border-t border-black/10">
             <p className="text-xs text-[#1a1420]/50 leading-relaxed">
-              {"Don't have a copy yet? "}<button onClick={() => setView('purchase')} className="text-[#b3232c] font-medium hover:opacity-80 transition-opacity">Order one here.</button>
+              {"Don't have a copy yet? "}<button onClick={() => setView('purchase')} className="link-molten font-medium hover:opacity-80 transition-opacity">Order one here.</button>
             </p>
           </div>
         </div>

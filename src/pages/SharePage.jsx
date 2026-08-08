@@ -33,22 +33,11 @@ export default function SharePage() {
 
   useEffect(() => {
     if (!token) { setError(true); setLoading(false); return; }
-    base44.entities.ShareLink.filter({ token, is_active: true })
-      .then(async links => {
-        const link = links?.[0];
-        if (!link) { setError(true); return; }
-        let profile = null;
-        if (link.profile_type === 'personal') {
-          const p = await base44.entities.PersonalBrandProfile.filter({ id: link.profile_id });
-          profile = p?.[0];
-        } else if (link.profile_type === 'corporate') {
-          const c = await base44.entities.CorporateBrandProfile.filter({ id: link.profile_id });
-          profile = c?.[0];
-        } else if (link.profile_type === 'media_kit') {
-          const m = await base44.entities.MediaKit.filter({ id: link.profile_id });
-          profile = m?.[0];
-        }
-        setData({ link, profile });
+    base44.functions.invoke('get-shared-profile', { token })
+      .then(response => {
+        const d = response.data;
+        if (d?.error) { setError(true); return; }
+        setData(d);
       })
       .catch(() => setError(true))
       .finally(() => setLoading(false));
@@ -64,7 +53,7 @@ export default function SharePage() {
     </div>
   );
 
-  const { link, profile } = data;
+  const { profile_type, profile } = data;
   if (!profile) return (
     <div className="flex items-center justify-center py-20">
       <div className="text-center">
@@ -79,10 +68,10 @@ export default function SharePage() {
       <div className="editorial-container space-y-8">
 
         {/* PERSONAL BRAND */}
-        {link.profile_type === 'personal' && (
+        {profile_type === 'personal' && (
           <>
             <div>
-              <p className="text-[10px] uppercase tracking-[0.3em] text-[#b3232c] mb-2">Personal Brand</p>
+              <p className="text-[10px] uppercase tracking-[0.3em] link-molten mb-2">Personal Brand</p>
               <h1 className="font-heading text-3xl text-[#1a1420]">{profile.first_name} {profile.last_name}</h1>
               {profile.business_name && <p className="text-sm text-[#1a1420]/60 mt-1">{profile.business_name}</p>}
             </div>
@@ -114,7 +103,7 @@ export default function SharePage() {
                 <div className="space-y-1 text-sm text-[#2c2c33]">
                   {profile.email && <p>📧 {profile.email}</p>}
                   {profile.phone && <p>📞 {profile.phone}</p>}
-                  {profile.website && <p>🌐 <a href={profile.website} target="_blank" rel="noopener noreferrer" className="text-[#b3232c] hover:underline">{profile.website}</a></p>}
+                  {profile.website && <p>🌐 <a href={profile.website} target="_blank" rel="noopener noreferrer" className="link-molten hover:underline">{profile.website}</a></p>}
                   {(profile.location_city || profile.location_state || profile.location_country) && (
                     <p>📍 {[profile.location_city, profile.location_state, profile.location_country].filter(Boolean).join(', ')}</p>
                   )}
@@ -126,7 +115,7 @@ export default function SharePage() {
               <Section title="Social">
                 <div className="flex flex-wrap gap-3">
                   {profile.social_links.map((s, i) => (
-                    <a key={i} href={s.url} target="_blank" rel="noopener noreferrer" className="text-sm text-[#b3232c] hover:underline">{s.platform}</a>
+                    <a key={i} href={s.url} target="_blank" rel="noopener noreferrer" className="text-sm link-molten hover:underline">{s.platform}</a>
                   ))}
                 </div>
               </Section>
@@ -136,7 +125,7 @@ export default function SharePage() {
               <Section title="Links">
                 <div className="flex flex-wrap gap-3">
                   {profile.feature_links.map((f, i) => (
-                    <a key={i} href={f.url} target="_blank" rel="noopener noreferrer" className="text-sm text-[#b3232c] hover:underline">{f.label}</a>
+                    <a key={i} href={f.url} target="_blank" rel="noopener noreferrer" className="text-sm link-molten hover:underline">{f.label}</a>
                   ))}
                 </div>
               </Section>
@@ -146,7 +135,7 @@ export default function SharePage() {
               <Section title="Books">
                 <div className="space-y-1">
                   {profile.book_links.map((b, i) => (
-                    <a key={i} href={b.url} target="_blank" rel="noopener noreferrer" className="block text-sm text-[#b3232c] hover:underline">{b.title}</a>
+                    <a key={i} href={b.url} target="_blank" rel="noopener noreferrer" className="block text-sm link-molten hover:underline">{b.title}</a>
                   ))}
                 </div>
               </Section>
@@ -155,10 +144,10 @@ export default function SharePage() {
         )}
 
         {/* CORPORATE BRAND */}
-        {link.profile_type === 'corporate' && (
+        {profile_type === 'corporate' && (
           <>
             <div>
-              <p className="text-[10px] uppercase tracking-[0.3em] text-[#b3232c] mb-2">Corporate Brand</p>
+              <p className="text-[10px] uppercase tracking-[0.3em] link-molten mb-2">Corporate Brand</p>
               <h1 className="font-heading text-3xl text-[#1a1420]">{profile.company_name}</h1>
               {profile.tagline && <p className="italic text-[#1a1420]/70 mt-1">{profile.tagline}</p>}
             </div>
@@ -193,7 +182,7 @@ export default function SharePage() {
                 <div className="space-y-1 text-sm text-[#2c2c33]">
                   {profile.email && <p>📧 {profile.email}</p>}
                   {profile.phone && <p>📞 {profile.phone}</p>}
-                  {profile.website && <p>🌐 <a href={profile.website} target="_blank" rel="noopener noreferrer" className="text-[#b3232c] hover:underline">{profile.website}</a></p>}
+                  {profile.website && <p>🌐 <a href={profile.website} target="_blank" rel="noopener noreferrer" className="link-molten hover:underline">{profile.website}</a></p>}
                   {(profile.location_city || profile.location_state || profile.location_country) && (
                     <p>📍 {[profile.location_city, profile.location_state, profile.location_country].filter(Boolean).join(', ')}</p>
                   )}
@@ -205,7 +194,7 @@ export default function SharePage() {
               <Section title="Books">
                 <div className="space-y-1">
                   {profile.book_links.map((b, i) => (
-                    <a key={i} href={b.url} target="_blank" rel="noopener noreferrer" className="block text-sm text-[#b3232c] hover:underline">{b.title}</a>
+                    <a key={i} href={b.url} target="_blank" rel="noopener noreferrer" className="block text-sm link-molten hover:underline">{b.title}</a>
                   ))}
                 </div>
               </Section>
@@ -214,10 +203,10 @@ export default function SharePage() {
         )}
 
         {/* MEDIA KIT */}
-        {link.profile_type === 'media_kit' && (
+        {profile_type === 'media_kit' && (
           <>
             <div>
-              <p className="text-[10px] uppercase tracking-[0.3em] text-[#b3232c] mb-2">Media Kit</p>
+              <p className="text-[10px] uppercase tracking-[0.3em] link-molten mb-2">Media Kit</p>
               <h1 className="font-heading text-3xl text-[#1a1420]">{profile.business_name || `${profile.first_name} ${profile.last_name}`}</h1>
             </div>
             {profile.short_bio && <p className="italic text-[#1a1420]/70 leading-relaxed">{profile.short_bio}</p>}
@@ -248,7 +237,7 @@ export default function SharePage() {
                 <div className="space-y-1 text-sm text-[#2c2c33]">
                   {profile.email && <p>📧 {profile.email}</p>}
                   {profile.phone && <p>📞 {profile.phone}</p>}
-                  {profile.website && <p>🌐 <a href={profile.website} target="_blank" rel="noopener noreferrer" className="text-[#b3232c] hover:underline">{profile.website}</a></p>}
+                  {profile.website && <p>🌐 <a href={profile.website} target="_blank" rel="noopener noreferrer" className="link-molten hover:underline">{profile.website}</a></p>}
                   {(profile.location_city || profile.location_state || profile.location_country) && (
                     <p>📍 {[profile.location_city, profile.location_state, profile.location_country].filter(Boolean).join(', ')}</p>
                   )}
@@ -260,7 +249,7 @@ export default function SharePage() {
               <Section title="Social">
                 <div className="flex flex-wrap gap-3">
                   {profile.social_links.map((s, i) => (
-                    <a key={i} href={s.url} target="_blank" rel="noopener noreferrer" className="text-sm text-[#b3232c] hover:underline">{s.platform}</a>
+                    <a key={i} href={s.url} target="_blank" rel="noopener noreferrer" className="text-sm link-molten hover:underline">{s.platform}</a>
                   ))}
                 </div>
               </Section>
@@ -270,7 +259,7 @@ export default function SharePage() {
               <Section title="Links">
                 <div className="flex flex-wrap gap-3">
                   {profile.feature_links.map((f, i) => (
-                    <a key={i} href={f.url} target="_blank" rel="noopener noreferrer" className="text-sm text-[#b3232c] hover:underline">{f.label}</a>
+                    <a key={i} href={f.url} target="_blank" rel="noopener noreferrer" className="text-sm link-molten hover:underline">{f.label}</a>
                   ))}
                 </div>
               </Section>
@@ -280,7 +269,7 @@ export default function SharePage() {
               <Section title="Books">
                 <div className="space-y-1">
                   {profile.book_links.map((b, i) => (
-                    <a key={i} href={b.url} target="_blank" rel="noopener noreferrer" className="block text-sm text-[#b3232c] hover:underline">{b.title}</a>
+                    <a key={i} href={b.url} target="_blank" rel="noopener noreferrer" className="block text-sm link-molten hover:underline">{b.title}</a>
                   ))}
                 </div>
               </Section>
@@ -290,7 +279,7 @@ export default function SharePage() {
               <Section title="Podcast Channels">
                 <div className="space-y-1">
                   {profile.podcast_links.map((p, i) => (
-                    <a key={i} href={p.url} target="_blank" rel="noopener noreferrer" className="block text-sm text-[#b3232c] hover:underline">{p.platform}</a>
+                    <a key={i} href={p.url} target="_blank" rel="noopener noreferrer" className="block text-sm link-molten hover:underline">{p.platform}</a>
                   ))}
                 </div>
               </Section>

@@ -18,14 +18,14 @@ const systemNav = [
   { name: 'Ignite OS', path: '/brand-portal/ignite', icon: 'flame' },
 ];
 
-function NavItem({ item, muted }) {
+function NavItem({ item }) {
   return (
     <NavLink
       to={item.path}
       end={item.end}
       className={({ isActive }) =>
         `flex items-center justify-between text-sm py-2 px-0 lg:py-2.5 transition-all duration-200 whitespace-nowrap lg:whitespace-normal ${
-          muted ? 'opacity-40 hover:opacity-70' : isActive ? 'font-semibold' : 'opacity-60 hover:opacity-90'
+          isActive ? 'font-semibold' : 'text-[#f7f2ea]/70 hover:text-[#f7f2ea]'
         }`
       }
     >
@@ -67,12 +67,9 @@ export default function BrandPortalLayout() {
           {mainNav.map((item) => (
             <NavItem key={item.path} item={item} />
           ))}
-          <div className="hidden lg:block w-full border-t border-white/5 my-3" />
-          <div className="lg:border-t lg:border-white/5 lg:pt-3 lg:mt-1 w-full">
-            {systemNav.map((item) => (
-              <NavItem key={item.path} item={item} muted />
-            ))}
-          </div>
+          {systemNav.map((item) => (
+            <NavItem key={item.path} item={item} />
+          ))}
         </nav>
       </aside>
 

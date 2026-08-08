@@ -49,15 +49,15 @@ export default function SetupProgressCard() {
   const allComplete = completedTasks === SETUP_TASKS.length;
 
   return (
-    <div className="relative rounded-2xl overflow-hidden bg-[#15151f] border border-[#f7f2ea]/[0.04] p-8 lg:p-10">
+    <div className="relative rounded-2xl overflow-hidden bg-[#15151f] border border-[#f7f2ea]/[0.04] p-6 lg:p-8 h-full flex flex-col">
       <div className="absolute -bottom-20 -left-20 w-64 h-64 ember-glow-bg opacity-30" />
-      <div className="relative z-10 flex flex-col lg:flex-row items-center gap-8">
+      <div className="relative z-10 flex flex-col items-center gap-5 flex-1">
         <div className="flex-shrink-0">
-          <ProgressRing percentage={loading ? 0 : overallProgress} size={180} strokeWidth={8} />
+          <ProgressRing percentage={loading ? 0 : overallProgress} size={140} strokeWidth={8} />
         </div>
-        <div className="flex-1 text-center lg:text-left">
+        <div className="flex-1 text-center flex flex-col items-center justify-start">
           <span className="text-xs uppercase tracking-[0.3em] text-[#d9c9a3]">Brand Portal Setup</span>
-          <h3 className="font-heading text-xl font-light text-[#f7f2ea] mt-1 mb-3">
+          <h3 className="font-heading text-lg font-light text-[#f7f2ea] mt-1 mb-3">
             {allComplete ? 'Your brand portal is ready.' : 'Build your brand foundation.'}
           </h3>
           {nextTask ? (

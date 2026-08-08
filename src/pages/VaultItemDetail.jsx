@@ -27,7 +27,7 @@ export default function VaultItemDetail() {
   if (!item) return (
     <div className="forged-border rounded-2xl bg-card p-12 text-center">
       <h3 className="font-heading text-xl text-foreground mb-2">Item not found</h3>
-      <Link to="/vault" className="text-sm text-primary hover:text-copper">← Back to The Vault</Link>
+      <Link to="/vault" className="text-sm link-molten">← Back to The Vault</Link>
     </div>
   );
 
@@ -37,7 +37,7 @@ export default function VaultItemDetail() {
         <ArrowLeft className="w-4 h-4" /> Back to The Vault
       </Link>
       <div className="mb-8">
-        <span className="text-xs uppercase tracking-widest text-primary">{item.type}</span>
+        <span className="text-xs uppercase tracking-widest molten-text">{item.type}</span>
         <h1 className="font-heading text-3xl lg:text-4xl font-light text-foreground mt-1 mb-2">{item.title}</h1>
         {item.subtitle && <p className="text-sm text-muted-foreground">{item.subtitle}</p>}
       </div>
@@ -66,7 +66,7 @@ export default function VaultItemDetail() {
             </a>
           )}
           <div className="forged-border rounded-2xl bg-card p-6 flex items-start gap-3">
-            <Sparkles className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+            <Sparkles className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ stroke: 'url(#warmGradientSvg)' }} />
             <div>
               <p className="text-sm text-foreground font-medium mb-1">Digital workbook coming soon</p>
               <p className="text-sm text-muted-foreground">An interactive digital workbook for this guide is being forged. In the meantime, enjoy this free resource.</p>
@@ -79,8 +79,8 @@ export default function VaultItemDetail() {
           <p className="text-sm text-muted-foreground leading-relaxed">{item.description}</p>
           {!item.is_free && (
             <div className="mt-6 pt-6 border-t border-border">
-              <div className="flex items-center gap-3 mb-4"><Lock className="w-4 h-4 text-primary" strokeWidth={1.5} /><span className="text-sm text-foreground">Premium Access Required</span></div>
-              <button className="forged-border px-6 py-3 rounded-lg text-xs uppercase tracking-widest text-primary">Purchase for ${item.price}</button>
+              <div className="flex items-center gap-3 mb-4"><Lock className="w-4 h-4" strokeWidth={1.5} style={{ stroke: 'url(#warmGradientSvg)' }} /><span className="text-sm text-foreground">Premium Access Required</span></div>
+              <button className="forged-border px-6 py-3 rounded-lg text-xs uppercase tracking-widest link-molten">Purchase for ${item.price}</button>
             </div>
           )}
         </div>

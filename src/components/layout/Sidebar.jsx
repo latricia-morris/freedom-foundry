@@ -20,7 +20,7 @@ export default function Sidebar() {
 
   return (
     <aside className="hidden lg:flex fixed left-0 top-0 h-full w-64 flex-col bg-sidebar border-r border-sidebar-border z-40">
-      <div className="p-6 border-b border-sidebar-border">
+      <Link to="/" className="block p-6 border-b border-sidebar-border hover:bg-sidebar-accent/30 transition-colors">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(131deg, #b3232c, #d9622c, #f0d9b5)', boxShadow: '0 0 7px rgba(217, 98, 44, 0.45), 0 0 3px rgba(179, 35, 44, 0.7)' }}>
             <div className="w-[30px] h-[30px] rounded-full bg-sidebar flex items-center justify-center">
@@ -31,7 +31,7 @@ export default function Sidebar() {
             <p className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground">By The Brand Revivalist</p>
           </div>
         </div>
-      </div>
+      </Link>
 
       <nav className="flex-1 overflow-y-auto py-4">
         {navItems.map((item) => {

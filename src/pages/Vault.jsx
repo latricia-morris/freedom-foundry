@@ -86,17 +86,17 @@ export default function Vault() {
                   )}
                   {locked && (
                     <div className="absolute top-3 left-3 w-7 h-7 rounded-full bg-background/80 backdrop-blur flex items-center justify-center">
-                      <Lock className="w-3 h-3 text-primary" strokeWidth={2} />
+                      <Lock className="w-3 h-3" strokeWidth={2} style={{ stroke: 'url(#warmGradientSvg)' }} />
                     </div>
                   )}
                 </div>
                 <div className="vault-card__body">
-                  <span className="text-[10px] uppercase tracking-widest text-primary">{item.type}</span>
+                  <span className="text-[10px] uppercase tracking-widest molten-text">{item.type}</span>
                   <h3 className="font-heading text-base text-foreground mt-1 mb-1 line-clamp-2">{item.title}</h3>
                   <p className="text-xs text-muted-foreground line-clamp-2">{item.subtitle || item.description}</p>
                   <div className="flex items-center justify-between mt-3">
                     <span className="text-xs text-muted-foreground">
-                      {isBpm ? (isBpmUnlocked ? 'Unlocked' : 'Locked') : item.is_free ? 'FREE' : `$${item.price}`}
+                      {isBpm ? (isBpmUnlocked ? 'Unlocked' : 'Free with book purchase') : item.is_free ? 'FREE' : `$${item.price}`}
                     </span>
                   </div>
                 </div>

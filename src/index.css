@@ -273,6 +273,20 @@
     opacity: 0.8;
   }
 
+  /* Gradient text for links and accents — replaces flat red */
+  .link-molten {
+    background: linear-gradient(131deg, #b3232c, #d9622c, #f0d9b5);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    transition: opacity 0.2s ease;
+  }
+
+  .link-molten:hover {
+    opacity: 0.8;
+  }
+
   /* Warm gradient stroke for SVG icons */
   .icon-warm {
     stroke: url(#warmGradient);

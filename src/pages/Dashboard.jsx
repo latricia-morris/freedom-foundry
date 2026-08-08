@@ -17,8 +17,14 @@ export default function Dashboard() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-6 animate-fade-in">
-      <BrandUpCard />
-      <SetupProgressCard />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <BrandUpCard />
+        </div>
+        <div className="lg:col-span-1">
+          <SetupProgressCard />
+        </div>
+      </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <WorkbookProgressCard />
         <VaultQuickCard vaultItems={vaultItems} />
