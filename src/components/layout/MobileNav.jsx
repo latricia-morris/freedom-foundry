@@ -2,11 +2,11 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 const navItems = [
-{ label: 'Home', path: '/' },
-{ label: 'Vault', path: '/vault' },
-{ label: 'Brand Portal', path: '/brand-portal' },
-{ label: 'Resources Hub', path: '/services' }];
-
+  { label: 'Home', path: '/' },
+  { label: 'Vault', path: '/vault' },
+  { label: 'Brand Portal', path: '/brand-portal' },
+  { label: 'Resources Hub', path: '/services' },
+];
 
 export default function MobileNav() {
   const location = useLocation();
@@ -18,47 +18,33 @@ export default function MobileNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 bg-[#0f0f1a]/95 backdrop-blur-md border-t border-[#f7f2ea]/10"
-      style={{ pointerEvents: 'auto' }}>
-      
-      <div className="grid grid-cols-4 gap-1 py-3 px-2">
+      className="fixed bottom-0 left-0 right-0 z-50 bg-black"
+      style={{ pointerEvents: 'auto' }}
+    >
+      <div className="flex items-center justify-between gap-1.5 px-3 py-2">
         {navItems.map((item) => {
           const active = isActive(item.path);
           return (
-            <Link
-              key={item.path}
-              to={item.path}
-              className="text-center">
-              
+            <Link key={item.path} to={item.path} className="flex-1 min-w-0 text-center">
               <span
-                className="block px-3 py-1.5 uppercase tracking-[0.06em] font-medium whitespace-nowrap transition-opacity duration-200 text-[9px]"
+                className="block px-2 py-1.5 uppercase text-[10px] tracking-wide whitespace-nowrap rounded-[7px]"
                 style={{
                   border: '1px solid transparent',
                   borderRadius: '7px',
-                  backgroundImage: 'linear-gradient(#0f0f1a, #0f0f1a) padding-box, linear-gradient(131deg, #b3232c, #d9622c, #f0d9b5) border-box'
-                }}>
-                
-                <span
-                  style={
-                  active ?
-                  {
-                    background: 'linear-gradient(131deg, #b3232c, #d9622c, #f0d9b5)',
-                    WebkitBackgroundClip: 'text',
-                    backgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    color: 'transparent',
-                    fontWeight: 700
-                  } :
-                  { color: '#f7f2ea' }
-                  } className="text-xs">
-                  
-                  {item.label}
-                </span>
+                  backgroundImage:
+                    'linear-gradient(#000, #000), linear-gradient(135deg, #d16298, #f7f2ea)',
+                  backgroundOrigin: 'border-box',
+                  backgroundClip: 'padding-box, border-box',
+                  color: active ? '#f7f2ea' : '#94a3b8',
+                  fontWeight: active ? 700 : 400,
+                }}
+              >
+                {item.label}
               </span>
-            </Link>);
-
+            </Link>
+          );
         })}
       </div>
-    </nav>);
-
+    </nav>
+  );
 }
