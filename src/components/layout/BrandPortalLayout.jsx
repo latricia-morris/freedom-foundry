@@ -75,7 +75,7 @@ export default function BrandPortalLayout() {
         <p className="text-[10px] uppercase tracking-[0.25em] text-[#d9c9a3] mb-4 hidden lg:block">
           Brand Portal
         </p>
-        <nav className="flex flex-row lg:flex-col flex-wrap overflow-x-auto lg:overflow-visible pb-1 lg:pb-0 lg:gap-1 gap-2.">
+        <nav className="flex flex-row lg:flex-col flex-wrap overflow-x-auto lg:overflow-visible lg:pb-0 gap-2 lg:gap-7 pb-2">
           {mainNav.map((item) =>
           <NavItem key={item.path} item={item} />
           )}
