@@ -5,7 +5,7 @@ const navItems = [
   { label: 'Home', path: '/' },
   { label: 'Vault', path: '/vault' },
   { label: 'Brand Portal', path: '/brand-portal' },
-  { label: 'Resources Hub', path: '/services' },
+  { label: 'Resources', path: '/services' },
 ];
 
 export default function MobileNav() {
@@ -21,14 +21,22 @@ export default function MobileNav() {
       className="fixed bottom-0 left-0 right-0 z-50 bg-black"
       style={{ pointerEvents: 'auto' }}
     >
-      <div className="flex items-center justify-between gap-1.5 px-3 py-2">
+      <div className="flex items-center justify-between gap-1 px-2 py-2 w-full overflow-hidden">
         {navItems.map((item) => {
           const active = isActive(item.path);
           return (
-            <Link key={item.path} to={item.path} className="flex-1 min-w-0 text-center">
+            <Link
+              key={item.path}
+              to={item.path}
+              className="flex-1 min-w-0 text-center"
+              style={{ maxWidth: '25%' }}
+            >
               <span
-                className="block px-2 py-1.5 uppercase text-[10px] tracking-wide whitespace-nowrap rounded-[7px]"
+                className="block uppercase whitespace-nowrap overflow-hidden text-ellipsis rounded-[7px]"
                 style={{
+                  padding: '6px 4px',
+                  fontSize: '9px',
+                  letterSpacing: '0.02em',
                   border: '1px solid transparent',
                   borderRadius: '7px',
                   backgroundImage:
