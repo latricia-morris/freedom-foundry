@@ -49,7 +49,7 @@ function NavItem({ item }) {
           </span>
           {item.icon === 'flame' &&
         <Flame
-          className="w-4 h-4 flex-shrink-0 ml-2"
+          className="w-4 h-4 flex-shrink-0"
           strokeWidth={1.5}
           style={{ stroke: 'url(#warmGradientSvg)' }} />
 
