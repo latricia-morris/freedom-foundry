@@ -37,7 +37,7 @@ export default function MobileNav() {
                   padding: '6px 4px',
                   fontSize: '9px',
                   letterSpacing: '0.02em',
-                  border: 0px solid transparent',
+                  border: '0px solid transparent',
                   borderRadius: '7px',
                   backgroundImage:
                     'linear-gradient(#000, #000), linear-gradient(135deg, #d16298, #f7f2ea)',
