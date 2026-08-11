@@ -43,7 +43,7 @@ function NavItem({ item }) {
             backgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             color: 'transparent'
-          } : {}} className="mr-4">
+          } : {}} className="mr-3">
           
             {item.name}
           </span>
