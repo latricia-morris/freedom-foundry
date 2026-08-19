@@ -1,11 +1,14 @@
-import { Toaster } from "@/components/ui/toaster"
-import { QueryClientProvider } from '@tanstack/react-query'
-import { queryClientInstance } from '@/lib/query-client'
+import { ClerkProvider, SignIn, SignUp, useUser } from '@clerk/react';
+import { publishableKeyFromHost } from '@clerk/react/internal';
+import { shadcn } from '@clerk/themes';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClientInstance } from '@/lib/query-client';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import PageNotFound from './lib/PageNotFound';
-import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import ScrollToTop from './components/ScrollToTop';
-// Add page imports here
+import { Toaster } from '@/components/ui/toaster';
 import Layout from '@/components/layout/Layout';
 import Dashboard from './pages/Dashboard';
 import Vault from './pages/Vault';
@@ -32,101 +35,245 @@ import AdminUsers from './pages/AdminUsers';
 import AdminUserDetail from './pages/AdminUserDetail';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import ForgotPassword from './pages/ForgotPassword';
-import ResetPassword from './pages/ResetPassword';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import BrandUp from './pages/BrandUp';
 import BrandChecklist from './pages/BrandChecklist';
 import RequestServices from './pages/RequestServices';
 import BrandUpAdmin from './pages/BrandUpAdmin';
 
-const AuthenticatedApp = () => {
-  const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
+// ─── Clerk config ─────────────────────────────────────────────────────────────
+const basePath = import.meta.env.BASE_URL?.replace(/\/$/, '') || '';
 
-  // Show loading spinner while checking app public settings or auth
-  if (isLoadingPublicSettings || isLoadingAuth) {
+const clerkPubKey = publishableKeyFromHost(
+  window.location.hostname,
+  import.meta.env.VITE_CLERK_PUBLISHABLE_KEY,
+);
+
+const clerkProxyUrl = import.meta.env.VITE_CLERK_PROXY_URL;
+
+// Freedom Foundry brand colours (from CSS variables)
+const primary   = '#b91c1c';  // molten red
+const bg        = '#0a0a14';  // deep forge-dark
+const cardBg    = '#111120';  // card surface
+const inputBg   = '#1a1a2e';  // input well
+const border    = '#2a1a2a';  // subtle border
+const text      = '#f5f0eb';  // warm off-white
+const muted     = '#a89888';  // warm muted
+const font      = "'Cormorant Garamond', 'Garamond', Georgia, serif";
+
+const clerkAppearance = {
+  theme: shadcn,
+  // Tailwind 3 / PostCSS project — no cssLayerName needed
+  options: {
+    logoPlacement: 'inside',
+    logoLinkUrl: basePath || '/',
+    logoImageUrl: `${window.location.origin}${basePath}/logo.svg`,
+  },
+  variables: {
+    colorPrimary:        primary,
+    colorForeground:     text,
+    colorMutedForeground: muted,
+    colorDanger:         '#ef4444',
+    colorBackground:     cardBg,
+    colorInput:          inputBg,
+    colorInputForeground: text,
+    colorNeutral:        border,
+    fontFamily:          font,
+    borderRadius:        '0.5rem',
+  },
+  elements: {
+    rootBox:   'w-full flex justify-center',
+    cardBox:   `bg-[${cardBg}] rounded-2xl w-[440px] max-w-full overflow-hidden shadow-2xl border border-[${border}]`,
+    card:      '!shadow-none !border-0 !bg-transparent !rounded-none',
+    footer:    '!shadow-none !border-0 !bg-transparent !rounded-none',
+    headerTitle:                 { color: text, fontFamily: font, fontSize: '1.6rem', fontWeight: '600', letterSpacing: '0.02em' },
+    headerSubtitle:              { color: muted },
+    socialButtonsBlockButtonText:{ color: text },
+    formFieldLabel:              { color: muted, textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '0.1em' },
+    footerActionLink:            { color: primary },
+    footerActionText:            { color: muted },
+    dividerText:                 { color: muted },
+    identityPreviewEditButton:   { color: primary },
+    formFieldSuccessText:        { color: '#4ade80' },
+    alertText:                   { color: text },
+    logoBox:                     'flex justify-center py-4',
+    logoImage:                   'w-12 h-12',
+    socialButtonsBlockButton:    `border border-[${border}] bg-[${inputBg}] hover:bg-[${border}] text-[${text}]`,
+    formButtonPrimary:           `bg-gradient-to-r from-[${primary}] to-[#b45309] hover:opacity-90 text-white font-semibold tracking-wide`,
+    formFieldInput:              `bg-[${inputBg}] border-[${border}] text-[${text}] placeholder-[${muted}]`,
+    footerAction:                `bg-[${cardBg}]`,
+    dividerLine:                 `bg-[${border}]`,
+    alert:                       `border border-[${border}]`,
+    otpCodeFieldInput:           `bg-[${inputBg}] border-[${border}] text-[${text}]`,
+    formFieldRow:                'mb-4',
+    main:                        'px-8 pt-4 pb-6',
+  },
+};
+
+// ─── Cache invalidation on user change ───────────────────────────────────────
+function ClerkCacheInvalidator() {
+  const { user } = useUser();
+  const qc = useQueryClient();
+  useEffect(() => {
+    qc.clear();
+  }, [user?.id]);
+  return null;
+}
+
+// ─── Sign-in / Sign-up page wrappers ─────────────────────────────────────────
+const EMBER_VIDEO = 'https://media.base44.com/videos/public/6a6982f0647238bf2b5d67bf/8d01159f7_rising-golden-embers-on-black-background-2025-12-17-19-25-08-utc.mp4';
+
+function AuthBackground({ children }) {
+  return (
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#0a0a12]">
+      {/* Ember video background */}
+      <video
+        autoPlay muted loop playsInline
+        className="absolute inset-0 w-full h-full object-cover opacity-20 pointer-events-none"
+        src={EMBER_VIDEO}
+      />
+      {/* Radial vignette */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0a0a1280] to-[#0a0a12] pointer-events-none" />
+      {/* Brand wordmark */}
+      <div className="absolute top-6 left-8 flex items-center gap-3 z-10">
+        <img src={`${basePath}/logo.svg`} alt="Freedom Foundry" className="w-9 h-9" />
+        <div>
+          <div className="text-[#f5f0eb] text-sm font-semibold tracking-widest uppercase">Freedom Foundry</div>
+          <div className="text-[#a89888] text-[10px] tracking-widest uppercase">by The Brand Revivalist</div>
+        </div>
+      </div>
+      <div className="relative z-10 w-full max-w-md px-4">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function SignInPage() {
+  return (
+    <AuthBackground>
+      <SignIn
+        routing="path"
+        path={`${basePath}/sign-in`}
+        signUpUrl={`${basePath}/sign-up`}
+        fallbackRedirectUrl={`${basePath}/`}
+      />
+    </AuthBackground>
+  );
+}
+
+function SignUpPage() {
+  return (
+    <AuthBackground>
+      <SignUp
+        routing="path"
+        path={`${basePath}/sign-up`}
+        signInUrl={`${basePath}/sign-in`}
+        fallbackRedirectUrl={`${basePath}/`}
+      />
+    </AuthBackground>
+  );
+}
+
+// ─── Main router ──────────────────────────────────────────────────────────────
+function AppRoutes() {
+  const { isSignedIn, isLoaded } = useUser();
+
+  if (!isLoaded) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
+      <div className="fixed inset-0 flex items-center justify-center bg-[#0a0a12]">
+        <div className="w-8 h-8 border-4 border-[#4a1010] border-t-[#c0392b] rounded-full animate-spin" />
       </div>
     );
   }
 
-  // Handle authentication errors
-  if (authError && authError.type === 'auth_required') {
-    // Redirect to login automatically
-    navigateToLogin();
-    return null;
-  }
-
-  // Render the main app
   return (
     <Routes>
-      {/* Auth routes — standalone (no main Layout), outside any auth guard */}
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/reset-password" element={<ResetPassword />} />
-      {/* Public share pages — no auth required */}
+      {/* Legacy /login → /sign-in redirect */}
+      <Route path="/login" element={<Navigate to="/sign-in" replace />} />
+      <Route path="/register" element={<Navigate to="/sign-up" replace />} />
+      <Route path="/forgot-password" element={<Navigate to="/sign-in" replace />} />
+      <Route path="/reset-password" element={<Navigate to="/sign-in" replace />} />
+
+      {/* Clerk auth routes — must be path-routed with /*? to handle OAuth callbacks */}
+      <Route path="/sign-in/*" element={<SignInPage />} />
+      <Route path="/sign-up/*" element={<SignUpPage />} />
+
+      {/* Public share pages */}
       <Route path="/share/:token" element={<SharePage />} />
       <Route path="/member/:brandSlug/:profileType" element={<SharePage />} />
 
+      {/* Root — redirect signed-in users to dashboard */}
+      <Route
+        path="/"
+        element={isSignedIn ? <Navigate to="/dashboard" replace /> : <Navigate to="/sign-in" replace />}
+      />
+
       {/* Protected routes */}
-      <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
+      <Route element={<ProtectedRoute />}>
         <Route element={<Layout />}>
-          <Route path="/" element={<Dashboard />} />
-        <Route path="/vault" element={<Vault />} />
-        <Route path="/vault/:id" element={<VaultItemDetail />} />
-        <Route path="/workbooks" element={<Workbooks />} />
-        <Route path="/workbooks/:id" element={<WorkbookPage />} />
-        <Route path="/services" element={<ServiceHub />} />
-        <Route path="/services/:type" element={<ServiceRequest />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/podcast" element={<Podcast />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/billing" element={<Billing />} />
-        <Route element={<BrandPortalLayout />}>
-          <Route path="/brand-portal" element={<BrandPortal />} />
-          <Route path="/brand-portal/big-picture" element={<BigPicture />} />
-          <Route path="/brand-portal/personal" element={<PersonalBrandProfile />} />
-          <Route path="/brand-portal/corporate" element={<CorporateBrandProfile />} />
-          <Route path="/brand-portal/guidelines" element={<BrandGuidelines />} />
-          <Route path="/brand-portal/assets" element={<BrandAssets />} />
-          <Route path="/brand-portal/media-kit" element={<MediaKit />} />
-          <Route path="/brand-portal/ignite" element={<IgniteOS />} />
-          <Route path="/brand-portal/brand-up" element={<BrandUp />} />
-          <Route path="/brand-portal/checklist" element={<BrandChecklist />} />
-          <Route path="/brand-portal/request-services" element={<RequestServices />} />
-        </Route>
-        {/* Legacy redirect paths kept for compatibility */}
-        <Route path="/admin/users" element={<AdminUsers />} />
-        <Route path="/admin/users/:id" element={<AdminUserDetail />} />
-        <Route path="/admin/brand-up" element={<BrandUpAdmin />} />
-        <Route path="/terms" element={<Terms />} />
-        <Route path="/privacy" element={<Privacy />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/vault" element={<Vault />} />
+          <Route path="/vault/:id" element={<VaultItemDetail />} />
+          <Route path="/workbooks" element={<Workbooks />} />
+          <Route path="/workbooks/:id" element={<WorkbookPage />} />
+          <Route path="/services" element={<ServiceHub />} />
+          <Route path="/services/:type" element={<ServiceRequest />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/podcast" element={<Podcast />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/billing" element={<Billing />} />
+          <Route element={<BrandPortalLayout />}>
+            <Route path="/brand-portal" element={<BrandPortal />} />
+            <Route path="/brand-portal/big-picture" element={<BigPicture />} />
+            <Route path="/brand-portal/personal" element={<PersonalBrandProfile />} />
+            <Route path="/brand-portal/corporate" element={<CorporateBrandProfile />} />
+            <Route path="/brand-portal/guidelines" element={<BrandGuidelines />} />
+            <Route path="/brand-portal/assets" element={<BrandAssets />} />
+            <Route path="/brand-portal/media-kit" element={<MediaKit />} />
+            <Route path="/brand-portal/ignite" element={<IgniteOS />} />
+            <Route path="/brand-portal/brand-up" element={<BrandUp />} />
+            <Route path="/brand-portal/checklist" element={<BrandChecklist />} />
+            <Route path="/brand-portal/request-services" element={<RequestServices />} />
+          </Route>
+          <Route path="/admin/users" element={<AdminUsers />} />
+          <Route path="/admin/users/:id" element={<AdminUserDetail />} />
+          <Route path="/admin/brand-up" element={<BrandUpAdmin />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
         </Route>
       </Route>
+
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
-};
-
+}
 
 function App() {
-
   return (
-    <AuthProvider>
+    <ClerkProvider
+      publishableKey={clerkPubKey}
+      proxyUrl={clerkProxyUrl}
+      appearance={clerkAppearance}
+      signInUrl={`${basePath}/sign-in`}
+      signUpUrl={`${basePath}/sign-up`}
+      signInFallbackRedirectUrl={`${basePath}/dashboard`}
+      signUpFallbackRedirectUrl={`${basePath}/dashboard`}
+      localization={{
+        signIn: { start: { title: 'Welcome back', subtitle: 'Sign in to your brand portal' } },
+        signUp: { start: { title: 'Create your account', subtitle: 'Join Freedom Foundry' } },
+      }}
+    >
       <QueryClientProvider client={queryClientInstance}>
+        <ClerkCacheInvalidator />
         <Router>
           <ScrollToTop />
-          <AuthenticatedApp />
+          <AppRoutes />
         </Router>
         <Toaster />
       </QueryClientProvider>
-    </AuthProvider>
-  )
+    </ClerkProvider>
+  );
 }
 
-export default App
+export default App;

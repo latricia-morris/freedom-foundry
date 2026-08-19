@@ -1,89 +1,45 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
-import apiClient, { getToken, setToken } from '@/api/client';
-
-const AuthContext = createContext();
-
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoadingAuth, setIsLoadingAuth] = useState(true);
-  const [isLoadingPublicSettings, setIsLoadingPublicSettings] = useState(false);
-  const [authError, setAuthError] = useState(null);
-  const [authChecked, setAuthChecked] = useState(false);
-  const [appPublicSettings] = useState({ public_settings: {} });
-
-  useEffect(() => {
-    checkUserAuth();
-  }, []);
-
-  const checkUserAuth = async () => {
-    try {
-      setIsLoadingAuth(true);
-      setAuthError(null);
-      const token = getToken();
-      if (!token) {
-        setIsAuthenticated(false);
-        setAuthChecked(true);
-        setIsLoadingAuth(false);
-        return;
-      }
-      const currentUser = await apiClient.auth.me();
-      setUser(currentUser);
-      setIsAuthenticated(true);
-      setAuthChecked(true);
-    } catch (error) {
-      setIsAuthenticated(false);
-      setAuthChecked(true);
-      if (error.status === 401 || error.status === 403) {
-        setToken(null);
-        setAuthError({ type: 'auth_required', message: 'Authentication required' });
-      }
-    } finally {
-      setIsLoadingAuth(false);
-    }
-  };
-
-  const checkAppState = checkUserAuth;
-
-  const logout = (shouldRedirect = true) => {
-    setUser(null);
-    setIsAuthenticated(false);
-    setToken(null);
-    if (shouldRedirect) {
-      window.location.href = '/login';
-    }
-  };
-
-  const navigateToLogin = (returnTo) => {
-    const url = returnTo ? `/login?returnTo=${encodeURIComponent(returnTo)}` : '/login';
-    window.location.href = url;
-  };
-
-  return (
-    <AuthContext.Provider value={{
-      user,
-      isAuthenticated,
-      isLoadingAuth,
-      isLoadingPublicSettings,
-      authError,
-      appPublicSettings,
-      authChecked,
-      logout,
-      navigateToLogin,
-      checkUserAuth,
-      checkAppState,
-      setUser,
-      setIsAuthenticated,
-    }}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
+/**
+ * Thin compatibility shim — the real auth is now Clerk.
+ * Components that import useAuth() still get isAuthenticated / user / logout.
+ * New code should prefer useUser() / useClerk() from @clerk/react directly.
+ */
+import { useUser, useClerk } from '@clerk/react';
 
 export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
+  const { user, isLoaded } = useUser();
+  const { signOut } = useClerk();
+
+  const basePath = import.meta.env.BASE_URL?.replace(/\/$/, '') || '';
+
+  return {
+    user: user
+      ? {
+          id: user.id,
+          email: user.primaryEmailAddress?.emailAddress ?? '',
+          first_name: user.firstName ?? '',
+          last_name: user.lastName ?? '',
+          full_name: user.fullName ?? '',
+          avatar_url: user.imageUrl ?? '',
+          role: user.publicMetadata?.role ?? 'user',
+        }
+      : null,
+    isAuthenticated: !!user,
+    isLoadingAuth: !isLoaded,
+    isLoadingPublicSettings: false,
+    authChecked: isLoaded,
+    authError: null,
+    appPublicSettings: { public_settings: {} },
+    logout: (shouldRedirect = true) =>
+      signOut({ redirectUrl: shouldRedirect ? basePath || '/' : undefined }),
+    navigateToLogin: () => {
+      window.location.href = `${basePath}/sign-in`;
+    },
+    checkUserAuth: () => {},
+    checkAppState: () => {},
+    setUser: () => {},
+    setIsAuthenticated: () => {},
+  };
 };
+
+// Legacy named export kept for compatibility
+export const AuthProvider = ({ children }) => children;
