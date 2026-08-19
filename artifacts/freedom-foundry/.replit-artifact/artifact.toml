@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Freedom Foundry"
+description = "Freedom Foundry is a premium brand portal by The Brand Revivalist. It gives entrepreneurs and creatives a complete toolkit for building and managing their personal or corporate brand identity — including a brand vault, workbooks, media kit, brand guidelines, a service hub, and an IgniteOS goal-setting experience. Built for serious brand builders who want to forge their freedom and build their legacy."
+version = "1.0.0"
+id = "artifacts/freedom-foundry"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 22640
+
+[services.development]
+run = "pnpm --filter @workspace/freedom-foundry run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/freedom-foundry", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/freedom-foundry/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "22640"
+BASE_PATH = "/"

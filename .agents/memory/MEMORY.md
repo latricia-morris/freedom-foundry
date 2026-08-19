@@ -1,0 +1,1 @@
+- [OpenAPI/Orval zod codegen quirks](openapi-orval-zod-quirks.md) — use type number (never integer), no bare type object, no union types, no multipart in openapi.yaml or zod codegen fails.

@@ -3,20 +3,22 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Freedom Foundry API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
-    description: Health operations
+  - name: auth
+  - name: users
+  - name: brand
+  - name: content
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +26,1066 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  # ─── AUTH ───────────────────────────────────────────────────────────────────
+  /auth/register:
+    post:
+      operationId: register
+      tags: [auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginInput"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthUser"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    patch:
+      operationId: updateMe
+      tags: [auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateMeInput"
+      responses:
+        "200":
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthUser"
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      responses:
+        "200":
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  # ─── USER PROFILES ──────────────────────────────────────────────────────────
+  /user-profiles:
+    get:
+      operationId: getUserProfiles
+      tags: [users]
+      parameters:
+        - name: user_id
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of user profiles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserProfile"
+    post:
+      operationId: createUserProfile
+      tags: [users]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserProfileInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+
+  /user-profiles/{id}:
+    patch:
+      operationId: updateUserProfile
+      tags: [users]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserProfileInput"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+
+  /users:
+    get:
+      operationId: listUsers
+      tags: [users]
+      responses:
+        "200":
+          description: All users (admin)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AuthUser"
+
+  # ─── BRAND PORTAL ───────────────────────────────────────────────────────────
+  /personal-brand-profiles:
+    get:
+      operationId: getPersonalBrandProfiles
+      tags: [brand]
+      parameters:
+        - name: user_id
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PersonalBrandProfile"
+    post:
+      operationId: createPersonalBrandProfile
+      tags: [brand]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PersonalBrandProfileInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PersonalBrandProfile"
+
+  /personal-brand-profiles/{id}:
+    patch:
+      operationId: updatePersonalBrandProfile
+      tags: [brand]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PersonalBrandProfileInput"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PersonalBrandProfile"
+
+  /corporate-brand-profiles:
+    get:
+      operationId: getCorporateBrandProfiles
+      tags: [brand]
+      parameters:
+        - name: user_id
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CorporateBrandProfile"
+    post:
+      operationId: createCorporateBrandProfile
+      tags: [brand]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CorporateBrandProfileInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CorporateBrandProfile"
+
+  /corporate-brand-profiles/{id}:
+    patch:
+      operationId: updateCorporateBrandProfile
+      tags: [brand]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CorporateBrandProfileInput"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CorporateBrandProfile"
+
+  /brand-guidelines:
+    get:
+      operationId: getBrandGuidelines
+      tags: [brand]
+      parameters:
+        - name: user_id
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BrandGuidelines"
+    post:
+      operationId: createBrandGuidelines
+      tags: [brand]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BrandGuidelinesInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BrandGuidelines"
+
+  /brand-guidelines/{id}:
+    patch:
+      operationId: updateBrandGuidelines
+      tags: [brand]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BrandGuidelinesInput"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BrandGuidelines"
+
+  /brand-assets:
+    get:
+      operationId: getBrandAssets
+      tags: [brand]
+      parameters:
+        - name: user_id
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BrandAsset"
+    post:
+      operationId: createBrandAsset
+      tags: [brand]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BrandAssetInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BrandAsset"
+
+  /brand-assets/{id}:
+    delete:
+      operationId: deleteBrandAsset
+      tags: [brand]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "204":
+          description: Deleted
+
+  /media-kits:
+    get:
+      operationId: getMediaKits
+      tags: [brand]
+      parameters:
+        - name: user_id
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MediaKit"
+    post:
+      operationId: createMediaKit
+      tags: [brand]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MediaKitInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MediaKit"
+
+  /media-kits/{id}:
+    patch:
+      operationId: updateMediaKit
+      tags: [brand]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MediaKitInput"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MediaKit"
+
+  /big-pictures:
+    get:
+      operationId: getBigPictures
+      tags: [brand]
+      parameters:
+        - name: user_id
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BigPicture"
+    post:
+      operationId: createBigPicture
+      tags: [brand]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BigPictureInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BigPicture"
+
+  /big-pictures/{id}:
+    patch:
+      operationId: updateBigPicture
+      tags: [brand]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BigPictureInput"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BigPicture"
+
+  /ignite-os:
+    get:
+      operationId: getIgniteOS
+      tags: [brand]
+      parameters:
+        - name: user_id
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/IgniteOS"
+    post:
+      operationId: createIgniteOS
+      tags: [brand]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IgniteOSInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IgniteOS"
+
+  /ignite-os/{id}:
+    patch:
+      operationId: updateIgniteOS
+      tags: [brand]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IgniteOSInput"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IgniteOS"
+
+  /share-links:
+    post:
+      operationId: createShareLink
+      tags: [brand]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ShareLinkInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShareLink"
+
+  /share-links/{token}:
+    get:
+      operationId: getShareLink
+      tags: [brand]
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Share link
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShareLink"
+
+  # ─── CONTENT ────────────────────────────────────────────────────────────────
+  /vault-items:
+    get:
+      operationId: getVaultItems
+      tags: [content]
+      responses:
+        "200":
+          description: List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/VaultItem"
+
+  /vault-items/{id}:
+    get:
+      operationId: getVaultItem
+      tags: [content]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Vault item
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VaultItem"
+
+  /course-modules:
+    get:
+      operationId: getCourseModules
+      tags: [content]
+      parameters:
+        - name: vault_item_id
+          in: query
+          schema:
+            type: number
+      responses:
+        "200":
+          description: List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CourseModule"
+
+  /course-lessons:
+    get:
+      operationId: getCourseLessons
+      tags: [content]
+      parameters:
+        - name: module_id
+          in: query
+          schema:
+            type: number
+      responses:
+        "200":
+          description: List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CourseLesson"
+
+  /lesson-progress:
+    get:
+      operationId: getLessonProgress
+      tags: [content]
+      parameters:
+        - name: user_id
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LessonProgress"
+    post:
+      operationId: createLessonProgress
+      tags: [content]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LessonProgressInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LessonProgress"
+
+  /lesson-progress/{id}:
+    delete:
+      operationId: deleteLessonProgress
+      tags: [content]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "204":
+          description: Deleted
+
+  /workbook-definitions:
+    get:
+      operationId: getWorkbookDefinitions
+      tags: [content]
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: vault_item_id
+          in: query
+          schema:
+            type: number
+      responses:
+        "200":
+          description: List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/WorkbookDefinition"
+
+  /workbook-definitions/{id}:
+    get:
+      operationId: getWorkbookDefinition
+      tags: [content]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Workbook definition
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkbookDefinition"
+
+  /workbook-responses:
+    get:
+      operationId: getWorkbookResponses
+      tags: [content]
+      parameters:
+        - name: user_id
+          in: query
+          schema:
+            type: string
+        - name: workbook_id
+          in: query
+          schema:
+            type: number
+      responses:
+        "200":
+          description: List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/WorkbookResponse"
+    post:
+      operationId: createWorkbookResponse
+      tags: [content]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WorkbookResponseInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkbookResponse"
+
+  /workbook-responses/{id}:
+    patch:
+      operationId: updateWorkbookResponse
+      tags: [content]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WorkbookResponseInput"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkbookResponse"
+
+  /checklist-tasks:
+    get:
+      operationId: getChecklistTasks
+      tags: [content]
+      parameters:
+        - name: user_id
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ChecklistTask"
+    post:
+      operationId: createChecklistTask
+      tags: [content]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChecklistTaskInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChecklistTask"
+
+  /checklist-tasks/{id}:
+    patch:
+      operationId: updateChecklistTask
+      tags: [content]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChecklistTaskInput"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChecklistTask"
+    delete:
+      operationId: deleteChecklistTask
+      tags: [content]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "204":
+          description: Deleted
+
+  /brand-up-prompts:
+    get:
+      operationId: getBrandUpPrompts
+      tags: [content]
+      parameters:
+        - name: is_active
+          in: query
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BrandUpPrompt"
+    post:
+      operationId: createBrandUpPrompt
+      tags: [content]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BrandUpPromptInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BrandUpPrompt"
+
+  /brand-up-prompts/{id}:
+    patch:
+      operationId: updateBrandUpPrompt
+      tags: [content]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BrandUpPromptInput"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BrandUpPrompt"
+    delete:
+      operationId: deleteBrandUpPrompt
+      tags: [content]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "204":
+          description: Deleted
+
+  /brand-up-entries:
+    get:
+      operationId: getBrandUpEntries
+      tags: [content]
+      parameters:
+        - name: user_id
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BrandUpEntry"
+    post:
+      operationId: createBrandUpEntry
+      tags: [content]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BrandUpEntryInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BrandUpEntry"
+
+  /brand-up-entries/{id}:
+    delete:
+      operationId: deleteBrandUpEntry
+      tags: [content]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "204":
+          description: Deleted
+
+  /service-requests:
+    get:
+      operationId: getServiceRequests
+      tags: [content]
+      parameters:
+        - name: user_id
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ServiceRequest"
+    post:
+      operationId: createServiceRequest
+      tags: [content]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ServiceRequestInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceRequest"
+
 components:
   schemas:
     HealthStatus:
@@ -31,6 +1093,1135 @@ components:
       properties:
         status:
           type: string
-      required:
-        - status
+      required: [status]
 
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required: [error]
+
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+      required: [success]
+
+    FreeObject:
+      type: object
+      additionalProperties: true
+
+    LinkObject:
+      type: object
+      properties:
+        title:
+          type: string
+        url:
+          type: string
+      additionalProperties: true
+
+    # ── Auth ──────────────────────────────────────────────────────────────────
+    RegisterInput:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+      required: [email, password]
+
+    LoginInput:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required: [email, password]
+
+    UpdateMeInput:
+      type: object
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+
+    AuthUser:
+      type: object
+      properties:
+        id:
+          type: number
+        email:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        role:
+          type: string
+        created_at:
+          type: string
+      required: [id, email, role, created_at]
+
+    AuthResponse:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/AuthUser"
+        token:
+          type: string
+      required: [user, token]
+
+    # ── User Profiles ─────────────────────────────────────────────────────────
+    UserProfile:
+      type: object
+      properties:
+        id:
+          type: number
+        user_id:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        business_name:
+          type: string
+        website:
+          type: string
+        phone:
+          type: string
+        headshot_url:
+          type: string
+        account_type:
+          type: string
+        brand_power_moves_unlocked:
+          type: boolean
+        brand_power_moves_unlocked_at:
+          type: string
+        unlock_method:
+          type: string
+        active_program_id:
+          type: string
+        notes:
+          type: string
+        setup_status:
+          $ref: "#/components/schemas/FreeObject"
+        marketing_consent:
+          type: boolean
+        consent_date:
+          type: string
+        created_at:
+          type: string
+      required: [id, user_id, created_at]
+
+    UserProfileInput:
+      type: object
+      properties:
+        user_id:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        business_name:
+          type: string
+        website:
+          type: string
+        phone:
+          type: string
+        headshot_url:
+          type: string
+        account_type:
+          type: string
+        brand_power_moves_unlocked:
+          type: boolean
+        brand_power_moves_unlocked_at:
+          type: string
+        unlock_method:
+          type: string
+        active_program_id:
+          type: string
+        notes:
+          type: string
+        setup_status:
+          $ref: "#/components/schemas/FreeObject"
+        marketing_consent:
+          type: boolean
+        consent_date:
+          type: string
+
+    # ── Brand ─────────────────────────────────────────────────────────────────
+    PersonalBrandProfile:
+      type: object
+      properties:
+        id:
+          type: number
+        user_id:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        business_name:
+          type: string
+        headshot_urls:
+          type: array
+          items:
+            type: string
+        short_bio:
+          type: string
+        long_bio:
+          type: string
+        logo_urls:
+          type: array
+          items:
+            type: string
+        feature_links:
+          type: array
+          items:
+            $ref: "#/components/schemas/LinkObject"
+        phone:
+          type: string
+        email:
+          type: string
+        website:
+          type: string
+        social_links:
+          type: array
+          items:
+            $ref: "#/components/schemas/LinkObject"
+        location_city:
+          type: string
+        location_state:
+          type: string
+        location_country:
+          type: string
+        has_books:
+          type: boolean
+        book_links:
+          type: array
+          items:
+            $ref: "#/components/schemas/LinkObject"
+        heading_font:
+          type: string
+        subheading_font:
+          type: string
+        body_font:
+          type: string
+        accent_font:
+          type: string
+        brand_voice:
+          type: string
+        brand_tonality:
+          type: string
+        brand_prompts:
+          type: string
+        brand_specs:
+          type: string
+        positioning:
+          type: string
+        created_at:
+          type: string
+      required: [id, user_id, created_at]
+
+    PersonalBrandProfileInput:
+      type: object
+      properties:
+        user_id:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        business_name:
+          type: string
+        headshot_urls:
+          type: array
+          items:
+            type: string
+        short_bio:
+          type: string
+        long_bio:
+          type: string
+        logo_urls:
+          type: array
+          items:
+            type: string
+        feature_links:
+          type: array
+          items:
+            $ref: "#/components/schemas/LinkObject"
+        phone:
+          type: string
+        email:
+          type: string
+        website:
+          type: string
+        social_links:
+          type: array
+          items:
+            $ref: "#/components/schemas/LinkObject"
+        location_city:
+          type: string
+        location_state:
+          type: string
+        location_country:
+          type: string
+        has_books:
+          type: boolean
+        book_links:
+          type: array
+          items:
+            $ref: "#/components/schemas/LinkObject"
+        heading_font:
+          type: string
+        subheading_font:
+          type: string
+        body_font:
+          type: string
+        accent_font:
+          type: string
+        brand_voice:
+          type: string
+        brand_tonality:
+          type: string
+        brand_prompts:
+          type: string
+        brand_specs:
+          type: string
+        positioning:
+          type: string
+
+    CorporateBrandProfile:
+      type: object
+      properties:
+        id:
+          type: number
+        user_id:
+          type: string
+        company_name:
+          type: string
+        tagline:
+          type: string
+        mission_statement:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        website:
+          type: string
+        location_city:
+          type: string
+        location_state:
+          type: string
+        location_country:
+          type: string
+        has_books:
+          type: boolean
+        book_links:
+          type: array
+          items:
+            $ref: "#/components/schemas/LinkObject"
+        heading_font:
+          type: string
+        subheading_font:
+          type: string
+        body_font:
+          type: string
+        accent_font:
+          type: string
+        colors:
+          type: array
+          items:
+            $ref: "#/components/schemas/FreeObject"
+        logo_urls:
+          type: array
+          items:
+            type: string
+        moodboard_urls:
+          type: array
+          items:
+            type: string
+        brand_voice:
+          type: string
+        brand_tonality:
+          type: string
+        brand_personality:
+          type: string
+        brand_prompts:
+          type: string
+        brand_specs:
+          type: string
+        positioning:
+          type: string
+        target_audience:
+          type: string
+        created_at:
+          type: string
+      required: [id, user_id, created_at]
+
+    CorporateBrandProfileInput:
+      type: object
+      properties:
+        user_id:
+          type: string
+        company_name:
+          type: string
+        tagline:
+          type: string
+        mission_statement:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        website:
+          type: string
+        location_city:
+          type: string
+        location_state:
+          type: string
+        location_country:
+          type: string
+        has_books:
+          type: boolean
+        book_links:
+          type: array
+          items:
+            $ref: "#/components/schemas/LinkObject"
+        heading_font:
+          type: string
+        subheading_font:
+          type: string
+        body_font:
+          type: string
+        accent_font:
+          type: string
+        colors:
+          type: array
+          items:
+            $ref: "#/components/schemas/FreeObject"
+        logo_urls:
+          type: array
+          items:
+            type: string
+        moodboard_urls:
+          type: array
+          items:
+            type: string
+        brand_voice:
+          type: string
+        brand_tonality:
+          type: string
+        brand_personality:
+          type: string
+        brand_prompts:
+          type: string
+        brand_specs:
+          type: string
+        positioning:
+          type: string
+        target_audience:
+          type: string
+
+    BrandGuidelines:
+      type: object
+      properties:
+        id:
+          type: number
+        user_id:
+          type: string
+        heading_font:
+          type: string
+        subheading_font:
+          type: string
+        body_font:
+          type: string
+        accent_font:
+          type: string
+        logo_usage_notes:
+          type: string
+        color_usage_notes:
+          type: string
+        typography_notes:
+          type: string
+        photography_style:
+          type: string
+        tone_notes:
+          type: string
+        brand_dont_list:
+          type: string
+        additional_standards:
+          type: string
+        created_at:
+          type: string
+      required: [id, user_id, created_at]
+
+    BrandGuidelinesInput:
+      type: object
+      properties:
+        user_id:
+          type: string
+        heading_font:
+          type: string
+        subheading_font:
+          type: string
+        body_font:
+          type: string
+        accent_font:
+          type: string
+        logo_usage_notes:
+          type: string
+        color_usage_notes:
+          type: string
+        typography_notes:
+          type: string
+        photography_style:
+          type: string
+        tone_notes:
+          type: string
+        brand_dont_list:
+          type: string
+        additional_standards:
+          type: string
+
+    BrandAsset:
+      type: object
+      properties:
+        id:
+          type: number
+        user_id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        file_url:
+          type: string
+        file_type:
+          type: string
+        created_at:
+          type: string
+      required: [id, user_id, created_at]
+
+    BrandAssetInput:
+      type: object
+      properties:
+        user_id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        file_url:
+          type: string
+        file_type:
+          type: string
+
+    MediaKit:
+      type: object
+      properties:
+        id:
+          type: number
+        user_id:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        business_name:
+          type: string
+        short_bio:
+          type: string
+        long_bio:
+          type: string
+        headshot_urls:
+          type: array
+          items:
+            type: string
+        logo_urls:
+          type: array
+          items:
+            type: string
+        phone:
+          type: string
+        email:
+          type: string
+        website:
+          type: string
+        social_links:
+          type: array
+          items:
+            $ref: "#/components/schemas/LinkObject"
+        feature_links:
+          type: array
+          items:
+            $ref: "#/components/schemas/LinkObject"
+        location_city:
+          type: string
+        location_state:
+          type: string
+        location_country:
+          type: string
+        has_books:
+          type: boolean
+        book_links:
+          type: array
+          items:
+            $ref: "#/components/schemas/LinkObject"
+        podcast_links:
+          type: array
+          items:
+            $ref: "#/components/schemas/LinkObject"
+        created_at:
+          type: string
+      required: [id, user_id, created_at]
+
+    MediaKitInput:
+      type: object
+      properties:
+        user_id:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        business_name:
+          type: string
+        short_bio:
+          type: string
+        long_bio:
+          type: string
+        headshot_urls:
+          type: array
+          items:
+            type: string
+        logo_urls:
+          type: array
+          items:
+            type: string
+        phone:
+          type: string
+        email:
+          type: string
+        website:
+          type: string
+        social_links:
+          type: array
+          items:
+            $ref: "#/components/schemas/LinkObject"
+        feature_links:
+          type: array
+          items:
+            $ref: "#/components/schemas/LinkObject"
+        location_city:
+          type: string
+        location_state:
+          type: string
+        location_country:
+          type: string
+        has_books:
+          type: boolean
+        book_links:
+          type: array
+          items:
+            $ref: "#/components/schemas/LinkObject"
+        podcast_links:
+          type: array
+          items:
+            $ref: "#/components/schemas/LinkObject"
+
+    BigPicture:
+      type: object
+      properties:
+        id:
+          type: number
+        user_id:
+          type: string
+        word_for_the_year:
+          type: string
+        end_of_year_goal:
+          type: string
+        secondary_goal:
+          type: string
+        annual_revenue:
+          type: string
+        monthly_revenue:
+          type: string
+        weekly_revenue:
+          type: string
+        pricing_strategy_month:
+          type: string
+        client_booking_target:
+          type: string
+        clients_per_week:
+          type: string
+        travel_goals:
+          type: string
+        learning_goals:
+          type: string
+        meeting_goals:
+          type: string
+        impact_statement:
+          type: string
+        legacy_statement:
+          type: string
+        planning_checklist:
+          type: array
+          items:
+            type: string
+        vision_health:
+          type: string
+        vision_career:
+          type: string
+        vision_family:
+          type: string
+        vision_money:
+          type: string
+        vision_travels:
+          type: string
+        vision_hobbies:
+          type: string
+        vision_relationships:
+          type: string
+        breakdown_goal:
+          type: string
+        breakdown_components:
+          type: string
+        breakdown_priorities:
+          type: string
+        breakdown_monthly_target:
+          type: string
+        breakdown_weekly_tasks:
+          type: string
+        breakdown_daily_step:
+          type: string
+        breakdown_weekly_review:
+          type: string
+        long_term_goal_3yr:
+          type: string
+        long_term_goal_5yr:
+          type: string
+        long_term_revenue:
+          type: string
+        long_term_positioning:
+          type: string
+        created_at:
+          type: string
+      required: [id, user_id, created_at]
+
+    BigPictureInput:
+      type: object
+      properties:
+        user_id:
+          type: string
+        word_for_the_year:
+          type: string
+        end_of_year_goal:
+          type: string
+        secondary_goal:
+          type: string
+        annual_revenue:
+          type: string
+        monthly_revenue:
+          type: string
+        weekly_revenue:
+          type: string
+        pricing_strategy_month:
+          type: string
+        client_booking_target:
+          type: string
+        clients_per_week:
+          type: string
+        travel_goals:
+          type: string
+        learning_goals:
+          type: string
+        meeting_goals:
+          type: string
+        impact_statement:
+          type: string
+        legacy_statement:
+          type: string
+        planning_checklist:
+          type: array
+          items:
+            type: string
+        vision_health:
+          type: string
+        vision_career:
+          type: string
+        vision_family:
+          type: string
+        vision_money:
+          type: string
+        vision_travels:
+          type: string
+        vision_hobbies:
+          type: string
+        vision_relationships:
+          type: string
+        breakdown_goal:
+          type: string
+        breakdown_components:
+          type: string
+        breakdown_priorities:
+          type: string
+        breakdown_monthly_target:
+          type: string
+        breakdown_weekly_tasks:
+          type: string
+        breakdown_daily_step:
+          type: string
+        breakdown_weekly_review:
+          type: string
+        long_term_goal_3yr:
+          type: string
+        long_term_goal_5yr:
+          type: string
+        long_term_revenue:
+          type: string
+        long_term_positioning:
+          type: string
+
+    IgniteOS:
+      type: object
+      properties:
+        id:
+          type: number
+        user_id:
+          type: string
+        data:
+          $ref: "#/components/schemas/FreeObject"
+        created_at:
+          type: string
+      required: [id, user_id, created_at]
+
+    IgniteOSInput:
+      type: object
+      properties:
+        user_id:
+          type: string
+        data:
+          $ref: "#/components/schemas/FreeObject"
+
+    ShareLink:
+      type: object
+      properties:
+        id:
+          type: number
+        token:
+          type: string
+        profile_type:
+          type: string
+        profile_id:
+          type: string
+        is_active:
+          type: boolean
+        created_at:
+          type: string
+      required: [id, token, profile_type, created_at]
+
+    ShareLinkInput:
+      type: object
+      properties:
+        token:
+          type: string
+        profile_type:
+          type: string
+        profile_id:
+          type: string
+        is_active:
+          type: boolean
+      required: [token, profile_type]
+
+    # ── Content ───────────────────────────────────────────────────────────────
+    VaultItem:
+      type: object
+      properties:
+        id:
+          type: number
+        title:
+          type: string
+        subtitle:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+        featured_image_url:
+          type: string
+        download_url:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        price:
+          type: string
+        status:
+          type: string
+        order:
+          type: number
+        is_featured:
+          type: boolean
+        is_free:
+          type: boolean
+        access_code:
+          type: string
+        created_at:
+          type: string
+      required: [id, title, type, created_at]
+
+    CourseModule:
+      type: object
+      properties:
+        id:
+          type: number
+        vault_item_id:
+          type: number
+        title:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+        order:
+          type: number
+        created_at:
+          type: string
+      required: [id, title, created_at]
+
+    CourseLesson:
+      type: object
+      properties:
+        id:
+          type: number
+        module_id:
+          type: number
+        title:
+          type: string
+        content:
+          type: string
+        video_url:
+          type: string
+        status:
+          type: string
+        order:
+          type: number
+        created_at:
+          type: string
+      required: [id, title, created_at]
+
+    LessonProgress:
+      type: object
+      properties:
+        id:
+          type: number
+        user_id:
+          type: string
+        lesson_id:
+          type: number
+        completed_at:
+          type: string
+        created_at:
+          type: string
+      required: [id, user_id, lesson_id, created_at]
+
+    LessonProgressInput:
+      type: object
+      properties:
+        user_id:
+          type: string
+        lesson_id:
+          type: number
+        completed_at:
+          type: string
+      required: [user_id, lesson_id]
+
+    WorkbookDefinition:
+      type: object
+      properties:
+        id:
+          type: number
+        vault_item_id:
+          type: number
+        title:
+          type: string
+        description:
+          type: string
+        fields:
+          $ref: "#/components/schemas/FreeObject"
+        status:
+          type: string
+        order:
+          type: number
+        created_at:
+          type: string
+      required: [id, title, created_at]
+
+    WorkbookResponse:
+      type: object
+      properties:
+        id:
+          type: number
+        user_id:
+          type: string
+        workbook_id:
+          type: number
+        responses:
+          $ref: "#/components/schemas/FreeObject"
+        created_at:
+          type: string
+      required: [id, user_id, workbook_id, created_at]
+
+    WorkbookResponseInput:
+      type: object
+      properties:
+        user_id:
+          type: string
+        workbook_id:
+          type: number
+        responses:
+          $ref: "#/components/schemas/FreeObject"
+      required: [user_id, workbook_id]
+
+    ChecklistTask:
+      type: object
+      properties:
+        id:
+          type: number
+        user_id:
+          type: string
+        title:
+          type: string
+        status:
+          type: string
+        parent_id:
+          type: number
+        deadline_date:
+          type: string
+        assignee:
+          type: string
+        created_at:
+          type: string
+      required: [id, user_id, title, created_at]
+
+    ChecklistTaskInput:
+      type: object
+      properties:
+        user_id:
+          type: string
+        title:
+          type: string
+        status:
+          type: string
+        parent_id:
+          type: number
+        deadline_date:
+          type: string
+        assignee:
+          type: string
+
+    BrandUpPrompt:
+      type: object
+      properties:
+        id:
+          type: number
+        title:
+          type: string
+        prompt:
+          type: string
+        is_active:
+          type: boolean
+        order:
+          type: number
+        created_at:
+          type: string
+      required: [id, created_at]
+
+    BrandUpPromptInput:
+      type: object
+      properties:
+        title:
+          type: string
+        prompt:
+          type: string
+        is_active:
+          type: boolean
+        order:
+          type: number
+
+    BrandUpEntry:
+      type: object
+      properties:
+        id:
+          type: number
+        user_id:
+          type: string
+        prompt_id:
+          type: number
+        response:
+          type: string
+        created_at:
+          type: string
+      required: [id, user_id, created_at]
+
+    BrandUpEntryInput:
+      type: object
+      properties:
+        user_id:
+          type: string
+        prompt_id:
+          type: number
+        response:
+          type: string
+      required: [user_id]
+
+    ServiceRequest:
+      type: object
+      properties:
+        id:
+          type: number
+        user_id:
+          type: string
+        service_type:
+          type: string
+        details:
+          $ref: "#/components/schemas/FreeObject"
+        budget_range:
+          type: string
+        timeline:
+          type: string
+        deposit_acknowledged:
+          type: boolean
+        status:
+          type: string
+        created_at:
+          type: string
+      required: [id, user_id, service_type, created_at]
+
+    ServiceRequestInput:
+      type: object
+      properties:
+        user_id:
+          type: string
+        service_type:
+          type: string
+        details:
+          $ref: "#/components/schemas/FreeObject"
+        budget_range:
+          type: string
+        timeline:
+          type: string
+        deposit_acknowledged:
+          type: boolean
+      required: [user_id, service_type]
