@@ -156,7 +156,7 @@ function SignInPage() {
         routing="path"
         path={`${basePath}/sign-in`}
         signUpUrl={`${basePath}/sign-up`}
-        fallbackRedirectUrl={`${basePath}/`}
+        fallbackRedirectUrl={`${basePath}/dashboard`}
       />
     </AuthBackground>
   );
@@ -169,7 +169,7 @@ function SignUpPage() {
         routing="path"
         path={`${basePath}/sign-up`}
         signInUrl={`${basePath}/sign-in`}
-        fallbackRedirectUrl={`${basePath}/`}
+        fallbackRedirectUrl={`${basePath}/dashboard`}
       />
     </AuthBackground>
   );
@@ -196,8 +196,8 @@ function AppRoutes() {
       <Route path="/reset-password" element={<Navigate to="/sign-in" replace />} />
 
       {/* Clerk auth routes — must be path-routed with /*? to handle OAuth callbacks */}
-      <Route path="/sign-in/*" element={<SignInPage />} />
-      <Route path="/sign-up/*" element={<SignUpPage />} />
+      <Route path="/sign-in/*?" element={<SignInPage />} />
+      <Route path="/sign-up/*?" element={<SignUpPage />} />
 
       {/* Public share pages */}
       <Route path="/share/:token" element={<SharePage />} />
