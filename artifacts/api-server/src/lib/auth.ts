@@ -1,14 +1,63 @@
 import { Request, Response, NextFunction } from "express";
-import { getAuth } from "@clerk/express";
+import { clerkClient, getAuth } from "@clerk/express";
 
-/** Middleware: require a valid Clerk session. Sets req.userId (Clerk user id string). */
-export function authMiddleware(req: Request, res: Response, next: NextFunction): void {
-  const { userId } = getAuth(req);
-  if (!userId) {
-    res.status(401).json({ error: "Unauthorized" });
+declare global {
+  namespace Express {
+    interface Request {
+      userId?: string;
+      user?: {
+        id: string;
+        email: string | null;
+        firstName: string | null;
+        lastName: string | null;
+        role: string;
+      };
+    }
+  }
+}
+
+const leadAdminEmail = process.env.LEAD_ADMIN_EMAIL?.trim().toLowerCase();
+
+/**
+ * Middleware: require a valid Clerk session and expose the signed-in user's
+ * minimal profile and role to the legacy API routes.
+ */
+export async function authMiddleware(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const { userId } = getAuth(req);
+    if (!userId) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+
+    const clerkUser = await clerkClient.users.getUser(userId);
+    const email = clerkUser.primaryEmailAddress?.emailAddress?.toLowerCase() ?? null;
+    const metadataRole = typeof clerkUser.publicMetadata?.role === "string"
+      ? clerkUser.publicMetadata.role
+      : "user";
+
+    req.userId = userId;
+    req.user = {
+      id: clerkUser.id,
+      email,
+      firstName: clerkUser.firstName,
+      lastName: clerkUser.lastName,
+      // The one lead-admin identity is configured outside source control.
+      // Other roles can be assigned through Clerk public metadata.
+      role: leadAdminEmail && email === leadAdminEmail ? "admin" : metadataRole,
+    };
+    next();
+  } catch (error) {
+    next(error);
+  }
+}
+
+/** Middleware: requires authMiddleware to run first and permits administrators only. */
+export function requireAdmin(req: Request, res: Response, next: NextFunction): void {
+  if (req.user?.role !== "admin") {
+    res.status(403).json({ error: "Forbidden" });
     return;
   }
-  (req as any).userId = userId;
   next();
 }
 
@@ -16,7 +65,7 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction):
 export function optionalAuth(req: Request, _res: Response, next: NextFunction): void {
   const { userId } = getAuth(req);
   if (userId) {
-    (req as any).userId = userId;
+    req.userId = userId;
   }
   next();
 }

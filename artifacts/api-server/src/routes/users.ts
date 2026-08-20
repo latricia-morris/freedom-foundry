@@ -7,8 +7,7 @@ const router: IRouter = Router();
 
 // Admin: list all users
 router.get("/users", authMiddleware, async (req, res): Promise<void> => {
-  const me = (req as any).user;
-  if (me.role !== "admin") {
+  if (req.user?.role !== "admin") {
     res.status(403).json({ error: "Forbidden" });
     return;
   }

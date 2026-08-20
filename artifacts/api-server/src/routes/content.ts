@@ -1,7 +1,7 @@
 import { Router, type IRouter } from "express";
 import { db, vaultItemsTable, courseModulesTable, courseLessonsTable, lessonProgressTable, workbookDefinitionsTable, workbookResponsesTable, checklistTasksTable, brandUpPromptsTable, brandUpEntriesTable, serviceRequestSubmissionsTable } from "@workspace/db";
 import { eq, and } from "drizzle-orm";
-import { authMiddleware } from "../lib/auth";
+import { authMiddleware, requireAdmin } from "../lib/auth";
 
 const router: IRouter = Router();
 
@@ -156,12 +156,12 @@ router.get("/brand-up-prompts", async (req, res): Promise<void> => {
   res.json(rows);
 });
 
-router.post("/brand-up-prompts", authMiddleware, async (req, res): Promise<void> => {
+router.post("/brand-up-prompts", authMiddleware, requireAdmin, async (req, res): Promise<void> => {
   const [row] = await db.insert(brandUpPromptsTable).values(req.body).returning();
   res.status(201).json(row);
 });
 
-router.patch("/brand-up-prompts/:id", authMiddleware, async (req, res): Promise<void> => {
+router.patch("/brand-up-prompts/:id", authMiddleware, requireAdmin, async (req, res): Promise<void> => {
   const id = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id, 10);
   const data = { ...req.body }; delete data.id;
   const [row] = await db.update(brandUpPromptsTable).set(data).where(eq(brandUpPromptsTable.id, id)).returning();
@@ -169,7 +169,7 @@ router.patch("/brand-up-prompts/:id", authMiddleware, async (req, res): Promise<
   res.json(row);
 });
 
-router.delete("/brand-up-prompts/:id", authMiddleware, async (req, res): Promise<void> => {
+router.delete("/brand-up-prompts/:id", authMiddleware, requireAdmin, async (req, res): Promise<void> => {
   const id = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id, 10);
   await db.delete(brandUpPromptsTable).where(eq(brandUpPromptsTable.id, id));
   res.sendStatus(204);

@@ -3,13 +3,27 @@
  * Components that import useAuth() still get isAuthenticated / user / logout.
  * New code should prefer useUser() / useClerk() from @clerk/react directly.
  */
+import { useEffect, useState } from 'react';
 import { useUser, useClerk } from '@clerk/react';
 
 export const useAuth = () => {
   const { user, isLoaded } = useUser();
   const { signOut } = useClerk();
+  const [appRole, setAppRole] = useState('user');
 
   const basePath = import.meta.env.BASE_URL?.replace(/\/$/, '') || '';
+
+  useEffect(() => {
+    if (!user) {
+      setAppRole('user');
+      return;
+    }
+
+    fetch(`${basePath}/api/auth/me`, { credentials: 'include' })
+      .then((response) => response.ok ? response.json() : null)
+      .then((data) => setAppRole(data?.user?.role ?? user.publicMetadata?.role ?? 'user'))
+      .catch(() => setAppRole(user.publicMetadata?.role ?? 'user'));
+  }, [basePath, user?.id, user?.publicMetadata?.role]);
 
   return {
     user: user
@@ -20,7 +34,7 @@ export const useAuth = () => {
           last_name: user.lastName ?? '',
           full_name: user.fullName ?? '',
           avatar_url: user.imageUrl ?? '',
-          role: user.publicMetadata?.role ?? 'user',
+          role: appRole,
         }
       : null,
     isAuthenticated: !!user,

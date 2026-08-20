@@ -26,9 +26,19 @@ router.post("/auth/reset-password", (_req, res): void => {
   res.status(410).json({ error: "Use Clerk authentication" });
 });
 
-// /api/auth/me — returns the Clerk userId for the active session
+// /api/auth/me — returns the session's safe profile and app role.
 router.get("/auth/me", authMiddleware, (req, res): void => {
-  res.json({ userId: (req as any).userId });
+  res.json({
+    user: req.user
+      ? {
+          id: req.user.id,
+          email: req.user.email,
+          firstName: req.user.firstName,
+          lastName: req.user.lastName,
+          role: req.user.role,
+        }
+      : { id: req.userId },
+  });
 });
 
 export default router;

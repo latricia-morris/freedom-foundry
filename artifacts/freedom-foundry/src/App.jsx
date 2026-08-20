@@ -1,4 +1,4 @@
-import { ClerkProvider, SignIn, SignUp, useUser } from '@clerk/react';
+import { AuthenticateWithRedirectCallback, ClerkProvider, SignUp, useUser } from '@clerk/react';
 import { publishableKeyFromHost } from '@clerk/react/internal';
 import { shadcn } from '@clerk/themes';
 import { QueryClientProvider } from '@tanstack/react-query';
@@ -40,6 +40,7 @@ import BrandUp from './pages/BrandUp';
 import BrandChecklist from './pages/BrandChecklist';
 import RequestServices from './pages/RequestServices';
 import BrandUpAdmin from './pages/BrandUpAdmin';
+import FreedomSignInForm from './components/auth/FreedomSignInForm';
 
 // ─── Clerk config ─────────────────────────────────────────────────────────────
 const basePath = import.meta.env.BASE_URL?.replace(/\/$/, '') || '';
@@ -123,7 +124,7 @@ const EMBER_VIDEO = 'https://media.base44.com/videos/public/6a6982f0647238bf2b5d
 
 function AuthBackground({ children }) {
   return (
-    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#0a0a12]">
+    <div className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden bg-[#0a0a12] px-4 py-12">
       {/* Ember video background */}
       <video
         autoPlay muted loop playsInline
@@ -143,7 +144,7 @@ function AuthBackground({ children }) {
           <div className="text-[10px] uppercase tracking-[0.25em] text-[#d9c9a3]">BY THE BRAND REVIVALIST</div>
         </div>
       </div>
-      <div className="relative z-10 w-full max-w-md px-4">
+      <div className="relative z-10 my-8 w-full max-w-md">
         {children}
       </div>
     </div>
@@ -153,12 +154,7 @@ function AuthBackground({ children }) {
 function SignInPage() {
   return (
     <AuthBackground>
-      <SignIn
-        routing="path"
-        path={`${basePath}/sign-in`}
-        signUpUrl={`${basePath}/sign-up`}
-        fallbackRedirectUrl={`${basePath}/dashboard`}
-      />
+      <FreedomSignInForm basePath={basePath} />
     </AuthBackground>
   );
 }
@@ -196,7 +192,9 @@ function AppRoutes() {
       <Route path="/forgot-password" element={<Navigate to="/sign-in" replace />} />
       <Route path="/reset-password" element={<Navigate to="/sign-in" replace />} />
 
-      {/* Clerk auth routes — must be path-routed with /*? to handle OAuth callbacks */}
+      {/* Custom sign-in and Clerk-managed sign-up */}
+      <Route path="/sign-in/sso-callback" element={<AuthenticateWithRedirectCallback />} />
+      <Route path="/sign-up/sso-callback" element={<AuthenticateWithRedirectCallback />} />
       <Route path="/sign-in/*?" element={<SignInPage />} />
       <Route path="/sign-up/*?" element={<SignUpPage />} />
 

@@ -25,7 +25,17 @@ async function apiFetch(path, options = {}) {
 
 // ─── Auth (compatibility surface — real auth is Clerk) ────────────────────────
 export const auth = {
-  async me() { return apiFetch('/auth/me'); },
+  async me() {
+    const response = await apiFetch('/auth/me');
+    const user = response?.user ?? response;
+    // Keep the imported app's snake_case user surface while Clerk's server
+    // bridge returns a minimal modern profile.
+    return {
+      ...user,
+      first_name: user?.first_name ?? user?.firstName ?? '',
+      last_name: user?.last_name ?? user?.lastName ?? '',
+    };
+  },
   // These are no-ops / compatibility stubs. Clerk handles registration & login.
   async login() { return null; },
   async register() { return null; },
