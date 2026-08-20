@@ -1,0 +1,24 @@
+kind = "mobile"
+previewPath = "/freedom-foundry-expo/"
+title = "Freedom Foundry Mobile"
+description = "A universal Expo Router client for Freedom Foundry, sharing the existing brand portal API across iOS, Android, and web without replacing the current browser app."
+version = "1.0.0"
+id = "artifacts/freedom-foundry-expo"
+router = "expo-domain"
+
+[[services]]
+name = "expo"
+ensurePreviewReachable = "/status"
+paths = [ "/freedom-foundry-expo/" ]
+localPort = 21360
+
+[services.development]
+run = "pnpm --filter @workspace/freedom-foundry-expo run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/freedom-foundry-expo", "run", "build" ]
+run = [ "pnpm", "--filter", "@workspace/freedom-foundry-expo", "run", "serve" ]
+
+[services.env]
+PORT = "21360"
+BASE_PATH = "/freedom-foundry-expo/"

@@ -1,0 +1,44 @@
+{
+  "expo": {
+    "name": "Freedom Foundry",
+    "slug": "freedom-foundry-expo",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon-generated.png",
+    "scheme": "freedom-foundry",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/icon-generated.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#14110f"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.thebrandrevivalist.freedomfoundry"
+    },
+    "android": {
+      "package": "com.thebrandrevivalist.freedomfoundry"
+    },
+    "web": {
+      "favicon": "./assets/images/icon-generated.png",
+      "bundler": "metro",
+      "output": "single"
+    },
+    "plugins": [
+      [
+        "expo-router",
+        {
+          "origin": "https://replit.com/"
+        }
+      ],
+      "expo-font",
+      "expo-web-browser"
+    ],
+    "experiments": {
+      "baseUrl": "/freedom-foundry-expo",
+      "typedRoutes": true,
+      "reactCompiler": true
+    }
+  }
+}
