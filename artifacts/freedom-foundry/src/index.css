@@ -69,6 +69,17 @@
 }
 
 @layer components {
+  .freedom-auth-card {
+    width: min(100%, 28rem);
+    overflow: hidden;
+    border: 1px solid rgba(247, 242, 234, 0.08);
+    border-radius: 20px;
+    background: rgba(8, 8, 14, 0.72);
+    box-shadow: 0 8px 48px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+  }
+
   .forged-border {
     border: 1px solid hsl(var(--border));
   }

@@ -1,2 +1,3 @@
 - [OpenAPI/Orval zod codegen quirks](openapi-orval-zod-quirks.md) — use type number (never integer), no bare type object, no union types, no multipart in openapi.yaml or zod codegen fails.
 - [Clerk provider settings](clerk-provider-settings.md) — enable email, Google, and Apple in Replit's Auth pane separately for Development and Production.
+- [Preserve imported auth visuals](preserve-imported-auth-visuals.md) — keep the original Freedom Foundry auth experience when changing authentication infrastructure.
