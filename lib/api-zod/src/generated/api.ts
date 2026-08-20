@@ -66,7 +66,9 @@ export const GetMeResponse = zod.object({
 
 export const UpdateMeBody = zod.object({
   "first_name": zod.string().optional(),
-  "last_name": zod.string().optional()
+  "last_name": zod.string().optional(),
+  "phone": zod.string().optional(),
+  "headshot_image_url": zod.string().optional()
 })
 
 export const UpdateMeResponse = zod.object({

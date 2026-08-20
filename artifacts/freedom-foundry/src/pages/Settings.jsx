@@ -12,8 +12,10 @@ export default function Settings() {
   const [phone, setPhone] = useState('');
   const [headshot, setHeadshot] = useState(null);
   const [headshotUrl, setHeadshotUrl] = useState('');
+  const [loadError, setLoadError] = useState('');
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState('');
   const [bugReport, setBugReport] = useState('');
   const [bugSubmitted, setBugSubmitted] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
@@ -34,8 +36,12 @@ export default function Settings() {
         const p = profiles?.[0] || null;
         setProfileRecord(p);
         setMarketingConsent(p?.marketing_consent || false);
-      }).catch(() => {});
-    }).catch(() => {});
+      }).catch((e) => {
+        setLoadError(e.message || 'Unable to load your profile.');
+      });
+    }).catch((e) => {
+      setLoadError(e.message || 'Unable to load your profile.');
+    });
   }, []);
 
   const handleConsentToggle = async () => {
@@ -58,6 +64,8 @@ export default function Settings() {
 
   const handleSave = async () => {
     setSaving(true);
+    setSaved(false);
+    setSaveError('');
     try {
       const data = { first_name: firstName, last_name: lastName, phone };
       if (headshot) {
@@ -68,7 +76,9 @@ export default function Settings() {
       await apiClient.auth.updateMe(data);
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
-    } catch (e) {}
+    } catch (e) {
+      setSaveError(e.message || 'Unable to save your profile. Please try again.');
+    }
     setSaving(false);
   };
 
@@ -88,6 +98,7 @@ export default function Settings() {
       </div>
 
       <div className="editorial-container space-y-8">
+        {loadError && <p role="alert" className="text-sm text-red-700">{loadError}</p>}
         {/* Profile */}
         <section className="space-y-5">
           <div className="flex items-center gap-2">
@@ -112,6 +123,7 @@ export default function Settings() {
           <button onClick={handleSave} disabled={saving} className="flex items-center gap-2 px-6 py-2.5 forged-gradient rounded-lg text-xs uppercase tracking-widest text-white disabled:opacity-50">
             {saved ? <Check className="w-4 h-4" /> : null}{saving ? 'Saving...' : saved ? 'Saved!' : 'Save Changes'}
           </button>
+          {saveError && <p role="alert" className="text-sm text-red-700">{saveError}</p>}
         </section>
 
         <div className="h-px bg-black/10" />

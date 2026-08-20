@@ -28,12 +28,15 @@ export const auth = {
   async me() {
     const response = await apiFetch('/auth/me');
     const user = response?.user ?? response;
+    const profile = response?.profile;
     // Keep the imported app's snake_case user surface while Clerk's server
     // bridge returns a minimal modern profile.
     return {
       ...user,
-      first_name: user?.first_name ?? user?.firstName ?? '',
-      last_name: user?.last_name ?? user?.lastName ?? '',
+      first_name: user?.first_name ?? profile?.first_name ?? user?.firstName ?? '',
+      last_name: user?.last_name ?? profile?.last_name ?? user?.lastName ?? '',
+      phone: user?.phone ?? profile?.phone ?? '',
+      headshot_image_url: user?.headshot_image_url ?? profile?.headshot_url ?? '',
     };
   },
   // These are no-ops / compatibility stubs. Clerk handles registration & login.

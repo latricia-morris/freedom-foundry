@@ -1134,6 +1134,10 @@ components:
           type: string
         last_name:
           type: string
+        phone:
+          type: string
+        headshot_image_url:
+          type: string
 
     AuthUser:
       type: object

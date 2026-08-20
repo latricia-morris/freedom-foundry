@@ -9,4 +9,6 @@
 export interface UpdateMeInput {
   first_name?: string;
   last_name?: string;
+  phone?: string;
+  headshot_image_url?: string;
 }
