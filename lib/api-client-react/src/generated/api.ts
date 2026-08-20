@@ -893,7 +893,7 @@ export const updateAdminUserAccount = async (userId: string,
 
 
 
-export const getUpdateAdminUserAccountMutationOptions = <TError = ErrorType<unknown>,
+export const getUpdateAdminUserAccountMutationOptions = <TError = ErrorType<ErrorResponse>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateAdminUserAccount>>, TError,{userId: string;data: BodyType<AdminAccountInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof updateAdminUserAccount>>, TError,{userId: string;data: BodyType<AdminAccountInput>}, TContext> => {
 
@@ -922,9 +922,9 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type UpdateAdminUserAccountMutationResult = NonNullable<Awaited<ReturnType<typeof updateAdminUserAccount>>>
     export type UpdateAdminUserAccountMutationBody = BodyType<AdminAccountInput>
-    export type UpdateAdminUserAccountMutationError = ErrorType<unknown>
+    export type UpdateAdminUserAccountMutationError = ErrorType<ErrorResponse>
 
-    export const useUpdateAdminUserAccount = <TError = ErrorType<unknown>,
+    export const useUpdateAdminUserAccount = <TError = ErrorType<ErrorResponse>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateAdminUserAccount>>, TError,{userId: string;data: BodyType<AdminAccountInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
  ): UseMutationResult<
         Awaited<ReturnType<typeof updateAdminUserAccount>>,

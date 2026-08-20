@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Shield, Check, FileText, ListChecks, MessageSquare, Send, Eye } from 'lucide-react';
+import { ArrowLeft, Shield, Check, FileText, ListChecks, MessageSquare, Send, Eye, AlertTriangle } from 'lucide-react';
 import apiClient from '@/api/client';
 import { ACCOUNT_TYPE_LABELS } from '@/lib/useMembership';
 
@@ -38,6 +38,7 @@ export default function AdminUserDetail() {
   const [bpmUnlocked, setBpmUnlocked] = useState(false);
   const [notes, setNotes] = useState('');
   const [role, setRole] = useState('user');
+  const [currentUserId, setCurrentUserId] = useState(null);
   const [saveError, setSaveError] = useState('');
   const [loadError, setLoadError] = useState('');
 
@@ -56,6 +57,7 @@ export default function AdminUserDetail() {
   useEffect(() => {
     apiClient.auth.me().then(async me => {
       if (me.role !== 'admin') { setDenied(true); setLoading(false); return; }
+      setCurrentUserId(me.id || null);
       try {
         const account = await apiClient.admin.getUserAccount(id);
         const u = account.user || null;
@@ -97,6 +99,10 @@ export default function AdminUserDetail() {
 
   const handleSave = async () => {
     if (!user) return;
+    if (user.id === currentUserId && user.role === 'admin' && role === 'user') {
+      setSaveError('Your administrator role cannot be changed from your own account. Ask another administrator to make this change.');
+      return;
+    }
     setSaving(true);
     setSaveError('');
     try {
@@ -145,6 +151,8 @@ export default function AdminUserDetail() {
       <Link to="/admin/users" className="text-sm text-primary">Back to Users</Link>
     </div>
   );
+
+  const isOwnAdministratorAccount = user.id === currentUserId && user.role === 'admin';
 
   // Group workbook responses by workbook
   const wbGroups = {};
@@ -213,12 +221,29 @@ export default function AdminUserDetail() {
             <select
               id="member-role"
               value={role}
-              onChange={e => setRole(e.target.value)}
+              onChange={e => {
+                setSaveError('');
+                setRole(e.target.value);
+              }}
+              aria-describedby={isOwnAdministratorAccount ? 'self-role-protection' : undefined}
               className="w-full rounded-xl border border-black/10 bg-white px-4 py-3 text-sm text-[#1a1420] outline-none transition-colors focus:border-[#b3232c]"
             >
-              <option value="user">Member</option>
+              <option value="user" disabled={isOwnAdministratorAccount}>Member</option>
               <option value="admin">Administrator</option>
             </select>
+            {isOwnAdministratorAccount && (
+              <div
+                id="self-role-protection"
+                role="status"
+                className="mt-3 flex gap-3 rounded-lg border border-amber-500/30 bg-amber-50 px-4 py-3 text-sm text-amber-950"
+              >
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-700" aria-hidden="true" />
+                <p>
+                  You’re editing your own administrator account. Your dashboard access is protected: you cannot change
+                  your own role to Member. Ask another administrator to make that change if needed.
+                </p>
+              </div>
+            )}
           </div>
 
           <div>

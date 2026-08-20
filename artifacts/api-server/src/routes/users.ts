@@ -137,6 +137,12 @@ router.patch("/admin/users/:userId", authMiddleware, requireAdmin, async (req, r
     res.status(400).json({ error: "Choose a valid membership type" });
     return;
   }
+  if (params.data.userId === req.user?.id && body.data.role === "user") {
+    res.status(409).json({
+      error: "You cannot remove your own administrator access. Ask another administrator to change your role.",
+    });
+    return;
+  }
 
   try {
     let user = await clerkClient.users.getUser(params.data.userId);

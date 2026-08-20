@@ -235,6 +235,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AdminUserAccount"
+        "409":
+          description: An administrator attempted to remove their own administrator access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 
   # ─── BRAND PORTAL ───────────────────────────────────────────────────────────
   /personal-brand-profiles:
