@@ -392,7 +392,7 @@ router.post("/admin/client-setups/:id/claim", authMiddleware, requireAdmin, asyn
   }
   const users = await clerkClient.users.getUserList({ emailAddress: [setup.email], limit: 1 });
   const user = users.data[0];
-  const userEmail = user?.primaryEmailAddress?.emailAddress?.toLowerCase();
+  const userEmail = normalizeEmail(user?.primaryEmailAddress?.emailAddress);
   if (!user || userEmail !== setup.email) {
     res.status(409).json({ error: "The matching client account has not accepted an invitation yet." });
     return;
