@@ -2000,15 +2000,13 @@ components:
     ShareLinkInput:
       type: object
       properties:
-        token:
-          type: string
         profile_type:
           type: string
         profile_id:
           type: string
         is_active:
           type: boolean
-      required: [token, profile_type]
+      required: [profile_type, profile_id]
 
     # ── Content ───────────────────────────────────────────────────────────────
     VaultItem:

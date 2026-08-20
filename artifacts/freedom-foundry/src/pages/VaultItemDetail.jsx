@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Lock, Download, Sparkles } from 'lucide-react';
+import { ArrowLeft, Lock, Download, ExternalLink } from 'lucide-react';
 import apiClient from '@/api/client';
 import CoursePlayer from '@/components/course/CoursePlayer';
 import WorkbookExperience from '@/components/workbook/WorkbookExperience';
@@ -54,24 +54,35 @@ export default function VaultItemDetail() {
             <p className="text-sm text-muted-foreground leading-relaxed">{item.description}</p>
           </div>
           {item.download_url && (
-            <a
-              href={item.download_url}
-              download
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-white text-sm font-semibold"
-              style={{ background: 'linear-gradient(131deg, #b3232c, #d9622c, #f0d9b5)' }}
-            >
-              <Download className="w-4 h-4" /> Download Resource
-            </a>
+            <>
+              {item.download_url.toLowerCase().includes('.pdf') && (
+                <div className="forged-border overflow-hidden rounded-2xl bg-card">
+                  <iframe
+                    src={item.download_url}
+                    title={`${item.title} preview`}
+                    className="h-[68vh] min-h-[32rem] w-full bg-white"
+                  />
+                </div>
+              )}
+              <div className="flex flex-wrap gap-3">
+                <a
+                  href={item.download_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+                >
+                  <ExternalLink className="w-4 h-4" /> View in a new tab
+                </a>
+                <a
+                  href={item.download_url}
+                  download
+                  className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-5 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-accent"
+                >
+                  <Download className="w-4 h-4" /> Download PDF
+                </a>
+              </div>
+            </>
           )}
-          <div className="forged-border rounded-2xl bg-card p-6 flex items-start gap-3">
-            <Sparkles className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ stroke: 'url(#warmGradientSvg)' }} />
-            <div>
-              <p className="text-sm text-foreground font-medium mb-1">Digital workbook coming soon</p>
-              <p className="text-sm text-muted-foreground">An interactive digital workbook for this guide is being forged. In the meantime, enjoy this free resource.</p>
-            </div>
-          </div>
         </div>
       )}
       {item.type !== 'Course' && item.type !== 'Digital Workbook' && item.type !== 'Download' && (

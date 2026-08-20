@@ -162,7 +162,7 @@ export default function MediaKit() {
           className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 text-sm text-[#f7f2ea]/70 hover:text-[#f7f2ea] hover:border-white/20 transition-colors disabled:opacity-40"
         >
           <Share2 className="w-4 h-4" />
-          {generatingShare ? 'Generating...' : 'Share Media Kit'}
+          {generatingShare ? 'Creating link...' : 'Create share link'}
         </button>
       </div>
 
@@ -188,7 +188,7 @@ export default function MediaKit() {
       {shareLink && (
         <div className="mb-6 p-4 rounded-xl border border-white/10 bg-white/[0.03] flex items-center gap-3">
           <span className="text-sm text-[#f7f2ea]/70 flex-1 truncate">{shareLink}</span>
-          <button onClick={() => copyText(shareLink)} className="flex items-center gap-1.5 text-xs text-[#f7f2ea]/50 hover:text-[#f7f2ea] transition-colors"><Copy className="w-3.5 h-3.5" /> Copy</button>
+          <button onClick={() => copyText(shareLink)} className="text-xs font-semibold text-[#f7f2ea]/50 transition-colors hover:text-[#f7f2ea]">Copy link</button>
           <a href={shareLink} target="_blank" rel="noopener noreferrer" className="text-[#f7f2ea]/50 hover:text-[#f7f2ea] transition-colors"><ExternalLink className="w-3.5 h-3.5" /></a>
         </div>
       )}

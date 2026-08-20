@@ -7,8 +7,7 @@
  */
 
 export interface ShareLinkInput {
-  token: string;
   profile_type: string;
-  profile_id?: string;
+  profile_id: string;
   is_active?: boolean;
 }

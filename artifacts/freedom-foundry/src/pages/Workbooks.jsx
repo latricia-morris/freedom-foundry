@@ -41,8 +41,8 @@ export default function Workbooks() {
 
       {workbooks.length === 0 ? (
         <div className="forged-border rounded-2xl bg-card p-12 text-center">
-          <h3 className="font-heading text-xl text-foreground mb-2">Workbooks coming soon</h3>
-          <p className="text-sm text-muted-foreground">Check back shortly for premium workbook experiences.</p>
+          <h3 className="font-heading text-xl text-foreground mb-2">No Brand Power Moves workbooks are available yet</h3>
+          <p className="text-sm text-muted-foreground">The original authored workbook exercises were not included in the imported data, so nothing has been substituted or invented here.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

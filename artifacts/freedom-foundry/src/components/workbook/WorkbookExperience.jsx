@@ -1,45 +1,79 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Copy, Printer, Check, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useUser } from '@clerk/react';
 import apiClient from '@/api/client';
 import WorkbookField from '@/components/workbook/WorkbookField';
 import ChecklistAddBox from '@/components/workbook/ChecklistAddBox';
 import openPrintFriendly from '@/components/workbook/openPrintFriendly';
 
 export default function WorkbookExperience({ workbook }) {
+  const { user } = useUser();
   const [responses, setResponses] = useState({});
+  const [responseRecord, setResponseRecord] = useState(null);
   const [activePageIndex, setActivePageIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const saveTimeouts = useRef({});
+  const saveChain = useRef(Promise.resolve());
+  const responsesRef = useRef({});
+  const responseRecordRef = useRef(null);
 
   useEffect(() => {
-    apiClient.entities.WorkbookResponse.filter({ workbook_id: workbook.id })
+    responsesRef.current = responses;
+  }, [responses]);
+
+  useEffect(() => {
+    responseRecordRef.current = responseRecord;
+  }, [responseRecord]);
+
+  useEffect(() => {
+    if (!user?.id) {
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    apiClient.entities.WorkbookResponse.filter({ user_id: user.id, workbook_id: workbook.id })
       .then(saved => {
-        const map = {};
-        (saved || []).forEach(r => { map[r.field_id] = r; });
-        setResponses(map);
+        const record = saved?.[0] || null;
+        setResponseRecord(record);
+        setResponses(record?.responses && typeof record.responses === 'object' ? record.responses : {});
       })
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, [workbook.id]);
+  }, [user?.id, workbook.id]);
 
-  const pages = workbook.pages || [];
+  const rawPages = Array.isArray(workbook.pages)
+    ? workbook.pages
+    : Array.isArray(workbook.fields)
+      ? workbook.fields
+      : [];
+  const pages = rawPages[0]?.fields
+    ? rawPages
+    : rawPages.length
+      ? [{ page_id: 'workbook', title: workbook.title, fields: rawPages }]
+      : [];
   const activePage = pages[activePageIndex];
 
   const handleFieldChange = (fieldId, value) => {
-    setResponses(prev => ({ ...prev, [fieldId]: { ...prev[fieldId], value } }));
+    if (!user?.id) return;
+    const nextResponses = { ...responsesRef.current, [fieldId]: value };
+    responsesRef.current = nextResponses;
+    setResponses(nextResponses);
     if (saveTimeouts.current[fieldId]) clearTimeout(saveTimeouts.current[fieldId]);
-    saveTimeouts.current[fieldId] = setTimeout(async () => {
-      const existing = responses[fieldId];
-      try {
+    saveTimeouts.current[fieldId] = setTimeout(() => {
+      saveChain.current = saveChain.current.catch(() => {}).then(async () => {
+        const currentResponses = responsesRef.current;
+        const existing = responseRecordRef.current;
         if (existing?.id) {
-          const updated = await apiClient.entities.WorkbookResponse.update(existing.id, { value });
-          setResponses(prev => ({ ...prev, [fieldId]: updated }));
+          const updated = await apiClient.entities.WorkbookResponse.update(existing.id, { responses: currentResponses });
+          responseRecordRef.current = updated;
+          setResponseRecord(updated);
         } else {
-          const created = await apiClient.entities.WorkbookResponse.create({ workbook_id: workbook.id, field_id: fieldId, page_id: activePage?.page_id, value });
-          setResponses(prev => ({ ...prev, [fieldId]: created }));
+          const created = await apiClient.entities.WorkbookResponse.create({ user_id: user.id, workbook_id: workbook.id, responses: currentResponses });
+          responseRecordRef.current = created;
+          setResponseRecord(created);
         }
-      } catch (e) {}
+      });
     }, 800);
   };
 
@@ -48,7 +82,7 @@ export default function WorkbookExperience({ workbook }) {
     pages.forEach(page => {
       prompt += `${page.title}\n\n`;
       page.fields?.forEach(field => {
-        const val = responses[field.field_id]?.value || '[Not yet answered]';
+        const val = responses[field.field_id] || '[Not yet answered]';
         prompt += `${field.label}\n${val}\n\n`;
       });
     });
@@ -60,8 +94,8 @@ export default function WorkbookExperience({ workbook }) {
   if (loading) return <div className="flex justify-center py-20"><div className="w-8 h-8 border-2 border-border border-t-primary rounded-full animate-spin" /></div>;
   if (!pages.length) return (
     <div className="editorial-container text-center">
-      <h3 className="text-xl mb-2">Workbook content coming soon</h3>
-      <p className="text-sm">This workbook is being prepared. Check back shortly.</p>
+      <h3 className="text-xl mb-2">No original workbook content is available</h3>
+      <p className="text-sm">This title was published without its original exercises, so no replacement content has been invented.</p>
     </div>
   );
 
@@ -93,7 +127,7 @@ export default function WorkbookExperience({ workbook }) {
               <div key={field.field_id}>
                 <WorkbookField
                   field={field}
-                  value={responses[field.field_id]?.value || ''}
+                  value={responses[field.field_id] || ''}
                   onChange={(v) => handleFieldChange(field.field_id, v)}
                 />
                 <ChecklistAddBox workbookTitle={workbook.title} />

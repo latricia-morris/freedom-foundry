@@ -117,7 +117,7 @@ export default function PersonalBrandProfile() {
         </div>
         <div className="flex items-center gap-3 mt-1">
           <button onClick={handleShare} disabled={generatingShare} className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm transition-colors disabled:opacity-40 whitespace-nowrap ${lightMode ? 'border-black/10 text-[#1a1420]/70 hover:text-[#1a1420] hover:border-black/20' : 'border-white/10 text-[#f7f2ea]/70 hover:text-[#f7f2ea] hover:border-white/20'}`}>
-            <Share2 className="w-4 h-4" /> {generatingShare ? 'Generating...' : 'Share Profile'}
+            <Share2 className="w-4 h-4" /> {generatingShare ? 'Creating link...' : 'Create share link'}
           </button>
           <button onClick={() => setLightMode(!lightMode)} className={`flex items-center gap-1.5 text-xs ${lightMode ? 'text-[#1a1420]/50 hover:text-[#1a1420]/80' : 'text-[#f7f2ea]/40 hover:text-[#f7f2ea]/70'} transition-colors`}>
             {lightMode ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
@@ -129,7 +129,7 @@ export default function PersonalBrandProfile() {
       {shareLink && (
         <div className={`mb-6 p-4 rounded-xl border ${lightMode ? 'border-black/10 bg-black/[0.03]' : 'border-white/10 bg-white/[0.03]'} flex items-center gap-3`}>
           <span className={`text-sm ${lightMode ? 'text-[#1a1420]/70' : 'text-[#f7f2ea]/70'} flex-1 truncate`}>{shareLink}</span>
-          <button onClick={() => { navigator.clipboard.writeText(shareLink); toast({ title: 'Copied!' }); }} className={`text-xs ${lightMode ? 'text-[#1a1420]/50 hover:text-[#1a1420]' : 'text-[#f7f2ea]/50 hover:text-[#f7f2ea]'} transition-colors`}>Copy</button>
+          <button onClick={() => { navigator.clipboard.writeText(shareLink); toast({ title: 'Link copied', description: 'Your brand kit link is ready to share.' }); }} className={`text-xs font-semibold ${lightMode ? 'text-[#1a1420]/50 hover:text-[#1a1420]' : 'text-[#f7f2ea]/50 hover:text-[#f7f2ea]'} transition-colors`}>Copy link</button>
         </div>
       )}
 

@@ -1,9 +1,69 @@
 import { Router, type IRouter } from "express";
+import { randomBytes } from "node:crypto";
 import { db, personalBrandProfilesTable, corporateBrandProfilesTable, brandGuidelinesTable, brandAssetsTable, mediaKitsTable, bigPicturesTable, igniteOSTable, shareLinksTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 import { authMiddleware } from "../lib/auth";
 
 const router: IRouter = Router();
+
+const publicProfileFields = {
+  personal: [
+    "first_name", "last_name", "business_name", "headshot_urls", "short_bio", "long_bio",
+    "logo_urls", "feature_links", "phone", "email", "website", "social_links",
+    "location_city", "location_state", "location_country", "has_books", "book_links",
+    "heading_font", "subheading_font", "body_font", "accent_font", "brand_voice",
+    "brand_tonality", "positioning", "brand_specs",
+  ],
+  corporate: [
+    "company_name", "tagline", "mission_statement", "phone", "email", "website",
+    "location_city", "location_state", "location_country", "has_books", "book_links",
+    "heading_font", "subheading_font", "body_font", "accent_font", "colors", "logo_urls",
+    "moodboard_urls", "brand_voice", "brand_tonality", "brand_personality", "positioning",
+    "target_audience", "brand_specs",
+  ],
+  media_kit: [
+    "first_name", "last_name", "business_name", "short_bio", "long_bio", "headshot_urls",
+    "logo_urls", "phone", "email", "website", "social_links", "feature_links",
+    "location_city", "location_state", "location_country", "has_books", "book_links",
+    "podcast_links",
+  ],
+} as const;
+
+const publicGuidelineFields = [
+  "heading_font", "subheading_font", "body_font", "accent_font", "logo_usage_notes",
+  "color_usage_notes", "typography_notes", "photography_style", "tone_notes",
+  "brand_dont_list", "additional_standards",
+] as const;
+
+function pickPublicFields(row: Record<string, unknown>, fields: readonly string[]) {
+  return fields.reduce<Record<string, unknown>>((result, field) => {
+    if (row[field] !== null && row[field] !== undefined && row[field] !== "") {
+      result[field] = row[field];
+    }
+    return result;
+  }, {});
+}
+
+function normalizePublicAsset(asset: Record<string, unknown>) {
+  return pickPublicFields(asset, ["title", "description", "file_url", "file_type"]);
+}
+
+function normalizeColors(value: unknown) {
+  if (!Array.isArray(value)) return [];
+  return value
+    .filter((color): color is Record<string, unknown> => Boolean(color) && typeof color === "object")
+    .map(color => ({
+      name: typeof color.name === "string" ? color.name : "",
+      hex: typeof color.hex === "string" ? color.hex : "",
+    }))
+    .filter(color => color.name || color.hex);
+}
+
+function ownedCreatePayload(req: Parameters<typeof authMiddleware>[0]) {
+  if (!req.userId) return null;
+  const { id: _id, user_id: _requestedUserId, ...data } = req.body as Record<string, unknown>;
+  return { ...data, user_id: req.userId };
+}
 
 // ─── Personal Brand Profiles ─────────────────────────────────────────────────
 router.get("/personal-brand-profiles", authMiddleware, async (req, res): Promise<void> => {
@@ -15,7 +75,9 @@ router.get("/personal-brand-profiles", authMiddleware, async (req, res): Promise
 });
 
 router.post("/personal-brand-profiles", authMiddleware, async (req, res): Promise<void> => {
-  const [row] = await db.insert(personalBrandProfilesTable).values(req.body).returning();
+  const data = ownedCreatePayload(req);
+  if (!data) { res.status(401).json({ error: "Unauthorized" }); return; }
+  const [row] = await db.insert(personalBrandProfilesTable).values(data).returning();
   res.status(201).json(row);
 });
 
@@ -37,7 +99,9 @@ router.get("/corporate-brand-profiles", authMiddleware, async (req, res): Promis
 });
 
 router.post("/corporate-brand-profiles", authMiddleware, async (req, res): Promise<void> => {
-  const [row] = await db.insert(corporateBrandProfilesTable).values(req.body).returning();
+  const data = ownedCreatePayload(req);
+  if (!data) { res.status(401).json({ error: "Unauthorized" }); return; }
+  const [row] = await db.insert(corporateBrandProfilesTable).values(data).returning();
   res.status(201).json(row);
 });
 
@@ -59,7 +123,9 @@ router.get("/brand-guidelines", authMiddleware, async (req, res): Promise<void> 
 });
 
 router.post("/brand-guidelines", authMiddleware, async (req, res): Promise<void> => {
-  const [row] = await db.insert(brandGuidelinesTable).values(req.body).returning();
+  const data = ownedCreatePayload(req);
+  if (!data) { res.status(401).json({ error: "Unauthorized" }); return; }
+  const [row] = await db.insert(brandGuidelinesTable).values(data).returning();
   res.status(201).json(row);
 });
 
@@ -81,7 +147,9 @@ router.get("/brand-assets", authMiddleware, async (req, res): Promise<void> => {
 });
 
 router.post("/brand-assets", authMiddleware, async (req, res): Promise<void> => {
-  const [row] = await db.insert(brandAssetsTable).values(req.body).returning();
+  const data = ownedCreatePayload(req);
+  if (!data) { res.status(401).json({ error: "Unauthorized" }); return; }
+  const [row] = await db.insert(brandAssetsTable).values(data).returning();
   res.status(201).json(row);
 });
 
@@ -101,7 +169,9 @@ router.get("/media-kits", authMiddleware, async (req, res): Promise<void> => {
 });
 
 router.post("/media-kits", authMiddleware, async (req, res): Promise<void> => {
-  const [row] = await db.insert(mediaKitsTable).values(req.body).returning();
+  const data = ownedCreatePayload(req);
+  if (!data) { res.status(401).json({ error: "Unauthorized" }); return; }
+  const [row] = await db.insert(mediaKitsTable).values(data).returning();
   res.status(201).json(row);
 });
 
@@ -170,22 +240,62 @@ router.get("/shared-profile/:token", async (req, res): Promise<void> => {
     res.status(404).json({ error: "Profile not found" });
     return;
   }
-  let profile: unknown = null;
+  let profileRow: Record<string, unknown> | null = null;
   if (link.profile_type === "personal") {
     const [row] = await db.select().from(personalBrandProfilesTable).where(eq(personalBrandProfilesTable.id, profileId));
-    profile = row || null;
+    profileRow = row ? (row as Record<string, unknown>) : null;
   } else if (link.profile_type === "corporate") {
     const [row] = await db.select().from(corporateBrandProfilesTable).where(eq(corporateBrandProfilesTable.id, profileId));
-    profile = row || null;
+    profileRow = row ? (row as Record<string, unknown>) : null;
   } else if (link.profile_type === "media_kit") {
     const [row] = await db.select().from(mediaKitsTable).where(eq(mediaKitsTable.id, profileId));
-    profile = row || null;
+    profileRow = row ? (row as Record<string, unknown>) : null;
   }
-  if (!profile) {
+  if (!profileRow) {
     res.status(404).json({ error: "Profile not found" });
     return;
   }
-  res.json({ profile_type: link.profile_type, profile });
+
+  const userId = profileRow.user_id;
+  const [guidelineRows, assetRows, corporateRows, personalRows, mediaKitRows] = await Promise.all([
+    db.select().from(brandGuidelinesTable).where(eq(brandGuidelinesTable.user_id, String(userId))),
+    db.select().from(brandAssetsTable).where(eq(brandAssetsTable.user_id, String(userId))),
+    db.select().from(corporateBrandProfilesTable).where(eq(corporateBrandProfilesTable.user_id, String(userId))),
+    db.select().from(personalBrandProfilesTable).where(eq(personalBrandProfilesTable.user_id, String(userId))),
+    db.select().from(mediaKitsTable).where(eq(mediaKitsTable.user_id, String(userId))),
+  ]);
+
+  const guidelines = guidelineRows[0] ? pickPublicFields(
+    guidelineRows[0] as Record<string, unknown>,
+    publicGuidelineFields,
+  ) : null;
+  const corporate = corporateRows[0] as Record<string, unknown> | undefined;
+  const profileFields = publicProfileFields[link.profile_type as keyof typeof publicProfileFields]
+    || publicProfileFields.personal;
+
+  const fontSource = corporate || (personalRows[0] as Record<string, unknown> | undefined)
+    || (mediaKitRows[0] as Record<string, unknown> | undefined) || profileRow;
+  const fonts = pickPublicFields(fontSource, [
+    "heading_font", "subheading_font", "body_font", "accent_font",
+  ]);
+
+  res.json({
+    version: 1,
+    profile_type: link.profile_type,
+    profile: pickPublicFields(profileRow, profileFields),
+    guidelines,
+    assets: assetRows.map(asset => normalizePublicAsset(asset as Record<string, unknown>)),
+    brand: {
+      colors: normalizeColors(corporate?.colors),
+      fonts,
+      voice: corporate?.brand_voice || profileRow.brand_voice || null,
+      tonality: corporate?.brand_tonality || profileRow.brand_tonality || null,
+      positioning: corporate?.positioning || profileRow.positioning || null,
+      target_audience: corporate?.target_audience || null,
+      mission_statement: corporate?.mission_statement || null,
+      tagline: corporate?.tagline || null,
+    },
+  });
 });
 
 // ─── Share Links ──────────────────────────────────────────────────────────────
@@ -197,7 +307,47 @@ router.get("/share-links/:token", async (req, res): Promise<void> => {
 });
 
 router.post("/share-links", authMiddleware, async (req, res): Promise<void> => {
-  const [row] = await db.insert(shareLinksTable).values(req.body).returning();
+  const { profile_type, profile_id, is_active = true } = req.body;
+  const profileId = Number(profile_id);
+  if (!["personal", "corporate", "media_kit"].includes(profile_type) || !Number.isInteger(profileId) || profileId <= 0) {
+    res.status(400).json({ error: "A supported profile type and profile are required" });
+    return;
+  }
+  if (!req.userId) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+
+  let profileOwnerId: string | null = null;
+  if (profile_type === "personal") {
+    const [profile] = await db.select({ user_id: personalBrandProfilesTable.user_id })
+      .from(personalBrandProfilesTable)
+      .where(eq(personalBrandProfilesTable.id, profileId));
+    profileOwnerId = profile?.user_id ?? null;
+  } else if (profile_type === "corporate") {
+    const [profile] = await db.select({ user_id: corporateBrandProfilesTable.user_id })
+      .from(corporateBrandProfilesTable)
+      .where(eq(corporateBrandProfilesTable.id, profileId));
+    profileOwnerId = profile?.user_id ?? null;
+  } else {
+    const [profile] = await db.select({ user_id: mediaKitsTable.user_id })
+      .from(mediaKitsTable)
+      .where(eq(mediaKitsTable.id, profileId));
+    profileOwnerId = profile?.user_id ?? null;
+  }
+
+  // Do not distinguish an absent profile from one owned by another member.
+  if (profileOwnerId !== req.userId) {
+    res.status(404).json({ error: "Profile not found" });
+    return;
+  }
+
+  const [row] = await db.insert(shareLinksTable).values({
+    token: randomBytes(24).toString("base64url"),
+    profile_type,
+    profile_id: String(profileId),
+    is_active: Boolean(is_active),
+  }).returning();
   res.status(201).json(row);
 });
 

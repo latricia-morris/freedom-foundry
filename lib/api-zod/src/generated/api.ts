@@ -1248,9 +1248,8 @@ export const UpdateIgniteOSResponse = zod.object({
 
 
 export const CreateShareLinkBody = zod.object({
-  "token": zod.string(),
   "profile_type": zod.string(),
-  "profile_id": zod.string().optional(),
+  "profile_id": zod.string(),
   "is_active": zod.boolean().optional()
 })
 

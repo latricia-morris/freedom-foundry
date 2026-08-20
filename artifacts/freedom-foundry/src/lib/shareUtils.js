@@ -29,14 +29,12 @@ export function parseProfileTypeSlug(slug) {
 }
 
 export async function createShareLink(profileType, profileId, brandName) {
-  const token = Math.random().toString(36).slice(2) + Date.now().toString(36);
-  await apiClient.entities.ShareLink.create({
-    token,
+  const shareLink = await apiClient.entities.ShareLink.create({
     profile_type: profileType,
     profile_id: profileId ? String(profileId) : null,
     is_active: true,
   });
   const slug = generateSlug(brandName);
   const typeSlug = getProfileTypeSlug(profileType);
-  return `${window.location.origin}/member/${slug}/${typeSlug}?k=${token}`;
+  return `${window.location.origin}/member/${slug}/${typeSlug}?k=${shareLink.token}`;
 }
