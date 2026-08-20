@@ -10,14 +10,20 @@ const { signedInUserId, profiles, nextProfileId, userProfilesTable } = vi.hoiste
 }));
 
 const profileFor = (userId: string) => profiles.get(userId);
+const profileMatching = (condition: { column: string; value: string }) =>
+  condition.column === "user_id"
+    ? profileFor(condition.value)
+    : [...profiles.values()].find(
+      (profile) => String(profile[condition.column]) === String(condition.value),
+    );
 
 vi.mock("@workspace/db", () => ({
   db: {
     select: () => ({
       from: () => ({
-        where: (condition: { userId: string }) => ({
+        where: (condition: { column: string; value: string }) => ({
           limit: async () => {
-            const profile = profileFor(condition.userId);
+            const profile = profileMatching(condition);
             return profile ? [profile] : [];
           },
         }),
@@ -25,9 +31,9 @@ vi.mock("@workspace/db", () => ({
     }),
     update: () => ({
       set: (changes: Record<string, unknown>) => ({
-        where: (condition: { userId: string }) => ({
+        where: (condition: { column: string; value: string }) => ({
           returning: async () => {
-            const profile = profileFor(condition.userId);
+            const profile = profileMatching(condition);
             if (!profile) return [];
             Object.assign(profile, changes);
             return [profile];
@@ -55,7 +61,7 @@ vi.mock("@workspace/db", () => ({
 }));
 
 vi.mock("drizzle-orm", () => ({
-  eq: (_column: unknown, value: string) => ({ userId: value }),
+  eq: (column: { name?: string }, value: string) => ({ column: column.name ?? String(column), value }),
 }));
 
 vi.mock("../lib/auth", () => ({
@@ -114,6 +120,62 @@ describe("authenticated member profile", () => {
       last_name: "Lovelace",
       phone: "+1 555 0100",
       headshot_image_url: "https://cdn.example.com/ada.png",
+    });
+  });
+
+  it("edits an existing profile and preserves another member's profile", async () => {
+    profiles.set(signedInUserId, {
+      id: 1,
+      user_id: signedInUserId,
+      first_name: "Original",
+      last_name: "Member",
+      phone: "+1 555 0001",
+      headshot_url: "https://cdn.example.com/original.png",
+    });
+    profiles.set("another-member", {
+      id: 2,
+      user_id: "another-member",
+      first_name: "Other",
+      last_name: "Member",
+      phone: "+1 555 0002",
+      headshot_url: "https://cdn.example.com/other.png",
+    });
+
+    const response = await request(app)
+      .patch("/api/auth/me")
+      .send({
+        first_name: "Updated",
+        last_name: "Profile",
+        phone: "+1 555 0101",
+        headshot_image_url: "https://cdn.example.com/updated.png",
+      });
+
+    expect(response.status).toBe(200);
+    expect(response.body.profile).toMatchObject({
+      user_id: signedInUserId,
+      first_name: "Updated",
+      last_name: "Profile",
+      phone: "+1 555 0101",
+      headshot_url: "https://cdn.example.com/updated.png",
+    });
+
+    const readResponse = await request(app).get("/api/auth/me");
+
+    expect(readResponse.status).toBe(200);
+    expect(readResponse.body.profile).toMatchObject({
+      user_id: signedInUserId,
+      first_name: "Updated",
+      last_name: "Profile",
+      phone: "+1 555 0101",
+      headshot_url: "https://cdn.example.com/updated.png",
+    });
+    expect(profiles.get("another-member")).toEqual({
+      id: 2,
+      user_id: "another-member",
+      first_name: "Other",
+      last_name: "Member",
+      phone: "+1 555 0002",
+      headshot_url: "https://cdn.example.com/other.png",
     });
   });
 
