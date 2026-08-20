@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Shield, ArrowRight, Search } from 'lucide-react';
+import { Shield, ArrowRight, Search, UserPlus, X } from 'lucide-react';
 import apiClient from '@/api/client';
 
 export default function AdminUsers() {
@@ -9,6 +9,24 @@ export default function AdminUsers() {
   const [denied, setDenied] = useState(false);
   const [search, setSearch] = useState('');
   const [error, setError] = useState('');
+  const [inviteOpen, setInviteOpen] = useState(false);
+  const [inviteEmail, setInviteEmail] = useState('');
+  const [inviting, setInviting] = useState(false);
+  const [inviteMessage, setInviteMessage] = useState('');
+
+  const sendInvite = async (event) => {
+    event.preventDefault();
+    setInviting(true);
+    setInviteMessage('');
+    try {
+      const invitation = await apiClient.admin.inviteUser(inviteEmail);
+      setInviteMessage(`Invitation sent to ${invitation.email}. They’ll choose their own sign-in details.`);
+      setInviteEmail('');
+    } catch (requestError) {
+      setInviteMessage(requestError.message || 'The invitation could not be sent.');
+    }
+    setInviting(false);
+  };
 
   useEffect(() => {
     apiClient.auth.me().then(u => {
@@ -39,15 +57,52 @@ export default function AdminUsers() {
 
   return (
     <div className="max-w-4xl mx-auto animate-fade-in">
-      <div className="mb-8">
-        <h1 className="font-heading text-3xl font-light text-foreground mb-2">User <span className="molten-text italic">Management</span></h1>
-        <p className="text-sm text-muted-foreground">Manage app users and roles.</p>
+      <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 className="font-heading text-3xl font-light text-foreground mb-2">User <span className="molten-text italic">Management</span></h1>
+          <p className="text-sm text-muted-foreground">Manage app users, access, and account content.</p>
+        </div>
+        <button
+          onClick={() => { setInviteOpen(true); setInviteMessage(''); }}
+          className="inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-xs font-medium uppercase tracking-wider text-white"
+          style={{ background: 'linear-gradient(131deg, #b3232c, #d9622c)' }}
+        >
+          <UserPlus className="h-4 w-4" /> Invite member
+        </button>
       </div>
 
       {error && (
         <p role="alert" className="mb-4 rounded-lg border border-red-500/30 bg-red-950/30 px-4 py-3 text-sm text-red-100">
           {error}
         </p>
+      )}
+
+      {inviteOpen && (
+        <form onSubmit={sendInvite} className="mb-5 rounded-xl border border-primary/25 bg-card p-5">
+          <div className="mb-4 flex items-start justify-between gap-4">
+            <div>
+              <h2 className="font-heading text-lg text-foreground">Invite a member</h2>
+              <p className="mt-1 text-sm text-muted-foreground">They’ll receive an email to set up their own Freedom Foundry account.</p>
+            </div>
+            <button type="button" onClick={() => setInviteOpen(false)} className="rounded-md p-1 text-muted-foreground hover:text-foreground" aria-label="Close invitation form">
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <input
+              type="email"
+              required
+              value={inviteEmail}
+              onChange={event => setInviteEmail(event.target.value)}
+              placeholder="member@example.com"
+              className="min-w-0 flex-1 rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary"
+            />
+            <button disabled={inviting} className="rounded-lg bg-primary px-4 py-2.5 text-xs font-medium uppercase tracking-wider text-primary-foreground disabled:opacity-50">
+              {inviting ? 'Sending…' : 'Send invitation'}
+            </button>
+          </div>
+          {inviteMessage && <p role="status" className="mt-3 text-sm text-muted-foreground">{inviteMessage}</p>}
+        </form>
       )}
 
       <div className="mb-4 relative">

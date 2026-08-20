@@ -62,6 +62,12 @@ export const functions = {
 };
 
 export const admin = {
+  async inviteUser(email) {
+    return apiFetch('/admin/invitations', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
+  },
   async getUserAccount(userId) {
     return apiFetch(`/admin/users/${encodeURIComponent(userId)}`);
   },
@@ -72,6 +78,12 @@ export const admin = {
     return apiFetch(`/admin/users/${encodeURIComponent(userId)}`, {
       method: 'PATCH',
       body: JSON.stringify(data),
+    });
+  },
+  async addUserContent(userId, payload) {
+    return apiFetch(`/admin/users/${encodeURIComponent(userId)}/portal-content`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
     });
   },
 };

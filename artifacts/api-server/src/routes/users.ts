@@ -38,6 +38,18 @@ import {
 const router: IRouter = Router();
 const accountTypes = new Set(["free", "premium", "client", "premium_client"]);
 const roles = new Set(["user", "admin"]);
+const adminContentKinds = new Set(["checklist_task", "brand_up_entry", "service_request", "brand_asset"]);
+
+function asRecord(value: unknown): Record<string, unknown> | null {
+  return value && typeof value === "object" && !Array.isArray(value)
+    ? value as Record<string, unknown>
+    : null;
+}
+
+function optionalText(data: Record<string, unknown>, key: string): string | undefined {
+  const value = data[key];
+  return typeof value === "string" && value.trim() ? value.trim() : undefined;
+}
 
 function serializeUser(user: Awaited<ReturnType<typeof clerkClient.users.getUser>>) {
   const email = user.primaryEmailAddress?.emailAddress?.toLowerCase() ?? "";
@@ -108,6 +120,26 @@ async function listAllClerkUsers() {
 router.get("/users", authMiddleware, requireAdmin, async (_req, res): Promise<void> => {
   const users = await listAllClerkUsers();
   res.json(users.map(serializeUser));
+});
+
+// Admin: send a Clerk-managed invitation. The recipient chooses their own credentials.
+router.post("/admin/invitations", authMiddleware, requireAdmin, async (req, res): Promise<void> => {
+  const email = typeof req.body?.email === "string" ? req.body.email.trim().toLowerCase() : "";
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    res.status(400).json({ error: "Enter a valid email address." });
+    return;
+  }
+
+  try {
+    const invitation = await clerkClient.invitations.createInvitation({ emailAddress: email });
+    res.status(201).json({
+      id: invitation.id,
+      email: invitation.emailAddress,
+      status: invitation.status,
+    });
+  } catch {
+    res.status(409).json({ error: "An invitation or account already exists for that email address." });
+  }
 });
 
 router.get("/admin/users/:userId", authMiddleware, requireAdmin, async (req, res): Promise<void> => {
@@ -195,6 +227,83 @@ router.get("/admin/users/:userId/portal-data", authMiddleware, requireAdmin, asy
       brandUpEntries,
       serviceRequests,
     });
+  } catch (error) {
+    const status = typeof error === "object" && error && "status" in error
+      ? Number((error as { status?: number }).status)
+      : 500;
+    if (status === 404) {
+      res.status(404).json({ error: "Member not found" });
+      return;
+    }
+    throw error;
+  }
+});
+
+// Admin: add narrowly scoped private content to a selected member's account.
+// This is intentionally separate from member routes, which always bind to req.userId.
+router.post("/admin/users/:userId/portal-content", authMiddleware, requireAdmin, async (req, res): Promise<void> => {
+  const params = GetAdminUserAccountParams.safeParse(req.params);
+  const body = asRecord(req.body);
+  const kind = typeof body?.kind === "string" ? body.kind : "";
+  const data = asRecord(body?.data);
+  if (!params.success || !adminContentKinds.has(kind) || !data) {
+    res.status(400).json({ error: "Choose a valid account item and complete its required fields." });
+    return;
+  }
+
+  try {
+    const userId = params.data.userId;
+    await clerkClient.users.getUser(userId);
+
+    if (kind === "checklist_task") {
+      const title = optionalText(data, "title");
+      if (!title) { res.status(400).json({ error: "A checklist task needs a title." }); return; }
+      const [item] = await db.insert(checklistTasksTable).values({
+        user_id: userId,
+        title,
+        ...(optionalText(data, "deadline_date") ? { deadline_date: optionalText(data, "deadline_date") } : {}),
+        ...(optionalText(data, "assignee") ? { assignee: optionalText(data, "assignee") } : {}),
+      }).returning();
+      res.status(201).json({ kind, item });
+      return;
+    }
+
+    if (kind === "brand_up_entry") {
+      const response = optionalText(data, "response");
+      if (!response) { res.status(400).json({ error: "A Brand Up entry needs a response." }); return; }
+      const promptId = Number(data.prompt_id);
+      const [item] = await db.insert(brandUpEntriesTable).values({
+        user_id: userId,
+        response,
+        ...(Number.isInteger(promptId) && promptId > 0 ? { prompt_id: promptId } : {}),
+      }).returning();
+      res.status(201).json({ kind, item });
+      return;
+    }
+
+    if (kind === "service_request") {
+      const serviceType = optionalText(data, "service_type");
+      if (!serviceType) { res.status(400).json({ error: "A service request needs a service type." }); return; }
+      const details = optionalText(data, "details");
+      const [item] = await db.insert(serviceRequestSubmissionsTable).values({
+        user_id: userId,
+        service_type: serviceType,
+        ...(details ? { details: { admin_note: details } } : {}),
+      }).returning();
+      res.status(201).json({ kind, item });
+      return;
+    }
+
+    const title = optionalText(data, "title");
+    if (!title) { res.status(400).json({ error: "A brand asset needs a title." }); return; }
+    const [item] = await db.insert(brandAssetsTable).values({
+      user_id: userId,
+      title,
+      ...(optionalText(data, "description") ? { description: optionalText(data, "description") } : {}),
+      ...(optionalText(data, "file_url") ? { file_url: optionalText(data, "file_url") } : {}),
+      ...(optionalText(data, "file_type") ? { file_type: optionalText(data, "file_type") } : {}),
+    }).returning();
+    res.status(201).json({ kind, item });
   } catch (error) {
     const status = typeof error === "object" && error && "status" in error
       ? Number((error as { status?: number }).status)

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Shield, Check, FileText, ListChecks, MessageSquare, Send, Eye, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Shield, Check, FileText, ListChecks, MessageSquare, Send, Eye, AlertTriangle, Plus } from 'lucide-react';
 import apiClient from '@/api/client';
 import { ACCOUNT_TYPE_LABELS } from '@/lib/useMembership';
 
@@ -47,12 +47,17 @@ export default function AdminUserDetail() {
   const [personalBrand, setPersonalBrand] = useState(null);
   const [corporateBrand, setCorporateBrand] = useState(null);
   const [mediaKit, setMediaKit] = useState(null);
+  const [brandAssets, setBrandAssets] = useState([]);
   const [workbookResponses, setWorkbookResponses] = useState([]);
   const [workbookDefs, setWorkbookDefs] = useState([]);
   const [checklist, setChecklist] = useState([]);
   const [brandUpEntries, setBrandUpEntries] = useState([]);
   const [serviceRequests, setServiceRequests] = useState([]);
   const [signedUrls, setSignedUrls] = useState({});
+  const [contentKind, setContentKind] = useState('checklist_task');
+  const [contentForm, setContentForm] = useState({});
+  const [addingContent, setAddingContent] = useState(false);
+  const [contentMessage, setContentMessage] = useState('');
 
   useEffect(() => {
     apiClient.auth.me().then(async me => {
@@ -76,6 +81,7 @@ export default function AdminUserDetail() {
           setPersonalBrand(portalData.personalBrandProfiles?.[0] || null);
           setCorporateBrand(portalData.corporateBrandProfiles?.[0] || null);
           setMediaKit(portalData.mediaKits?.[0] || null);
+          setBrandAssets(portalData.brandAssets || []);
           setWorkbookDefs(portalData.workbookDefinitions || []);
           setWorkbookResponses(portalData.workbookResponses || []);
           setChecklist(portalData.checklistTasks || []);
@@ -125,6 +131,35 @@ export default function AdminUserDetail() {
       setSignedUrls(prev => ({ ...prev, [index]: signed_url }));
       window.open(signed_url, '_blank');
     } catch (_) {}
+  };
+
+  const handleContentKindChange = (kind) => {
+    setContentKind(kind);
+    setContentForm({});
+    setContentMessage('');
+  };
+
+  const updateContentForm = (key, value) => {
+    setContentForm(previous => ({ ...previous, [key]: value }));
+  };
+
+  const handleAddContent = async (event) => {
+    event.preventDefault();
+    if (!user) return;
+    setAddingContent(true);
+    setContentMessage('');
+    try {
+      const created = await apiClient.admin.addUserContent(user.id, { kind: contentKind, data: contentForm });
+      if (contentKind === 'checklist_task') setChecklist(previous => [...previous, created.item]);
+      if (contentKind === 'brand_up_entry') setBrandUpEntries(previous => [...previous, created.item]);
+      if (contentKind === 'service_request') setServiceRequests(previous => [...previous, created.item]);
+      if (contentKind === 'brand_asset') setBrandAssets(previous => [...previous, created.item]);
+      setContentForm({});
+      setContentMessage('Added to this member’s account.');
+    } catch (requestError) {
+      setContentMessage(requestError.message || 'This item could not be added.');
+    }
+    setAddingContent(false);
   };
 
   if (loading) return <div className="flex justify-center py-20"><div className="w-8 h-8 border-2 border-border border-t-primary rounded-full animate-spin" /></div>;
@@ -187,6 +222,66 @@ export default function AdminUserDetail() {
           </button>
         ))}
       </div>
+
+      <form onSubmit={handleAddContent} className="mb-8 rounded-xl border border-primary/20 bg-primary/[0.03] p-5">
+        <div className="mb-4 flex items-center gap-2">
+          <Plus className="h-4 w-4 text-primary" />
+          <div>
+            <h2 className="font-heading text-lg text-foreground">Add to this account</h2>
+            <p className="text-sm text-muted-foreground">Create a member item without leaving the administrator dashboard.</p>
+          </div>
+        </div>
+        <div className="grid gap-3 md:grid-cols-2">
+          <select
+            value={contentKind}
+            onChange={event => handleContentKindChange(event.target.value)}
+            className="rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary"
+          >
+            <option value="checklist_task">Checklist task</option>
+            <option value="brand_up_entry">Brand Up entry</option>
+            <option value="service_request">Service request</option>
+            <option value="brand_asset">Brand asset</option>
+          </select>
+
+          {contentKind === 'checklist_task' && (
+            <input required value={contentForm.title || ''} onChange={event => updateContentForm('title', event.target.value)} placeholder="Task title" className="rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary" />
+          )}
+          {contentKind === 'brand_up_entry' && (
+            <textarea required value={contentForm.response || ''} onChange={event => updateContentForm('response', event.target.value)} placeholder="Brand Up entry" rows={2} className="rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary md:col-span-1" />
+          )}
+          {contentKind === 'service_request' && (
+            <input required value={contentForm.service_type || ''} onChange={event => updateContentForm('service_type', event.target.value)} placeholder="Service type" className="rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary" />
+          )}
+          {contentKind === 'brand_asset' && (
+            <input required value={contentForm.title || ''} onChange={event => updateContentForm('title', event.target.value)} placeholder="Asset title" className="rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary" />
+          )}
+        </div>
+
+        {contentKind === 'checklist_task' && (
+          <div className="mt-3 grid gap-3 md:grid-cols-2">
+            <input type="date" value={contentForm.deadline_date || ''} onChange={event => updateContentForm('deadline_date', event.target.value)} className="rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary" />
+            <input value={contentForm.assignee || ''} onChange={event => updateContentForm('assignee', event.target.value)} placeholder="Assignee (optional)" className="rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary" />
+          </div>
+        )}
+        {contentKind === 'service_request' && (
+          <textarea value={contentForm.details || ''} onChange={event => updateContentForm('details', event.target.value)} placeholder="Request details (optional)" rows={2} className="mt-3 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary" />
+        )}
+        {contentKind === 'brand_asset' && (
+          <div className="mt-3 grid gap-3 md:grid-cols-2">
+            <input value={contentForm.file_url || ''} onChange={event => updateContentForm('file_url', event.target.value)} placeholder="Asset URL (optional)" className="rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary" />
+            <input value={contentForm.file_type || ''} onChange={event => updateContentForm('file_type', event.target.value)} placeholder="File type, e.g. PDF" className="rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary" />
+          </div>
+        )}
+        {contentKind === 'brand_asset' && (
+          <input value={contentForm.description || ''} onChange={event => updateContentForm('description', event.target.value)} placeholder="Description (optional)" className="mt-3 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary" />
+        )}
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <button disabled={addingContent} className="rounded-lg bg-primary px-4 py-2.5 text-xs font-medium uppercase tracking-wider text-primary-foreground disabled:opacity-50">
+            {addingContent ? 'Adding…' : 'Add to account'}
+          </button>
+          {contentMessage && <p role="status" className="text-sm text-muted-foreground">{contentMessage}</p>}
+        </div>
+      </form>
 
       {/* Account tab */}
       {tab === 'account' && (
@@ -358,9 +453,25 @@ export default function AdminUserDetail() {
             </div>
           )}
 
-          {!bigPicture && !personalBrand && !corporateBrand && !mediaKit && (
+          {!bigPicture && !personalBrand && !corporateBrand && !mediaKit && brandAssets.length === 0 && (
             <div className="editorial-container text-center py-12">
               <p className="text-sm text-[#1a1420]/50">No brand data available yet.</p>
+            </div>
+          )}
+          {brandAssets.length > 0 && (
+            <div className="editorial-container">
+              <h3 className="font-heading text-lg text-[#1a1420] mb-3">Brand Assets</h3>
+              <div className="space-y-2">
+                {brandAssets.map(asset => (
+                  <div key={asset.id} className="flex items-center justify-between gap-4 border-b border-black/5 py-2 last:border-0">
+                    <div>
+                      <p className="text-sm text-[#1a1420]">{asset.title}</p>
+                      {asset.description && <p className="text-xs text-[#1a1420]/50">{asset.description}</p>}
+                    </div>
+                    {asset.file_url && <button onClick={() => handleViewFile(asset.file_url, `asset-${asset.id}`)} className="text-xs text-[#b3232c] hover:underline">View file</button>}
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
@@ -432,8 +543,8 @@ export default function AdminUserDetail() {
           ) : (
             brandUpEntries.map(entry => (
               <div key={entry.id} className="editorial-container">
-                <p className="font-heading text-sm text-[#1a1420] mb-2 italic">"{entry.prompt_text}"</p>
-                <p className="text-sm text-[#2c2c33]">{entry.response_text}</p>
+                <p className="font-heading text-sm text-[#1a1420] mb-2 italic">{entry.prompt_text ? `"${entry.prompt_text}"` : 'Brand Up entry'}</p>
+                <p className="text-sm text-[#2c2c33]">{entry.response_text || entry.response}</p>
                 <p className="text-xs text-[#1a1420]/30 mt-2">{entry.created_date ? new Date(entry.created_date).toLocaleDateString() : ''}</p>
               </div>
             ))
@@ -472,6 +583,12 @@ export default function AdminUserDetail() {
                   <div className="mb-2">
                     <span className="text-xs uppercase tracking-wider text-[#1a1420]/40 block">Notes</span>
                     <p className="text-sm text-[#1a1420] mt-1">{req.notes}</p>
+                  </div>
+                )}
+                {req.details && (
+                  <div className="mb-2">
+                    <span className="text-xs uppercase tracking-wider text-[#1a1420]/40 block">Details</span>
+                    <p className="text-sm text-[#1a1420] mt-1">{req.details.admin_note || JSON.stringify(req.details)}</p>
                   </div>
                 )}
                 {(req.inspiration_file_uris || []).length > 0 && (
