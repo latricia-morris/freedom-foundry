@@ -1,7 +1,23 @@
 import { Router, type IRouter } from "express";
 import { clerkClient } from "@clerk/express";
-import { db, userProfilesTable } from "@workspace/db";
-import { eq } from "drizzle-orm";
+import {
+  bigPicturesTable,
+  brandAssetsTable,
+  brandGuidelinesTable,
+  brandUpEntriesTable,
+  corporateBrandProfilesTable,
+  db,
+  igniteOSTable,
+  lessonProgressTable,
+  mediaKitsTable,
+  personalBrandProfilesTable,
+  serviceRequestSubmissionsTable,
+  userProfilesTable,
+  workbookDefinitionsTable,
+  workbookResponsesTable,
+  checklistTasksTable,
+} from "@workspace/db";
+import { and, eq } from "drizzle-orm";
 import {
   GetAdminUserAccountParams,
   GetAdminUserAccountResponse,
@@ -9,7 +25,15 @@ import {
   UpdateAdminUserAccountParams,
   UpdateAdminUserAccountResponse,
 } from "@workspace/api-zod";
-import { authMiddleware, requireAdmin, resolveAppRole } from "../lib/auth";
+import {
+  authMiddleware,
+  ownedCreatePayload,
+  ownedNotFound,
+  ownedUpdatePayload,
+  requireAdmin,
+  requireMemberId,
+  resolveAppRole,
+} from "../lib/auth";
 
 const router: IRouter = Router();
 const accountTypes = new Set(["free", "premium", "client", "premium_client"]);
@@ -114,6 +138,75 @@ router.get("/admin/users/:userId", authMiddleware, requireAdmin, async (req, res
   }
 });
 
+// Admin-only aggregate for viewing a selected member's private portal records.
+// Member-scoped routes intentionally never accept a target user ID.
+router.get("/admin/users/:userId/portal-data", authMiddleware, requireAdmin, async (req, res): Promise<void> => {
+  const params = GetAdminUserAccountParams.safeParse(req.params);
+  if (!params.success) {
+    res.status(400).json({ error: params.error.message });
+    return;
+  }
+
+  try {
+    await clerkClient.users.getUser(params.data.userId);
+    const userId = params.data.userId;
+    const [
+      bigPictures,
+      personalBrandProfiles,
+      corporateBrandProfiles,
+      brandGuidelines,
+      brandAssets,
+      mediaKits,
+      igniteOs,
+      lessonProgress,
+      workbookDefinitions,
+      workbookResponses,
+      checklistTasks,
+      brandUpEntries,
+      serviceRequests,
+    ] = await Promise.all([
+      db.select().from(bigPicturesTable).where(eq(bigPicturesTable.user_id, userId)),
+      db.select().from(personalBrandProfilesTable).where(eq(personalBrandProfilesTable.user_id, userId)),
+      db.select().from(corporateBrandProfilesTable).where(eq(corporateBrandProfilesTable.user_id, userId)),
+      db.select().from(brandGuidelinesTable).where(eq(brandGuidelinesTable.user_id, userId)),
+      db.select().from(brandAssetsTable).where(eq(brandAssetsTable.user_id, userId)),
+      db.select().from(mediaKitsTable).where(eq(mediaKitsTable.user_id, userId)),
+      db.select().from(igniteOSTable).where(eq(igniteOSTable.user_id, userId)),
+      db.select().from(lessonProgressTable).where(eq(lessonProgressTable.user_id, userId)),
+      db.select().from(workbookDefinitionsTable).orderBy(workbookDefinitionsTable.order),
+      db.select().from(workbookResponsesTable).where(eq(workbookResponsesTable.user_id, userId)),
+      db.select().from(checklistTasksTable).where(eq(checklistTasksTable.user_id, userId)),
+      db.select().from(brandUpEntriesTable).where(eq(brandUpEntriesTable.user_id, userId)),
+      db.select().from(serviceRequestSubmissionsTable).where(eq(serviceRequestSubmissionsTable.user_id, userId)),
+    ]);
+
+    res.json({
+      bigPictures,
+      personalBrandProfiles,
+      corporateBrandProfiles,
+      brandGuidelines,
+      brandAssets,
+      mediaKits,
+      igniteOs,
+      lessonProgress,
+      workbookDefinitions,
+      workbookResponses,
+      checklistTasks,
+      brandUpEntries,
+      serviceRequests,
+    });
+  } catch (error) {
+    const status = typeof error === "object" && error && "status" in error
+      ? Number((error as { status?: number }).status)
+      : 500;
+    if (status === 404) {
+      res.status(404).json({ error: "Member not found" });
+      return;
+    }
+    throw error;
+  }
+});
+
 router.patch("/admin/users/:userId", authMiddleware, requireAdmin, async (req, res): Promise<void> => {
   const params = UpdateAdminUserAccountParams.safeParse(req.params);
   if (!params.success) {
@@ -194,31 +287,30 @@ router.patch("/admin/users/:userId", authMiddleware, requireAdmin, async (req, r
 
 // User profiles
 router.get("/user-profiles", authMiddleware, async (req, res): Promise<void> => {
-  const { user_id } = req.query;
-  let rows;
-  if (user_id) {
-    rows = await db.select().from(userProfilesTable).where(eq(userProfilesTable.user_id, String(user_id)));
-  } else {
-    rows = await db.select().from(userProfilesTable);
-  }
+  const userId = requireMemberId(req, res);
+  if (!userId) return;
+  const rows = await db.select().from(userProfilesTable)
+    .where(eq(userProfilesTable.user_id, userId));
   res.json(rows);
 });
 
 router.post("/user-profiles", authMiddleware, async (req, res): Promise<void> => {
-  const data = req.body;
+  const data = ownedCreatePayload<typeof userProfilesTable.$inferInsert>(req);
+  if (!data) { res.status(401).json({ error: "Unauthorized" }); return; }
   const [created] = await db.insert(userProfilesTable).values(data).returning();
   res.status(201).json(created);
 });
 
 router.patch("/user-profiles/:id", authMiddleware, async (req, res): Promise<void> => {
+  const userId = requireMemberId(req, res);
+  if (!userId) return;
   const raw = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
   const id = parseInt(raw, 10);
-  const data = req.body;
-  // Remove undefined/null id to avoid overwrite
-  delete data.id;
-  const [updated] = await db.update(userProfilesTable).set(data).where(eq(userProfilesTable.id, id)).returning();
+  const data = ownedUpdatePayload<typeof userProfilesTable.$inferInsert>(req);
+  const [updated] = await db.update(userProfilesTable).set(data)
+    .where(and(eq(userProfilesTable.id, id), eq(userProfilesTable.user_id, userId))).returning();
   if (!updated) {
-    res.status(404).json({ error: "Not found" });
+    ownedNotFound(res);
     return;
   }
   res.json(updated);

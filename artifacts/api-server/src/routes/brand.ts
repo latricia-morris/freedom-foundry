@@ -1,8 +1,14 @@
 import { Router, type IRouter } from "express";
 import { randomBytes } from "node:crypto";
 import { db, personalBrandProfilesTable, corporateBrandProfilesTable, brandGuidelinesTable, brandAssetsTable, mediaKitsTable, bigPicturesTable, igniteOSTable, shareLinksTable } from "@workspace/db";
-import { eq } from "drizzle-orm";
-import { authMiddleware } from "../lib/auth";
+import { and, eq } from "drizzle-orm";
+import {
+  authMiddleware,
+  ownedCreatePayload,
+  ownedNotFound,
+  ownedUpdatePayload,
+  requireMemberId,
+} from "../lib/auth";
 
 const router: IRouter = Router();
 
@@ -59,171 +65,191 @@ function normalizeColors(value: unknown) {
     .filter(color => color.name || color.hex);
 }
 
-function ownedCreatePayload(req: Parameters<typeof authMiddleware>[0]) {
-  if (!req.userId) return null;
-  const { id: _id, user_id: _requestedUserId, ...data } = req.body as Record<string, unknown>;
-  return { ...data, user_id: req.userId };
-}
-
 // ─── Personal Brand Profiles ─────────────────────────────────────────────────
 router.get("/personal-brand-profiles", authMiddleware, async (req, res): Promise<void> => {
-  const { user_id } = req.query;
-  const rows = user_id
-    ? await db.select().from(personalBrandProfilesTable).where(eq(personalBrandProfilesTable.user_id, String(user_id)))
-    : await db.select().from(personalBrandProfilesTable);
+  const userId = requireMemberId(req, res);
+  if (!userId) return;
+  const rows = await db.select().from(personalBrandProfilesTable)
+    .where(eq(personalBrandProfilesTable.user_id, userId));
   res.json(rows);
 });
 
 router.post("/personal-brand-profiles", authMiddleware, async (req, res): Promise<void> => {
-  const data = ownedCreatePayload(req);
+  const data = ownedCreatePayload<typeof personalBrandProfilesTable.$inferInsert>(req);
   if (!data) { res.status(401).json({ error: "Unauthorized" }); return; }
   const [row] = await db.insert(personalBrandProfilesTable).values(data).returning();
   res.status(201).json(row);
 });
 
 router.patch("/personal-brand-profiles/:id", authMiddleware, async (req, res): Promise<void> => {
+  const userId = requireMemberId(req, res);
+  if (!userId) return;
   const id = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id, 10);
-  const data = { ...req.body }; delete data.id;
-  const [row] = await db.update(personalBrandProfilesTable).set(data).where(eq(personalBrandProfilesTable.id, id)).returning();
-  if (!row) { res.status(404).json({ error: "Not found" }); return; }
+  const data = ownedUpdatePayload<typeof personalBrandProfilesTable.$inferInsert>(req);
+  const [row] = await db.update(personalBrandProfilesTable).set(data)
+    .where(and(eq(personalBrandProfilesTable.id, id), eq(personalBrandProfilesTable.user_id, userId))).returning();
+  if (!row) { ownedNotFound(res); return; }
   res.json(row);
 });
 
 // ─── Corporate Brand Profiles ─────────────────────────────────────────────────
 router.get("/corporate-brand-profiles", authMiddleware, async (req, res): Promise<void> => {
-  const { user_id } = req.query;
-  const rows = user_id
-    ? await db.select().from(corporateBrandProfilesTable).where(eq(corporateBrandProfilesTable.user_id, String(user_id)))
-    : await db.select().from(corporateBrandProfilesTable);
+  const userId = requireMemberId(req, res);
+  if (!userId) return;
+  const rows = await db.select().from(corporateBrandProfilesTable)
+    .where(eq(corporateBrandProfilesTable.user_id, userId));
   res.json(rows);
 });
 
 router.post("/corporate-brand-profiles", authMiddleware, async (req, res): Promise<void> => {
-  const data = ownedCreatePayload(req);
+  const data = ownedCreatePayload<typeof corporateBrandProfilesTable.$inferInsert>(req);
   if (!data) { res.status(401).json({ error: "Unauthorized" }); return; }
   const [row] = await db.insert(corporateBrandProfilesTable).values(data).returning();
   res.status(201).json(row);
 });
 
 router.patch("/corporate-brand-profiles/:id", authMiddleware, async (req, res): Promise<void> => {
+  const userId = requireMemberId(req, res);
+  if (!userId) return;
   const id = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id, 10);
-  const data = { ...req.body }; delete data.id;
-  const [row] = await db.update(corporateBrandProfilesTable).set(data).where(eq(corporateBrandProfilesTable.id, id)).returning();
-  if (!row) { res.status(404).json({ error: "Not found" }); return; }
+  const data = ownedUpdatePayload<typeof corporateBrandProfilesTable.$inferInsert>(req);
+  const [row] = await db.update(corporateBrandProfilesTable).set(data)
+    .where(and(eq(corporateBrandProfilesTable.id, id), eq(corporateBrandProfilesTable.user_id, userId))).returning();
+  if (!row) { ownedNotFound(res); return; }
   res.json(row);
 });
 
 // ─── Brand Guidelines ─────────────────────────────────────────────────────────
 router.get("/brand-guidelines", authMiddleware, async (req, res): Promise<void> => {
-  const { user_id } = req.query;
-  const rows = user_id
-    ? await db.select().from(brandGuidelinesTable).where(eq(brandGuidelinesTable.user_id, String(user_id)))
-    : await db.select().from(brandGuidelinesTable);
+  const userId = requireMemberId(req, res);
+  if (!userId) return;
+  const rows = await db.select().from(brandGuidelinesTable)
+    .where(eq(brandGuidelinesTable.user_id, userId));
   res.json(rows);
 });
 
 router.post("/brand-guidelines", authMiddleware, async (req, res): Promise<void> => {
-  const data = ownedCreatePayload(req);
+  const data = ownedCreatePayload<typeof brandGuidelinesTable.$inferInsert>(req);
   if (!data) { res.status(401).json({ error: "Unauthorized" }); return; }
   const [row] = await db.insert(brandGuidelinesTable).values(data).returning();
   res.status(201).json(row);
 });
 
 router.patch("/brand-guidelines/:id", authMiddleware, async (req, res): Promise<void> => {
+  const userId = requireMemberId(req, res);
+  if (!userId) return;
   const id = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id, 10);
-  const data = { ...req.body }; delete data.id;
-  const [row] = await db.update(brandGuidelinesTable).set(data).where(eq(brandGuidelinesTable.id, id)).returning();
-  if (!row) { res.status(404).json({ error: "Not found" }); return; }
+  const data = ownedUpdatePayload<typeof brandGuidelinesTable.$inferInsert>(req);
+  const [row] = await db.update(brandGuidelinesTable).set(data)
+    .where(and(eq(brandGuidelinesTable.id, id), eq(brandGuidelinesTable.user_id, userId))).returning();
+  if (!row) { ownedNotFound(res); return; }
   res.json(row);
 });
 
 // ─── Brand Assets ─────────────────────────────────────────────────────────────
 router.get("/brand-assets", authMiddleware, async (req, res): Promise<void> => {
-  const { user_id } = req.query;
-  const rows = user_id
-    ? await db.select().from(brandAssetsTable).where(eq(brandAssetsTable.user_id, String(user_id)))
-    : await db.select().from(brandAssetsTable);
+  const userId = requireMemberId(req, res);
+  if (!userId) return;
+  const rows = await db.select().from(brandAssetsTable)
+    .where(eq(brandAssetsTable.user_id, userId));
   res.json(rows);
 });
 
 router.post("/brand-assets", authMiddleware, async (req, res): Promise<void> => {
-  const data = ownedCreatePayload(req);
+  const data = ownedCreatePayload<typeof brandAssetsTable.$inferInsert>(req);
   if (!data) { res.status(401).json({ error: "Unauthorized" }); return; }
   const [row] = await db.insert(brandAssetsTable).values(data).returning();
   res.status(201).json(row);
 });
 
 router.delete("/brand-assets/:id", authMiddleware, async (req, res): Promise<void> => {
+  const userId = requireMemberId(req, res);
+  if (!userId) return;
   const id = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id, 10);
-  await db.delete(brandAssetsTable).where(eq(brandAssetsTable.id, id));
+  const [deleted] = await db.delete(brandAssetsTable)
+    .where(and(eq(brandAssetsTable.id, id), eq(brandAssetsTable.user_id, userId))).returning();
+  if (!deleted) { ownedNotFound(res); return; }
   res.sendStatus(204);
 });
 
 // ─── Media Kits ───────────────────────────────────────────────────────────────
 router.get("/media-kits", authMiddleware, async (req, res): Promise<void> => {
-  const { user_id } = req.query;
-  const rows = user_id
-    ? await db.select().from(mediaKitsTable).where(eq(mediaKitsTable.user_id, String(user_id)))
-    : await db.select().from(mediaKitsTable);
+  const userId = requireMemberId(req, res);
+  if (!userId) return;
+  const rows = await db.select().from(mediaKitsTable)
+    .where(eq(mediaKitsTable.user_id, userId));
   res.json(rows);
 });
 
 router.post("/media-kits", authMiddleware, async (req, res): Promise<void> => {
-  const data = ownedCreatePayload(req);
+  const data = ownedCreatePayload<typeof mediaKitsTable.$inferInsert>(req);
   if (!data) { res.status(401).json({ error: "Unauthorized" }); return; }
   const [row] = await db.insert(mediaKitsTable).values(data).returning();
   res.status(201).json(row);
 });
 
 router.patch("/media-kits/:id", authMiddleware, async (req, res): Promise<void> => {
+  const userId = requireMemberId(req, res);
+  if (!userId) return;
   const id = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id, 10);
-  const data = { ...req.body }; delete data.id;
-  const [row] = await db.update(mediaKitsTable).set(data).where(eq(mediaKitsTable.id, id)).returning();
-  if (!row) { res.status(404).json({ error: "Not found" }); return; }
+  const data = ownedUpdatePayload<typeof mediaKitsTable.$inferInsert>(req);
+  const [row] = await db.update(mediaKitsTable).set(data)
+    .where(and(eq(mediaKitsTable.id, id), eq(mediaKitsTable.user_id, userId))).returning();
+  if (!row) { ownedNotFound(res); return; }
   res.json(row);
 });
 
 // ─── Big Picture ──────────────────────────────────────────────────────────────
 router.get("/big-pictures", authMiddleware, async (req, res): Promise<void> => {
-  const { user_id } = req.query;
-  const rows = user_id
-    ? await db.select().from(bigPicturesTable).where(eq(bigPicturesTable.user_id, String(user_id)))
-    : await db.select().from(bigPicturesTable);
+  const userId = requireMemberId(req, res);
+  if (!userId) return;
+  const rows = await db.select().from(bigPicturesTable)
+    .where(eq(bigPicturesTable.user_id, userId));
   res.json(rows);
 });
 
 router.post("/big-pictures", authMiddleware, async (req, res): Promise<void> => {
-  const [row] = await db.insert(bigPicturesTable).values(req.body).returning();
+  const data = ownedCreatePayload<typeof bigPicturesTable.$inferInsert>(req);
+  if (!data) { res.status(401).json({ error: "Unauthorized" }); return; }
+  const [row] = await db.insert(bigPicturesTable).values(data).returning();
   res.status(201).json(row);
 });
 
 router.patch("/big-pictures/:id", authMiddleware, async (req, res): Promise<void> => {
+  const userId = requireMemberId(req, res);
+  if (!userId) return;
   const id = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id, 10);
-  const data = { ...req.body }; delete data.id;
-  const [row] = await db.update(bigPicturesTable).set(data).where(eq(bigPicturesTable.id, id)).returning();
-  if (!row) { res.status(404).json({ error: "Not found" }); return; }
+  const data = ownedUpdatePayload<typeof bigPicturesTable.$inferInsert>(req);
+  const [row] = await db.update(bigPicturesTable).set(data)
+    .where(and(eq(bigPicturesTable.id, id), eq(bigPicturesTable.user_id, userId))).returning();
+  if (!row) { ownedNotFound(res); return; }
   res.json(row);
 });
 
 // ─── IgniteOS ─────────────────────────────────────────────────────────────────
 router.get("/ignite-os", authMiddleware, async (req, res): Promise<void> => {
-  const { user_id } = req.query;
-  const rows = user_id
-    ? await db.select().from(igniteOSTable).where(eq(igniteOSTable.user_id, String(user_id)))
-    : await db.select().from(igniteOSTable);
+  const userId = requireMemberId(req, res);
+  if (!userId) return;
+  const rows = await db.select().from(igniteOSTable)
+    .where(eq(igniteOSTable.user_id, userId));
   res.json(rows);
 });
 
 router.post("/ignite-os", authMiddleware, async (req, res): Promise<void> => {
-  const [row] = await db.insert(igniteOSTable).values(req.body).returning();
+  const data = ownedCreatePayload<typeof igniteOSTable.$inferInsert>(req);
+  if (!data) { res.status(401).json({ error: "Unauthorized" }); return; }
+  const [row] = await db.insert(igniteOSTable).values(data).returning();
   res.status(201).json(row);
 });
 
 router.patch("/ignite-os/:id", authMiddleware, async (req, res): Promise<void> => {
+  const userId = requireMemberId(req, res);
+  if (!userId) return;
   const id = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id, 10);
-  const data = { ...req.body }; delete data.id;
-  const [row] = await db.update(igniteOSTable).set(data).where(eq(igniteOSTable.id, id)).returning();
-  if (!row) { res.status(404).json({ error: "Not found" }); return; }
+  const data = ownedUpdatePayload<typeof igniteOSTable.$inferInsert>(req);
+  const [row] = await db.update(igniteOSTable).set(data)
+    .where(and(eq(igniteOSTable.id, id), eq(igniteOSTable.user_id, userId))).returning();
+  if (!row) { ownedNotFound(res); return; }
   res.json(row);
 });
 
@@ -296,14 +322,6 @@ router.get("/shared-profile/:token", async (req, res): Promise<void> => {
       tagline: corporate?.tagline || null,
     },
   });
-});
-
-// ─── Share Links ──────────────────────────────────────────────────────────────
-router.get("/share-links/:token", async (req, res): Promise<void> => {
-  const token = Array.isArray(req.params.token) ? req.params.token[0] : req.params.token;
-  const [row] = await db.select().from(shareLinksTable).where(eq(shareLinksTable.token, token));
-  if (!row) { res.status(404).json({ error: "Not found" }); return; }
-  res.json(row);
 });
 
 router.post("/share-links", authMiddleware, async (req, res): Promise<void> => {

@@ -7,6 +7,5 @@
  */
 
 export type GetWorkbookResponsesParams = {
-user_id?: string;
 workbook_id?: number;
 };

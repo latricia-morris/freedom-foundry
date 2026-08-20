@@ -59,36 +59,28 @@ export default function AdminUserDetail() {
       if (me.role !== 'admin') { setDenied(true); setLoading(false); return; }
       setCurrentUserId(me.id || null);
       try {
-        const account = await apiClient.admin.getUserAccount(id);
+        const [account, portalData] = await Promise.all([
+          apiClient.admin.getUserAccount(id),
+          apiClient.admin.getUserPortalData(id),
+        ]);
         const u = account.user || null;
         setUser(u);
         if (u) {
-          const [bigPic, personal, corporate, media, wbDefs, wbResponses, checklistTasks, brandUp, svcReqs] = await Promise.all([
-            apiClient.entities.BigPicture.filter({ user_id: u.id }, '-created_date', 1).catch(() => []),
-            apiClient.entities.PersonalBrandProfile.filter({ user_id: u.id }, '-created_date', 1).catch(() => []),
-            apiClient.entities.CorporateBrandProfile.filter({ user_id: u.id }, '-created_date', 1).catch(() => []),
-            apiClient.entities.MediaKit.filter({ user_id: u.id }, '-created_date', 1).catch(() => []),
-            apiClient.entities.WorkbookDefinition.filter({}, '-created_date', 50).catch(() => []),
-            apiClient.entities.WorkbookResponse.filter({ user_id: u.id }, '-created_date', 200).catch(() => []),
-            apiClient.entities.ChecklistTask.filter({ user_id: u.id }, '-created_date', 200).catch(() => []),
-            apiClient.entities.BrandUpEntry.filter({ user_id: u.id }, '-created_date', 200).catch(() => []),
-            apiClient.entities.ServiceRequestSubmission.filter({ user_id: u.id }, '-created_date', 50).catch(() => []),
-          ]);
           const p = account.profile || null;
           setUserProfile(p);
           setAccountType(p?.account_type || 'free');
           setBpmUnlocked(p?.brand_power_moves_unlocked || false);
           setNotes(p?.notes || '');
           setRole(u.role || 'user');
-          setBigPicture(bigPic?.[0] || null);
-          setPersonalBrand(personal?.[0] || null);
-          setCorporateBrand(corporate?.[0] || null);
-          setMediaKit(media?.[0] || null);
-          setWorkbookDefs(wbDefs || []);
-          setWorkbookResponses(wbResponses || []);
-          setChecklist(checklistTasks || []);
-          setBrandUpEntries(brandUp || []);
-          setServiceRequests(svcReqs || []);
+          setBigPicture(portalData.bigPictures?.[0] || null);
+          setPersonalBrand(portalData.personalBrandProfiles?.[0] || null);
+          setCorporateBrand(portalData.corporateBrandProfiles?.[0] || null);
+          setMediaKit(portalData.mediaKits?.[0] || null);
+          setWorkbookDefs(portalData.workbookDefinitions || []);
+          setWorkbookResponses(portalData.workbookResponses || []);
+          setChecklist(portalData.checklistTasks || []);
+          setBrandUpEntries(portalData.brandUpEntries || []);
+          setServiceRequests(portalData.serviceRequests || []);
         }
       } catch (requestError) {
         setLoadError(requestError.message || 'This member account could not be loaded.');

@@ -127,11 +127,6 @@ paths:
     get:
       operationId: getUserProfiles
       tags: [users]
-      parameters:
-        - name: user_id
-          in: query
-          schema:
-            type: string
       responses:
         "200":
           description: List of user profiles
@@ -242,16 +237,29 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
 
+  /admin/users/{userId}/portal-data:
+    get:
+      operationId: getAdminMemberPortalData
+      tags: [admin]
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Private portal records for the selected member, available to administrators only
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminPortalData"
+
   # ─── BRAND PORTAL ───────────────────────────────────────────────────────────
   /personal-brand-profiles:
     get:
       operationId: getPersonalBrandProfiles
       tags: [brand]
-      parameters:
-        - name: user_id
-          in: query
-          schema:
-            type: string
       responses:
         "200":
           description: List
@@ -306,11 +314,6 @@ paths:
     get:
       operationId: getCorporateBrandProfiles
       tags: [brand]
-      parameters:
-        - name: user_id
-          in: query
-          schema:
-            type: string
       responses:
         "200":
           description: List
@@ -365,11 +368,6 @@ paths:
     get:
       operationId: getBrandGuidelines
       tags: [brand]
-      parameters:
-        - name: user_id
-          in: query
-          schema:
-            type: string
       responses:
         "200":
           description: List
@@ -424,11 +422,6 @@ paths:
     get:
       operationId: getBrandAssets
       tags: [brand]
-      parameters:
-        - name: user_id
-          in: query
-          schema:
-            type: string
       responses:
         "200":
           description: List
@@ -473,11 +466,6 @@ paths:
     get:
       operationId: getMediaKits
       tags: [brand]
-      parameters:
-        - name: user_id
-          in: query
-          schema:
-            type: string
       responses:
         "200":
           description: List
@@ -532,11 +520,6 @@ paths:
     get:
       operationId: getBigPictures
       tags: [brand]
-      parameters:
-        - name: user_id
-          in: query
-          schema:
-            type: string
       responses:
         "200":
           description: List
@@ -591,11 +574,6 @@ paths:
     get:
       operationId: getIgniteOS
       tags: [brand]
-      parameters:
-        - name: user_id
-          in: query
-          schema:
-            type: string
       responses:
         "200":
           description: List
@@ -659,24 +637,6 @@ paths:
       responses:
         "201":
           description: Created
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ShareLink"
-
-  /share-links/{token}:
-    get:
-      operationId: getShareLink
-      tags: [brand]
-      parameters:
-        - name: token
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: Share link
           content:
             application/json:
               schema:
@@ -757,11 +717,6 @@ paths:
     get:
       operationId: getLessonProgress
       tags: [content]
-      parameters:
-        - name: user_id
-          in: query
-          schema:
-            type: string
       responses:
         "200":
           description: List
@@ -848,10 +803,6 @@ paths:
       operationId: getWorkbookResponses
       tags: [content]
       parameters:
-        - name: user_id
-          in: query
-          schema:
-            type: string
         - name: workbook_id
           in: query
           schema:
@@ -910,11 +861,6 @@ paths:
     get:
       operationId: getChecklistTasks
       tags: [content]
-      parameters:
-        - name: user_id
-          in: query
-          schema:
-            type: string
       responses:
         "200":
           description: List
@@ -1052,11 +998,6 @@ paths:
     get:
       operationId: getBrandUpEntries
       tags: [content]
-      parameters:
-        - name: user_id
-          in: query
-          schema:
-            type: string
       responses:
         "200":
           description: List
@@ -1101,11 +1042,6 @@ paths:
     get:
       operationId: getServiceRequests
       tags: [content]
-      parameters:
-        - name: user_id
-          in: query
-          schema:
-            type: string
       responses:
         "200":
           description: List
@@ -1236,6 +1172,62 @@ components:
           type: boolean
         notes:
           type: string
+
+    AdminPortalData:
+      type: object
+      properties:
+        bigPictures:
+          type: array
+          items:
+            $ref: "#/components/schemas/BigPicture"
+        personalBrandProfiles:
+          type: array
+          items:
+            $ref: "#/components/schemas/PersonalBrandProfile"
+        corporateBrandProfiles:
+          type: array
+          items:
+            $ref: "#/components/schemas/CorporateBrandProfile"
+        brandGuidelines:
+          type: array
+          items:
+            $ref: "#/components/schemas/BrandGuidelines"
+        brandAssets:
+          type: array
+          items:
+            $ref: "#/components/schemas/BrandAsset"
+        mediaKits:
+          type: array
+          items:
+            $ref: "#/components/schemas/MediaKit"
+        igniteOs:
+          type: array
+          items:
+            $ref: "#/components/schemas/IgniteOS"
+        lessonProgress:
+          type: array
+          items:
+            $ref: "#/components/schemas/LessonProgress"
+        workbookDefinitions:
+          type: array
+          items:
+            $ref: "#/components/schemas/WorkbookDefinition"
+        workbookResponses:
+          type: array
+          items:
+            $ref: "#/components/schemas/WorkbookResponse"
+        checklistTasks:
+          type: array
+          items:
+            $ref: "#/components/schemas/ChecklistTask"
+        brandUpEntries:
+          type: array
+          items:
+            $ref: "#/components/schemas/BrandUpEntry"
+        serviceRequests:
+          type: array
+          items:
+            $ref: "#/components/schemas/ServiceRequest"
 
     AuthResponse:
       type: object

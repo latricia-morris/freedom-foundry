@@ -1,7 +1,14 @@
 import { Router, type IRouter } from "express";
 import { db, vaultItemsTable, courseModulesTable, courseLessonsTable, lessonProgressTable, workbookDefinitionsTable, workbookResponsesTable, checklistTasksTable, brandUpPromptsTable, brandUpEntriesTable, serviceRequestSubmissionsTable } from "@workspace/db";
 import { eq, and } from "drizzle-orm";
-import { authMiddleware, requireAdmin } from "../lib/auth";
+import {
+  authMiddleware,
+  ownedCreatePayload,
+  ownedNotFound,
+  ownedUpdatePayload,
+  requireAdmin,
+  requireMemberId,
+} from "../lib/auth";
 
 const router: IRouter = Router();
 
@@ -48,21 +55,27 @@ router.get("/course-lessons", async (req, res): Promise<void> => {
 
 // ─── Lesson Progress ──────────────────────────────────────────────────────────
 router.get("/lesson-progress", authMiddleware, async (req, res): Promise<void> => {
-  const { user_id } = req.query;
-  const rows = user_id
-    ? await db.select().from(lessonProgressTable).where(eq(lessonProgressTable.user_id, String(user_id)))
-    : await db.select().from(lessonProgressTable);
+  const userId = requireMemberId(req, res);
+  if (!userId) return;
+  const rows = await db.select().from(lessonProgressTable)
+    .where(eq(lessonProgressTable.user_id, userId));
   res.json(rows);
 });
 
 router.post("/lesson-progress", authMiddleware, async (req, res): Promise<void> => {
-  const [row] = await db.insert(lessonProgressTable).values(req.body).returning();
+  const data = ownedCreatePayload<typeof lessonProgressTable.$inferInsert>(req);
+  if (!data) { res.status(401).json({ error: "Unauthorized" }); return; }
+  const [row] = await db.insert(lessonProgressTable).values(data).returning();
   res.status(201).json(row);
 });
 
 router.delete("/lesson-progress/:id", authMiddleware, async (req, res): Promise<void> => {
+  const userId = requireMemberId(req, res);
+  if (!userId) return;
   const id = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id, 10);
-  await db.delete(lessonProgressTable).where(eq(lessonProgressTable.id, id));
+  const [deleted] = await db.delete(lessonProgressTable)
+    .where(and(eq(lessonProgressTable.id, id), eq(lessonProgressTable.user_id, userId))).returning();
+  if (!deleted) { ownedNotFound(res); return; }
   res.sendStatus(204);
 });
 
@@ -93,57 +106,68 @@ router.get("/workbook-definitions/:id", async (req, res): Promise<void> => {
 
 // ─── Workbook Responses ───────────────────────────────────────────────────────
 router.get("/workbook-responses", authMiddleware, async (req, res): Promise<void> => {
-  const { user_id, workbook_id } = req.query;
-  let rows;
-  if (user_id && workbook_id) {
-    rows = await db.select().from(workbookResponsesTable)
-      .where(and(eq(workbookResponsesTable.user_id, String(user_id)), eq(workbookResponsesTable.workbook_id, Number(workbook_id))));
-  } else if (user_id) {
-    rows = await db.select().from(workbookResponsesTable).where(eq(workbookResponsesTable.user_id, String(user_id)));
-  } else {
-    rows = await db.select().from(workbookResponsesTable);
-  }
+  const userId = requireMemberId(req, res);
+  if (!userId) return;
+  const workbookId = req.query.workbook_id;
+  const rows = workbookId
+    ? await db.select().from(workbookResponsesTable)
+      .where(and(eq(workbookResponsesTable.user_id, userId), eq(workbookResponsesTable.workbook_id, Number(workbookId))))
+    : await db.select().from(workbookResponsesTable).where(eq(workbookResponsesTable.user_id, userId));
   res.json(rows);
 });
 
 router.post("/workbook-responses", authMiddleware, async (req, res): Promise<void> => {
-  const [row] = await db.insert(workbookResponsesTable).values(req.body).returning();
+  const data = ownedCreatePayload<typeof workbookResponsesTable.$inferInsert>(req);
+  if (!data) { res.status(401).json({ error: "Unauthorized" }); return; }
+  const [row] = await db.insert(workbookResponsesTable).values(data).returning();
   res.status(201).json(row);
 });
 
 router.patch("/workbook-responses/:id", authMiddleware, async (req, res): Promise<void> => {
+  const userId = requireMemberId(req, res);
+  if (!userId) return;
   const id = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id, 10);
-  const data = { ...req.body }; delete data.id;
-  const [row] = await db.update(workbookResponsesTable).set(data).where(eq(workbookResponsesTable.id, id)).returning();
-  if (!row) { res.status(404).json({ error: "Not found" }); return; }
+  const data = ownedUpdatePayload<typeof workbookResponsesTable.$inferInsert>(req);
+  const [row] = await db.update(workbookResponsesTable).set(data)
+    .where(and(eq(workbookResponsesTable.id, id), eq(workbookResponsesTable.user_id, userId))).returning();
+  if (!row) { ownedNotFound(res); return; }
   res.json(row);
 });
 
 // ─── Checklist Tasks ──────────────────────────────────────────────────────────
 router.get("/checklist-tasks", authMiddleware, async (req, res): Promise<void> => {
-  const { user_id } = req.query;
-  const rows = user_id
-    ? await db.select().from(checklistTasksTable).where(eq(checklistTasksTable.user_id, String(user_id)))
-    : await db.select().from(checklistTasksTable);
+  const userId = requireMemberId(req, res);
+  if (!userId) return;
+  const rows = await db.select().from(checklistTasksTable)
+    .where(eq(checklistTasksTable.user_id, userId));
   res.json(rows);
 });
 
 router.post("/checklist-tasks", authMiddleware, async (req, res): Promise<void> => {
-  const [row] = await db.insert(checklistTasksTable).values(req.body).returning();
+  const data = ownedCreatePayload<typeof checklistTasksTable.$inferInsert>(req);
+  if (!data) { res.status(401).json({ error: "Unauthorized" }); return; }
+  const [row] = await db.insert(checklistTasksTable).values(data).returning();
   res.status(201).json(row);
 });
 
 router.patch("/checklist-tasks/:id", authMiddleware, async (req, res): Promise<void> => {
+  const userId = requireMemberId(req, res);
+  if (!userId) return;
   const id = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id, 10);
-  const data = { ...req.body }; delete data.id;
-  const [row] = await db.update(checklistTasksTable).set(data).where(eq(checklistTasksTable.id, id)).returning();
-  if (!row) { res.status(404).json({ error: "Not found" }); return; }
+  const data = ownedUpdatePayload<typeof checklistTasksTable.$inferInsert>(req);
+  const [row] = await db.update(checklistTasksTable).set(data)
+    .where(and(eq(checklistTasksTable.id, id), eq(checklistTasksTable.user_id, userId))).returning();
+  if (!row) { ownedNotFound(res); return; }
   res.json(row);
 });
 
 router.delete("/checklist-tasks/:id", authMiddleware, async (req, res): Promise<void> => {
+  const userId = requireMemberId(req, res);
+  if (!userId) return;
   const id = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id, 10);
-  await db.delete(checklistTasksTable).where(eq(checklistTasksTable.id, id));
+  const [deleted] = await db.delete(checklistTasksTable)
+    .where(and(eq(checklistTasksTable.id, id), eq(checklistTasksTable.user_id, userId))).returning();
+  if (!deleted) { ownedNotFound(res); return; }
   res.sendStatus(204);
 });
 
@@ -177,35 +201,43 @@ router.delete("/brand-up-prompts/:id", authMiddleware, requireAdmin, async (req,
 
 // ─── Brand Up Entries ─────────────────────────────────────────────────────────
 router.get("/brand-up-entries", authMiddleware, async (req, res): Promise<void> => {
-  const { user_id } = req.query;
-  const rows = user_id
-    ? await db.select().from(brandUpEntriesTable).where(eq(brandUpEntriesTable.user_id, String(user_id)))
-    : await db.select().from(brandUpEntriesTable);
+  const userId = requireMemberId(req, res);
+  if (!userId) return;
+  const rows = await db.select().from(brandUpEntriesTable)
+    .where(eq(brandUpEntriesTable.user_id, userId));
   res.json(rows);
 });
 
 router.post("/brand-up-entries", authMiddleware, async (req, res): Promise<void> => {
-  const [row] = await db.insert(brandUpEntriesTable).values(req.body).returning();
+  const data = ownedCreatePayload<typeof brandUpEntriesTable.$inferInsert>(req);
+  if (!data) { res.status(401).json({ error: "Unauthorized" }); return; }
+  const [row] = await db.insert(brandUpEntriesTable).values(data).returning();
   res.status(201).json(row);
 });
 
 router.delete("/brand-up-entries/:id", authMiddleware, async (req, res): Promise<void> => {
+  const userId = requireMemberId(req, res);
+  if (!userId) return;
   const id = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id, 10);
-  await db.delete(brandUpEntriesTable).where(eq(brandUpEntriesTable.id, id));
+  const [deleted] = await db.delete(brandUpEntriesTable)
+    .where(and(eq(brandUpEntriesTable.id, id), eq(brandUpEntriesTable.user_id, userId))).returning();
+  if (!deleted) { ownedNotFound(res); return; }
   res.sendStatus(204);
 });
 
 // ─── Service Requests ─────────────────────────────────────────────────────────
 router.get("/service-requests", authMiddleware, async (req, res): Promise<void> => {
-  const { user_id } = req.query;
-  const rows = user_id
-    ? await db.select().from(serviceRequestSubmissionsTable).where(eq(serviceRequestSubmissionsTable.user_id, String(user_id)))
-    : await db.select().from(serviceRequestSubmissionsTable);
+  const userId = requireMemberId(req, res);
+  if (!userId) return;
+  const rows = await db.select().from(serviceRequestSubmissionsTable)
+    .where(eq(serviceRequestSubmissionsTable.user_id, userId));
   res.json(rows);
 });
 
 router.post("/service-requests", authMiddleware, async (req, res): Promise<void> => {
-  const [row] = await db.insert(serviceRequestSubmissionsTable).values(req.body).returning();
+  const data = ownedCreatePayload<typeof serviceRequestSubmissionsTable.$inferInsert>(req);
+  if (!data) { res.status(401).json({ error: "Unauthorized" }); return; }
+  const [row] = await db.insert(serviceRequestSubmissionsTable).values(data).returning();
   res.status(201).json(row);
 });
 

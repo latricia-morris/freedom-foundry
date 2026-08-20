@@ -67,6 +67,48 @@ export function requireAdmin(req: Request, res: Response, next: NextFunction): v
   next();
 }
 
+/**
+ * Return the member identity established by authMiddleware. Route handlers use
+ * this rather than browser-provided ownership fields or query parameters.
+ */
+export function requireMemberId(req: Request, res: Response): string | null {
+  if (!req.userId) {
+    res.status(401).json({ error: "Unauthorized" });
+    return null;
+  }
+  return req.userId;
+}
+
+/** Assign immutable ownership for a new member-owned database record. */
+export function ownedCreatePayload<T extends object>(req: Request): (T & { user_id: string }) | null {
+  if (!req.userId) return null;
+  const {
+    id: _id,
+    user_id: _requestedUserId,
+    created_at: _createdAt,
+    updated_at: _updatedAt,
+    ...data
+  } = (req.body && typeof req.body === "object" ? req.body : {}) as Record<string, unknown>;
+  return { ...data, user_id: req.userId } as T & { user_id: string };
+}
+
+/** Remove immutable database fields before updating a member-owned record. */
+export function ownedUpdatePayload<T extends object>(req: Request): Partial<T> {
+  const {
+    id: _id,
+    user_id: _requestedUserId,
+    created_at: _createdAt,
+    updated_at: _updatedAt,
+    ...data
+  } = (req.body && typeof req.body === "object" ? req.body : {}) as Record<string, unknown>;
+  return data as Partial<T>;
+}
+
+/** Do not reveal whether an inaccessible member-owned record exists. */
+export function ownedNotFound(res: Response): void {
+  res.status(404).json({ error: "Not found" });
+}
+
 /** Middleware: attach Clerk userId if present, but do not reject unauthenticated requests. */
 export function optionalAuth(req: Request, _res: Response, next: NextFunction): void {
   const { userId } = getAuth(req);

@@ -84,10 +84,6 @@ export const LogoutResponse = zod.object({
 })
 
 
-export const GetUserProfilesQueryParams = zod.object({
-  "user_id": zod.coerce.string().optional()
-})
-
 export const GetUserProfilesResponseItem = zod.object({
   "id": zod.number(),
   "user_id": zod.string(),
@@ -287,9 +283,242 @@ export const UpdateAdminUserAccountResponse = zod.object({
 })
 
 
-export const GetPersonalBrandProfilesQueryParams = zod.object({
-  "user_id": zod.coerce.string().optional()
+export const GetAdminMemberPortalDataParams = zod.object({
+  "userId": zod.coerce.string()
 })
+
+export const GetAdminMemberPortalDataResponse = zod.object({
+  "bigPictures": zod.array(zod.object({
+  "id": zod.number(),
+  "user_id": zod.string(),
+  "word_for_the_year": zod.string().optional(),
+  "end_of_year_goal": zod.string().optional(),
+  "secondary_goal": zod.string().optional(),
+  "annual_revenue": zod.string().optional(),
+  "monthly_revenue": zod.string().optional(),
+  "weekly_revenue": zod.string().optional(),
+  "pricing_strategy_month": zod.string().optional(),
+  "client_booking_target": zod.string().optional(),
+  "clients_per_week": zod.string().optional(),
+  "travel_goals": zod.string().optional(),
+  "learning_goals": zod.string().optional(),
+  "meeting_goals": zod.string().optional(),
+  "impact_statement": zod.string().optional(),
+  "legacy_statement": zod.string().optional(),
+  "planning_checklist": zod.array(zod.string()).optional(),
+  "vision_health": zod.string().optional(),
+  "vision_career": zod.string().optional(),
+  "vision_family": zod.string().optional(),
+  "vision_money": zod.string().optional(),
+  "vision_travels": zod.string().optional(),
+  "vision_hobbies": zod.string().optional(),
+  "vision_relationships": zod.string().optional(),
+  "breakdown_goal": zod.string().optional(),
+  "breakdown_components": zod.string().optional(),
+  "breakdown_priorities": zod.string().optional(),
+  "breakdown_monthly_target": zod.string().optional(),
+  "breakdown_weekly_tasks": zod.string().optional(),
+  "breakdown_daily_step": zod.string().optional(),
+  "breakdown_weekly_review": zod.string().optional(),
+  "long_term_goal_3yr": zod.string().optional(),
+  "long_term_goal_5yr": zod.string().optional(),
+  "long_term_revenue": zod.string().optional(),
+  "long_term_positioning": zod.string().optional(),
+  "created_at": zod.string()
+})).optional(),
+  "personalBrandProfiles": zod.array(zod.object({
+  "id": zod.number(),
+  "user_id": zod.string(),
+  "first_name": zod.string().optional(),
+  "last_name": zod.string().optional(),
+  "business_name": zod.string().optional(),
+  "headshot_urls": zod.array(zod.string()).optional(),
+  "short_bio": zod.string().optional(),
+  "long_bio": zod.string().optional(),
+  "logo_urls": zod.array(zod.string()).optional(),
+  "feature_links": zod.array(zod.object({
+  "title": zod.string().optional(),
+  "url": zod.string().optional()
+})).optional(),
+  "phone": zod.string().optional(),
+  "email": zod.string().optional(),
+  "website": zod.string().optional(),
+  "social_links": zod.array(zod.object({
+  "title": zod.string().optional(),
+  "url": zod.string().optional()
+})).optional(),
+  "location_city": zod.string().optional(),
+  "location_state": zod.string().optional(),
+  "location_country": zod.string().optional(),
+  "has_books": zod.boolean().optional(),
+  "book_links": zod.array(zod.object({
+  "title": zod.string().optional(),
+  "url": zod.string().optional()
+})).optional(),
+  "heading_font": zod.string().optional(),
+  "subheading_font": zod.string().optional(),
+  "body_font": zod.string().optional(),
+  "accent_font": zod.string().optional(),
+  "brand_voice": zod.string().optional(),
+  "brand_tonality": zod.string().optional(),
+  "brand_prompts": zod.string().optional(),
+  "brand_specs": zod.string().optional(),
+  "positioning": zod.string().optional(),
+  "created_at": zod.string()
+})).optional(),
+  "corporateBrandProfiles": zod.array(zod.object({
+  "id": zod.number(),
+  "user_id": zod.string(),
+  "company_name": zod.string().optional(),
+  "tagline": zod.string().optional(),
+  "mission_statement": zod.string().optional(),
+  "phone": zod.string().optional(),
+  "email": zod.string().optional(),
+  "website": zod.string().optional(),
+  "location_city": zod.string().optional(),
+  "location_state": zod.string().optional(),
+  "location_country": zod.string().optional(),
+  "has_books": zod.boolean().optional(),
+  "book_links": zod.array(zod.object({
+  "title": zod.string().optional(),
+  "url": zod.string().optional()
+})).optional(),
+  "heading_font": zod.string().optional(),
+  "subheading_font": zod.string().optional(),
+  "body_font": zod.string().optional(),
+  "accent_font": zod.string().optional(),
+  "colors": zod.array(zod.record(zod.string(), zod.unknown())).optional(),
+  "logo_urls": zod.array(zod.string()).optional(),
+  "moodboard_urls": zod.array(zod.string()).optional(),
+  "brand_voice": zod.string().optional(),
+  "brand_tonality": zod.string().optional(),
+  "brand_personality": zod.string().optional(),
+  "brand_prompts": zod.string().optional(),
+  "brand_specs": zod.string().optional(),
+  "positioning": zod.string().optional(),
+  "target_audience": zod.string().optional(),
+  "created_at": zod.string()
+})).optional(),
+  "brandGuidelines": zod.array(zod.object({
+  "id": zod.number(),
+  "user_id": zod.string(),
+  "heading_font": zod.string().optional(),
+  "subheading_font": zod.string().optional(),
+  "body_font": zod.string().optional(),
+  "accent_font": zod.string().optional(),
+  "logo_usage_notes": zod.string().optional(),
+  "color_usage_notes": zod.string().optional(),
+  "typography_notes": zod.string().optional(),
+  "photography_style": zod.string().optional(),
+  "tone_notes": zod.string().optional(),
+  "brand_dont_list": zod.string().optional(),
+  "additional_standards": zod.string().optional(),
+  "created_at": zod.string()
+})).optional(),
+  "brandAssets": zod.array(zod.object({
+  "id": zod.number(),
+  "user_id": zod.string(),
+  "title": zod.string().optional(),
+  "description": zod.string().optional(),
+  "file_url": zod.string().optional(),
+  "file_type": zod.string().optional(),
+  "created_at": zod.string()
+})).optional(),
+  "mediaKits": zod.array(zod.object({
+  "id": zod.number(),
+  "user_id": zod.string(),
+  "first_name": zod.string().optional(),
+  "last_name": zod.string().optional(),
+  "business_name": zod.string().optional(),
+  "short_bio": zod.string().optional(),
+  "long_bio": zod.string().optional(),
+  "headshot_urls": zod.array(zod.string()).optional(),
+  "logo_urls": zod.array(zod.string()).optional(),
+  "phone": zod.string().optional(),
+  "email": zod.string().optional(),
+  "website": zod.string().optional(),
+  "social_links": zod.array(zod.object({
+  "title": zod.string().optional(),
+  "url": zod.string().optional()
+})).optional(),
+  "feature_links": zod.array(zod.object({
+  "title": zod.string().optional(),
+  "url": zod.string().optional()
+})).optional(),
+  "location_city": zod.string().optional(),
+  "location_state": zod.string().optional(),
+  "location_country": zod.string().optional(),
+  "has_books": zod.boolean().optional(),
+  "book_links": zod.array(zod.object({
+  "title": zod.string().optional(),
+  "url": zod.string().optional()
+})).optional(),
+  "podcast_links": zod.array(zod.object({
+  "title": zod.string().optional(),
+  "url": zod.string().optional()
+})).optional(),
+  "created_at": zod.string()
+})).optional(),
+  "igniteOs": zod.array(zod.object({
+  "id": zod.number(),
+  "user_id": zod.string(),
+  "data": zod.record(zod.string(), zod.unknown()).optional(),
+  "created_at": zod.string()
+})).optional(),
+  "lessonProgress": zod.array(zod.object({
+  "id": zod.number(),
+  "user_id": zod.string(),
+  "lesson_id": zod.number(),
+  "completed_at": zod.string().optional(),
+  "created_at": zod.string()
+})).optional(),
+  "workbookDefinitions": zod.array(zod.object({
+  "id": zod.number(),
+  "vault_item_id": zod.number().optional(),
+  "title": zod.string(),
+  "description": zod.string().optional(),
+  "fields": zod.record(zod.string(), zod.unknown()).optional(),
+  "status": zod.string().optional(),
+  "order": zod.number().optional(),
+  "created_at": zod.string()
+})).optional(),
+  "workbookResponses": zod.array(zod.object({
+  "id": zod.number(),
+  "user_id": zod.string(),
+  "workbook_id": zod.number(),
+  "responses": zod.record(zod.string(), zod.unknown()).optional(),
+  "created_at": zod.string()
+})).optional(),
+  "checklistTasks": zod.array(zod.object({
+  "id": zod.number(),
+  "user_id": zod.string(),
+  "title": zod.string(),
+  "status": zod.string().optional(),
+  "parent_id": zod.number().optional(),
+  "deadline_date": zod.string().optional(),
+  "assignee": zod.string().optional(),
+  "created_at": zod.string()
+})).optional(),
+  "brandUpEntries": zod.array(zod.object({
+  "id": zod.number(),
+  "user_id": zod.string(),
+  "prompt_id": zod.number().optional(),
+  "response": zod.string().optional(),
+  "created_at": zod.string()
+})).optional(),
+  "serviceRequests": zod.array(zod.object({
+  "id": zod.number(),
+  "user_id": zod.string(),
+  "service_type": zod.string(),
+  "details": zod.record(zod.string(), zod.unknown()).optional(),
+  "budget_range": zod.string().optional(),
+  "timeline": zod.string().optional(),
+  "deposit_acknowledged": zod.boolean().optional(),
+  "status": zod.string().optional(),
+  "created_at": zod.string()
+})).optional()
+})
+
 
 export const GetPersonalBrandProfilesResponseItem = zod.object({
   "id": zod.number(),
@@ -500,10 +729,6 @@ export const UpdatePersonalBrandProfileResponse = zod.object({
 })
 
 
-export const GetCorporateBrandProfilesQueryParams = zod.object({
-  "user_id": zod.coerce.string().optional()
-})
-
 export const GetCorporateBrandProfilesResponseItem = zod.object({
   "id": zod.number(),
   "user_id": zod.string(),
@@ -678,10 +903,6 @@ export const UpdateCorporateBrandProfileResponse = zod.object({
 })
 
 
-export const GetBrandGuidelinesQueryParams = zod.object({
-  "user_id": zod.coerce.string().optional()
-})
-
 export const GetBrandGuidelinesResponseItem = zod.object({
   "id": zod.number(),
   "user_id": zod.string(),
@@ -771,10 +992,6 @@ export const UpdateBrandGuidelinesResponse = zod.object({
 })
 
 
-export const GetBrandAssetsQueryParams = zod.object({
-  "user_id": zod.coerce.string().optional()
-})
-
 export const GetBrandAssetsResponseItem = zod.object({
   "id": zod.number(),
   "user_id": zod.string(),
@@ -812,10 +1029,6 @@ export const DeleteBrandAssetParams = zod.object({
 
 export const DeleteBrandAssetResponse = zod.void()
 
-
-export const GetMediaKitsQueryParams = zod.object({
-  "user_id": zod.coerce.string().optional()
-})
 
 export const GetMediaKitsResponseItem = zod.object({
   "id": zod.number(),
@@ -1000,10 +1213,6 @@ export const UpdateMediaKitResponse = zod.object({
   "created_at": zod.string()
 })
 
-
-export const GetBigPicturesQueryParams = zod.object({
-  "user_id": zod.coerce.string().optional()
-})
 
 export const GetBigPicturesResponseItem = zod.object({
   "id": zod.number(),
@@ -1204,10 +1413,6 @@ export const UpdateBigPictureResponse = zod.object({
 })
 
 
-export const GetIgniteOSQueryParams = zod.object({
-  "user_id": zod.coerce.string().optional()
-})
-
 export const GetIgniteOSResponseItem = zod.object({
   "id": zod.number(),
   "user_id": zod.string(),
@@ -1254,20 +1459,6 @@ export const CreateShareLinkBody = zod.object({
 })
 
 export const CreateShareLinkResponse = zod.object({
-  "id": zod.number(),
-  "token": zod.string(),
-  "profile_type": zod.string(),
-  "profile_id": zod.string().optional(),
-  "is_active": zod.boolean().optional(),
-  "created_at": zod.string()
-})
-
-
-export const GetShareLinkParams = zod.object({
-  "token": zod.coerce.string()
-})
-
-export const GetShareLinkResponse = zod.object({
   "id": zod.number(),
   "token": zod.string(),
   "profile_type": zod.string(),
@@ -1353,10 +1544,6 @@ export const GetCourseLessonsResponseItem = zod.object({
 export const GetCourseLessonsResponse = zod.array(GetCourseLessonsResponseItem)
 
 
-export const GetLessonProgressQueryParams = zod.object({
-  "user_id": zod.coerce.string().optional()
-})
-
 export const GetLessonProgressResponseItem = zod.object({
   "id": zod.number(),
   "user_id": zod.string(),
@@ -1424,7 +1611,6 @@ export const GetWorkbookDefinitionResponse = zod.object({
 
 
 export const GetWorkbookResponsesQueryParams = zod.object({
-  "user_id": zod.coerce.string().optional(),
   "workbook_id": zod.coerce.number().optional()
 })
 
@@ -1471,10 +1657,6 @@ export const UpdateWorkbookResponseResponse = zod.object({
   "created_at": zod.string()
 })
 
-
-export const GetChecklistTasksQueryParams = zod.object({
-  "user_id": zod.coerce.string().optional()
-})
 
 export const GetChecklistTasksResponseItem = zod.object({
   "id": zod.number(),
@@ -1602,10 +1784,6 @@ export const DeleteBrandUpPromptParams = zod.object({
 export const DeleteBrandUpPromptResponse = zod.void()
 
 
-export const GetBrandUpEntriesQueryParams = zod.object({
-  "user_id": zod.coerce.string().optional()
-})
-
 export const GetBrandUpEntriesResponseItem = zod.object({
   "id": zod.number(),
   "user_id": zod.string(),
@@ -1637,10 +1815,6 @@ export const DeleteBrandUpEntryParams = zod.object({
 
 export const DeleteBrandUpEntryResponse = zod.void()
 
-
-export const GetServiceRequestsQueryParams = zod.object({
-  "user_id": zod.coerce.string().optional()
-})
 
 export const GetServiceRequestsResponseItem = zod.object({
   "id": zod.number(),

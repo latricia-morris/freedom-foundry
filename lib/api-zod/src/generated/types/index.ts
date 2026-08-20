@@ -7,6 +7,7 @@
  */
 
 export * from './adminAccountInput';
+export * from './adminPortalData';
 export * from './adminUserAccount';
 export * from './authResponse';
 export * from './authUser';
@@ -28,21 +29,9 @@ export * from './courseLesson';
 export * from './courseModule';
 export * from './errorResponse';
 export * from './freeObject';
-export * from './getBigPicturesParams';
-export * from './getBrandAssetsParams';
-export * from './getBrandGuidelinesParams';
-export * from './getBrandUpEntriesParams';
 export * from './getBrandUpPromptsParams';
-export * from './getChecklistTasksParams';
-export * from './getCorporateBrandProfilesParams';
 export * from './getCourseLessonsParams';
 export * from './getCourseModulesParams';
-export * from './getIgniteOSParams';
-export * from './getLessonProgressParams';
-export * from './getMediaKitsParams';
-export * from './getPersonalBrandProfilesParams';
-export * from './getServiceRequestsParams';
-export * from './getUserProfilesParams';
 export * from './getWorkbookDefinitionsParams';
 export * from './getWorkbookResponsesParams';
 export * from './healthStatus';

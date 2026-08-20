@@ -62,6 +62,9 @@ export const admin = {
   async getUserAccount(userId) {
     return apiFetch(`/admin/users/${encodeURIComponent(userId)}`);
   },
+  async getUserPortalData(userId) {
+    return apiFetch(`/admin/users/${encodeURIComponent(userId)}/portal-data`);
+  },
   async updateUserAccount(userId, data) {
     return apiFetch(`/admin/users/${encodeURIComponent(userId)}`, {
       method: 'PATCH',

@@ -84,248 +84,6 @@ export interface AdminAccountInput {
   notes?: string;
 }
 
-export interface AuthResponse {
-  user: AuthUser;
-  token: string;
-}
-
-export interface UserProfileInput {
-  user_id?: string;
-  first_name?: string;
-  last_name?: string;
-  business_name?: string;
-  website?: string;
-  phone?: string;
-  headshot_url?: string;
-  account_type?: string;
-  brand_power_moves_unlocked?: boolean;
-  brand_power_moves_unlocked_at?: string;
-  unlock_method?: string;
-  active_program_id?: string;
-  notes?: string;
-  setup_status?: FreeObject;
-  marketing_consent?: boolean;
-  consent_date?: string;
-}
-
-export interface PersonalBrandProfile {
-  id: number;
-  user_id: string;
-  first_name?: string;
-  last_name?: string;
-  business_name?: string;
-  headshot_urls?: string[];
-  short_bio?: string;
-  long_bio?: string;
-  logo_urls?: string[];
-  feature_links?: LinkObject[];
-  phone?: string;
-  email?: string;
-  website?: string;
-  social_links?: LinkObject[];
-  location_city?: string;
-  location_state?: string;
-  location_country?: string;
-  has_books?: boolean;
-  book_links?: LinkObject[];
-  heading_font?: string;
-  subheading_font?: string;
-  body_font?: string;
-  accent_font?: string;
-  brand_voice?: string;
-  brand_tonality?: string;
-  brand_prompts?: string;
-  brand_specs?: string;
-  positioning?: string;
-  created_at: string;
-}
-
-export interface PersonalBrandProfileInput {
-  user_id?: string;
-  first_name?: string;
-  last_name?: string;
-  business_name?: string;
-  headshot_urls?: string[];
-  short_bio?: string;
-  long_bio?: string;
-  logo_urls?: string[];
-  feature_links?: LinkObject[];
-  phone?: string;
-  email?: string;
-  website?: string;
-  social_links?: LinkObject[];
-  location_city?: string;
-  location_state?: string;
-  location_country?: string;
-  has_books?: boolean;
-  book_links?: LinkObject[];
-  heading_font?: string;
-  subheading_font?: string;
-  body_font?: string;
-  accent_font?: string;
-  brand_voice?: string;
-  brand_tonality?: string;
-  brand_prompts?: string;
-  brand_specs?: string;
-  positioning?: string;
-}
-
-export interface CorporateBrandProfile {
-  id: number;
-  user_id: string;
-  company_name?: string;
-  tagline?: string;
-  mission_statement?: string;
-  phone?: string;
-  email?: string;
-  website?: string;
-  location_city?: string;
-  location_state?: string;
-  location_country?: string;
-  has_books?: boolean;
-  book_links?: LinkObject[];
-  heading_font?: string;
-  subheading_font?: string;
-  body_font?: string;
-  accent_font?: string;
-  colors?: FreeObject[];
-  logo_urls?: string[];
-  moodboard_urls?: string[];
-  brand_voice?: string;
-  brand_tonality?: string;
-  brand_personality?: string;
-  brand_prompts?: string;
-  brand_specs?: string;
-  positioning?: string;
-  target_audience?: string;
-  created_at: string;
-}
-
-export interface CorporateBrandProfileInput {
-  user_id?: string;
-  company_name?: string;
-  tagline?: string;
-  mission_statement?: string;
-  phone?: string;
-  email?: string;
-  website?: string;
-  location_city?: string;
-  location_state?: string;
-  location_country?: string;
-  has_books?: boolean;
-  book_links?: LinkObject[];
-  heading_font?: string;
-  subheading_font?: string;
-  body_font?: string;
-  accent_font?: string;
-  colors?: FreeObject[];
-  logo_urls?: string[];
-  moodboard_urls?: string[];
-  brand_voice?: string;
-  brand_tonality?: string;
-  brand_personality?: string;
-  brand_prompts?: string;
-  brand_specs?: string;
-  positioning?: string;
-  target_audience?: string;
-}
-
-export interface BrandGuidelines {
-  id: number;
-  user_id: string;
-  heading_font?: string;
-  subheading_font?: string;
-  body_font?: string;
-  accent_font?: string;
-  logo_usage_notes?: string;
-  color_usage_notes?: string;
-  typography_notes?: string;
-  photography_style?: string;
-  tone_notes?: string;
-  brand_dont_list?: string;
-  additional_standards?: string;
-  created_at: string;
-}
-
-export interface BrandGuidelinesInput {
-  user_id?: string;
-  heading_font?: string;
-  subheading_font?: string;
-  body_font?: string;
-  accent_font?: string;
-  logo_usage_notes?: string;
-  color_usage_notes?: string;
-  typography_notes?: string;
-  photography_style?: string;
-  tone_notes?: string;
-  brand_dont_list?: string;
-  additional_standards?: string;
-}
-
-export interface BrandAsset {
-  id: number;
-  user_id: string;
-  title?: string;
-  description?: string;
-  file_url?: string;
-  file_type?: string;
-  created_at: string;
-}
-
-export interface BrandAssetInput {
-  user_id?: string;
-  title?: string;
-  description?: string;
-  file_url?: string;
-  file_type?: string;
-}
-
-export interface MediaKit {
-  id: number;
-  user_id: string;
-  first_name?: string;
-  last_name?: string;
-  business_name?: string;
-  short_bio?: string;
-  long_bio?: string;
-  headshot_urls?: string[];
-  logo_urls?: string[];
-  phone?: string;
-  email?: string;
-  website?: string;
-  social_links?: LinkObject[];
-  feature_links?: LinkObject[];
-  location_city?: string;
-  location_state?: string;
-  location_country?: string;
-  has_books?: boolean;
-  book_links?: LinkObject[];
-  podcast_links?: LinkObject[];
-  created_at: string;
-}
-
-export interface MediaKitInput {
-  user_id?: string;
-  first_name?: string;
-  last_name?: string;
-  business_name?: string;
-  short_bio?: string;
-  long_bio?: string;
-  headshot_urls?: string[];
-  logo_urls?: string[];
-  phone?: string;
-  email?: string;
-  website?: string;
-  social_links?: LinkObject[];
-  feature_links?: LinkObject[];
-  location_city?: string;
-  location_state?: string;
-  location_country?: string;
-  has_books?: boolean;
-  book_links?: LinkObject[];
-  podcast_links?: LinkObject[];
-}
-
 export interface BigPicture {
   id: number;
   user_id: string;
@@ -365,6 +123,329 @@ export interface BigPicture {
   created_at: string;
 }
 
+export interface PersonalBrandProfile {
+  id: number;
+  user_id: string;
+  first_name?: string;
+  last_name?: string;
+  business_name?: string;
+  headshot_urls?: string[];
+  short_bio?: string;
+  long_bio?: string;
+  logo_urls?: string[];
+  feature_links?: LinkObject[];
+  phone?: string;
+  email?: string;
+  website?: string;
+  social_links?: LinkObject[];
+  location_city?: string;
+  location_state?: string;
+  location_country?: string;
+  has_books?: boolean;
+  book_links?: LinkObject[];
+  heading_font?: string;
+  subheading_font?: string;
+  body_font?: string;
+  accent_font?: string;
+  brand_voice?: string;
+  brand_tonality?: string;
+  brand_prompts?: string;
+  brand_specs?: string;
+  positioning?: string;
+  created_at: string;
+}
+
+export interface CorporateBrandProfile {
+  id: number;
+  user_id: string;
+  company_name?: string;
+  tagline?: string;
+  mission_statement?: string;
+  phone?: string;
+  email?: string;
+  website?: string;
+  location_city?: string;
+  location_state?: string;
+  location_country?: string;
+  has_books?: boolean;
+  book_links?: LinkObject[];
+  heading_font?: string;
+  subheading_font?: string;
+  body_font?: string;
+  accent_font?: string;
+  colors?: FreeObject[];
+  logo_urls?: string[];
+  moodboard_urls?: string[];
+  brand_voice?: string;
+  brand_tonality?: string;
+  brand_personality?: string;
+  brand_prompts?: string;
+  brand_specs?: string;
+  positioning?: string;
+  target_audience?: string;
+  created_at: string;
+}
+
+export interface BrandGuidelines {
+  id: number;
+  user_id: string;
+  heading_font?: string;
+  subheading_font?: string;
+  body_font?: string;
+  accent_font?: string;
+  logo_usage_notes?: string;
+  color_usage_notes?: string;
+  typography_notes?: string;
+  photography_style?: string;
+  tone_notes?: string;
+  brand_dont_list?: string;
+  additional_standards?: string;
+  created_at: string;
+}
+
+export interface BrandAsset {
+  id: number;
+  user_id: string;
+  title?: string;
+  description?: string;
+  file_url?: string;
+  file_type?: string;
+  created_at: string;
+}
+
+export interface MediaKit {
+  id: number;
+  user_id: string;
+  first_name?: string;
+  last_name?: string;
+  business_name?: string;
+  short_bio?: string;
+  long_bio?: string;
+  headshot_urls?: string[];
+  logo_urls?: string[];
+  phone?: string;
+  email?: string;
+  website?: string;
+  social_links?: LinkObject[];
+  feature_links?: LinkObject[];
+  location_city?: string;
+  location_state?: string;
+  location_country?: string;
+  has_books?: boolean;
+  book_links?: LinkObject[];
+  podcast_links?: LinkObject[];
+  created_at: string;
+}
+
+export interface IgniteOS {
+  id: number;
+  user_id: string;
+  data?: FreeObject;
+  created_at: string;
+}
+
+export interface LessonProgress {
+  id: number;
+  user_id: string;
+  lesson_id: number;
+  completed_at?: string;
+  created_at: string;
+}
+
+export interface WorkbookDefinition {
+  id: number;
+  vault_item_id?: number;
+  title: string;
+  description?: string;
+  fields?: FreeObject;
+  status?: string;
+  order?: number;
+  created_at: string;
+}
+
+export interface WorkbookResponse {
+  id: number;
+  user_id: string;
+  workbook_id: number;
+  responses?: FreeObject;
+  created_at: string;
+}
+
+export interface ChecklistTask {
+  id: number;
+  user_id: string;
+  title: string;
+  status?: string;
+  parent_id?: number;
+  deadline_date?: string;
+  assignee?: string;
+  created_at: string;
+}
+
+export interface BrandUpEntry {
+  id: number;
+  user_id: string;
+  prompt_id?: number;
+  response?: string;
+  created_at: string;
+}
+
+export interface ServiceRequest {
+  id: number;
+  user_id: string;
+  service_type: string;
+  details?: FreeObject;
+  budget_range?: string;
+  timeline?: string;
+  deposit_acknowledged?: boolean;
+  status?: string;
+  created_at: string;
+}
+
+export interface AdminPortalData {
+  bigPictures?: BigPicture[];
+  personalBrandProfiles?: PersonalBrandProfile[];
+  corporateBrandProfiles?: CorporateBrandProfile[];
+  brandGuidelines?: BrandGuidelines[];
+  brandAssets?: BrandAsset[];
+  mediaKits?: MediaKit[];
+  igniteOs?: IgniteOS[];
+  lessonProgress?: LessonProgress[];
+  workbookDefinitions?: WorkbookDefinition[];
+  workbookResponses?: WorkbookResponse[];
+  checklistTasks?: ChecklistTask[];
+  brandUpEntries?: BrandUpEntry[];
+  serviceRequests?: ServiceRequest[];
+}
+
+export interface AuthResponse {
+  user: AuthUser;
+  token: string;
+}
+
+export interface UserProfileInput {
+  user_id?: string;
+  first_name?: string;
+  last_name?: string;
+  business_name?: string;
+  website?: string;
+  phone?: string;
+  headshot_url?: string;
+  account_type?: string;
+  brand_power_moves_unlocked?: boolean;
+  brand_power_moves_unlocked_at?: string;
+  unlock_method?: string;
+  active_program_id?: string;
+  notes?: string;
+  setup_status?: FreeObject;
+  marketing_consent?: boolean;
+  consent_date?: string;
+}
+
+export interface PersonalBrandProfileInput {
+  user_id?: string;
+  first_name?: string;
+  last_name?: string;
+  business_name?: string;
+  headshot_urls?: string[];
+  short_bio?: string;
+  long_bio?: string;
+  logo_urls?: string[];
+  feature_links?: LinkObject[];
+  phone?: string;
+  email?: string;
+  website?: string;
+  social_links?: LinkObject[];
+  location_city?: string;
+  location_state?: string;
+  location_country?: string;
+  has_books?: boolean;
+  book_links?: LinkObject[];
+  heading_font?: string;
+  subheading_font?: string;
+  body_font?: string;
+  accent_font?: string;
+  brand_voice?: string;
+  brand_tonality?: string;
+  brand_prompts?: string;
+  brand_specs?: string;
+  positioning?: string;
+}
+
+export interface CorporateBrandProfileInput {
+  user_id?: string;
+  company_name?: string;
+  tagline?: string;
+  mission_statement?: string;
+  phone?: string;
+  email?: string;
+  website?: string;
+  location_city?: string;
+  location_state?: string;
+  location_country?: string;
+  has_books?: boolean;
+  book_links?: LinkObject[];
+  heading_font?: string;
+  subheading_font?: string;
+  body_font?: string;
+  accent_font?: string;
+  colors?: FreeObject[];
+  logo_urls?: string[];
+  moodboard_urls?: string[];
+  brand_voice?: string;
+  brand_tonality?: string;
+  brand_personality?: string;
+  brand_prompts?: string;
+  brand_specs?: string;
+  positioning?: string;
+  target_audience?: string;
+}
+
+export interface BrandGuidelinesInput {
+  user_id?: string;
+  heading_font?: string;
+  subheading_font?: string;
+  body_font?: string;
+  accent_font?: string;
+  logo_usage_notes?: string;
+  color_usage_notes?: string;
+  typography_notes?: string;
+  photography_style?: string;
+  tone_notes?: string;
+  brand_dont_list?: string;
+  additional_standards?: string;
+}
+
+export interface BrandAssetInput {
+  user_id?: string;
+  title?: string;
+  description?: string;
+  file_url?: string;
+  file_type?: string;
+}
+
+export interface MediaKitInput {
+  user_id?: string;
+  first_name?: string;
+  last_name?: string;
+  business_name?: string;
+  short_bio?: string;
+  long_bio?: string;
+  headshot_urls?: string[];
+  logo_urls?: string[];
+  phone?: string;
+  email?: string;
+  website?: string;
+  social_links?: LinkObject[];
+  feature_links?: LinkObject[];
+  location_city?: string;
+  location_state?: string;
+  location_country?: string;
+  has_books?: boolean;
+  book_links?: LinkObject[];
+  podcast_links?: LinkObject[];
+}
+
 export interface BigPictureInput {
   user_id?: string;
   word_for_the_year?: string;
@@ -400,13 +481,6 @@ export interface BigPictureInput {
   long_term_goal_5yr?: string;
   long_term_revenue?: string;
   long_term_positioning?: string;
-}
-
-export interface IgniteOS {
-  id: number;
-  user_id: string;
-  data?: FreeObject;
-  created_at: string;
 }
 
 export interface IgniteOSInput {
@@ -468,54 +542,16 @@ export interface CourseLesson {
   created_at: string;
 }
 
-export interface LessonProgress {
-  id: number;
-  user_id: string;
-  lesson_id: number;
-  completed_at?: string;
-  created_at: string;
-}
-
 export interface LessonProgressInput {
   user_id: string;
   lesson_id: number;
   completed_at?: string;
 }
 
-export interface WorkbookDefinition {
-  id: number;
-  vault_item_id?: number;
-  title: string;
-  description?: string;
-  fields?: FreeObject;
-  status?: string;
-  order?: number;
-  created_at: string;
-}
-
-export interface WorkbookResponse {
-  id: number;
-  user_id: string;
-  workbook_id: number;
-  responses?: FreeObject;
-  created_at: string;
-}
-
 export interface WorkbookResponseInput {
   user_id: string;
   workbook_id: number;
   responses?: FreeObject;
-}
-
-export interface ChecklistTask {
-  id: number;
-  user_id: string;
-  title: string;
-  status?: string;
-  parent_id?: number;
-  deadline_date?: string;
-  assignee?: string;
-  created_at: string;
 }
 
 export interface ChecklistTaskInput {
@@ -543,30 +579,10 @@ export interface BrandUpPromptInput {
   order?: number;
 }
 
-export interface BrandUpEntry {
-  id: number;
-  user_id: string;
-  prompt_id?: number;
-  response?: string;
-  created_at: string;
-}
-
 export interface BrandUpEntryInput {
   user_id: string;
   prompt_id?: number;
   response?: string;
-}
-
-export interface ServiceRequest {
-  id: number;
-  user_id: string;
-  service_type: string;
-  details?: FreeObject;
-  budget_range?: string;
-  timeline?: string;
-  deposit_acknowledged?: boolean;
-  status?: string;
-  created_at: string;
 }
 
 export interface ServiceRequestInput {
@@ -578,38 +594,6 @@ export interface ServiceRequestInput {
   deposit_acknowledged?: boolean;
 }
 
-export type GetUserProfilesParams = {
-user_id?: string;
-};
-
-export type GetPersonalBrandProfilesParams = {
-user_id?: string;
-};
-
-export type GetCorporateBrandProfilesParams = {
-user_id?: string;
-};
-
-export type GetBrandGuidelinesParams = {
-user_id?: string;
-};
-
-export type GetBrandAssetsParams = {
-user_id?: string;
-};
-
-export type GetMediaKitsParams = {
-user_id?: string;
-};
-
-export type GetBigPicturesParams = {
-user_id?: string;
-};
-
-export type GetIgniteOSParams = {
-user_id?: string;
-};
-
 export type GetCourseModulesParams = {
 vault_item_id?: number;
 };
@@ -618,33 +602,16 @@ export type GetCourseLessonsParams = {
 module_id?: number;
 };
 
-export type GetLessonProgressParams = {
-user_id?: string;
-};
-
 export type GetWorkbookDefinitionsParams = {
 status?: string;
 vault_item_id?: number;
 };
 
 export type GetWorkbookResponsesParams = {
-user_id?: string;
 workbook_id?: number;
-};
-
-export type GetChecklistTasksParams = {
-user_id?: string;
 };
 
 export type GetBrandUpPromptsParams = {
 is_active?: boolean;
-};
-
-export type GetBrandUpEntriesParams = {
-user_id?: string;
-};
-
-export type GetServiceRequestsParams = {
-user_id?: string;
 };
 
