@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Shield, ArrowRight, Search, UserPlus, X } from 'lucide-react';
+import { Shield, ArrowRight, Search, UserPlus, X, Layers3 } from 'lucide-react';
 import apiClient from '@/api/client';
 
 export default function AdminUsers() {
@@ -62,13 +62,18 @@ export default function AdminUsers() {
           <h1 className="font-heading text-3xl font-light text-foreground mb-2">User <span className="molten-text italic">Management</span></h1>
           <p className="text-sm text-muted-foreground">Manage app users, access, and account content.</p>
         </div>
-        <button
-          onClick={() => { setInviteOpen(true); setInviteMessage(''); }}
-          className="inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-xs font-medium uppercase tracking-wider text-white"
-          style={{ background: 'linear-gradient(131deg, #b3232c, #d9622c)' }}
-        >
-          <UserPlus className="h-4 w-4" /> Invite member
-        </button>
+        <div className="flex flex-wrap gap-2">
+          <Link to="/admin/client-setups" className="inline-flex items-center gap-2 rounded-lg border border-primary/30 bg-card px-4 py-2.5 text-xs font-medium uppercase tracking-wider text-foreground hover:border-primary">
+            <Layers3 className="h-4 w-4 text-primary" /> Client migrations
+          </Link>
+          <button
+            onClick={() => { setInviteOpen(true); setInviteMessage(''); }}
+            className="inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-xs font-medium uppercase tracking-wider text-white"
+            style={{ background: 'linear-gradient(131deg, #b3232c, #d9622c)' }}
+          >
+            <UserPlus className="h-4 w-4" /> Invite member
+          </button>
+        </div>
       </div>
 
       {error && (

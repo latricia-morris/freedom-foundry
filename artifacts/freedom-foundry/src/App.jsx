@@ -33,6 +33,8 @@ import IgniteOS from './pages/IgniteOS';
 import SharePage from './pages/SharePage';
 import AdminUsers from './pages/AdminUsers';
 import AdminUserDetail from './pages/AdminUserDetail';
+import ClientMigrations from './pages/ClientMigrations';
+import ClientSetupWorkspace from './pages/ClientSetupWorkspace';
 import AdminDashboard from './pages/AdminDashboard';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
@@ -241,6 +243,8 @@ function AppRoutes() {
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/users" element={<AdminUsers />} />
             <Route path="/admin/users/:id" element={<AdminUserDetail />} />
+            <Route path="/admin/client-setups" element={<ClientMigrations />} />
+            <Route path="/admin/client-setups/:id" element={<ClientSetupWorkspace />} />
             <Route path="/admin/brand-up" element={<BrandUpAdmin />} />
           </Route>
           <Route path="/terms" element={<Terms />} />

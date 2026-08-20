@@ -86,6 +86,36 @@ export const admin = {
       body: JSON.stringify(payload),
     });
   },
+  async listClientSetups() {
+    return apiFetch('/admin/client-setups');
+  },
+  async createClientSetup(data) {
+    return apiFetch('/admin/client-setups', { method: 'POST', body: JSON.stringify(data) });
+  },
+  async getClientSetup(id) {
+    return apiFetch(`/admin/client-setups/${encodeURIComponent(id)}`);
+  },
+  async updateClientSetup(id, data) {
+    return apiFetch(`/admin/client-setups/${encodeURIComponent(id)}`, { method: 'PATCH', body: JSON.stringify(data) });
+  },
+  async importClientSetup(id, payload) {
+    return apiFetch(`/admin/client-setups/${encodeURIComponent(id)}/import`, { method: 'POST', body: JSON.stringify({ payload }) });
+  },
+  async listClientSetupTemplates() {
+    return apiFetch('/admin/client-setup-templates');
+  },
+  async createClientSetupTemplate(data) {
+    return apiFetch('/admin/client-setup-templates', { method: 'POST', body: JSON.stringify(data) });
+  },
+  async applyClientSetupTemplate(id, templateId) {
+    return apiFetch(`/admin/client-setups/${encodeURIComponent(id)}/apply-template`, { method: 'POST', body: JSON.stringify({ template_id: templateId }) });
+  },
+  async inviteClientSetup(id) {
+    return apiFetch(`/admin/client-setups/${encodeURIComponent(id)}/invite`, { method: 'POST' });
+  },
+  async claimClientSetup(id) {
+    return apiFetch(`/admin/client-setups/${encodeURIComponent(id)}/claim`, { method: 'POST' });
+  },
 };
 
 // ─── Generic entity factory ───────────────────────────────────────────────────

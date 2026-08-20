@@ -4,6 +4,7 @@ import authRouter from "./auth";
 import usersRouter from "./users";
 import brandRouter from "./brand";
 import contentRouter from "./content";
+import clientSetupsRouter from "./client-setups";
 
 const router: IRouter = Router();
 
@@ -12,5 +13,6 @@ router.use(authRouter);
 router.use(usersRouter);
 router.use(brandRouter);
 router.use(contentRouter);
+router.use(clientSetupsRouter);
 
 export default router;
