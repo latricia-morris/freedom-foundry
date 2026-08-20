@@ -6,6 +6,8 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from './adminAccountInput';
+export * from './adminUserAccount';
 export * from './authResponse';
 export * from './authUser';
 export * from './bigPicture';

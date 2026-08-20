@@ -196,6 +196,46 @@ paths:
                 items:
                   $ref: "#/components/schemas/AuthUser"
 
+  /admin/users/{userId}:
+    get:
+      operationId: getAdminUserAccount
+      tags: [admin]
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: A member account and its Freedom Foundry access settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminUserAccount"
+    patch:
+      operationId: updateAdminUserAccount
+      tags: [admin]
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminAccountInput"
+      responses:
+        "200":
+          description: Updated member account and Freedom Foundry access settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminUserAccount"
+
   # ─── BRAND PORTAL ───────────────────────────────────────────────────────────
   /personal-brand-profiles:
     get:
@@ -1157,7 +1197,7 @@ components:
       type: object
       properties:
         id:
-          type: number
+          type: string
         email:
           type: string
         first_name:
@@ -1169,6 +1209,27 @@ components:
         created_at:
           type: string
       required: [id, email, role, created_at]
+
+    AdminUserAccount:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/AuthUser"
+        profile:
+          $ref: "#/components/schemas/UserProfile"
+      required: [user]
+
+    AdminAccountInput:
+      type: object
+      properties:
+        role:
+          type: string
+        account_type:
+          type: string
+        brand_power_moves_unlocked:
+          type: boolean
+        notes:
+          type: string
 
     AuthResponse:
       type: object

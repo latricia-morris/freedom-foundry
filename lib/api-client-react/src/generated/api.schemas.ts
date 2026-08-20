@@ -43,17 +43,12 @@ export interface UpdateMeInput {
 }
 
 export interface AuthUser {
-  id: number;
+  id: string;
   email: string;
   first_name?: string;
   last_name?: string;
   role: string;
   created_at: string;
-}
-
-export interface AuthResponse {
-  user: AuthUser;
-  token: string;
 }
 
 export interface UserProfile {
@@ -75,6 +70,23 @@ export interface UserProfile {
   marketing_consent?: boolean;
   consent_date?: string;
   created_at: string;
+}
+
+export interface AdminUserAccount {
+  user: AuthUser;
+  profile?: UserProfile;
+}
+
+export interface AdminAccountInput {
+  role?: string;
+  account_type?: string;
+  brand_power_moves_unlocked?: boolean;
+  notes?: string;
+}
+
+export interface AuthResponse {
+  user: AuthUser;
+  token: string;
 }
 
 export interface UserProfileInput {

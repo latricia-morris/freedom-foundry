@@ -20,6 +20,8 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  AdminAccountInput,
+  AdminUserAccount,
   AuthResponse,
   AuthUser,
   BigPicture,
@@ -795,6 +797,143 @@ export function useListUsers<TData = Awaited<ReturnType<typeof listUsers>>, TErr
 
 
 
+
+export const getGetAdminUserAccountUrl = (userId: string,) => {
+
+
+
+
+  return `/api/admin/users/${userId}`
+}
+
+export const getAdminUserAccount = async (userId: string, options?: Parameters<typeof customFetch>[1]): Promise<AdminUserAccount> => {
+
+  return customFetch<AdminUserAccount>(getGetAdminUserAccountUrl(userId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetAdminUserAccountQueryKey = (userId: string,) => {
+    return [
+    `/api/admin/users/${userId}`
+    ] as const;
+    }
+
+
+export const getGetAdminUserAccountQueryOptions = <TData = Awaited<ReturnType<typeof getAdminUserAccount>>, TError = ErrorType<unknown>>(userId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getAdminUserAccount>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetAdminUserAccountQueryKey(userId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getAdminUserAccount>>> = ({ signal }) => getAdminUserAccount(userId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: userId !== null && userId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getAdminUserAccount>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetAdminUserAccountQueryResult = NonNullable<Awaited<ReturnType<typeof getAdminUserAccount>>>
+export type GetAdminUserAccountQueryError = ErrorType<unknown>
+
+
+
+export function useGetAdminUserAccount<TData = Awaited<ReturnType<typeof getAdminUserAccount>>, TError = ErrorType<unknown>>(
+ userId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getAdminUserAccount>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetAdminUserAccountQueryOptions(userId,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getUpdateAdminUserAccountUrl = (userId: string,) => {
+
+
+
+
+  return `/api/admin/users/${userId}`
+}
+
+export const updateAdminUserAccount = async (userId: string,
+    adminAccountInput: AdminAccountInput, options?: Parameters<typeof customFetch>[1]): Promise<AdminUserAccount> => {
+
+  return customFetch<AdminUserAccount>(getUpdateAdminUserAccountUrl(userId),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(adminAccountInput)
+  }
+);}
+
+
+
+
+
+export const getUpdateAdminUserAccountMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateAdminUserAccount>>, TError,{userId: string;data: BodyType<AdminAccountInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateAdminUserAccount>>, TError,{userId: string;data: BodyType<AdminAccountInput>}, TContext> => {
+
+const mutationKey = ['updateAdminUserAccount'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateAdminUserAccount>>, {userId: string;data: BodyType<AdminAccountInput>}> = (props) => {
+          const {userId,data} = props ?? {};
+
+          return  updateAdminUserAccount(userId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateAdminUserAccountMutationResult = NonNullable<Awaited<ReturnType<typeof updateAdminUserAccount>>>
+    export type UpdateAdminUserAccountMutationBody = BodyType<AdminAccountInput>
+    export type UpdateAdminUserAccountMutationError = ErrorType<unknown>
+
+    export const useUpdateAdminUserAccount = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateAdminUserAccount>>, TError,{userId: string;data: BodyType<AdminAccountInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof updateAdminUserAccount>>,
+        TError,
+        {userId: string;data: BodyType<AdminAccountInput>},
+        TContext
+      > => {
+      return useMutation(getUpdateAdminUserAccountMutationOptions(options));
+    }
 
 export const getGetPersonalBrandProfilesUrl = (params?: GetPersonalBrandProfilesParams,) => {
   const normalizedParams = new URLSearchParams();

@@ -25,7 +25,7 @@ export const RegisterBody = zod.object({
 
 export const RegisterResponse = zod.object({
   "user": zod.object({
-  "id": zod.number(),
+  "id": zod.string(),
   "email": zod.string(),
   "first_name": zod.string().optional(),
   "last_name": zod.string().optional(),
@@ -43,7 +43,7 @@ export const LoginBody = zod.object({
 
 export const LoginResponse = zod.object({
   "user": zod.object({
-  "id": zod.number(),
+  "id": zod.string(),
   "email": zod.string(),
   "first_name": zod.string().optional(),
   "last_name": zod.string().optional(),
@@ -55,7 +55,7 @@ export const LoginResponse = zod.object({
 
 
 export const GetMeResponse = zod.object({
-  "id": zod.number(),
+  "id": zod.string(),
   "email": zod.string(),
   "first_name": zod.string().optional(),
   "last_name": zod.string().optional(),
@@ -70,7 +70,7 @@ export const UpdateMeBody = zod.object({
 })
 
 export const UpdateMeResponse = zod.object({
-  "id": zod.number(),
+  "id": zod.string(),
   "email": zod.string(),
   "first_name": zod.string().optional(),
   "last_name": zod.string().optional(),
@@ -198,7 +198,7 @@ export const UpdateUserProfileResponse = zod.object({
 
 
 export const ListUsersResponseItem = zod.object({
-  "id": zod.number(),
+  "id": zod.string(),
   "email": zod.string(),
   "first_name": zod.string().optional(),
   "last_name": zod.string().optional(),
@@ -206,6 +206,85 @@ export const ListUsersResponseItem = zod.object({
   "created_at": zod.string()
 })
 export const ListUsersResponse = zod.array(ListUsersResponseItem)
+
+
+export const GetAdminUserAccountParams = zod.object({
+  "userId": zod.coerce.string()
+})
+
+export const GetAdminUserAccountResponse = zod.object({
+  "user": zod.object({
+  "id": zod.string(),
+  "email": zod.string(),
+  "first_name": zod.string().optional(),
+  "last_name": zod.string().optional(),
+  "role": zod.string(),
+  "created_at": zod.string()
+}),
+  "profile": zod.object({
+  "id": zod.number(),
+  "user_id": zod.string(),
+  "first_name": zod.string().optional(),
+  "last_name": zod.string().optional(),
+  "business_name": zod.string().optional(),
+  "website": zod.string().optional(),
+  "phone": zod.string().optional(),
+  "headshot_url": zod.string().optional(),
+  "account_type": zod.string().optional(),
+  "brand_power_moves_unlocked": zod.boolean().optional(),
+  "brand_power_moves_unlocked_at": zod.string().optional(),
+  "unlock_method": zod.string().optional(),
+  "active_program_id": zod.string().optional(),
+  "notes": zod.string().optional(),
+  "setup_status": zod.record(zod.string(), zod.unknown()).optional(),
+  "marketing_consent": zod.boolean().optional(),
+  "consent_date": zod.string().optional(),
+  "created_at": zod.string()
+}).optional()
+})
+
+
+export const UpdateAdminUserAccountParams = zod.object({
+  "userId": zod.coerce.string()
+})
+
+export const UpdateAdminUserAccountBody = zod.object({
+  "role": zod.string().optional(),
+  "account_type": zod.string().optional(),
+  "brand_power_moves_unlocked": zod.boolean().optional(),
+  "notes": zod.string().optional()
+})
+
+export const UpdateAdminUserAccountResponse = zod.object({
+  "user": zod.object({
+  "id": zod.string(),
+  "email": zod.string(),
+  "first_name": zod.string().optional(),
+  "last_name": zod.string().optional(),
+  "role": zod.string(),
+  "created_at": zod.string()
+}),
+  "profile": zod.object({
+  "id": zod.number(),
+  "user_id": zod.string(),
+  "first_name": zod.string().optional(),
+  "last_name": zod.string().optional(),
+  "business_name": zod.string().optional(),
+  "website": zod.string().optional(),
+  "phone": zod.string().optional(),
+  "headshot_url": zod.string().optional(),
+  "account_type": zod.string().optional(),
+  "brand_power_moves_unlocked": zod.boolean().optional(),
+  "brand_power_moves_unlocked_at": zod.string().optional(),
+  "unlock_method": zod.string().optional(),
+  "active_program_id": zod.string().optional(),
+  "notes": zod.string().optional(),
+  "setup_status": zod.record(zod.string(), zod.unknown()).optional(),
+  "marketing_consent": zod.boolean().optional(),
+  "consent_date": zod.string().optional(),
+  "created_at": zod.string()
+}).optional()
+})
 
 
 export const GetPersonalBrandProfilesQueryParams = zod.object({

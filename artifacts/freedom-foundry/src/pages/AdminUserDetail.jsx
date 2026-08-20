@@ -37,6 +37,9 @@ export default function AdminUserDetail() {
   const [accountType, setAccountType] = useState('free');
   const [bpmUnlocked, setBpmUnlocked] = useState(false);
   const [notes, setNotes] = useState('');
+  const [role, setRole] = useState('user');
+  const [saveError, setSaveError] = useState('');
+  const [loadError, setLoadError] = useState('');
 
   // Brand data
   const [bigPicture, setBigPicture] = useState(null);
@@ -54,27 +57,27 @@ export default function AdminUserDetail() {
     apiClient.auth.me().then(async me => {
       if (me.role !== 'admin') { setDenied(true); setLoading(false); return; }
       try {
-        const users = await apiClient.entities.User.list();
-        const u = users.find(u => u.id === id) || null;
+        const account = await apiClient.admin.getUserAccount(id);
+        const u = account.user || null;
         setUser(u);
         if (u) {
-          const [profiles, bigPic, personal, corporate, media, wbDefs, wbResponses, checklistTasks, brandUp, svcReqs] = await Promise.all([
-            apiClient.entities.UserProfile.filter({ user_id: u.id }, '-created_date', 1).catch(() => []),
-            apiClient.entities.BigPicture.filter({}, '-created_date', 1).catch(() => []),
-            apiClient.entities.PersonalBrandProfile.filter({}, '-created_date', 1).catch(() => []),
-            apiClient.entities.CorporateBrandProfile.filter({}, '-created_date', 1).catch(() => []),
-            apiClient.entities.MediaKit.filter({}, '-created_date', 1).catch(() => []),
+          const [bigPic, personal, corporate, media, wbDefs, wbResponses, checklistTasks, brandUp, svcReqs] = await Promise.all([
+            apiClient.entities.BigPicture.filter({ user_id: u.id }, '-created_date', 1).catch(() => []),
+            apiClient.entities.PersonalBrandProfile.filter({ user_id: u.id }, '-created_date', 1).catch(() => []),
+            apiClient.entities.CorporateBrandProfile.filter({ user_id: u.id }, '-created_date', 1).catch(() => []),
+            apiClient.entities.MediaKit.filter({ user_id: u.id }, '-created_date', 1).catch(() => []),
             apiClient.entities.WorkbookDefinition.filter({}, '-created_date', 50).catch(() => []),
-            apiClient.entities.WorkbookResponse.filter({}, '-created_date', 200).catch(() => []),
-            apiClient.entities.ChecklistTask.filter({}, '-created_date', 200).catch(() => []),
-            apiClient.entities.BrandUpEntry.filter({}, '-created_date', 200).catch(() => []),
-            apiClient.entities.ServiceRequestSubmission.filter({}, '-created_date', 50).catch(() => []),
+            apiClient.entities.WorkbookResponse.filter({ user_id: u.id }, '-created_date', 200).catch(() => []),
+            apiClient.entities.ChecklistTask.filter({ user_id: u.id }, '-created_date', 200).catch(() => []),
+            apiClient.entities.BrandUpEntry.filter({ user_id: u.id }, '-created_date', 200).catch(() => []),
+            apiClient.entities.ServiceRequestSubmission.filter({ user_id: u.id }, '-created_date', 50).catch(() => []),
           ]);
-          const p = profiles?.[0] || null;
+          const p = account.profile || null;
           setUserProfile(p);
           setAccountType(p?.account_type || 'free');
           setBpmUnlocked(p?.brand_power_moves_unlocked || false);
           setNotes(p?.notes || '');
+          setRole(u.role || 'user');
           setBigPicture(bigPic?.[0] || null);
           setPersonalBrand(personal?.[0] || null);
           setCorporateBrand(corporate?.[0] || null);
@@ -85,7 +88,9 @@ export default function AdminUserDetail() {
           setBrandUpEntries(brandUp || []);
           setServiceRequests(svcReqs || []);
         }
-      } catch (_) {}
+      } catch (requestError) {
+        setLoadError(requestError.message || 'This member account could not be loaded.');
+      }
       setLoading(false);
     }).catch(() => { setDenied(true); setLoading(false); });
   }, [id]);
@@ -93,17 +98,22 @@ export default function AdminUserDetail() {
   const handleSave = async () => {
     if (!user) return;
     setSaving(true);
+    setSaveError('');
     try {
-      const data = { user_id: user.id, account_type: accountType, brand_power_moves_unlocked: bpmUnlocked, notes };
-      if (userProfile?.id) {
-        await apiClient.entities.UserProfile.update(userProfile.id, data);
-      } else {
-        const created = await apiClient.entities.UserProfile.create(data);
-        setUserProfile(created);
-      }
+      const account = await apiClient.admin.updateUserAccount(user.id, {
+        role,
+        account_type: accountType,
+        brand_power_moves_unlocked: bpmUnlocked,
+        notes,
+      });
+      setUser(account.user);
+      setUserProfile(account.profile || null);
+      setRole(account.user.role || 'user');
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
-    } catch (_) {}
+    } catch (requestError) {
+      setSaveError(requestError.message || 'The account settings could not be saved.');
+    }
     setSaving(false);
   };
 
@@ -131,6 +141,7 @@ export default function AdminUserDetail() {
   if (!user) return (
     <div className="text-center py-20">
       <h1 className="font-heading text-xl text-foreground mb-2">User not found</h1>
+      {loadError && <p role="alert" className="mb-4 text-sm text-red-400">{loadError}</p>}
       <Link to="/admin/users" className="text-sm text-primary">Back to Users</Link>
     </div>
   );
@@ -159,7 +170,7 @@ export default function AdminUserDetail() {
           <span className="font-heading text-lg text-[#1a1420]">{(user.full_name || user.email || 'U')[0].toUpperCase()}</span>
         </div>
         <div>
-          <h1 className="font-heading text-xl text-foreground">{user.full_name || 'Unnamed User'}</h1>
+          <h1 className="font-heading text-xl text-foreground">{`${user.first_name || ''} ${user.last_name || ''}`.trim() || 'Unnamed User'}</h1>
           <p className="text-sm text-muted-foreground">{user.email}</p>
         </div>
       </div>
@@ -191,11 +202,24 @@ export default function AdminUserDetail() {
             </div>
             <div className="flex items-center justify-between py-1">
               <span className="text-sm text-[#1a1420]/60">Joined</span>
-              <span className="text-sm text-[#1a1420]">{user.created_date ? new Date(user.created_date).toLocaleDateString() : '—'}</span>
+              <span className="text-sm text-[#1a1420]">{user.created_at ? new Date(user.created_at).toLocaleDateString() : '—'}</span>
             </div>
           </div>
 
           <div className="h-px bg-black/10" />
+
+          <div>
+            <label className="block text-xs uppercase tracking-wider text-[#1a1420]/50 mb-2" htmlFor="member-role">Portal Role</label>
+            <select
+              id="member-role"
+              value={role}
+              onChange={e => setRole(e.target.value)}
+              className="w-full rounded-xl border border-black/10 bg-white px-4 py-3 text-sm text-[#1a1420] outline-none transition-colors focus:border-[#b3232c]"
+            >
+              <option value="user">Member</option>
+              <option value="admin">Administrator</option>
+            </select>
+          </div>
 
           <div>
             <label className="block text-xs uppercase tracking-wider text-[#1a1420]/50 mb-3">Membership Type</label>
@@ -237,6 +261,8 @@ export default function AdminUserDetail() {
               placeholder="Internal notes about this user..."
             />
           </div>
+
+          {saveError && <p role="alert" className="rounded-lg border border-red-500/30 bg-red-950/20 px-4 py-3 text-sm text-red-700">{saveError}</p>}
 
           <button
             onClick={handleSave}

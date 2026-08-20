@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import { Bell } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import MobileNav from './MobileNav';
+import Sidebar from './Sidebar';
 import UserAvatar from './UserAvatar';
 import WarmGradientDefs from '@/components/shared/WarmGradientDefs';
 
@@ -10,7 +11,8 @@ export default function Layout() {
   return (
     <div className="min-h-screen bg-[#0f0f1a]">
       <WarmGradientDefs />
-      <header className="sticky top-0 z-30 flex items-center justify-between gap-3 px-4 lg:px-8 py-5 border-b border-white/5 bg-[#0f0f1a]/95 backdrop-blur">
+      <Sidebar />
+      <header className="sticky top-0 z-30 flex items-center justify-between gap-3 px-4 py-5 lg:ml-64 lg:px-8 border-b border-white/5 bg-[#0f0f1a]/95 backdrop-blur">
         <Link to="/" className="flex items-center gap-3 group">
           <div
             className="w-9 h-9 rounded-full flex items-center justify-center transition-transform group-hover:scale-105"
@@ -38,7 +40,7 @@ export default function Layout() {
         </div>
       </header>
 
-      <main className="px-4 lg:px-8 py-6 lg:py-10 pb-28 lg:pb-24">
+      <main className="px-4 py-6 pb-28 lg:ml-64 lg:px-8 lg:py-10 lg:pb-24">
         <Outlet />
       </main>
 

@@ -18,6 +18,16 @@ declare global {
 
 const leadAdminEmail = process.env.LEAD_ADMIN_EMAIL?.trim().toLowerCase();
 
+export function resolveAppRole(email: string | null, publicMetadata: unknown): string {
+  const metadataRole = publicMetadata
+    && typeof publicMetadata === "object"
+    && typeof (publicMetadata as Record<string, unknown>).role === "string"
+    ? (publicMetadata as Record<string, unknown>).role as string
+    : "user";
+
+  return leadAdminEmail && email === leadAdminEmail ? "admin" : metadataRole;
+}
+
 /**
  * Middleware: require a valid Clerk session and expose the signed-in user's
  * minimal profile and role to the legacy API routes.
@@ -32,10 +42,6 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
 
     const clerkUser = await clerkClient.users.getUser(userId);
     const email = clerkUser.primaryEmailAddress?.emailAddress?.toLowerCase() ?? null;
-    const metadataRole = typeof clerkUser.publicMetadata?.role === "string"
-      ? clerkUser.publicMetadata.role
-      : "user";
-
     req.userId = userId;
     req.user = {
       id: clerkUser.id,
@@ -44,7 +50,7 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
       lastName: clerkUser.lastName,
       // The one lead-admin identity is configured outside source control.
       // Other roles can be assigned through Clerk public metadata.
-      role: leadAdminEmail && email === leadAdminEmail ? "admin" : metadataRole,
+      role: resolveAppRole(email, clerkUser.publicMetadata),
     };
     next();
   } catch (error) {

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '@/lib/AuthContext';
 
 const navItems = [
 { label: 'Home', path: '/' },
@@ -10,6 +11,10 @@ const navItems = [
 
 export default function MobileNav() {
   const location = useLocation();
+  const { user } = useAuth();
+  const visibleItems = user?.role === 'admin'
+    ? [...navItems, { label: 'Admin', path: '/admin' }]
+    : navItems;
 
   const isActive = (path) => {
     if (path === '/') return location.pathname === '/';
@@ -22,14 +27,14 @@ export default function MobileNav() {
       style={{ pointerEvents: 'auto' }}>
       
       <div className="flex items-center justify-between gap-1 px-2 py-2 w-full overflow-hidden">
-        {navItems.map((item) => {
+        {visibleItems.map((item) => {
           const active = isActive(item.path);
           return (
             <Link
               key={item.path}
               to={item.path}
               className="flex-1 min-w-0 text-center"
-              style={{ maxWidth: '25%' }}>
+              style={{ maxWidth: `${100 / visibleItems.length}%` }}>
               
               <span
                 className="block uppercase whitespace-nowrap overflow-hidden text-ellipsis rounded-[7px]"

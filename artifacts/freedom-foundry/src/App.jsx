@@ -33,9 +33,11 @@ import IgniteOS from './pages/IgniteOS';
 import SharePage from './pages/SharePage';
 import AdminUsers from './pages/AdminUsers';
 import AdminUserDetail from './pages/AdminUserDetail';
+import AdminDashboard from './pages/AdminDashboard';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import AdminRoute from '@/components/AdminRoute';
 import BrandUp from './pages/BrandUp';
 import BrandChecklist from './pages/BrandChecklist';
 import RequestServices from './pages/RequestServices';
@@ -235,9 +237,12 @@ function AppRoutes() {
             <Route path="/brand-portal/checklist" element={<BrandChecklist />} />
             <Route path="/brand-portal/request-services" element={<RequestServices />} />
           </Route>
-          <Route path="/admin/users" element={<AdminUsers />} />
-          <Route path="/admin/users/:id" element={<AdminUserDetail />} />
-          <Route path="/admin/brand-up" element={<BrandUpAdmin />} />
+          <Route element={<AdminRoute />}>
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/users" element={<AdminUsers />} />
+            <Route path="/admin/users/:id" element={<AdminUserDetail />} />
+            <Route path="/admin/brand-up" element={<BrandUpAdmin />} />
+          </Route>
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />
         </Route>

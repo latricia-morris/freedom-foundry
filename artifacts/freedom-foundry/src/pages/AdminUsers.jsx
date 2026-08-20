@@ -8,13 +8,14 @@ export default function AdminUsers() {
   const [loading, setLoading] = useState(true);
   const [denied, setDenied] = useState(false);
   const [search, setSearch] = useState('');
+  const [error, setError] = useState('');
 
   useEffect(() => {
     apiClient.auth.me().then(u => {
       if (u.role !== 'admin') { setDenied(true); setLoading(false); return; }
       apiClient.entities.User.list()
         .then(setUsers)
-        .catch(() => {})
+        .catch((requestError) => setError(requestError.message || 'The member roster could not be loaded.'))
         .finally(() => setLoading(false));
     }).catch(() => { setDenied(true); setLoading(false); });
   }, []);
@@ -32,7 +33,8 @@ export default function AdminUsers() {
 
   const filtered = users.filter(u => {
     const q = search.toLowerCase();
-    return !q || (u.email || '').toLowerCase().includes(q) || (u.full_name || '').toLowerCase().includes(q);
+    const name = `${u.first_name || ''} ${u.last_name || ''}`.trim();
+    return !q || (u.email || '').toLowerCase().includes(q) || name.toLowerCase().includes(q);
   });
 
   return (
@@ -41,6 +43,12 @@ export default function AdminUsers() {
         <h1 className="font-heading text-3xl font-light text-foreground mb-2">User <span className="molten-text italic">Management</span></h1>
         <p className="text-sm text-muted-foreground">Manage app users and roles.</p>
       </div>
+
+      {error && (
+        <p role="alert" className="mb-4 rounded-lg border border-red-500/30 bg-red-950/30 px-4 py-3 text-sm text-red-100">
+          {error}
+        </p>
+      )}
 
       <div className="mb-4 relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" strokeWidth={1.5} />
@@ -60,10 +68,10 @@ export default function AdminUsers() {
           <tbody>
             {filtered.map(u => (
               <tr key={u.id} className="border-b border-border last:border-0 hover:bg-card/50 transition-colors">
-                <td className="px-4 py-3 text-sm text-foreground">{u.full_name || '—'}</td>
+                <td className="px-4 py-3 text-sm text-foreground">{`${u.first_name || ''} ${u.last_name || ''}`.trim() || '—'}</td>
                 <td className="px-4 py-3 text-sm text-muted-foreground hidden sm:table-cell">{u.email}</td>
                 <td className="px-4 py-3"><span className={`text-xs uppercase tracking-widest ${u.role === 'admin' ? 'text-primary' : 'text-muted-foreground'}`}>{u.role || 'user'}</span></td>
-                <td className="px-4 py-3"><Link to={`/admin/users/${u.id}`}><ArrowRight className="w-4 h-4 text-muted-foreground hover:text-foreground" strokeWidth={1.5} /></Link></td>
+                <td className="px-4 py-3"><Link to={`/admin/users/${u.id}`} aria-label={`Manage ${u.email || 'member'}`}><ArrowRight className="w-4 h-4 text-muted-foreground hover:text-foreground" strokeWidth={1.5} /></Link></td>
               </tr>
             ))}
           </tbody>

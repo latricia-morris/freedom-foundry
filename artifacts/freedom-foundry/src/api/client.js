@@ -58,6 +58,18 @@ export const functions = {
   },
 };
 
+export const admin = {
+  async getUserAccount(userId) {
+    return apiFetch(`/admin/users/${encodeURIComponent(userId)}`);
+  },
+  async updateUserAccount(userId, data) {
+    return apiFetch(`/admin/users/${encodeURIComponent(userId)}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+  },
+};
+
 // ─── Generic entity factory ───────────────────────────────────────────────────
 function entity(basePath) {
   return {
@@ -121,7 +133,7 @@ export const integrations = {
   },
 };
 
-const apiClient = { auth, entities, integrations };
+const apiClient = { auth, admin, entities, integrations };
 export default apiClient;
 
 // Legacy compat
