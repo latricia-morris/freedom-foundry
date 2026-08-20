@@ -1,12 +1,11 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Vault as VaultIcon, BookOpen, Palette, Target, ClipboardList, Mic, Mail, CreditCard, Settings as SettingsIcon, ShieldCheck } from 'lucide-react';
+import { LayoutDashboard, Vault as VaultIcon, Palette, Target, ClipboardList, Mic, Mail, CreditCard, Settings as SettingsIcon, ShieldCheck } from 'lucide-react';
 import { useAuth } from '@/lib/AuthContext';
 
 const navItems = [
   { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
   { label: 'The Vault', path: '/vault', icon: VaultIcon },
-  { label: 'Brand Power Moves', path: '/workbooks', icon: BookOpen },
   { label: 'Brand Portal', path: '/brand-portal', icon: Palette },
   { label: 'Big Picture', path: '/brand-portal/big-picture', icon: Target },
   { label: 'Collaborations', path: '/services', icon: ClipboardList },
@@ -47,7 +46,7 @@ export default function Sidebar() {
               key={item.path}
               to={item.path}
               className={`relative flex items-center gap-3 px-6 py-3 text-sm transition-all duration-200 ${
-                isActive ? 'text-warm bg-sidebar-accent' : 'text-[#f7f2ea]/50 hover:text-[#f7f2ea] hover:bg-sidebar-accent/50'
+                isActive ? 'text-[#f7f5f5] bg-sidebar-accent' : 'text-[#8d8b89] hover:text-[#b7b3b0] hover:bg-sidebar-accent/50'
               }`}
             >
               {isActive && <span className="absolute left-0 top-0 h-full w-0.5" style={{ background: 'linear-gradient(41deg, #4a0404, #7a1f1f, #b3232c, #d9622c, #f0d9b5)' }} />}

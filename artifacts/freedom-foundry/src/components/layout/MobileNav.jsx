@@ -4,7 +4,6 @@ import { Link, useLocation } from 'react-router-dom';
 const navItems = [
   { label: 'Home', path: '/dashboard' },
   { label: 'Vault', path: '/vault' },
-  { label: 'Power Moves', path: '/workbooks' },
   { label: 'Brand Portal', path: '/brand-portal' },
   { label: 'Services', path: '/services' },
 ];
@@ -28,10 +27,10 @@ export default function MobileNav() {
               key={item.path}
               to={item.path}
               aria-current={active ? 'page' : undefined}
-              className={`flex min-w-0 flex-1 items-center justify-center rounded-lg px-1 py-2.5 text-center text-[9px] font-semibold uppercase leading-tight tracking-[0.06em] transition-colors sm:px-2 sm:text-xs ${
+                className={`flex min-w-0 flex-1 items-center justify-center rounded-lg px-1 py-2 text-center text-[10px] font-medium leading-tight tracking-normal transition-colors sm:px-2 sm:text-[11px] ${
                 active
-                  ? 'bg-[#f0d9b5] text-[#24140e] shadow-[inset_0_1px_0_rgba(255,255,255,0.45)]'
-                  : 'text-[#d9c9a3] hover:bg-[#f0d9b5]/10 hover:text-[#fff5e8]'
+                   ? 'text-[#f7f5f5]'
+                   : 'text-[#8d8b89] hover:text-[#b7b3b0]'
               }`}
             >
               <span className="max-w-full whitespace-normal">{item.label}</span>
