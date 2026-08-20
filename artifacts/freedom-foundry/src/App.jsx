@@ -55,9 +55,9 @@ const clerkPubKey = publishableKeyFromHost(
 const clerkProxyUrl = import.meta.env.VITE_CLERK_PROXY_URL;
 
 // Freedom Foundry brand colours (from CSS variables)
-const primary   = '#b3232c';
-const cardBg    = '#08080e';
-const inputBg   = '#000000';
+const primary   = '#e4a06e';
+const cardBg    = '#120f0d';
+const inputBg   = '#0b0908';
 const border    = 'rgba(247, 242, 234, 0.08)';
 const text      = '#f7f2ea';
 const muted     = 'rgba(247, 242, 234, 0.5)';
@@ -75,7 +75,7 @@ const clerkAppearance = {
     colorPrimary:        primary,
     colorForeground:     text,
     colorMutedForeground: muted,
-    colorDanger:         '#ef4444',
+    colorDanger:         '#ffb29b',
     colorBackground:     cardBg,
     colorInput:          inputBg,
     colorInputForeground: text,
@@ -100,11 +100,11 @@ const clerkAppearance = {
     alertText:                   { color: text },
     logoBox:                     'hidden',
     socialButtonsBlockButton:    'h-12 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-[#f7f2ea]',
-    formButtonPrimary:           'h-12 rounded-xl bg-gradient-to-r from-[#b3232c] via-[#d9622c] to-[#f0d9b5] hover:opacity-90 text-white font-semibold tracking-wide',
+    formButtonPrimary:           'h-12 rounded-xl bg-gradient-to-r from-[#c76a47] via-[#e49a63] to-[#f0d9b5] hover:opacity-90 text-[#25140d] font-semibold tracking-wide',
     formFieldInput:              'h-12 rounded-xl border border-white/[0.08] bg-black/45 text-white placeholder:text-white/20',
     footerAction:                'bg-transparent',
     dividerLine:                 'bg-white/10',
-    alert:                       'border border-red-700/30 bg-red-900/30',
+    alert:                       'border border-[#e49a63]/35 bg-[#3a2119]',
     otpCodeFieldInput:           'rounded-xl border border-white/[0.08] bg-black/45 text-white',
     formFieldRow:                'mb-4',
     main:                        'px-8 py-8 sm:px-10 sm:py-10',
@@ -126,14 +126,14 @@ const EMBER_VIDEO = 'https://media.base44.com/videos/public/6a6982f0647238bf2b5d
 
 function AuthBackground({ children }) {
   return (
-    <div className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden bg-[#0a0a12] px-4 py-12">
+    <div className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden bg-[#100e0c] px-4 py-12">
       {/* Ember video background */}
       <video
         autoPlay muted loop playsInline
         className="absolute inset-0 w-full h-full object-cover opacity-60 pointer-events-none"
         src={EMBER_VIDEO}
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a12]/70 via-[#0a0a12]/40 to-[#0a0a12]/80 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#100e0c]/70 via-[#100e0c]/40 to-[#100e0c]/80 pointer-events-none" />
       {/* Brand wordmark */}
       <div className="absolute top-6 left-6 flex items-center gap-3 z-10">
         <img
@@ -180,8 +180,8 @@ function AppRoutes() {
 
   if (!isLoaded) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-[#0a0a12]">
-        <div className="w-8 h-8 border-4 border-[#4a1010] border-t-[#c0392b] rounded-full animate-spin" />
+      <div className="fixed inset-0 flex items-center justify-center bg-[#100e0c]">
+        <div className="w-8 h-8 border-4 border-[#3a2119] border-t-[#e4a06e] rounded-full animate-spin" />
       </div>
     );
   }

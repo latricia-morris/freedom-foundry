@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronDown, Settings as SettingsIcon, CreditCard, LogOut, Mail } from 'lucide-react';
+import { ChevronDown, Settings as SettingsIcon, CreditCard, LogOut, Mail, ShieldCheck } from 'lucide-react';
 import apiClient from '@/api/client';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 export default function UserAvatar() {
   const navigate = useNavigate();
@@ -41,20 +41,35 @@ export default function UserAvatar() {
         </div>
         <ChevronDown className="w-4 h-4 text-[#f7f2ea]/60 group-hover:text-[#f7f2ea]" />
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56 bg-[#15151f] border border-white/10">
-        <DropdownMenuItem onClick={() => navigate('/settings')} className="text-[#f7f2ea] focus:text-[#f7f2ea] focus:bg-white/5 cursor-pointer">
+      <DropdownMenuContent align="end" className="w-60 rounded-xl border border-[#f0d9b5]/15 bg-[#1a130f] p-1.5 text-[#f7f2ea] shadow-2xl">
+        <DropdownMenuLabel className="px-3 py-2 font-normal">
+          <p className="truncate text-sm text-[#fff5e8]">{user?.email || 'Your account'}</p>
+          <p className="mt-0.5 text-xs text-[#d9c9a3]">Account &amp; support</p>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator className="bg-[#f0d9b5]/10" />
+        <DropdownMenuItem onClick={() => navigate('/settings')} className="cursor-pointer text-[#f7f2ea] focus:bg-[#f0d9b5]/10 focus:text-[#fff5e8]">
           <SettingsIcon className="w-4 h-4 mr-2" strokeWidth={1.5} />
           <span>Settings</span>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => navigate('/billing')} className="text-[#f7f2ea] focus:text-[#f7f2ea] focus:bg-white/5 cursor-pointer">
+        <DropdownMenuItem onClick={() => navigate('/billing')} className="cursor-pointer text-[#f7f2ea] focus:bg-[#f0d9b5]/10 focus:text-[#fff5e8]">
           <CreditCard className="w-4 h-4 mr-2" strokeWidth={1.5} />
           <span>Billing &amp; Subscriptions</span>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => navigate('/contact')} className="text-[#f7f2ea] focus:text-[#f7f2ea] focus:bg-white/5 cursor-pointer">
+        <DropdownMenuItem onClick={() => navigate('/contact')} className="cursor-pointer text-[#f7f2ea] focus:bg-[#f0d9b5]/10 focus:text-[#fff5e8]">
           <Mail className="w-4 h-4 mr-2" strokeWidth={1.5} />
           <span>Contact</span>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-[#f7f2ea] focus:text-[#f7f2ea] focus:bg-white/5">
+        {user?.role === 'admin' && (
+          <>
+            <DropdownMenuSeparator className="bg-[#f0d9b5]/10" />
+            <DropdownMenuItem onClick={() => navigate('/admin')} className="cursor-pointer text-[#f0d9b5] focus:bg-[#f0d9b5]/10 focus:text-[#fff5e8]">
+              <ShieldCheck className="mr-2 h-4 w-4" strokeWidth={1.5} />
+              <span>Admin Dashboard</span>
+            </DropdownMenuItem>
+          </>
+        )}
+        <DropdownMenuSeparator className="bg-[#f0d9b5]/10" />
+        <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-[#f7f2ea] focus:bg-[#f0d9b5]/10 focus:text-[#fff5e8]">
           <LogOut className="w-4 h-4 mr-2" strokeWidth={1.5} />
           <span>Log Out</span>
         </DropdownMenuItem>

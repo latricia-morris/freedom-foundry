@@ -4,49 +4,49 @@
 
 @layer base {
   :root {
-    --background: 240 27% 8%;
+    --background: 20 14% 7%;
     --foreground: 0 9% 96%;
-    --card: 252 20% 9%;
+    --card: 20 13% 10%;
     --card-foreground: 0 9% 96%;
-    --popover: 240 27% 6%;
+    --popover: 20 14% 6%;
     --popover-foreground: 0 9% 96%;
-    --primary: 356 67% 42%;
-    --primary-foreground: 0 9% 96%;
-    --secondary: 240 15% 12%;
+    --primary: 24 62% 64%;
+    --primary-foreground: 20 30% 11%;
+    --secondary: 20 10% 13%;
     --secondary-foreground: 0 9% 96%;
-    --muted: 240 15% 10%;
-        --muted-foreground: 40 20% 88%;
-    --accent: 357 56% 19%;
+    --muted: 20 9% 11%;
+    --muted-foreground: 38 31% 81%;
+    --accent: 20 21% 17%;
     --accent-foreground: 0 9% 96%;
-    --destructive: 0 72% 51%;
+    --destructive: 8 57% 43%;
     --destructive-foreground: 0 9% 96%;
-    --border: 240 10% 14%;
-    --input: 240 10% 14%;
-    --ring: 356 67% 42%;
+    --border: 20 9% 18%;
+    --input: 20 9% 18%;
+    --ring: 24 62% 64%;
     --copper: 28 47% 59%;
     --brass: 43 30% 57%;
-    --ember: 356 67% 42%;
-    --oxblood: 357 56% 19%;
-    --merlot: 357 56% 28%;
+    --ember: 18 65% 57%;
+    --oxblood: 16 48% 23%;
+    --merlot: 16 42% 34%;
     --cloudbone: 0 9% 96%;
-    --chart-1: 356 67% 42%;
-    --chart-2: 357 56% 19%;
+    --chart-1: 18 65% 57%;
+    --chart-2: 16 42% 34%;
     --chart-3: 28 47% 59%;
     --chart-4: 43 30% 57%;
-    --chart-5: 240 5% 55%;
+    --chart-5: 32 12% 56%;
     --radius: 0.5rem;
     --font-heading: 'Cormorant Garamond', serif;
     --font-body: 'Urbanist', sans-serif;
     --font-display: 'Cormorant Garamond', serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    --sidebar-background: 240 27% 8%;
+    --sidebar-background: 20 14% 7%;
     --sidebar-foreground: 0 9% 96%;
-    --sidebar-primary: 356 67% 42%;
+    --sidebar-primary: 24 62% 64%;
     --sidebar-primary-foreground: 0 9% 96%;
-    --sidebar-accent: 252 20% 9%;
+    --sidebar-accent: 20 13% 10%;
     --sidebar-accent-foreground: 0 9% 96%;
-    --sidebar-border: 240 15% 12%;
-    --sidebar-ring: 356 67% 42%;
+    --sidebar-border: 20 10% 13%;
+    --sidebar-ring: 24 62% 64%;
   }
 }
 
@@ -56,7 +56,7 @@
   }
 
   body {
-    background: linear-gradient(131deg, #0f0f1a 0%, #1a1420 45%, #2b0f14 100%);
+    background: linear-gradient(131deg, #14110f 0%, #201510 45%, #2b1710 100%);
     background-attachment: fixed;
     color: hsl(var(--foreground));
     font-family: var(--font-body);
@@ -286,11 +286,7 @@
 
   /* Gradient text for links and accents — replaces flat red */
   .link-molten {
-    background: linear-gradient(131deg, #b3232c, #d9622c, #f0d9b5);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
+    color: #8a482d;
     transition: opacity 0.2s ease;
   }
 
@@ -434,7 +430,7 @@
   }
 
   .brand-portal-page {
-    background: linear-gradient(131deg, #0f0f1a 0%, #1a1420 45%, #2b0f14 100%);
+    background: linear-gradient(131deg, #14110f 0%, #201510 45%, #2b1710 100%);
   }
 
   .brand-portal-page.light-mode {
@@ -465,14 +461,14 @@
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0f0f1a;
+    background: #14110f;
 }
 ::-webkit-scrollbar-thumb {
-  background: #2b0f14;
+    background: #2b1710;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #4a1518;
+    background: #5c3324;
 }
 
 html {
@@ -499,4 +495,10 @@ p, li, span, label {
 
 .text-muted-foreground {
   color: rgba(247, 242, 234, 0.75) !important;
+}
+
+.editorial-container .text-primary,
+.editorial-card .text-primary,
+.dash-editorial-block .text-primary {
+  color: #7d4028;
 }

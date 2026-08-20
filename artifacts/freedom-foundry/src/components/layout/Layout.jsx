@@ -3,17 +3,16 @@ import { Outlet } from 'react-router-dom';
 import { Bell } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import MobileNav from './MobileNav';
-import Sidebar from './Sidebar';
 import UserAvatar from './UserAvatar';
 import WarmGradientDefs from '@/components/shared/WarmGradientDefs';
 
 export default function Layout() {
   return (
-    <div className="min-h-screen bg-[#0f0f1a]">
+    <div className="min-h-screen bg-[#14110f]">
       <WarmGradientDefs />
-      <Sidebar />
-      <header className="sticky top-0 z-30 flex items-center justify-between gap-3 px-4 py-5 lg:ml-64 lg:px-8 border-b border-white/5 bg-[#0f0f1a]/95 backdrop-blur">
-        <Link to="/" className="flex items-center gap-3 group">
+      <header className="sticky top-0 z-30 border-b border-[#f0d9b5]/10 bg-[#14110f]/95 backdrop-blur">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-5 lg:px-8">
+        <Link to="/dashboard" className="flex items-center gap-3 group">
           <div
             className="w-9 h-9 rounded-full flex items-center justify-center transition-transform group-hover:scale-105"
             style={{
@@ -21,7 +20,7 @@ export default function Layout() {
               boxShadow: '0 0 7px rgba(217, 98, 44, 0.45), 0 0 3px rgba(179, 35, 44, 0.7)'
             }}
           >
-            <div className="w-[30px] h-[30px] rounded-full bg-[#0f0f1a] flex items-center justify-center">
+            <div className="w-[30px] h-[30px] rounded-full bg-[#14110f] flex items-center justify-center">
               <span className="font-heading text-sm font-medium molten-text">TBR</span>
             </div>
           </div>
@@ -38,9 +37,10 @@ export default function Layout() {
           </button>
           <UserAvatar />
         </div>
+        </div>
       </header>
 
-      <main className="px-4 py-6 pb-28 lg:ml-64 lg:px-8 lg:py-10 lg:pb-24">
+      <main className="mx-auto max-w-7xl px-4 py-6 pb-28 lg:px-8 lg:py-10 lg:pb-28">
         <Outlet />
       </main>
 
