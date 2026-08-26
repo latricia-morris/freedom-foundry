@@ -33,7 +33,7 @@ export default function MobileNav() {
                    : 'text-[#b7bfbd] hover:text-[#e0e4e3]'
               }`}
             >
-              <span className="max-w-full whitespace-normal font-normal text-[14px]">{item.label}</span>
+               <span className="max-w-full whitespace-normal font-normal text-[10px] uppercase tracking-[0.1em] sm:text-[11px]">{item.label}</span>
             </Link>
           );
         })}
