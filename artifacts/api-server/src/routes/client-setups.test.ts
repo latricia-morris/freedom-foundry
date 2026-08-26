@@ -23,6 +23,7 @@ const { clerkState, tables, dbState } = vi.hoisted(() => {
     dbState: {
       rows: Object.fromEntries(tableNames.map((name) => [name, [] as Array<Record<string, any>>])),
       nextId: 1,
+      transactionTail: Promise.resolve() as Promise<unknown>,
     },
   };
 });
@@ -53,7 +54,11 @@ vi.mock("@workspace/db", () => ({
         }),
       }),
     }),
-    transaction: async (callback: (tx: any) => Promise<void>) => callback(makeDb()),
+    transaction: (callback: (tx: any) => Promise<unknown>) => {
+      const result = dbState.transactionTail.then(() => callback(makeDb()));
+      dbState.transactionTail = result.catch(() => undefined);
+      return result;
+    },
   },
 }));
 vi.mock("drizzle-orm", () => ({
@@ -82,9 +87,13 @@ function makeDb() {
   return {
     select: () => ({
       from: (table: { name: string }) => ({
-        where: (condition: unknown) => ({
-          limit: async () => selectRows(table, condition),
-        }),
+        where: (condition: unknown) => {
+          const query = {
+            for: () => query,
+            limit: async () => selectRows(table, condition),
+          };
+          return query;
+        },
       }),
     }),
     update: (table: { name: string }) => ({
@@ -174,6 +183,7 @@ describe("prepared client portal activation", () => {
   beforeEach(() => {
     for (const rows of Object.values(dbState.rows)) rows.splice(0);
     dbState.nextId = 1;
+    dbState.transactionTail = Promise.resolve();
     clerkState.users.splice(0);
   });
 
@@ -224,6 +234,23 @@ describe("prepared client portal activation", () => {
     expect(first.body.claimed_user_id).toBe("client-user");
     expect(second.status).toBe(200);
     expect(second.body.claimed_user_id).toBe("client-user");
+    expect(dbState.rows.clientSetups[0].status).toBe("claimed");
+    expect(dbState.rows.brandAssets).toHaveLength(1);
+    expect(dbState.rows.checklistTasks).toHaveLength(1);
+    expect(dbState.rows.serviceRequestSubmissions).toHaveLength(1);
+  });
+
+  it("serializes simultaneous activations and promotes the staged data only once", async () => {
+    await createReadySetup();
+    clerkState.users.push({ id: "client-user", primaryEmailAddress: { emailAddress: "client@example.com" } });
+
+    const responses = await Promise.all([
+      request(app).post("/api/admin/client-setups/1/claim"),
+      request(app).post("/api/admin/client-setups/1/claim"),
+    ]);
+
+    expect(responses.map((response) => response.status)).toEqual([200, 200]);
+    expect(responses.map((response) => response.body.claimed_user_id)).toEqual(["client-user", "client-user"]);
     expect(dbState.rows.clientSetups[0].status).toBe("claimed");
     expect(dbState.rows.brandAssets).toHaveLength(1);
     expect(dbState.rows.checklistTasks).toHaveLength(1);

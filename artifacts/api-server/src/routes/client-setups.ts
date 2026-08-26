@@ -215,53 +215,51 @@ async function upsertSingleton(tx: any, table: any, userId: string, values: Reco
   else await tx.insert(table).values({ user_id: userId, ...values });
 }
 
-async function promotePayload(setup: typeof clientSetupsTable.$inferSelect, userId: string) {
+async function promotePayload(tx: any, setup: typeof clientSetupsTable.$inferSelect, userId: string) {
   const payload = normalizePayload(setup.payload);
-  await db.transaction(async (tx) => {
-    await upsertSingleton(tx, userProfilesTable, userId, {
-      ...(text(setup.first_name) ? { first_name: text(setup.first_name) } : {}),
-      ...(text(setup.last_name) ? { last_name: text(setup.last_name) } : {}),
-      ...(text(setup.business_name) ? { business_name: text(setup.business_name) } : {}),
+  await upsertSingleton(tx, userProfilesTable, userId, {
+    ...(text(setup.first_name) ? { first_name: text(setup.first_name) } : {}),
+    ...(text(setup.last_name) ? { last_name: text(setup.last_name) } : {}),
+    ...(text(setup.business_name) ? { business_name: text(setup.business_name) } : {}),
+  });
+  await upsertSingleton(tx, personalBrandProfilesTable, userId, payload.personal as Record<string, unknown>);
+  await upsertSingleton(tx, corporateBrandProfilesTable, userId, payload.corporate as Record<string, unknown>);
+  await upsertSingleton(tx, brandGuidelinesTable, userId, payload.guidelines as Record<string, unknown>);
+  await upsertSingleton(tx, mediaKitsTable, userId, payload.mediaKit as Record<string, unknown>);
+  await upsertSingleton(tx, bigPicturesTable, userId, payload.bigPicture as Record<string, unknown>);
+
+  const assets = normalizeAssets(payload.assets);
+  for (const asset of assets) {
+    const existing = await tx.select().from(brandAssetsTable)
+      .where(and(eq(brandAssetsTable.user_id, userId), eq(brandAssetsTable.title, asset.title))).limit(1);
+    if (existing.length === 0) await tx.insert(brandAssetsTable).values({ user_id: userId, ...asset });
+  }
+
+  const tasks = normalizeChecklist(payload.checklist);
+  for (const task of tasks) {
+    const existing = await tx.select().from(checklistTasksTable)
+      .where(and(eq(checklistTasksTable.user_id, userId), eq(checklistTasksTable.title, task.title))).limit(1);
+    if (existing.length === 0) await tx.insert(checklistTasksTable).values({
+      user_id: userId,
+      title: task.title,
+      ...task,
     });
-    await upsertSingleton(tx, personalBrandProfilesTable, userId, payload.personal as Record<string, unknown>);
-    await upsertSingleton(tx, corporateBrandProfilesTable, userId, payload.corporate as Record<string, unknown>);
-    await upsertSingleton(tx, brandGuidelinesTable, userId, payload.guidelines as Record<string, unknown>);
-    await upsertSingleton(tx, mediaKitsTable, userId, payload.mediaKit as Record<string, unknown>);
-    await upsertSingleton(tx, bigPicturesTable, userId, payload.bigPicture as Record<string, unknown>);
+  }
 
-    const assets = normalizeAssets(payload.assets);
-    for (const asset of assets) {
-      const existing = await tx.select().from(brandAssetsTable)
-        .where(and(eq(brandAssetsTable.user_id, userId), eq(brandAssetsTable.title, asset.title))).limit(1);
-      if (existing.length === 0) await tx.insert(brandAssetsTable).values({ user_id: userId, ...asset });
-    }
-
-    const tasks = normalizeChecklist(payload.checklist);
-    for (const task of tasks) {
-      const existing = await tx.select().from(checklistTasksTable)
-        .where(and(eq(checklistTasksTable.user_id, userId), eq(checklistTasksTable.title, task.title))).limit(1);
-      if (existing.length === 0) await tx.insert(checklistTasksTable).values({
+  const services = normalizeServices(payload.serviceRequests);
+  for (const service of services) {
+    const existing = await tx.select().from(serviceRequestSubmissionsTable)
+      .where(and(eq(serviceRequestSubmissionsTable.user_id, userId), eq(serviceRequestSubmissionsTable.service_type, service.service_type))).limit(1);
+    if (existing.length === 0) {
+      await tx.insert(serviceRequestSubmissionsTable).values({
         user_id: userId,
-        title: task.title,
-        ...task,
+        service_type: service.service_type,
+        ...(service.details ? { details: { admin_note: service.details } } : {}),
       });
     }
+  }
 
-    const services = normalizeServices(payload.serviceRequests);
-    for (const service of services) {
-      const existing = await tx.select().from(serviceRequestSubmissionsTable)
-        .where(and(eq(serviceRequestSubmissionsTable.user_id, userId), eq(serviceRequestSubmissionsTable.service_type, service.service_type))).limit(1);
-      if (existing.length === 0) {
-        await tx.insert(serviceRequestSubmissionsTable).values({
-          user_id: userId,
-          service_type: service.service_type,
-          ...(service.details ? { details: { admin_note: service.details } } : {}),
-        });
-      }
-    }
-
-    await tx.update(clientSetupsTable).set({ status: "claimed", claimed_user_id: userId }).where(eq(clientSetupsTable.id, setup.id));
-  });
+  await tx.update(clientSetupsTable).set({ status: "claimed", claimed_user_id: userId }).where(eq(clientSetupsTable.id, setup.id));
 }
 
 router.get("/admin/client-setups", authMiddleware, requireAdmin, async (_req, res): Promise<void> => {
@@ -397,7 +395,24 @@ router.post("/admin/client-setups/:id/claim", authMiddleware, requireAdmin, asyn
     res.status(409).json({ error: "The matching client account has not accepted an invitation yet." });
     return;
   }
-  await promotePayload(setup, user.id);
+
+  const claimResult = await db.transaction(async (tx) => {
+    const [current] = await tx.select().from(clientSetupsTable)
+      .where(eq(clientSetupsTable.id, setup.id))
+      .for("update")
+      .limit(1);
+    if (!current) return "missing";
+    if (current.status === "claimed") return "claimed";
+    if (!completeness(normalizePayload(current.payload)).is_ready) return "not_ready";
+    await promotePayload(tx, current, user.id);
+    return "promoted";
+  });
+
+  if (claimResult === "missing") { res.status(404).json({ error: "Client setup not found." }); return; }
+  if (claimResult === "not_ready") {
+    res.status(400).json({ error: "Add at least one brand section and one asset before activating this portal." });
+    return;
+  }
   const claimed = await getSetup(setup.id);
   res.json(serializeSetup(claimed!));
 });
