@@ -7,6 +7,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import PageNotFound from './lib/PageNotFound';
+import LandingPage from './pages/LandingPage';
 import ScrollToTop from './components/ScrollToTop';
 import { Toaster } from '@/components/ui/toaster';
 import Layout from '@/components/layout/Layout';
@@ -205,11 +206,13 @@ function AppRoutes() {
       {/* Public share pages */}
       <Route path="/share/:token" element={<SharePage />} />
       <Route path="/member/:brandSlug/:profileType" element={<SharePage />} />
+      <Route path="/terms" element={<Terms />} />
+      <Route path="/privacy" element={<Privacy />} />
 
       {/* Root — redirect signed-in users to dashboard */}
       <Route
         path="/"
-        element={isSignedIn ? <Navigate to="/dashboard" replace /> : <Navigate to="/sign-in" replace />}
+        element={isSignedIn ? <Navigate to="/dashboard" replace /> : <LandingPage />}
       />
 
       {/* Protected routes */}
@@ -247,8 +250,6 @@ function AppRoutes() {
             <Route path="/admin/client-setups/:id" element={<ClientSetupWorkspace />} />
             <Route path="/admin/brand-up" element={<BrandUpAdmin />} />
           </Route>
-          <Route path="/terms" element={<Terms />} />
-          <Route path="/privacy" element={<Privacy />} />
         </Route>
       </Route>
 
