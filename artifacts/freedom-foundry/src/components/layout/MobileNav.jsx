@@ -17,7 +17,7 @@ export default function MobileNav() {
   return (
     <nav
       aria-label="Primary navigation"
-      className="fixed bottom-0 left-0 right-0 z-50 border-t border-[#f0d9b5]/15 bg-[#100d0b]/95 px-2 py-2 backdrop-blur-xl"
+      className="fixed bottom-0 left-0 right-0 z-50 border-t border-white/[0.12] bg-[#100d0b]/95 px-2 py-2 backdrop-blur-xl"
     >
       <div className="mx-auto flex max-w-4xl items-stretch justify-between gap-1">
         {navItems.map((item) => {
@@ -30,7 +30,7 @@ export default function MobileNav() {
                 className={`flex min-w-0 flex-1 items-center justify-center rounded-lg px-1 py-2 text-center text-[10px] font-medium leading-tight tracking-normal transition-colors sm:px-2 sm:text-[11px] ${
                 active
                    ? 'text-[#f7f5f5]'
-                   : 'text-[#8d8b89] hover:text-[#b7b3b0]'
+                   : 'text-[#b7bfbd] hover:text-[#e0e4e3]'
               }`}
             >
               <span className="max-w-full whitespace-normal font-normal text-[14px]">{item.label}</span>

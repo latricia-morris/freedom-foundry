@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Vault as VaultIcon, Palette, Target, ClipboardList, Mic, Mail, CreditCard, Settings as SettingsIcon, ShieldCheck } from 'lucide-react';
+import { LayoutDashboard, Vault as VaultIcon, Palette, Target, ClipboardList, Mic } from 'lucide-react';
 import { useAuth } from '@/lib/AuthContext';
 
 const navItems = [
@@ -9,19 +9,12 @@ const navItems = [
   { label: 'Brand Portal', path: '/brand-portal', icon: Palette },
   { label: 'Big Picture', path: '/brand-portal/big-picture', icon: Target },
   { label: 'Collaborations', path: '/services', icon: ClipboardList },
-  { label: 'Billing', path: '/billing', icon: CreditCard },
   { label: 'Podcast', path: '/podcast', icon: Mic },
-  { label: 'Contact', path: '/contact', icon: Mail },
-  { label: 'Settings', path: '/settings', icon: SettingsIcon },
 ];
 
 export default function Sidebar() {
   const location = useLocation();
   const { user } = useAuth();
-  const visibleItems = user?.role === 'admin'
-    ? [...navItems, { label: 'Admin Dashboard', path: '/admin', icon: ShieldCheck }]
-    : navItems;
-
   return (
     <aside className="hidden lg:flex fixed left-0 top-0 h-full w-64 flex-col bg-sidebar border-r border-sidebar-border z-40">
       <Link to="/" className="block p-6 border-b border-sidebar-border hover:bg-sidebar-accent/30 transition-colors">
@@ -38,18 +31,18 @@ export default function Sidebar() {
       </Link>
 
       <nav className="flex-1 overflow-y-auto py-4">
-        {visibleItems.map((item) => {
+        {navItems.map((item) => {
           const isActive = location.pathname === item.path || location.pathname.startsWith(`${item.path}/`);
           const Icon = item.icon;
           return (
             <Link
               key={item.path}
               to={item.path}
-              className={`relative flex items-center gap-3 px-6 py-3 text-sm transition-all duration-200 ${
-                isActive ? 'text-[#f7f5f5] bg-sidebar-accent' : 'text-[#8d8b89] hover:text-[#b7b3b0] hover:bg-sidebar-accent/50'
+                className={`relative flex items-center gap-3 px-6 py-3 text-sm transition-colors duration-200 ${
+                 isActive ? 'font-medium text-[#f7f5f5]' : 'text-[#b7bfbd] hover:text-[#e0e4e3] hover:bg-white/[0.035]'
               }`}
+               aria-current={isActive ? 'page' : undefined}
             >
-              {isActive && <span className="absolute left-0 top-0 h-full w-0.5" style={{ background: 'linear-gradient(41deg, #4a0404, #7a1f1f, #b3232c, #d9622c, #f0d9b5)' }} />}
               <Icon className="w-4 h-4" strokeWidth={1.5} />
               <span className="tracking-wide">{item.label}</span>
             </Link>

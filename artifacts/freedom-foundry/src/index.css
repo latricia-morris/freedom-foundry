@@ -41,12 +41,12 @@
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     --sidebar-background: 20 14% 7%;
     --sidebar-foreground: 0 9% 96%;
-    --sidebar-primary: 24 62% 64%;
-    --sidebar-primary-foreground: 0 9% 96%;
+    --sidebar-primary: 168 7% 74%;
+    --sidebar-primary-foreground: 20 14% 7%;
     --sidebar-accent: 20 13% 10%;
     --sidebar-accent-foreground: 0 9% 96%;
     --sidebar-border: 20 10% 13%;
-    --sidebar-ring: 24 62% 64%;
+    --sidebar-ring: 168 7% 74%;
   }
 }
 
@@ -337,10 +337,10 @@
     background: linear-gradient(131deg, #b3232c, #d9622c, #f0d9b5);
   }
 
-  /* Brand portal navigation — text only, cloudbone inactive, gradient active */
+  /* Brand portal navigation — quiet dove-grey inactive, cloudbone active */
   .bp-nav-item {
-    color: #f7f2ea;
-    opacity: 0.5;
+    color: #b7bfbd;
+    opacity: 0.9;
     transition: opacity 0.2s ease;
     text-decoration: none;
     display: block;
@@ -350,15 +350,12 @@
   }
 
   .bp-nav-item:hover {
-    opacity: 0.8;
+    color: #e0e4e3;
+    opacity: 1;
   }
 
   .bp-nav-item--active {
-    background: linear-gradient(131deg, #b3232c, #d9622c, #f0d9b5);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
+    color: #f7f5f5;
     opacity: 1;
   }
 
