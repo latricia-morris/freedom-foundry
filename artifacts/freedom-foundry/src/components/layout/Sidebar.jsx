@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Vault as VaultIcon, Palette, Target, ClipboardList, Mic } from 'lucide-react';
-import { useAuth } from '@/lib/AuthContext';
 
 const navItems = [
   { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
@@ -14,7 +13,6 @@ const navItems = [
 
 export default function Sidebar() {
   const location = useLocation();
-  const { user } = useAuth();
   return (
     <aside className="hidden lg:flex fixed left-0 top-0 h-full w-64 flex-col bg-sidebar border-r border-sidebar-border z-40">
       <Link to="/" className="block p-6 border-b border-sidebar-border hover:bg-sidebar-accent/30 transition-colors">
