@@ -1,7 +1,6 @@
 import React from 'react';
 import { Outlet, NavLink } from 'react-router-dom';
 import { Flame, Send } from 'lucide-react';
-import WarmGradientDefs from '@/components/shared/WarmGradientDefs';
 
 const strategyNav = [
   { name: 'Overview', path: '/brand-portal', end: true },
@@ -30,10 +29,10 @@ function NavItem({ item }) {
       to={item.path}
       end={item.end}
       className={({ isActive }) =>
-        `flex items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors duration-200 ${
+        `flex items-center justify-between border-l-2 px-3 py-2.5 text-sm transition-colors duration-200 ${
           isActive
-            ? 'bg-[#f0d9b5] font-semibold text-[#24140e] shadow-[inset_0_1px_0_rgba(255,255,255,0.45)]'
-            : 'text-[#e5d6bd] hover:bg-[#f0d9b5]/10 hover:text-[#fff5e8]'
+            ? 'border-[#f7f5f5] font-medium text-[#f7f5f5]'
+            : 'border-transparent text-[#b7bfbd] hover:bg-white/[0.035] hover:text-[#e0e4e3]'
         }`
       }
     >
@@ -47,14 +46,14 @@ function NavItem({ item }) {
         <Flame
           className="w-4 h-4 flex-shrink-0"
           strokeWidth={1.5}
-          style={{ stroke: 'url(#warmGradientSvg)' }} />
+          />
 
         }
           {item.icon === 'send' &&
         <Send
           className="w-3.5 h-3.5 flex-shrink-0 ml-2"
           strokeWidth={1.5}
-          style={{ stroke: 'url(#warmGradientSvg)' }} />
+          />
 
         }
         </>
@@ -66,17 +65,16 @@ function NavItem({ item }) {
 export default function BrandPortalLayout() {
   return (
     <div className="flex min-h-[calc(100vh-10rem)] flex-col gap-6 lg:flex-row lg:gap-10">
-      <WarmGradientDefs />
-      <aside className="flex flex-shrink-0 flex-col rounded-xl border border-[#f0d9b5]/10 bg-[#1a130f]/75 p-3 shadow-[0_18px_40px_rgba(0,0,0,0.12)] lg:sticky lg:top-28 lg:h-fit lg:w-60 lg:p-4">
-        <p className="mb-3 px-3 text-[10px] uppercase tracking-[0.24em] text-[#e5b981]">
+      <aside className="flex flex-shrink-0 flex-col border border-white/[0.08] bg-[#1a1c1b]/75 p-3 lg:sticky lg:top-28 lg:h-fit lg:w-60 lg:p-4">
+        <p className="mb-3 px-3 text-[10px] uppercase tracking-[0.24em] text-[#b7bfbd]">
           Brand Portal
         </p>
         <nav aria-label="Brand Portal pages" className="flex gap-1 overflow-x-auto pb-1 lg:flex-col lg:overflow-visible">
           {strategyNav.map((item) => <NavItem key={item.path} item={item} />)}
-          <div className="mx-3 my-2 hidden border-t border-[#f0d9b5]/10 lg:block" />
+          <div className="mx-3 my-2 hidden border-t border-white/[0.1] lg:block" />
           {buildNav.map((item) => <NavItem key={item.path} item={item} />)}
         </nav>
-        <div className="mt-3 border-t border-[#f0d9b5]/10 pt-3">
+        <div className="mt-3 border-t border-white/[0.1] pt-3">
           {supportNav.map((item) => <NavItem key={item.path} item={item} />)}
         </div>
       </aside>
