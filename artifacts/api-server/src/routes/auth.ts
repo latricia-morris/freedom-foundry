@@ -9,6 +9,7 @@ const captchaPurposes = new Set(["sign-up", "password-recovery"]);
 type CaptchaVerificationResponse = {
   success?: boolean;
   score?: number;
+  action?: string;
 };
 
 // Google reCAPTCHA verification stays on the server so the secret never reaches the browser.
@@ -46,7 +47,9 @@ router.post("/auth/captcha/verify", async (req, res): Promise<void> => {
 
     const result = await verification.json() as CaptchaVerificationResponse;
     const scoreIsAcceptable = result.score === undefined || result.score >= 0.5;
-    if (!result.success || !scoreIsAcceptable) {
+    const expectedAction = purpose === "sign-up" ? "sign_up" : "password_recovery";
+    const actionIsAcceptable = result.action === undefined || result.action === expectedAction;
+    if (!result.success || !scoreIsAcceptable || !actionIsAcceptable) {
       res.status(400).json({ error: "Complete the human verification and try again", code: "CAPTCHA_FAILED" });
       return;
     }

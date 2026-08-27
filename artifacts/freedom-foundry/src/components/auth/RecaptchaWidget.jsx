@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const siteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY?.trim() || '';
 const mode = import.meta.env.VITE_RECAPTCHA_MODE?.trim().toLowerCase() === 'v3' ? 'v3' : 'checkbox';
@@ -25,25 +25,55 @@ function loadRecaptcha() {
   return promise;
 }
 
+function waitForRecaptchaReady(grecaptcha) {
+  return new Promise((resolve, reject) => {
+    if (typeof grecaptcha?.ready !== 'function') {
+      reject(new Error('reCAPTCHA did not finish initializing.'));
+      return;
+    }
+    grecaptcha.ready(() => resolve(grecaptcha));
+  });
+}
+
 export default function RecaptchaWidget({ action, resetToken = 0, onChange, onExpired, onError }) {
   const containerRef = useRef(null);
   const widgetIdRef = useRef(null);
   const challengeRef = useRef(() => {});
   const callbacksRef = useRef({ onChange, onExpired, onError });
+  const [isVerified, setIsVerified] = useState(false);
 
   callbacksRef.current = { onChange, onExpired, onError };
 
+  function handleToken(token) {
+    setIsVerified(Boolean(token));
+    callbacksRef.current.onChange?.(token);
+  }
+
+  function handleExpired() {
+    setIsVerified(false);
+    callbacksRef.current.onExpired?.();
+    callbacksRef.current.onChange?.('');
+  }
+
+  function handleError(message) {
+    setIsVerified(false);
+    callbacksRef.current.onError?.(message);
+    callbacksRef.current.onChange?.('');
+  }
+
   useEffect(() => {
     let active = true;
+    let refreshTimer;
 
     if (!siteKey) {
-      callbacksRef.current.onError?.('Human verification is not configured yet.');
+      handleError('Human verification is not configured yet.');
       return () => {
         active = false;
       };
     }
 
     loadRecaptcha()
+      .then(waitForRecaptchaReady)
       .then((grecaptcha) => {
         if (!active) return;
 
@@ -53,13 +83,14 @@ export default function RecaptchaWidget({ action, resetToken = 0, onChange, onEx
               if (!active) return;
               grecaptcha.execute(siteKey, { action })
                 .then((token) => {
-                  if (active && token) callbacksRef.current.onChange?.(token);
-                  else if (active) callbacksRef.current.onError?.('Human verification could not be completed. Please try again.');
+                  if (active && token) handleToken(token);
+                  else if (active) handleError('Human verification could not be completed. Please try again.');
                 })
-                .catch(() => callbacksRef.current.onError?.('Human verification could not be completed. Please try again.'));
+                .catch(() => handleError('Human verification could not be completed. Please try again.'));
             });
           };
           challengeRef.current();
+          refreshTimer = window.setInterval(challengeRef.current, 90000);
           return;
         }
 
@@ -68,29 +99,29 @@ export default function RecaptchaWidget({ action, resetToken = 0, onChange, onEx
           sitekey: siteKey,
           theme: 'dark',
           size: 'normal',
-          callback: (token) => callbacksRef.current.onChange?.(token),
-          'expired-callback': () => {
-            callbacksRef.current.onExpired?.();
-            callbacksRef.current.onChange?.('');
-          },
-          'error-callback': () => {
-            callbacksRef.current.onError?.('Human verification could not be completed. Please try again.');
-            callbacksRef.current.onChange?.('');
-          },
+          callback: handleToken,
+          'expired-callback': handleExpired,
+          'error-callback': () => handleError('The verification service rejected this page. Check that this site is allowed for the reCAPTCHA key.'),
         });
       })
-      .catch(() => {
-        if (active) callbacksRef.current.onError?.('Human verification could not load. Check your connection and try again.');
+      .catch((loadError) => {
+        if (!active) return;
+        const detail = loadError?.message?.toLowerCase().includes('invalid key')
+          ? 'The reCAPTCHA site key is not valid for this page. Check its Google domain and mode settings.'
+          : 'Human verification could not load. Check your connection and try again.';
+        handleError(detail);
       });
 
     return () => {
       active = false;
+      if (refreshTimer) window.clearInterval(refreshTimer);
       challengeRef.current = () => {};
     };
   }, [action]);
 
   useEffect(() => {
     if (resetToken <= 0) return;
+    setIsVerified(false);
     if (mode === 'v3') {
       challengeRef.current();
       return;
@@ -107,7 +138,7 @@ export default function RecaptchaWidget({ action, resetToken = 0, onChange, onEx
         className={mode === 'v3' ? 'min-h-6 text-xs text-white/45' : 'min-h-[78px] overflow-hidden rounded-lg'}
         aria-label="Human verification"
       >
-        {mode === 'v3' && <span role="status" aria-live="polite">Verifying you’re human…</span>}
+        {mode === 'v3' && <span role="status" aria-live="polite">{isVerified ? 'Human verification ready.' : 'Verifying you’re human…'}</span>}
       </div>
       <p className="text-[11px] leading-5 text-white/40">
         This helps protect Freedom Foundry from automated abuse.

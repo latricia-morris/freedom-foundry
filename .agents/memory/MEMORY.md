@@ -2,3 +2,4 @@
 - [Clerk provider settings](clerk-provider-settings.md) — enable email, Google, and Apple in Replit's Auth pane separately for Development and Production.
 - [Preserve imported auth visuals](preserve-imported-auth-visuals.md) — keep the original Freedom Foundry auth experience when changing authentication infrastructure.
 - [Expo artifact subpaths](expo-artifact-subpaths.md) — static Expo web exports must set experiments.baseUrl to the deployed artifact prefix.
+- [reCAPTCHA key configuration](recaptcha-domain-allowlist.md) — the supplied key is v3; Google must allowlist preview and production hosts.
