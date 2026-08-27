@@ -122,6 +122,24 @@ export const admin = {
   async claimClientSetup(id) {
     return apiFetch(`/admin/client-setups/${encodeURIComponent(id)}/claim`, { method: 'POST' });
   },
+  async listSupportReports() {
+    return apiFetch('/admin/support-reports');
+  },
+  async getSupportReport(id) {
+    return apiFetch(`/admin/support-reports/${encodeURIComponent(id)}`);
+  },
+};
+
+export const support = {
+  async listReports() {
+    return apiFetch('/support/reports');
+  },
+  async createReport(data) {
+    return apiFetch('/support/reports', { method: 'POST', body: JSON.stringify(data) });
+  },
+  async createProviderEvent(data) {
+    return apiFetch('/support/provider-events', { method: 'POST', body: JSON.stringify(data) });
+  },
 };
 
 // ─── Generic entity factory ───────────────────────────────────────────────────
@@ -187,7 +205,7 @@ export const integrations = {
   },
 };
 
-const apiClient = { auth, admin, entities, integrations };
+const apiClient = { auth, admin, support, entities, integrations };
 export default apiClient;
 
 // Legacy compat

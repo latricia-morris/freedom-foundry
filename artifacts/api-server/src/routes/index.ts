@@ -5,6 +5,7 @@ import usersRouter from "./users";
 import brandRouter from "./brand";
 import contentRouter from "./content";
 import clientSetupsRouter from "./client-setups";
+import supportRouter from "./support";
 
 const router: IRouter = Router();
 
@@ -14,5 +15,6 @@ router.use(usersRouter);
 router.use(brandRouter);
 router.use(contentRouter);
 router.use(clientSetupsRouter);
+router.use(supportRouter);
 
 export default router;

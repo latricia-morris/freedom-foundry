@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Linking, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Link, type Href, useLocalSearchParams, useRouter } from 'expo-router';
-import { useUser } from '@clerk/clerk-expo';
+import { useClerk, useUser } from '@clerk/clerk-expo';
 import { useQuery } from '@tanstack/react-query';
 import { customFetch, useGetBrandUpPrompts, useGetVaultItem, useGetVaultItems, useGetWorkbookDefinition, useGetWorkbookDefinitions } from '@workspace/api-client-react';
 import { EmptyBlock, FoundryCard, LoadingBlock, MemberShell, foundry } from '@/components/FoundryUI';
@@ -72,8 +72,86 @@ export function WorkbookScreen() {
 }
 
 export function StaticPortalScreen({ page }: { page: string }) {
+  if (page === 'settings') return <QuickBooksSupportScreen />;
   const data = portalPages[page] ?? { title: 'Freedom Foundry', copy: 'Forge the brand and life that create more freedom.' };
   return <MemberShell title={data.title}><FoundryCard><Text style={styles.copy}>{data.copy}</Text>{page === 'brand-portal' ? <View style={styles.portalLinks}>{Object.entries(portalPages).filter(([key]) => key.startsWith('brand-portal/')).map(([key, child]) => <Link key={key} href={`/${key}`} style={styles.row}><Text style={styles.rowTitle}>{child.title}</Text><Text style={styles.rowCopy}>{child.copy}</Text></Link>)}</View> : <Text style={styles.fieldHint}>This destination shares the current Freedom Foundry API and will keep expanding toward browser-level editing parity.</Text>}</FoundryCard></MemberShell>;
+}
+
+function QuickBooksSupportScreen() {
+  const { signOut } = useClerk();
+  const router = useRouter();
+  const [description, setDescription] = useState('');
+  const [intuitTid, setIntuitTid] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+
+  async function submitReport() {
+    if (!description.trim() || submitting) return;
+    setSubmitting(true);
+    setMessage(null);
+    try {
+      await customFetch('/api/support/reports', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          description: description.trim(),
+          provider: 'quickbooks',
+          page_context: '/settings',
+          intuit_tid: intuitTid.trim() || undefined,
+          occurred_at: new Date().toISOString(),
+        }),
+        responseType: 'json',
+      });
+      setDescription('');
+      setIntuitTid('');
+      setMessage('Report sent. Our support team has the details they need.');
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : 'Unable to send the report. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <MemberShell title="Account Settings">
+      <FoundryCard>
+        <Text style={styles.copy}>Manage the account details that support your Freedom Foundry experience.</Text>
+        <View style={styles.supportDivider} />
+        <Text style={styles.cardEyebrow}>QUICKBOOKS SUPPORT</Text>
+        <Text style={styles.cardTitle}>Report a problem</Text>
+        <Text style={styles.copy}>Tell us what happened. We’ll attach this page and the current time to help troubleshoot quickly.</Text>
+        <Text style={styles.inputLabel}>WHAT WENT WRONG?</Text>
+        <TextInput
+          value={description}
+          onChangeText={setDescription}
+          multiline
+          numberOfLines={5}
+          maxLength={5000}
+          placeholder="Describe the QuickBooks issue you encountered..."
+          placeholderTextColor="rgba(247,242,234,0.45)"
+          style={[styles.input, styles.multilineInput]}
+          textAlignVertical="top"
+        />
+        <Text style={styles.inputLabel}>ERROR TID, IF SHOWN</Text>
+        <TextInput
+          value={intuitTid}
+          onChangeText={setIntuitTid}
+          maxLength={256}
+          autoCapitalize="none"
+          placeholder="Paste the intuit_tid shown with the error"
+          placeholderTextColor="rgba(247,242,234,0.45)"
+          style={styles.input}
+        />
+        <Pressable onPress={submitReport} disabled={!description.trim() || submitting} style={[styles.request, (!description.trim() || submitting) && styles.dimmed]}>
+          <Text style={styles.requestText}>{submitting ? 'Sending…' : 'Send to support'}</Text>
+        </Pressable>
+        {message ? <Text accessibilityRole="alert" style={styles.fieldHint}>{message}</Text> : null}
+        <Pressable onPress={async () => { await signOut(); router.replace('/sign-in'); }} style={[styles.request, styles.signOut]}>
+          <Text style={styles.secondaryText}>Sign out</Text>
+        </Pressable>
+      </FoundryCard>
+    </MemberShell>
+  );
 }
 
 type SharedProfile = {
@@ -125,5 +203,6 @@ const styles = StyleSheet.create({
   resourceType: { color: foundry.primary, fontSize: 10, fontWeight: '800', letterSpacing: 1.3 }, resourceTitle: { color: foundry.foreground, fontSize: 21, fontWeight: '600' }, row: { borderTopWidth: 1, borderTopColor: 'rgba(240,217,181,0.12)', paddingVertical: 13, textDecorationLine: 'none' },
   rowTitle: { color: foundry.foreground, fontSize: 16, fontWeight: '700' }, rowCopy: { color: foundry.mutedForeground, fontSize: 13, lineHeight: 19, marginTop: 3 }, fieldHint: { color: '#d9c9a3', fontSize: 13, lineHeight: 20, marginTop: 8 },
   portalLinks: { marginTop: 8 }, public: { flex: 1, padding: 28, justifyContent: 'center', backgroundColor: foundry.background, gap: 16 }, publicBrand: { color: foundry.primary, fontSize: 15, fontWeight: '800', letterSpacing: 2, textAlign: 'center' }, publicCard: { maxWidth: 600, width: '100%', alignSelf: 'center' }, sharedStack: { width: '100%', maxWidth: 760, alignSelf: 'center', gap: 14 }, sharedSection: { gap: 8 }, sharedField: { borderTopWidth: 1, borderTopColor: 'rgba(240,217,181,0.12)', paddingTop: 9, gap: 3 }, sharedLabel: { color: foundry.primary, fontSize: 11, fontWeight: '800', letterSpacing: 1 },
-  request: { alignSelf: 'flex-start', marginTop: 8, borderColor: foundry.primary, borderWidth: 1, borderRadius: 10, paddingHorizontal: 15, paddingVertical: 11 }, requestText: { color: foundry.primary, fontWeight: '800' },
+  request: { alignSelf: 'flex-start', marginTop: 8, borderColor: foundry.primary, borderWidth: 1, borderRadius: 10, paddingHorizontal: 15, paddingVertical: 11 }, requestText: { color: foundry.primary, fontWeight: '800' }, secondaryText: { color: foundry.mutedForeground, fontWeight: '700' }, signOut: { borderColor: 'rgba(240,217,181,0.22)', marginTop: 4 }, dimmed: { opacity: 0.5 },
+  supportDivider: { height: 1, backgroundColor: 'rgba(240,217,181,0.12)', marginVertical: 10 }, inputLabel: { color: foundry.primary, fontSize: 10, fontWeight: '800', letterSpacing: 1.2, marginTop: 8 }, input: { width: '100%', minHeight: 46, borderWidth: 1, borderColor: 'rgba(240,217,181,0.2)', borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, color: foundry.foreground, backgroundColor: 'rgba(0,0,0,0.18)', fontSize: 14 }, multilineInput: { minHeight: 120 },
 });

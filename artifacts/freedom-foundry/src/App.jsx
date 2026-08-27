@@ -37,6 +37,7 @@ import AdminUserDetail from './pages/AdminUserDetail';
 import ClientMigrations from './pages/ClientMigrations';
 import ClientSetupWorkspace from './pages/ClientSetupWorkspace';
 import AdminDashboard from './pages/AdminDashboard';
+import AdminSupportReports from './pages/AdminSupportReports';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
 import ProtectedRoute from '@/components/ProtectedRoute';
@@ -240,6 +241,7 @@ function AppRoutes() {
           </Route>
           <Route element={<AdminRoute />}>
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/support-reports" element={<AdminSupportReports />} />
             <Route path="/admin/users" element={<AdminUsers />} />
             <Route path="/admin/users/:id" element={<AdminUserDetail />} />
             <Route path="/admin/client-setups" element={<ClientMigrations />} />

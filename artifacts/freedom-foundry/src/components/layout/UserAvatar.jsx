@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronDown, Settings as SettingsIcon, CreditCard, LogOut, Mail, ShieldCheck } from 'lucide-react';
+import { ChevronDown, Settings as SettingsIcon, CreditCard, LogOut, Mail, ShieldCheck, Bug } from 'lucide-react';
 import apiClient from '@/api/client';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
@@ -58,6 +58,10 @@ export default function UserAvatar() {
         <DropdownMenuItem onClick={() => navigate('/contact')} className="cursor-pointer text-[#f7f2ea] focus:bg-[#f0d9b5]/10 focus:text-[#fff5e8]">
           <Mail className="w-4 h-4 mr-2" strokeWidth={1.5} />
           <span>Contact</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => navigate('/settings#quickbooks-support')} className="cursor-pointer text-[#f7f2ea] focus:bg-[#f0d9b5]/10 focus:text-[#fff5e8]">
+          <Bug className="w-4 h-4 mr-2" strokeWidth={1.5} />
+          <span>Report QuickBooks Issue</span>
         </DropdownMenuItem>
         {user?.role === 'admin' && (
           <>

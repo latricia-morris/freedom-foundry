@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User as UserIcon, Bug, Trash2, AlertTriangle, Upload, Check, Mail } from 'lucide-react';
+import { User as UserIcon, Bug, Trash2, AlertTriangle, Upload, Check, Mail, Clock3, ShieldCheck } from 'lucide-react';
 import apiClient from '@/api/client';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -17,7 +17,10 @@ export default function Settings() {
   const [saved, setSaved] = useState(false);
   const [saveError, setSaveError] = useState('');
   const [bugReport, setBugReport] = useState('');
+  const [intuitTid, setIntuitTid] = useState('');
   const [bugSubmitted, setBugSubmitted] = useState(false);
+  const [bugSubmitting, setBugSubmitting] = useState(false);
+  const [bugError, setBugError] = useState('');
   const [showDelete, setShowDelete] = useState(false);
   const [deleteText, setDeleteText] = useState('');
   const [marketingConsent, setMarketingConsent] = useState(false);
@@ -82,12 +85,28 @@ export default function Settings() {
     setSaving(false);
   };
 
-  const handleBugReport = async () => {
-    if (!bugReport.trim()) return;
-    await apiClient.entities.BugReport.create({ description: bugReport });
-    setBugReport('');
-    setBugSubmitted(true);
-    setTimeout(() => setBugSubmitted(false), 3000);
+  const handleBugReport = async (event) => {
+    event.preventDefault();
+    if (!bugReport.trim() || bugSubmitting) return;
+    setBugSubmitting(true);
+    setBugError('');
+    try {
+      await apiClient.support.createReport({
+        description: bugReport.trim(),
+        provider: 'quickbooks',
+        page_context: window.location.pathname,
+        intuit_tid: intuitTid.trim() || undefined,
+        occurred_at: new Date().toISOString(),
+      });
+      setBugReport('');
+      setIntuitTid('');
+      setBugSubmitted(true);
+      setTimeout(() => setBugSubmitted(false), 4000);
+    } catch (error) {
+      setBugError(error.message || 'Unable to submit your report. Please try again.');
+    } finally {
+      setBugSubmitting(false);
+    }
   };
 
   return (
@@ -129,7 +148,7 @@ export default function Settings() {
         <div className="h-px bg-black/10" />
 
         {/* Email Preferences */}
-        <section className="space-y-5">
+        <section id="quickbooks-support" className="space-y-5 scroll-mt-6">
           <div className="flex items-center gap-2">
             <Mail className="w-4 h-4 text-merlot" strokeWidth={1.5} />
             <h2 className="font-heading text-lg">Email Preferences</h2>
@@ -155,16 +174,54 @@ export default function Settings() {
 
         <div className="h-px bg-black/10" />
 
-        {/* Bug Report */}
+        {/* QuickBooks support report */}
         <section className="space-y-5">
           <div className="flex items-center gap-2">
             <Bug className="w-4 h-4 text-merlot" strokeWidth={1.5} />
-            <h2 className="font-heading text-lg">Report a Bug</h2>
+            <h2 className="font-heading text-lg">Report a QuickBooks Problem</h2>
           </div>
-          <Textarea value={bugReport} onChange={e => setBugReport(e.target.value)} placeholder="Describe the issue you encountered..." rows={4} />
-          <button onClick={handleBugReport} disabled={!bugReport.trim()} className="flex items-center gap-2 px-4 py-2 border border-black/10 rounded-lg text-xs uppercase tracking-widest text-black/50 hover:text-black transition-colors disabled:opacity-50">
-            {bugSubmitted ? <Check className="w-3.5 h-3.5" /> : <Bug className="w-3.5 h-3.5" />}{bugSubmitted ? 'Submitted!' : 'Submit Report'}
-          </button>
+          <p className="text-sm text-[#1a1420]/65">
+            Tell us what happened and we’ll include the page, time, and troubleshooting details our support team needs.
+          </p>
+          <form onSubmit={handleBugReport} className="space-y-4">
+            <div>
+              <Label htmlFor="quickbooks-problem" className="text-xs uppercase tracking-wider mb-2 block">What went wrong?</Label>
+              <Textarea
+                id="quickbooks-problem"
+                value={bugReport}
+                onChange={e => setBugReport(e.target.value)}
+                placeholder="Describe the QuickBooks issue you encountered..."
+                rows={5}
+                maxLength={5000}
+                required
+              />
+              <p className="mt-1 text-right text-[11px] text-[#1a1420]/45">{bugReport.length}/5000</p>
+            </div>
+            <div>
+              <Label htmlFor="intuit-tid" className="text-xs uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                <ShieldCheck className="w-3.5 h-3.5" /> Error TID, if shown
+              </Label>
+              <Input
+                id="intuit-tid"
+                value={intuitTid}
+                onChange={e => setIntuitTid(e.target.value)}
+                placeholder="Paste the intuit_tid shown with the error"
+                maxLength={256}
+              />
+              <p className="mt-1 text-xs text-[#1a1420]/50">This is a troubleshooting reference, not a password or access code.</p>
+            </div>
+            <div className="flex flex-wrap items-center gap-3">
+              <button type="submit" disabled={!bugReport.trim() || bugSubmitting} className="flex items-center gap-2 px-4 py-2 forged-gradient text-white rounded-lg text-xs uppercase tracking-widest hover:opacity-90 transition-opacity disabled:opacity-50">
+                {bugSubmitted ? <Check className="w-3.5 h-3.5" /> : <Bug className="w-3.5 h-3.5" />}
+                {bugSubmitting ? 'Sending...' : bugSubmitted ? 'Report Sent' : 'Send to Support'}
+              </button>
+              <span className="flex items-center gap-1.5 text-xs text-[#1a1420]/50">
+                <Clock3 className="w-3.5 h-3.5" /> Includes page and timestamp
+              </span>
+            </div>
+            {bugError && <p role="alert" className="text-sm text-red-700">{bugError}</p>}
+            {bugSubmitted && <p role="status" className="text-sm text-green-700">Thanks — your report is available to the support team.</p>}
+          </form>
         </section>
 
         <div className="h-px bg-black/10" />
