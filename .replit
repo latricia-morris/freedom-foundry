@@ -23,6 +23,7 @@ timeoutMs = 90000
 
 [userenv.shared]
 LEAD_ADMIN_EMAIL = "latricia@thebrandrevivalist.com"
+VITE_RECAPTCHA_SITE_KEY = "6LdYGJwtAAAAAMk_LjR-tzJniCr979cGSdptb0F-"
 
 [nix]
 channel = "stable-25_05"
