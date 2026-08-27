@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSignIn } from '@clerk/react';
 import { Apple, KeyRound, LoaderCircle, LockKeyhole, Mail } from 'lucide-react';
+import apiClient from '@/api/client';
+import RecaptchaWidget from './RecaptchaWidget';
 
 function clerkErrorMessage(error, fallback) {
   return error?.longMessage || error?.errors?.[0]?.longMessage || error?.message || fallback;
@@ -38,8 +40,11 @@ export default function FreedomSignInForm({ basePath }) {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
+  const [captchaToken, setCaptchaToken] = useState('');
+  const [captchaResetToken, setCaptchaResetToken] = useState(0);
+  const [isVerifyingCaptcha, setIsVerifyingCaptcha] = useState(false);
 
-  const isSubmitting = fetchStatus === 'fetching';
+  const isSubmitting = fetchStatus === 'fetching' || isVerifyingCaptcha;
   const dashboardUrl = `${basePath}/dashboard`;
   const callbackUrl = `${basePath}/sign-in/sso-callback`;
 
@@ -49,7 +54,31 @@ export default function FreedomSignInForm({ basePath }) {
     setPassword('');
     setConfirmPassword('');
     setCode('');
+    setCaptchaToken('');
+    setCaptchaResetToken((value) => value + 1);
     setError('');
+  }
+
+  async function verifyRecoveryHuman() {
+    if (!captchaToken) {
+      setError('Complete the human verification to continue.');
+      return false;
+    }
+
+    setIsVerifyingCaptcha(true);
+    try {
+      await apiClient.auth.verifyCaptcha(captchaToken, 'password-recovery');
+      setCaptchaToken('');
+      setCaptchaResetToken((value) => value + 1);
+      return true;
+    } catch (verificationError) {
+      setCaptchaToken('');
+      setCaptchaResetToken((value) => value + 1);
+      setError(verificationError.message || 'Human verification failed. Please try again.');
+      return false;
+    } finally {
+      setIsVerifyingCaptcha(false);
+    }
   }
 
   async function finishSignIn() {
@@ -108,6 +137,7 @@ export default function FreedomSignInForm({ basePath }) {
     }
 
     try {
+      if (!await verifyRecoveryHuman()) return;
       const init = await signIn.create({ identifier: email.trim() });
       if (init.error) throw init.error;
 
@@ -168,13 +198,22 @@ export default function FreedomSignInForm({ basePath }) {
 
         <form onSubmit={verifying ? resetPassword : sendRecoveryCode} className="space-y-5">
           {!verifying && (
-            <label className="block">
-              <span className="mb-2 block text-[11px] uppercase tracking-[0.16em] text-white/55">Email address</span>
-              <span className="relative block">
-                <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#d9c9a3]/70" />
-                <input className={inputClassName} type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com" />
-              </span>
-            </label>
+            <>
+              <label className="block">
+                <span className="mb-2 block text-[11px] uppercase tracking-[0.16em] text-white/55">Email address</span>
+                <span className="relative block">
+                  <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#d9c9a3]/70" />
+                  <input className={inputClassName} type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com" />
+                </span>
+              </label>
+              <RecaptchaWidget
+                action="password_recovery"
+                resetToken={captchaResetToken}
+                onChange={(token) => { setCaptchaToken(token || ''); if (token) setError(''); }}
+                onExpired={() => { setCaptchaToken(''); setError('Human verification expired. Please complete it again.'); }}
+                onError={(message) => { setCaptchaToken(''); setError(message); }}
+              />
+            </>
           )}
 
           {verifying && (

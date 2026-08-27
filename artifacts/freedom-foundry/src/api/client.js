@@ -51,6 +51,12 @@ export const auth = {
   async resendOtp() { return {}; },
   async resetPasswordRequest() { return {}; },
   async resetPassword() { return {}; },
+  async verifyCaptcha(token, purpose) {
+    return apiFetch('/auth/captcha/verify', {
+      method: 'POST',
+      body: JSON.stringify({ token, purpose }),
+    });
+  },
   async updateMe(data) { return apiFetch('/auth/me', { method: 'PATCH', body: JSON.stringify(data) }); },
 };
 

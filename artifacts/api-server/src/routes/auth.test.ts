@@ -188,3 +188,55 @@ describe("authenticated member profile", () => {
     expect(response.body).toEqual({ error: "Profile settings must be text values" });
   });
 });
+
+describe("reCAPTCHA verification", () => {
+  beforeEach(() => {
+    delete process.env.GOOGLE_reCAPTCHA;
+    vi.unstubAllGlobals();
+  });
+
+  it("rejects missing tokens and unknown purposes before contacting Google", async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+
+    const response = await request(app)
+      .post("/api/auth/captcha/verify")
+      .send({ token: "", purpose: "sign-in" });
+
+    expect(response.status).toBe(400);
+    expect(response.body.code).toBe("CAPTCHA_REQUIRED");
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("returns verified only when Google accepts the token", async () => {
+    process.env.GOOGLE_reCAPTCHA = "test-secret";
+    const fetchMock = vi.fn(async () => new Response(
+      JSON.stringify({ success: true, hostname: "localhost" }),
+      { status: 200, headers: { "Content-Type": "application/json" } },
+    ));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const response = await request(app)
+      .post("/api/auth/captcha/verify")
+      .send({ token: "valid-token", purpose: "sign-up" });
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ verified: true });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("rejects a failed or low-score Google response", async () => {
+    process.env.GOOGLE_reCAPTCHA = "test-secret";
+    vi.stubGlobal("fetch", vi.fn(async () => new Response(
+      JSON.stringify({ success: true, score: 0.2 }),
+      { status: 200, headers: { "Content-Type": "application/json" } },
+    )));
+
+    const response = await request(app)
+      .post("/api/auth/captcha/verify")
+      .send({ token: "low-score-token", purpose: "password-recovery" });
+
+    expect(response.status).toBe(400);
+    expect(response.body.code).toBe("CAPTCHA_FAILED");
+  });
+});

@@ -5,6 +5,59 @@ import { authMiddleware } from "../lib/auth";
 
 const router: IRouter = Router();
 
+const captchaPurposes = new Set(["sign-up", "password-recovery"]);
+type CaptchaVerificationResponse = {
+  success?: boolean;
+  score?: number;
+};
+
+// Google reCAPTCHA verification stays on the server so the secret never reaches the browser.
+router.post("/auth/captcha/verify", async (req, res): Promise<void> => {
+  const body = req.body && typeof req.body === "object"
+    ? req.body as Record<string, unknown>
+    : {};
+  const token = typeof body.token === "string" ? body.token.trim() : "";
+  const purpose = typeof body.purpose === "string" ? body.purpose : "";
+
+  if (!token || token.length > 4096 || !captchaPurposes.has(purpose)) {
+    res.status(400).json({ error: "Complete the human verification and try again", code: "CAPTCHA_REQUIRED" });
+    return;
+  }
+
+  const secret = process.env.GOOGLE_reCAPTCHA?.trim();
+  if (!secret) {
+    req.log?.error({ purpose }, "reCAPTCHA server secret is not configured");
+    res.status(503).json({ error: "Human verification is temporarily unavailable", code: "CAPTCHA_UNAVAILABLE" });
+    return;
+  }
+
+  try {
+    const verification = await fetch("https://www.google.com/recaptcha/api/siteverify", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({ secret, response: token }),
+    });
+
+    if (!verification.ok) {
+      req.log?.error({ status: verification.status, purpose }, "reCAPTCHA verification service failed");
+      res.status(502).json({ error: "Human verification is temporarily unavailable", code: "CAPTCHA_UNAVAILABLE" });
+      return;
+    }
+
+    const result = await verification.json() as CaptchaVerificationResponse;
+    const scoreIsAcceptable = result.score === undefined || result.score >= 0.5;
+    if (!result.success || !scoreIsAcceptable) {
+      res.status(400).json({ error: "Complete the human verification and try again", code: "CAPTCHA_FAILED" });
+      return;
+    }
+
+    res.json({ verified: true });
+  } catch (error) {
+    req.log?.error({ err: error, purpose }, "reCAPTCHA verification request failed");
+    res.status(502).json({ error: "Human verification is temporarily unavailable", code: "CAPTCHA_UNAVAILABLE" });
+  }
+});
+
 // With Clerk, registration/login/logout are handled client-side by the Clerk SDK.
 // These stubs keep any legacy callers from 404-ing during the transition.
 

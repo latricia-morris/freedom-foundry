@@ -1,4 +1,4 @@
-import { AuthenticateWithRedirectCallback, ClerkProvider, SignUp, useUser } from '@clerk/react';
+import { AuthenticateWithRedirectCallback, ClerkProvider, useUser } from '@clerk/react';
 import { publishableKeyFromHost } from '@clerk/react/internal';
 import { shadcn } from '@clerk/themes';
 import { QueryClientProvider } from '@tanstack/react-query';
@@ -46,6 +46,7 @@ import BrandChecklist from './pages/BrandChecklist';
 import RequestServices from './pages/RequestServices';
 import BrandUpAdmin from './pages/BrandUpAdmin';
 import FreedomSignInForm from './components/auth/FreedomSignInForm';
+import FreedomSignUpForm from './components/auth/FreedomSignUpForm';
 
 // ─── Clerk config ─────────────────────────────────────────────────────────────
 const basePath = import.meta.env.BASE_URL?.replace(/\/$/, '') || '';
@@ -167,12 +168,7 @@ function SignInPage() {
 function SignUpPage() {
   return (
     <AuthBackground>
-      <SignUp
-        routing="path"
-        path={`${basePath}/sign-up`}
-        signInUrl={`${basePath}/sign-in`}
-        fallbackRedirectUrl={`${basePath}/dashboard`}
-      />
+      <FreedomSignUpForm basePath={basePath} />
     </AuthBackground>
   );
 }
