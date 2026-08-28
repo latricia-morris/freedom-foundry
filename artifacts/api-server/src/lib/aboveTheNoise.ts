@@ -47,7 +47,7 @@ const strategies: AboveTheNoiseStrategy[] = [
     title: "Hyper-targeted Messaging",
     content: "Develop messaging that resonates deeply with your target audience. Segmenting your audience and speaking to the intimate pains, fears, hopes, and aspirations of your ideal customer creates trust, relevance, and stronger engagement.",
     example: "Dove's “Real Beauty” campaign built a strong emotional connection by showing real women rather than models.",
-    exercise: ["Identify your ideal customer. What do they need and want to hear from you?"],
+    exercise: ["Think about your ideal client or customer. What specific messaging do they need/want to hear from you?"],
   },
   {
     number: 7,
@@ -239,9 +239,9 @@ const strategies: AboveTheNoiseStrategy[] = [
     content: "Involve customers in the creation and development of products or services. Inviting customers to contribute ideas boosts engagement, aligns offerings with customer desires, and fosters a sense of ownership and connection.",
     example: "Lay's “Do Us a Flavor” campaign invites customers to submit new chip flavors; winning ideas are produced and sold.",
     exercise: [
-      "Identify the customers you could invite into the creation and development of your products or services.",
-      "Design a respectful way to gather, evaluate, and act on their ideas.",
-      "Plan how you will share the resulting product, service, or community story with participants.",
+      "Identify the community benefit initiatives that resonate with your company's values. Highlight ones that overlap with your ICA's values.",
+      "Research the needs and opportunities within your community to understand where your efforts can have the most impact.",
+      "Integrate these initiatives into your brand’s operations, marketing, and communications in an authentic and meaningful manner.",
     ],
   },
 ];

@@ -196,7 +196,7 @@ router.patch("/workbook-responses/:id", authMiddleware, async (req, res): Promis
     .limit(1);
   if (!existingResponse) { ownedNotFound(res); return; }
   if (!await requireWorkbookAccess(req, res, existingResponse.workbook_id)) return;
-  const data = ownedUpdatePayload<typeof workbookResponsesTable.$inferInsert>(req);
+  const data = { responses: req.body?.responses };
   const [row] = await db.update(workbookResponsesTable).set(data)
     .where(and(eq(workbookResponsesTable.id, id), eq(workbookResponsesTable.user_id, userId))).returning();
   if (!row) { ownedNotFound(res); return; }
