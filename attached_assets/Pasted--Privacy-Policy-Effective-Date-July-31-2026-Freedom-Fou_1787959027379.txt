@@ -1,0 +1,125 @@
+# Privacy Policy
+
+Effective Date: July 31, 2026
+
+Freedom Foundry (“App”) is owned and operated by The Brand Revivalist® (“Company,” “we,” “our,” or “us”). The Brand Revivalist® is the professional brand identity and public-facing business persona of LaTricia Morris. Certain services, projects, or fulfillment activities connected to the App may be delivered directly by The Brand Revivalist®, by Ox & Iron, or by vetted third-party partners, depending on the nature of the request.
+
+This Privacy Policy explains how we collect, use, disclose, and protect information when you use the Freedom Foundry mobile application, website, and related services (collectively, the “Services”).
+
+## 1. Information We Collect
+
+We may collect the following categories of information:
+
+### a. Information You Provide to Us
+- Name
+- Email address
+- Business name
+- Billing information
+- Account credentials
+- Project details, intake responses, questionnaires, uploaded files, and communications you send through the App
+- Information you provide when requesting branding, design, copywriting, consulting, or related services
+
+### b. Information Collected Automatically
+When you use the App, we may automatically collect certain technical and usage information, including:
+- Device type
+- Operating system
+- Browser or app version
+- IP address
+- Device identifiers
+- App activity and interaction data
+- Crash reports, diagnostics, and performance data
+
+### c. Information From Third Parties
+We may receive information from third-party tools, integrations, marketplaces, payment processors, analytics providers, or partners that support operation of the Services.
+
+## 2. How We Use Information
+
+We may use your information to:
+- Provide and operate the App and related services
+- Create and manage your account
+- Respond to inquiries and fulfill service requests
+- Deliver branding, design, copywriting, consulting, strategy, and agency-related services
+- Coordinate project fulfillment internally or through Ox & Iron or vetted partners
+- Process payments and transactions
+- Send service updates, onboarding communications, administrative notices, and support messages
+- Improve app performance, user experience, service delivery, and business operations
+- Detect fraud, misuse, security incidents, or technical issues
+- Comply with legal obligations and enforce our policies
+
+## 3. How We Share Information
+
+We may share information with:
+- Service providers and contractors who help us operate the App and deliver services
+- Ox & Iron, where fulfillment or project execution is handled through that agency
+- Vetted third-party partners or referral partners, when a requested service falls outside our direct scope or requires specialized support
+- Payment processors, hosting providers, analytics vendors, communication platforms, and other business tools
+- Legal, regulatory, or governmental authorities when required by law
+- A successor entity in connection with a merger, acquisition, restructuring, or sale of all or part of our business
+
+We do not sell your personal information for money. If we refer you to a third party or connect you with a vetted partner, that third party’s own practices, processes, policies, and outcomes are outside our control and subject to that third party’s own terms and privacy practices. [web:23]
+
+## 4. Third-Party Services and Referrals
+
+The App may allow you to connect with or request services involving third-party providers, platforms, or referral partners. These third parties are independent businesses and are not under our control. We are not responsible for the privacy practices, sales processes, service performance, decisions, communications, deliverables, or results of any third party, even if introduced, suggested, or referred through the App.
+
+You should review the separate policies and terms of any third-party provider you choose to engage.
+
+## 5. Data Retention
+
+We retain personal information for as long as reasonably necessary to:
+- Provide the Services
+- Maintain business and project records
+- Comply with legal, tax, accounting, or contractual obligations
+- Resolve disputes
+- Enforce our agreements
+
+Retention periods may vary depending on the type of data and the nature of the relationship.
+
+## 6. Your Rights and Choices
+
+Depending on your jurisdiction, you may have the right to:
+- Request access to personal information we hold about you
+- Request correction of inaccurate information
+- Request deletion of your information
+- Object to or restrict certain processing
+- Withdraw consent where processing is based on consent
+
+To submit a request, contact us at: latricia@thebrandrevivalist.com
+
+We may need to verify your identity before processing certain requests.
+
+## 7. Account Deletion
+
+You may request deletion of your account and associated personal information by:
+- Using any account deletion feature available in the App, or
+- Contacting us at latricia@thebrandrevivalist.com
+
+We may retain limited information where necessary for legal compliance, recordkeeping, dispute resolution, fraud prevention, or enforcement purposes. Apple expects policies to explain deletion and retention practices clearly. [web:23][web:26]
+
+## 8. Data Security
+
+We use reasonable administrative, technical, and organizational safeguards designed to protect the information we collect. However, no method of transmission over the internet or electronic storage is completely secure, and we cannot guarantee absolute security.
+
+## 9. Children’s Privacy
+
+Freedom Foundry is not directed to children under 13, and we do not knowingly collect personal information from children under 13. If we learn that we have collected personal information from a child under 13 without appropriate authorization, we will take steps to delete that information. [web:19][web:21]
+
+## 10. Health and Sensitive Data
+
+Freedom Foundry is not intended to collect, store, or process personal health information, medical records, or child-directed data as part of its ordinary business operations. If you choose to submit sensitive information that is not necessary to provide our services, you do so at your own discretion.
+
+## 11. International Users
+
+If you access the Services from outside the United States, your information may be transferred to and processed in the United States or other jurisdictions where our service providers operate.
+
+## 12. Changes to This Privacy Policy
+
+We may update this Privacy Policy from time to time. When we do, we will revise the Effective Date. Your continued use of the Services after any update becomes effective constitutes acceptance of the revised Privacy Policy, to the extent permitted by law.
+
+## 13. Contact Us
+
+If you have questions or requests regarding this Privacy Policy, contact:
+
+The Brand Revivalist®  
+Attn: LaTricia Morris  
+latricia@thebrandrevivalist.com
