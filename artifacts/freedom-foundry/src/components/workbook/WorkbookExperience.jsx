@@ -6,6 +6,87 @@ import WorkbookField from '@/components/workbook/WorkbookField';
 import ChecklistAddBox from '@/components/workbook/ChecklistAddBox';
 import openPrintFriendly from '@/components/workbook/openPrintFriendly';
 
+function getPaginationItems(totalPages, activePageIndex) {
+  if (totalPages <= 7) return Array.from({ length: totalPages }, (_, index) => index);
+
+  const visiblePages = new Set([0, totalPages - 1, activePageIndex]);
+  if (activePageIndex <= 2) {
+    [1, 2, 3].forEach(index => visiblePages.add(index));
+  } else if (activePageIndex >= totalPages - 3) {
+    [totalPages - 4, totalPages - 3, totalPages - 2].forEach(index => visiblePages.add(index));
+  } else {
+    [activePageIndex - 1, activePageIndex + 1].forEach(index => visiblePages.add(index));
+  }
+
+  const sortedPages = [...visiblePages].sort((a, b) => a - b);
+  return sortedPages.reduce((items, pageIndex, position) => {
+    if (position > 0 && pageIndex - sortedPages[position - 1] > 1) {
+      items.push(`ellipsis-${pageIndex}`);
+    }
+    items.push(pageIndex);
+    return items;
+  }, []);
+}
+
+function WorkbookPagination({ pageCount, activePageIndex, onPageChange }) {
+  if (pageCount <= 1) return null;
+
+  const goToPrevious = () => onPageChange(Math.max(0, activePageIndex - 1));
+  const goToNext = () => onPageChange(Math.min(pageCount - 1, activePageIndex + 1));
+
+  return (
+    <nav aria-label="Workbook pages" className="space-y-3">
+      <div className="flex items-center justify-between gap-3">
+        <button
+          type="button"
+          onClick={goToPrevious}
+          disabled={activePageIndex === 0}
+          className="flex min-w-0 shrink-0 items-center gap-1.5 text-xs uppercase tracking-widest text-muted-foreground transition-colors hover:text-foreground disabled:opacity-30"
+          aria-label="Go to previous page"
+        >
+          <ChevronLeft className="h-4 w-4" />
+          <span className="hidden sm:inline">Previous</span>
+        </button>
+        <span className="min-w-0 text-center text-xs uppercase tracking-widest text-muted-foreground">
+          Page <span className="font-semibold text-foreground">{activePageIndex + 1}</span> of {pageCount}
+        </span>
+        <button
+          type="button"
+          onClick={goToNext}
+          disabled={activePageIndex === pageCount - 1}
+          className="flex min-w-0 shrink-0 items-center gap-1.5 text-xs uppercase tracking-widest text-primary transition-colors hover:text-copper disabled:opacity-30"
+          aria-label="Go to next page"
+        >
+          <span className="hidden sm:inline">Next</span>
+          <ChevronRight className="h-4 w-4" />
+        </button>
+      </div>
+      <div className="flex flex-wrap justify-center gap-1.5" role="list">
+        {getPaginationItems(pageCount, activePageIndex).map(item => (
+          typeof item === 'string' ? (
+            <span key={item} className="flex h-8 w-6 items-center justify-center text-xs text-muted-foreground" aria-hidden="true">…</span>
+          ) : (
+            <button
+              type="button"
+              key={item}
+              onClick={() => onPageChange(item)}
+              aria-current={item === activePageIndex ? 'page' : undefined}
+              aria-label={`Go to page ${item + 1}`}
+              className={`h-8 min-w-8 rounded px-2 text-xs transition-all ${
+                item === activePageIndex
+                  ? 'forged-gradient text-white'
+                  : 'bg-card text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              {item + 1}
+            </button>
+          )
+        ))}
+      </div>
+    </nav>
+  );
+}
+
 export default function WorkbookExperience({ workbook }) {
   const { user } = useUser();
   const [responses, setResponses] = useState({});
@@ -113,10 +194,12 @@ export default function WorkbookExperience({ workbook }) {
           <Printer className="w-4 h-4" /> Printer-Friendly Download
         </button>
       </div>
-      <div className="flex items-center gap-2 mb-6">
-        {pages.map((page, i) => (
-          <button key={page.page_id || i} onClick={() => setActivePageIndex(i)} className={`px-3 py-1.5 rounded text-xs uppercase tracking-wider transition-all ${i === activePageIndex ? 'forged-gradient text-white' : 'bg-card text-muted-foreground hover:text-foreground'}`}>{i + 1}</button>
-        ))}
+      <div className="mb-6">
+        <WorkbookPagination
+          pageCount={pages.length}
+          activePageIndex={activePageIndex}
+          onPageChange={setActivePageIndex}
+        />
       </div>
       {activePage && (
         <div className="editorial-container">
@@ -136,9 +219,12 @@ export default function WorkbookExperience({ workbook }) {
           </div>
         </div>
       )}
-      <div className="flex items-center justify-between mt-6">
-        <button onClick={() => setActivePageIndex(Math.max(0, activePageIndex - 1))} disabled={activePageIndex === 0} className="flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors disabled:opacity-30"><ChevronLeft className="w-4 h-4" /> Previous</button>
-        <button onClick={() => setActivePageIndex(Math.min(pages.length - 1, activePageIndex + 1))} disabled={activePageIndex === pages.length - 1} className="flex items-center gap-2 text-xs uppercase tracking-widest text-primary hover:text-copper transition-colors disabled:opacity-30">Next <ChevronRight className="w-4 h-4" /></button>
+      <div className="mt-6">
+        <WorkbookPagination
+          pageCount={pages.length}
+          activePageIndex={activePageIndex}
+          onPageChange={setActivePageIndex}
+        />
       </div>
     </div>
   );
