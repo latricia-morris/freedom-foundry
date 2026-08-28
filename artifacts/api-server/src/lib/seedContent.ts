@@ -2,6 +2,7 @@ import { and, eq } from "drizzle-orm";
 import { db, vaultItemsTable, workbookDefinitionsTable } from "@workspace/db";
 import { powerMoves1to6 } from "./brandPowerMoves1to6";
 import { powerMoves7to12, type BrandPowerMove } from "./brandPowerMoves7to12";
+import { buildAboveTheNoisePages } from "./aboveTheNoise";
 
 const ABOVE_THE_NOISE_TITLE = "Above the Noise: 31 High-Impact Brand Differentiation Strategies";
 const BRAND_POWER_MOVES_TITLE = "Brand Power Moves";
@@ -84,11 +85,12 @@ async function ensureVaultItem(
  * member workbook responses remain linked to the same definitions.
  */
 export async function ensureLaunchContent(): Promise<void> {
-  await ensureVaultItem({
+  const aboveTheNoise = await ensureVaultItem({
     title: ABOVE_THE_NOISE_TITLE,
     subtitle: "A practical brand-differentiation field guide",
     description: "A focused collection of 31 strategies for finding the signal in a crowded market and building a brand that cannot be ignored.",
-    type: "Download",
+    type: "Digital Workbook",
+    featured_image_url: "/resources/above-the-noise-cover.png",
     download_url: "/resources/above-the-noise.pdf",
     tags: ["brand strategy", "differentiation", "guide"],
     price: "0",
@@ -97,6 +99,30 @@ export async function ensureLaunchContent(): Promise<void> {
     is_featured: true,
     is_free: true,
   });
+
+  const aboveTheNoiseValues = {
+    vault_item_id: aboveTheNoise.id,
+    title: "Above the Noise Digital Workbook",
+    description: "The complete Above the Noise guide, digitized into saved, printable exercises.",
+    fields: buildAboveTheNoisePages(),
+    status: "published",
+    order: 1,
+  };
+  const [existingAboveTheNoise] = await db
+    .select({ id: workbookDefinitionsTable.id })
+    .from(workbookDefinitionsTable)
+    .where(and(
+      eq(workbookDefinitionsTable.vault_item_id, aboveTheNoise.id),
+      eq(workbookDefinitionsTable.order, 1),
+    ))
+    .limit(1);
+  if (existingAboveTheNoise) {
+    await db.update(workbookDefinitionsTable)
+      .set(aboveTheNoiseValues)
+      .where(eq(workbookDefinitionsTable.id, existingAboveTheNoise.id));
+  } else {
+    await db.insert(workbookDefinitionsTable).values(aboveTheNoiseValues);
+  }
 
   const brandPowerMoves = await ensureVaultItem({
     title: BRAND_POWER_MOVES_TITLE,

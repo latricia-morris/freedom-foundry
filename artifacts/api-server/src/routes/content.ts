@@ -28,6 +28,32 @@ async function requireBrandPowerMovesAccess(req: Parameters<typeof authMiddlewar
   return true;
 }
 
+async function isAboveTheNoiseWorkbook(workbookId: number): Promise<boolean> {
+  const [definition] = await db
+    .select({ vault_item_id: workbookDefinitionsTable.vault_item_id })
+    .from(workbookDefinitionsTable)
+    .where(eq(workbookDefinitionsTable.id, workbookId))
+    .limit(1);
+  if (!definition?.vault_item_id) return false;
+  const [item] = await db
+    .select({ title: vaultItemsTable.title })
+    .from(vaultItemsTable)
+    .where(eq(vaultItemsTable.id, definition.vault_item_id))
+    .limit(1);
+  return item?.title === "Above the Noise: 31 High-Impact Brand Differentiation Strategies";
+}
+
+async function requireWorkbookAccess(
+  req: Parameters<typeof authMiddleware>[0],
+  res: Parameters<typeof authMiddleware>[1],
+  workbookId?: number,
+): Promise<boolean> {
+  if (workbookId && await isAboveTheNoiseWorkbook(workbookId)) {
+    return Boolean(requireMemberId(req, res));
+  }
+  return requireBrandPowerMovesAccess(req, res);
+}
+
 // ─── Vault Items ──────────────────────────────────────────────────────────────
 router.get("/vault-items", async (_req, res): Promise<void> => {
   const rows = await db.select().from(vaultItemsTable).orderBy(vaultItemsTable.order);
@@ -97,8 +123,23 @@ router.delete("/lesson-progress/:id", authMiddleware, async (req, res): Promise<
 
 // ─── Workbook Definitions ─────────────────────────────────────────────────────
 router.get("/workbook-definitions", authMiddleware, async (req, res): Promise<void> => {
-  if (!await requireBrandPowerMovesAccess(req, res)) return;
   const { status, vault_item_id } = req.query;
+  const targetVaultItemId = vault_item_id ? Number(vault_item_id) : undefined;
+  if (targetVaultItemId) {
+    const [item] = await db.select({ title: vaultItemsTable.title })
+      .from(vaultItemsTable)
+      .where(eq(vaultItemsTable.id, targetVaultItemId))
+      .limit(1);
+    if (item?.title === "Above the Noise: 31 High-Impact Brand Differentiation Strategies") {
+      if (!requireMemberId(req, res)) return;
+      const rows = await db.select().from(workbookDefinitionsTable)
+        .where(eq(workbookDefinitionsTable.vault_item_id, targetVaultItemId))
+        .orderBy(workbookDefinitionsTable.order);
+      res.json(rows);
+      return;
+    }
+  }
+  if (!await requireBrandPowerMovesAccess(req, res)) return;
   let rows;
   if (vault_item_id) {
     rows = await db.select().from(workbookDefinitionsTable)
@@ -115,8 +156,8 @@ router.get("/workbook-definitions", authMiddleware, async (req, res): Promise<vo
 });
 
 router.get("/workbook-definitions/:id", authMiddleware, async (req, res): Promise<void> => {
-  if (!await requireBrandPowerMovesAccess(req, res)) return;
   const id = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id, 10);
+  if (!await requireWorkbookAccess(req, res, id)) return;
   const [row] = await db.select().from(workbookDefinitionsTable).where(eq(workbookDefinitionsTable.id, id));
   if (!row) { res.status(404).json({ error: "Not found" }); return; }
   res.json(row);
@@ -124,7 +165,8 @@ router.get("/workbook-definitions/:id", authMiddleware, async (req, res): Promis
 
 // ─── Workbook Responses ───────────────────────────────────────────────────────
 router.get("/workbook-responses", authMiddleware, async (req, res): Promise<void> => {
-  if (!await requireBrandPowerMovesAccess(req, res)) return;
+  const requestedWorkbookId = req.query.workbook_id ? Number(req.query.workbook_id) : undefined;
+  if (!await requireWorkbookAccess(req, res, requestedWorkbookId)) return;
   const userId = requireMemberId(req, res);
   if (!userId) return;
   const workbookId = req.query.workbook_id;
@@ -136,7 +178,8 @@ router.get("/workbook-responses", authMiddleware, async (req, res): Promise<void
 });
 
 router.post("/workbook-responses", authMiddleware, async (req, res): Promise<void> => {
-  if (!await requireBrandPowerMovesAccess(req, res)) return;
+  const workbookId = Number(req.body?.workbook_id);
+  if (!Number.isInteger(workbookId) || !await requireWorkbookAccess(req, res, workbookId)) return;
   const data = ownedCreatePayload<typeof workbookResponsesTable.$inferInsert>(req);
   if (!data) { res.status(401).json({ error: "Unauthorized" }); return; }
   const [row] = await db.insert(workbookResponsesTable).values(data).returning();
@@ -144,10 +187,15 @@ router.post("/workbook-responses", authMiddleware, async (req, res): Promise<voi
 });
 
 router.patch("/workbook-responses/:id", authMiddleware, async (req, res): Promise<void> => {
-  if (!await requireBrandPowerMovesAccess(req, res)) return;
   const userId = requireMemberId(req, res);
   if (!userId) return;
   const id = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id, 10);
+  const [existingResponse] = await db.select({ workbook_id: workbookResponsesTable.workbook_id })
+    .from(workbookResponsesTable)
+    .where(and(eq(workbookResponsesTable.id, id), eq(workbookResponsesTable.user_id, userId)))
+    .limit(1);
+  if (!existingResponse) { ownedNotFound(res); return; }
+  if (!await requireWorkbookAccess(req, res, existingResponse.workbook_id)) return;
   const data = ownedUpdatePayload<typeof workbookResponsesTable.$inferInsert>(req);
   const [row] = await db.update(workbookResponsesTable).set(data)
     .where(and(eq(workbookResponsesTable.id, id), eq(workbookResponsesTable.user_id, userId))).returning();

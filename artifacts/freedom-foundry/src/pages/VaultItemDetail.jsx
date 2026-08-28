@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Lock, Download, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Lock, Download, ExternalLink, BookOpen, FileText } from 'lucide-react';
 import apiClient from '@/api/client';
 import CoursePlayer from '@/components/course/CoursePlayer';
 import WorkbookExperience from '@/components/workbook/WorkbookExperience';
@@ -10,12 +10,13 @@ export default function VaultItemDetail() {
   const [item, setItem] = useState(null);
   const [workbook, setWorkbook] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [view, setView] = useState('options');
 
   useEffect(() => {
     apiClient.entities.VaultItem.get(id)
       .then(i => {
         setItem(i);
-        if (i?.type === 'Digital Workbook') {
+        if (i?.type === 'Digital Workbook' || i?.title?.startsWith('Above the Noise')) {
           apiClient.entities.WorkbookDefinition.filter({ vault_item_id: id }).then(wbs => setWorkbook(wbs?.[0] || null));
         }
         setLoading(false);
@@ -42,12 +43,59 @@ export default function VaultItemDetail() {
         {item.subtitle && <p className="text-sm text-muted-foreground">{item.subtitle}</p>}
       </div>
       {item.type === 'Course' && <CoursePlayer vaultItem={item} />}
-      {item.type === 'Digital Workbook' && (workbook ? <WorkbookExperience workbook={workbook} /> : (
-        <div className="forged-border rounded-2xl bg-card p-12 text-center">
-          <h3 className="font-heading text-xl text-foreground mb-2">Workbook coming soon</h3>
-          <p className="text-sm text-muted-foreground">This workbook is being forged.</p>
+      {item.type === 'Digital Workbook' && (
+        <div className="space-y-6">
+          <div className="forged-border rounded-2xl bg-card p-6 sm:p-8">
+            <p className="text-sm text-muted-foreground leading-relaxed">{item.description}</p>
+            <div className="grid gap-3 sm:grid-cols-2 mt-6">
+              <button
+                type="button"
+                onClick={() => setView('pdf')}
+                className={`text-left rounded-xl border p-4 transition-colors ${view === 'pdf' ? 'border-primary bg-primary/5' : 'border-border hover:bg-accent'}`}
+              >
+                <FileText className="w-5 h-5 text-primary mb-3" />
+                <span className="block text-sm font-semibold text-foreground">Read the original PDF</span>
+                <span className="block text-xs text-muted-foreground mt-1">Preview or download the complete source guide.</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setView('workbook')}
+                disabled={!workbook}
+                className={`text-left rounded-xl border p-4 transition-colors disabled:opacity-60 ${view === 'workbook' ? 'border-primary bg-primary/5' : 'border-border hover:bg-accent'}`}
+              >
+                <BookOpen className="w-5 h-5 text-primary mb-3" />
+                <span className="block text-sm font-semibold text-foreground">Open the digital workbook</span>
+                <span className="block text-xs text-muted-foreground mt-1">Complete, save, revisit, and print your responses.</span>
+              </button>
+            </div>
+          </div>
+          {view === 'workbook' && (workbook ? <WorkbookExperience workbook={workbook} /> : (
+            <div className="forged-border rounded-2xl bg-card p-12 text-center">
+              <h3 className="font-heading text-xl text-foreground mb-2">Workbook coming soon</h3>
+              <p className="text-sm text-muted-foreground">This workbook is being forged.</p>
+            </div>
+          ))}
+          {view === 'pdf' && item.download_url && (
+            <div className="space-y-4">
+              <div className="forged-border overflow-hidden rounded-2xl bg-card">
+                <iframe
+                  src={item.download_url}
+                  title={`${item.title} preview`}
+                  className="h-[68vh] min-h-[32rem] w-full bg-white"
+                />
+              </div>
+              <div className="flex flex-wrap gap-3">
+                <a href={item.download_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90">
+                  <ExternalLink className="w-4 h-4" /> View in a new tab
+                </a>
+                <a href={item.download_url} download className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-5 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-accent">
+                  <Download className="w-4 h-4" /> Download PDF
+                </a>
+              </div>
+            </div>
+          )}
         </div>
-      ))}
+      )}
       {item.type === 'Download' && (
         <div className="space-y-6">
           <div className="forged-border rounded-2xl bg-card p-8">
