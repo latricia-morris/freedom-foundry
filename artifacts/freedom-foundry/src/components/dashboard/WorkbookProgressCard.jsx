@@ -8,9 +8,16 @@ export default function WorkbookProgressCard() {
   const [workbooks, setWorkbooks] = useState([]);
   const [responses, setResponses] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { isBpmUnlocked } = useMembership();
+  const { isBpmUnlocked, loading: memberLoading } = useMembership();
 
   useEffect(() => {
+    if (memberLoading || !isBpmUnlocked) {
+      setWorkbooks([]);
+      setResponses([]);
+      setLoading(!memberLoading);
+      return;
+    }
+    setLoading(true);
     Promise.all([
       apiClient.entities.WorkbookDefinition.filter({ status: 'published' }, 'order', 50),
       apiClient.entities.WorkbookResponse.filter({}).catch(() => []),
@@ -19,7 +26,7 @@ export default function WorkbookProgressCard() {
       setResponses(r || []);
       setLoading(false);
     });
-  }, []);
+  }, [isBpmUnlocked, memberLoading]);
 
   const responsesByWorkbook = {};
   (responses || []).forEach(r => {

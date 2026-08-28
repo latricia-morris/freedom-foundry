@@ -1,5 +1,5 @@
 import { Router, type IRouter } from "express";
-import { db, vaultItemsTable, courseModulesTable, courseLessonsTable, lessonProgressTable, workbookDefinitionsTable, workbookResponsesTable, checklistTasksTable, brandUpPromptsTable, brandUpEntriesTable, serviceRequestSubmissionsTable } from "@workspace/db";
+import { db, vaultItemsTable, courseModulesTable, courseLessonsTable, lessonProgressTable, workbookDefinitionsTable, workbookResponsesTable, checklistTasksTable, brandUpPromptsTable, brandUpEntriesTable, serviceRequestSubmissionsTable, userProfilesTable } from "@workspace/db";
 import { eq, and } from "drizzle-orm";
 import {
   authMiddleware,
@@ -11,6 +11,22 @@ import {
 } from "../lib/auth";
 
 const router: IRouter = Router();
+
+async function requireBrandPowerMovesAccess(req: Parameters<typeof authMiddleware>[0], res: Parameters<typeof authMiddleware>[1]): Promise<boolean> {
+  const userId = requireMemberId(req, res);
+  if (!userId) return false;
+  const [profile] = await db
+    .select({ unlocked: userProfilesTable.brand_power_moves_unlocked })
+    .from(userProfilesTable)
+    .where(eq(userProfilesTable.user_id, userId))
+    .limit(1);
+
+  if (!profile?.unlocked) {
+    res.status(403).json({ error: "Brand Power Moves access is locked" });
+    return false;
+  }
+  return true;
+}
 
 // ─── Vault Items ──────────────────────────────────────────────────────────────
 router.get("/vault-items", async (_req, res): Promise<void> => {
@@ -80,7 +96,8 @@ router.delete("/lesson-progress/:id", authMiddleware, async (req, res): Promise<
 });
 
 // ─── Workbook Definitions ─────────────────────────────────────────────────────
-router.get("/workbook-definitions", async (req, res): Promise<void> => {
+router.get("/workbook-definitions", authMiddleware, async (req, res): Promise<void> => {
+  if (!await requireBrandPowerMovesAccess(req, res)) return;
   const { status, vault_item_id } = req.query;
   let rows;
   if (vault_item_id) {
@@ -97,7 +114,8 @@ router.get("/workbook-definitions", async (req, res): Promise<void> => {
   res.json(rows);
 });
 
-router.get("/workbook-definitions/:id", async (req, res): Promise<void> => {
+router.get("/workbook-definitions/:id", authMiddleware, async (req, res): Promise<void> => {
+  if (!await requireBrandPowerMovesAccess(req, res)) return;
   const id = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id, 10);
   const [row] = await db.select().from(workbookDefinitionsTable).where(eq(workbookDefinitionsTable.id, id));
   if (!row) { res.status(404).json({ error: "Not found" }); return; }
@@ -106,6 +124,7 @@ router.get("/workbook-definitions/:id", async (req, res): Promise<void> => {
 
 // ─── Workbook Responses ───────────────────────────────────────────────────────
 router.get("/workbook-responses", authMiddleware, async (req, res): Promise<void> => {
+  if (!await requireBrandPowerMovesAccess(req, res)) return;
   const userId = requireMemberId(req, res);
   if (!userId) return;
   const workbookId = req.query.workbook_id;
@@ -117,6 +136,7 @@ router.get("/workbook-responses", authMiddleware, async (req, res): Promise<void
 });
 
 router.post("/workbook-responses", authMiddleware, async (req, res): Promise<void> => {
+  if (!await requireBrandPowerMovesAccess(req, res)) return;
   const data = ownedCreatePayload<typeof workbookResponsesTable.$inferInsert>(req);
   if (!data) { res.status(401).json({ error: "Unauthorized" }); return; }
   const [row] = await db.insert(workbookResponsesTable).values(data).returning();
@@ -124,6 +144,7 @@ router.post("/workbook-responses", authMiddleware, async (req, res): Promise<voi
 });
 
 router.patch("/workbook-responses/:id", authMiddleware, async (req, res): Promise<void> => {
+  if (!await requireBrandPowerMovesAccess(req, res)) return;
   const userId = requireMemberId(req, res);
   if (!userId) return;
   const id = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id, 10);

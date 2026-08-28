@@ -12,11 +12,18 @@ export default function WorkbookPage() {
   const { isBpmUnlocked, loading: memberLoading, refreshProfile } = useMembership();
 
   useEffect(() => {
+    if (memberLoading) return;
+    if (!isBpmUnlocked) {
+      setWorkbook(null);
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
     apiClient.entities.WorkbookDefinition.get(id)
       .then(setWorkbook)
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [id, isBpmUnlocked, memberLoading]);
 
   if (loading || memberLoading) return <div className="flex justify-center py-20"><div className="w-8 h-8 border-2 border-border border-t-primary rounded-full animate-spin" /></div>;
 

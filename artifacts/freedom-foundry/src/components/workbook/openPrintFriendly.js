@@ -2,7 +2,7 @@
 // questions (no fill-in fields), a reflection note, and a repeating footer
 // with the workbook name, lesson, and freedomfoundry.vip.
 
-export default function openPrintFriendly(workbook) {
+export default function openPrintFriendly(workbook, responses = {}) {
   const pages = workbook.pages || [];
 
   const escape = (str) =>
@@ -12,12 +12,25 @@ export default function openPrintFriendly(workbook) {
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;');
 
+  const formatAnswer = (value) => {
+    if (!value) return '';
+    if (typeof value === 'string') {
+      try {
+        const parsed = JSON.parse(value);
+        if (Array.isArray(parsed)) return parsed.join(', ');
+      } catch (_) {}
+    }
+    return String(value);
+  };
+
   const pageBlocks = pages
     .map((page, idx) => {
       const fields = (page.fields || [])
         .map(
-          (f) =>
-            `<li>${escape(f.label)}${f.help_text ? ` <span class="hint">${escape(f.help_text)}</span>` : ''}</li>`
+          (f) => {
+            const answer = formatAnswer(responses[f.field_id]);
+            return `<li>${escape(f.label)}${f.helper_text ? ` <span class="hint">${escape(f.helper_text)}</span>` : ''}${answer ? ` <div class="answer">${escape(answer).replace(/\n/g, '<br />')}</div>` : ''}</li>`;
+          }
         )
         .join('');
 
@@ -110,6 +123,12 @@ export default function openPrintFriendly(workbook) {
     font-style: italic;
     margin-top: 2px;
   }
+   .questions li .answer {
+     margin-top: 7px;
+     color: #2c2c33;
+     font-weight: 500;
+     white-space: normal;
+   }
   .footer {
     position: fixed;
     bottom: 0;
