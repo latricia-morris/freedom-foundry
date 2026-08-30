@@ -32,6 +32,9 @@ function loadRecaptcha() {
     script.onerror = () => reject(new Error('reCAPTCHA could not load.'));
   });
   scriptPromises.set(mode, promise);
+  promise.catch(() => {
+    if (scriptPromises.get(mode) === promise) scriptPromises.delete(mode);
+  });
   document.head.appendChild(script);
   return promise;
 }
@@ -52,24 +55,36 @@ export default function RecaptchaWidget({ action, resetToken = 0, onChange, onEx
   const challengeRef = useRef(() => {});
   const callbacksRef = useRef({ onChange, onExpired, onError });
   const [isVerified, setIsVerified] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [retryToken, setRetryToken] = useState(0);
 
   callbacksRef.current = { onChange, onExpired, onError };
 
   function handleToken(token) {
     setIsVerified(Boolean(token));
+    if (token) setErrorMessage('');
     callbacksRef.current.onChange?.(token);
   }
 
   function handleExpired() {
     setIsVerified(false);
+    setErrorMessage('Human verification expired. Please complete it again.');
     callbacksRef.current.onExpired?.();
     callbacksRef.current.onChange?.('');
   }
 
   function handleError(message) {
     setIsVerified(false);
+    setErrorMessage(message);
     callbacksRef.current.onError?.(message);
     callbacksRef.current.onChange?.('');
+  }
+
+  function retry() {
+    setErrorMessage('');
+    setIsVerified(false);
+    callbacksRef.current.onChange?.('');
+    setRetryToken((value) => value + 1);
   }
 
   useEffect(() => {
@@ -97,7 +112,11 @@ export default function RecaptchaWidget({ action, resetToken = 0, onChange, onEx
                   if (active && token) handleToken(token);
                   else if (active) handleError('Human verification could not be completed. Please try again.');
                 })
-                .catch(() => handleError('Human verification could not be completed. Please try again.'));
+                .catch((executeError) => handleError(
+                  executeError?.message?.toLowerCase().includes('timed out')
+                    ? executeError.message
+                    : 'Human verification could not be completed. Check that this domain is allowed for the reCAPTCHA key, then try again.',
+                ));
             });
           };
           challengeRef.current();
@@ -117,9 +136,12 @@ export default function RecaptchaWidget({ action, resetToken = 0, onChange, onEx
       })
       .catch((loadError) => {
         if (!active) return;
-        const detail = loadError?.message?.toLowerCase().includes('invalid key')
+        const lowerMessage = loadError?.message?.toLowerCase() || '';
+        const detail = lowerMessage.includes('invalid key')
           ? 'The reCAPTCHA site key is not valid for this page. Check its Google domain and mode settings.'
-          : 'Human verification could not load. Check your connection and try again.';
+          : lowerMessage.includes('timed out')
+            ? loadError.message
+            : 'Human verification could not load. Check that this domain is allowed for the reCAPTCHA key, then try again.';
         handleError(detail);
       });
 
@@ -128,7 +150,7 @@ export default function RecaptchaWidget({ action, resetToken = 0, onChange, onEx
       if (refreshTimer) window.clearInterval(refreshTimer);
       challengeRef.current = () => {};
     };
-  }, [action]);
+  }, [action, retryToken]);
 
   useEffect(() => {
     if (resetToken <= 0) return;
@@ -149,8 +171,11 @@ export default function RecaptchaWidget({ action, resetToken = 0, onChange, onEx
         className={mode === 'v3' ? 'min-h-6 text-xs text-white/45' : 'min-h-[78px] overflow-hidden rounded-lg'}
         aria-label="Human verification"
       >
-        {mode === 'v3' && <span role="status" aria-live="polite">{isVerified ? 'Human verification ready.' : 'Verifying you’re human…'}</span>}
+        {errorMessage
+          ? <span role="alert" className="text-red-200">{errorMessage}</span>
+          : mode === 'v3' && <span role="status" aria-live="polite">{isVerified ? 'Human verification ready.' : 'Verifying you’re human…'}</span>}
       </div>
+      {errorMessage && <button type="button" onClick={retry} className="text-xs text-[#f0d9b5] underline underline-offset-4 hover:text-white">Try human verification again</button>}
       <p className="text-[11px] leading-5 text-white/40">
         This helps protect Freedom Foundry from automated abuse.
       </p>

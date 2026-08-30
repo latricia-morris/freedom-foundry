@@ -36,34 +36,33 @@ router.post("/auth/captcha/verify", async (req, res): Promise<void> => {
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), CAPTCHA_VERIFY_TIMEOUT_MS);
-    let verification: Response;
     try {
-      verification = await fetch("https://www.google.com/recaptcha/api/siteverify", {
+      const verification = await fetch("https://www.google.com/recaptcha/api/siteverify", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({ secret, response: token }),
         signal: controller.signal,
       });
+
+      if (!verification.ok) {
+        req.log?.error({ status: verification.status, purpose }, "reCAPTCHA verification service failed");
+        res.status(502).json({ error: "Human verification is temporarily unavailable", code: "CAPTCHA_UNAVAILABLE" });
+        return;
+      }
+
+      const result = await verification.json() as CaptchaVerificationResponse;
+      const scoreIsAcceptable = result.score === undefined || result.score >= 0.5;
+      const expectedAction = purpose === "sign-up" ? "sign_up" : "password_recovery";
+      const actionIsAcceptable = result.action === undefined || result.action === expectedAction;
+      if (!result.success || !scoreIsAcceptable || !actionIsAcceptable) {
+        res.status(400).json({ error: "Complete the human verification and try again", code: "CAPTCHA_FAILED" });
+        return;
+      }
+
+      res.json({ verified: true });
     } finally {
       clearTimeout(timeout);
     }
-
-    if (!verification.ok) {
-      req.log?.error({ status: verification.status, purpose }, "reCAPTCHA verification service failed");
-      res.status(502).json({ error: "Human verification is temporarily unavailable", code: "CAPTCHA_UNAVAILABLE" });
-      return;
-    }
-
-    const result = await verification.json() as CaptchaVerificationResponse;
-    const scoreIsAcceptable = result.score === undefined || result.score >= 0.5;
-    const expectedAction = purpose === "sign-up" ? "sign_up" : "password_recovery";
-    const actionIsAcceptable = result.action === undefined || result.action === expectedAction;
-    if (!result.success || !scoreIsAcceptable || !actionIsAcceptable) {
-      res.status(400).json({ error: "Complete the human verification and try again", code: "CAPTCHA_FAILED" });
-      return;
-    }
-
-    res.json({ verified: true });
   } catch (error) {
     req.log?.error({ err: error, purpose }, "reCAPTCHA verification request failed");
     res.status(502).json({ error: "Human verification is temporarily unavailable", code: "CAPTCHA_UNAVAILABLE" });
