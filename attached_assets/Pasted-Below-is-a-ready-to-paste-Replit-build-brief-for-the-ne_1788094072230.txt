@@ -1,0 +1,910 @@
+Below is a ready-to-paste **Replit build brief** for the new “Start a Project” / pricing-guidance flow in Freedom Foundry. It includes the user experience, questionnaire logic, recommended service menu, starting investment ranges, the separate referral-network disclaimer, and a Brand Coaching offer.
+
+I recommend positioning brand coaching a little above generic business coaching because it combines business direction with your specialized expertise in positioning, messaging, offer clarity, and brand-led growth. Current small-business and marketing coaching references commonly place experienced coaching around $150–$500 per hour, while specialist or executive-level work can run higher; a $300–$450 strategic session and $1,250–$2,500+ monthly coaching structure would be credible starting territory for your experience and positioning. [growthmentor](https://www.growthmentor.com/blog/marketing-coach)
+
+## Replit build brief
+
+```text
+FEATURE NAME:
+Project Starting Point Finder
+
+PURPOSE:
+Create a guided “Start a Project” experience inside Freedom Foundry that helps members and public site visitors understand what type of support may fit their current business stage, what a realistic starting investment may look like, and what their next best action should be.
+
+This must NOT function like a generic contact form or a fixed-price quote calculator.
+
+It should:
+1. Ask a short series of intelligent questions.
+2. Use answers and available Brand Portal information to identify likely support paths.
+3. Present transparent starting investment ranges for Freedom Foundry / The Brand Revivalist / studio services.
+4. Explain the factors that affect final scope and pricing.
+5. Give users appropriate next actions based on budget, readiness, and complexity.
+6. Create and save a pre-filled project brief when a user requests a consultation.
+7. Clearly separate our own service pricing from third-party fractional professional fees.
+
+BRAND AND UX PRINCIPLES:
+- Clear, warm, strategic, and supportive.
+- Never make a visitor feel rejected because of budget, business stage, or uncertainty.
+- Do not use an overwhelming list of services as the first screen.
+- Do not overuse “Foundry” or “Forge” terminology.
+- Use “starting range,” “planning range,” or “typical investment range.”
+- Never present an automated range as a binding quote, proposal, or final scope.
+- Recommend self-guided Academy resources, coaching, a strategy session, partner support, or a Studio project based on fit.
+- If a logged-in user has Brand Portal data, prefill relevant questions but allow edits.
+- The user should receive useful guidance before being asked to book a conversation.
+
+ENTRY POINTS:
+Create buttons/links labeled:
+- Find My Best Starting Point
+- Explore Project Options
+- Start a Project Conversation
+- Get a Project Starting Range
+
+Main primary button label:
+Find My Best Starting Point
+
+PAGE URL:
+Suggested route: /start-a-project
+Optional short route: /project-planner
+
+PUBLIC PAGE HEADLINE:
+Find your best starting point.
+
+PUBLIC PAGE SUBHEAD:
+Every business needs a different level of support. A solo service provider, product-based business, growing company, and multi-location organization may all need branding, a website, or marketing help—but the right scope, timeline, team, and investment can look very different.
+
+Answer a few quick questions to receive a personalized starting-point recommendation, a typical planning range, and the next best way to move forward.
+
+SUPPORTING COPY:
+You will not receive a random list of services or a pressure-filled sales pitch. You will receive a clearer path.
+
+TOP PAGE NOTE:
+Your results are for planning purposes only and are not a formal proposal, scope of work, or binding quote. Final scope and pricing are confirmed after a project conversation and review of your needs.
+
+--------------------------------------------------
+QUESTIONNAIRE FLOW
+--------------------------------------------------
+
+QUESTION 1:
+What best describes your business?
+
+ANSWER OPTIONS:
+- I am starting or refining a personal brand.
+- I am a service-based business, consultant, or agency.
+- I sell products online, in person, or through retail.
+- I am building a course, membership, community, or digital product.
+- I am an author, speaker, creator, or public-facing expert.
+- I lead an established company.
+- I represent a multi-location business, franchise, or organization.
+- I am building a nonprofit, community initiative, or event.
+- I am still figuring it out.
+
+DATA FIELD:
+business_type
+
+QUESTION 2:
+Where are you right now?
+
+ANSWER OPTIONS:
+- I have an idea, skill, or business concept and need clarity.
+- I am already operating, but my brand no longer reflects where I am headed.
+- I have a brand, but I need better visibility, leads, or conversion.
+- I am preparing to launch a product, service, campaign, event, location, or initiative.
+- I am growing and need better systems, consistency, or support.
+- I am established and preparing for expansion, repositioning, or a major redesign.
+
+DATA FIELD:
+business_stage
+
+QUESTION 3:
+What outcome matters most right now?
+
+ANSWER OPTIONS:
+- Clarify my business, audience, positioning, and brand direction.
+- Create or refresh my visual identity.
+- Build or improve my website.
+- Improve my messaging, copy, offers, or sales materials.
+- Launch a product, service, campaign, course, event, or initiative.
+- Generate more qualified leads.
+- Set up or improve CRM, automation, client journey, or follow-up.
+- Create a complete brand and growth plan.
+- Create consistency across a larger company, team, multiple locations, or franchise system.
+- I need help deciding.
+
+DATA FIELD:
+primary_goal
+
+QUESTION 4:
+What do you already have in place?
+
+ALLOW MULTI-SELECT:
+- A clear target audience and positioning.
+- A logo and visual identity.
+- Brand messaging, website copy, or a clear brand story.
+- Defined offers, services, products, and pricing.
+- A functioning website.
+- Professional photos, product visuals, or other usable brand assets.
+- A lead process, email list, CRM, or sales follow-up system.
+- A team or internal person who can help with implementation.
+- None of these are consistently in place yet.
+
+DATA FIELD:
+existing_assets
+
+QUESTION 5:
+How hands-on would you like our team to be?
+
+ANSWER OPTIONS:
+- I need a clear plan and can handle most implementation myself.
+- I need guidance and support for selected parts of the work.
+- I need a team to lead the project from strategy through execution.
+- I am not sure yet and need help identifying the best level of support.
+
+DATA FIELD:
+support_level
+
+QUESTION 6:
+What investment range feels feasible at this stage?
+
+ANSWER OPTIONS:
+- Under $1,000
+- $1,000–$3,000
+- $3,000–$7,500
+- $7,500–$15,000
+- $15,000–$30,000
+- $30,000+
+- I am exploring and need guidance
+
+DATA FIELD:
+investment_comfort_range
+
+QUESTION 7:
+When would you like to begin?
+
+ANSWER OPTIONS:
+- As soon as possible
+- Within the next 30 days
+- Within 1–3 months
+- Within 3–6 months
+- I am planning ahead
+- I am not sure yet
+
+DATA FIELD:
+desired_timeline
+
+CONDITIONAL QUESTION SET:
+After Question 3, show only one relevant project-complexity section.
+
+IF primary_goal = Build or improve my website:
+Ask:
+- What type of website do you need?
+  - Simple informational or credibility site
+  - Service-business lead generation site
+  - Ecommerce site
+  - Membership, course, or community site
+  - Author, speaker, or media site
+  - Corporate or multi-location site
+  - I am not sure
+- What capabilities may be needed? (multi-select)
+  - Booking or scheduling
+  - Ecommerce or payments
+  - Course, membership, or gated content
+  - Blog, podcast, resource center, or media
+  - CRM, email, automations, or lead capture
+  - Online forms, applications, or assessments
+  - Multiple locations or location pages
+  - Copywriting
+  - Photography or video direction
+  - Content migration
+  - I am not sure
+
+IF primary_goal = Launch a product, service, campaign, course, event, or initiative:
+Ask:
+- What are you launching?
+  - New or refreshed service
+  - Physical product
+  - Digital product, course, or membership
+  - Event or community initiative
+  - Book, author platform, or speaking offer
+  - New business or startup
+  - New location or franchise campaign
+- What do you need help with? (multi-select)
+  - Positioning and offer clarity
+  - Messaging and copy
+  - Visual identity or campaign creative
+  - Sales or landing page
+  - Email campaign
+  - Social content
+  - Website or ecommerce
+  - CRM and follow-up automation
+  - Launch strategy and timeline
+  - I am not sure
+
+IF primary_goal = Create consistency across a larger company, team, multiple locations, or franchise system:
+Ask:
+- How many locations, teams, divisions, or key stakeholder groups are involved?
+  - 1
+  - 2–5
+  - 6–20
+  - 21+
+- What is most needed? (multi-select)
+  - Parent brand or brand architecture
+  - Brand standards and visual consistency
+  - Marketing templates and toolkits
+  - Website or local-location pages
+  - Internal rollout and training
+  - Franchise or partner marketing support
+  - Campaign strategy
+  - Brand governance
+  - I am not sure
+
+IF primary_goal = Set up or improve CRM, automation, client journey, or follow-up:
+Ask:
+- What is your current setup?
+  - No CRM or structured follow-up process
+  - Multiple disconnected tools
+  - Existing CRM that needs cleanup or better use
+  - GoHighLevel or another platform that needs setup
+  - I am not sure
+- What support do you need? (multi-select)
+  - Lead capture
+  - Booking and appointments
+  - Email or SMS follow-up
+  - Sales pipeline
+  - Onboarding
+  - Client portal or course delivery
+  - Reviews and reputation
+  - Automations and integrations
+  - Reporting
+  - I am not sure
+
+--------------------------------------------------
+RESULTS PAGE
+--------------------------------------------------
+
+RESULTS PAGE FORMAT:
+Display:
+1. Recommended starting point.
+2. Why this recommendation fits their current answers.
+3. Typical planning range.
+4. What may be included.
+5. What affects final scope.
+6. Appropriate next steps.
+7. Save/share/request support actions.
+
+RESULTS PAGE HEADLINE:
+Your most likely starting point
+
+RESULTS PAGE DISCLAIMER:
+This is a planning recommendation based on the information you shared. It is not a final scope, binding quote, or promise of availability. Final recommendations and pricing are confirmed after a project conversation.
+
+RESULTS PAGE ACTIONS:
+- Save this plan to My Brand
+- Share with My Team
+- Explore Academy Resources
+- Book Brand Coaching
+- Request a Project Conversation
+- Ask for Help Choosing
+
+LOGGED-IN USER BEHAVIOR:
+If logged in:
+- Save answers to the Brand Portal project-planning record.
+- Prefill information already in the Brand Portal where available.
+- Allow user to edit all prefilled information.
+- Attach selected existing brand assets to a project request when permission is granted.
+- Allow user to choose which files/team members to share.
+- Create a project brief record.
+- Allow admin/studio team to see user answers, results, selected range, request details, timeline, relevant assets, and any uploaded files.
+
+PUBLIC USER BEHAVIOR:
+If not logged in:
+- Allow questionnaire completion.
+- Show recommendation and planning range.
+- Before “Save My Plan” or “Request a Project Conversation,” ask for:
+  - Name
+  - Email
+  - Business name
+  - Website or social link, optional
+  - Permission to follow up
+- Offer account creation after results:
+  “Create your free Freedom Foundry account to save your plan, begin building your Brand Portal, and access your recommended next steps.”
+
+--------------------------------------------------
+SERVICE CATALOG AND STARTING RANGES
+--------------------------------------------------
+
+IMPORTANT PRICING DISPLAY RULE:
+Display “Starting at” or a realistic “Typical planning range.”
+Do not display exact fixed pricing unless the service is intentionally productized and has a tightly defined scope.
+Use “Most projects begin at…” for custom work.
+
+SERVICE GROUP 1:
+Brand Coaching
+
+SERVICE NAME:
+Brand Coaching Session
+
+SHORT DESCRIPTION:
+A focused, one-on-one strategy session for entrepreneurs who need clarity around their brand, positioning, audience, messaging, offers, visibility, or next best move.
+
+STARTING PRICE:
+$350 for a 90-minute session
+
+INCLUDES:
+- Pre-session review of submitted information
+- 90-minute private coaching and strategy session
+- Real-time guidance around brand, offer, messaging, or business direction
+- A focused action summary or next-step plan
+- Recommendation for self-guided, partner, or Studio support if appropriate
+
+NOTES:
+- Position this as strategic brand coaching, not generic accountability coaching.
+- Do not frame it as therapy, financial advising, legal advising, or business guarantees.
+- If a client needs deep research, full brand strategy, extensive copywriting, or implementation, recommend the appropriate project scope instead.
+
+SERVICE NAME:
+Brand Coaching Partnership
+
+SHORT DESCRIPTION:
+Ongoing strategic support for business owners who want a trusted Brand Director-level thought partner as they clarify, build, launch, or grow.
+
+STARTING PRICE:
+Starting at $1,250 per month
+
+SUGGESTED INITIAL STRUCTURE:
+- 3-month minimum
+- Two 60-minute coaching sessions per month
+- Limited asynchronous check-in support inside the Brand Portal or designated communication channel
+- Review of priorities, offers, messaging, active initiatives, and decisions
+- Monthly next-step plan
+- Access to recommended Academy resources and tools as appropriate
+
+OPTIONAL HIGHER TIER:
+Brand Advisory Partnership
+Starting at $2,500 per month
+
+SUGGESTED STRUCTURE:
+- 3-month minimum
+- Two 90-minute sessions per month
+- More involved strategic review
+- Priority feedback on key brand, campaign, offer, messaging, or launch decisions
+- Team-facing guidance when appropriate
+- Limited review of selected materials between sessions
+- Does not include execution, design, copywriting, web development, paid media management, or unlimited access unless separately scoped
+
+SERVICE GROUP 2:
+Strategy and Brand Foundation
+
+SERVICE NAME:
+Brand Clarity Intensive
+
+SHORT DESCRIPTION:
+A focused starting point for entrepreneurs who need sharper direction before investing in a website, campaign, rebrand, or larger initiative.
+
+TYPICAL PLANNING RANGE:
+$1,500–$3,500
+
+MAY INCLUDE:
+- Business and audience review
+- Positioning direction
+- Offer and messaging clarity
+- Brand story and key message guidance
+- Priority recommendations
+- A practical roadmap
+- Core updates saved in the Brand Portal
+
+BEST FOR:
+- Early-stage entrepreneurs
+- Solo service providers
+- Founders with an unclear message
+- Businesses preparing for their next stage
+- Clients who know they need help but are not yet ready for a full brand project
+
+SERVICE NAME:
+Brand Strategy and Messaging
+
+SHORT DESCRIPTION:
+A more comprehensive strategic engagement to define the direction behind a credible, consistent, and conversion-ready brand.
+
+TYPICAL PLANNING RANGE:
+$4,500–$9,500
+
+MAY INCLUDE:
+- Discovery and stakeholder input as appropriate
+- Audience and competitive context
+- Positioning and differentiation
+- Brand promise and strategic direction
+- Messaging framework
+- Offer architecture or offer refinement
+- Website or campaign content direction
+- 90-day brand and growth roadmap
+- Brand Portal organization and strategic documentation
+
+BEST FOR:
+- Established service businesses
+- Experts and thought leaders
+- Businesses preparing for a rebrand, website, launch, or growth initiative
+- Companies that need a strategic foundation before investing in creative execution
+
+SERVICE GROUP 3:
+Identity and Brand Systems
+
+SERVICE NAME:
+Visual Identity Refresh
+
+SHORT DESCRIPTION:
+A focused update for businesses with a sound foundation that need their visual presentation to better match their current quality, direction, and audience.
+
+TYPICAL PLANNING RANGE:
+$3,500–$7,500
+
+MAY INCLUDE:
+- Visual direction
+- Logo refinement or focused logo system
+- Color, type, and design system
+- Basic brand-use guidance
+- Select social, sales, or marketing templates
+- Asset organization in the Brand Portal
+
+SERVICE NAME:
+Complete Brand Identity System
+
+SHORT DESCRIPTION:
+A strategic visual identity engagement for a business that needs a distinct, cohesive, and scalable brand system.
+
+TYPICAL PLANNING RANGE:
+$7,500–$15,000+
+
+MAY INCLUDE:
+- Brand strategy alignment
+- Identity concepts and logo suite
+- Color, typography, and supporting visual language
+- Brand guidelines
+- Core templates
+- Brand asset organization
+- Launch or rollout recommendations
+
+SCOPE DRIVERS:
+- Number of audiences, offerings, decision-makers, locations, divisions, products, and required collateral items
+- Whether strategy and messaging are included
+- Need for naming, packaging, photography direction, templates, signage, or implementation support
+
+SERVICE GROUP 4:
+Websites and Digital Experiences
+
+SERVICE NAME:
+Website Strategy and Roadmap
+
+SHORT DESCRIPTION:
+A planning engagement for businesses that need to clarify the role, structure, messaging, priorities, and technical needs of a website before development begins.
+
+TYPICAL PLANNING RANGE:
+$1,500–$3,500
+
+MAY INCLUDE:
+- Website goals
+- Page and conversion-path recommendations
+- Content and copy requirements
+- Platform and functionality recommendations
+- SEO and lead-capture considerations
+- Project roadmap
+
+SERVICE NAME:
+Strategic Website Build
+
+SHORT DESCRIPTION:
+A professionally directed website designed to support credibility, visibility, lead generation, and a stronger client journey.
+
+TYPICAL PLANNING RANGE:
+$6,500–$15,000+
+
+MAY INCLUDE:
+- Website strategy
+- Sitemap and conversion path
+- Design direction
+- WordPress/Elementor or appropriate platform development
+- Core-page design and build
+- Basic forms and lead capture
+- Mobile optimization
+- Basic on-page SEO setup
+- Training or handoff
+- Brand Portal documentation and asset organization
+
+SCOPE DRIVERS:
+- Number of pages
+- Copywriting needs
+- Ecommerce
+- Memberships, courses, or gated access
+- Booking
+- CRM/GoHighLevel/automation integrations
+- Blog, podcast, resources, events, applications, custom functionality
+- Content migration
+- Photography, video, and content production
+- Multiple locations, teams, or approval layers
+
+SERVICE NAME:
+Ecommerce, Membership, or Advanced Digital Experience
+
+TYPICAL PLANNING RANGE:
+$12,000–$30,000+
+
+BEST FOR:
+- Ecommerce brands
+- Course and membership platforms
+- Complex lead-generation systems
+- Multi-offer digital ecosystems
+- Businesses needing integrations, automations, checkout, gated access, or more advanced user journeys
+
+SERVICE GROUP 5:
+Launch, Campaign, and Growth Support
+
+SERVICE NAME:
+Offer or Launch Strategy Sprint
+
+TYPICAL PLANNING RANGE:
+$2,500–$5,000
+
+MAY INCLUDE:
+- Offer positioning
+- Audience and message clarity
+- Launch priorities
+- Campaign concept
+- Funnel or customer-journey recommendations
+- Launch timeline
+- Content and asset checklist
+- Key conversion recommendations
+
+SERVICE NAME:
+Campaign Creative and Launch Support
+
+TYPICAL PLANNING RANGE:
+$5,000–$15,000+
+
+MAY INCLUDE:
+- Strategy alignment
+- Campaign messaging
+- Landing or sales page
+- Email sequence
+- Social content direction
+- Creative concepts
+- Brand and launch assets
+- Implementation guidance
+- Coordination with relevant tools, team members, or specialists
+
+SERVICE GROUP 6:
+CRM, GoHighLevel, Automation, and Client Journey
+
+SERVICE NAME:
+CRM and Client Journey Assessment
+
+TYPICAL PLANNING RANGE:
+$1,500–$3,500
+
+MAY INCLUDE:
+- Current-tool review
+- Lead journey and follow-up review
+- CRM and automation recommendations
+- Prioritized setup roadmap
+- Recommendations for GoHighLevel or other appropriate tools
+- Clear next steps for self-setup, partner support, or Studio implementation
+
+SERVICE NAME:
+GoHighLevel / CRM Setup and Automation Implementation
+
+TYPICAL PLANNING RANGE:
+$3,500–$10,000+
+
+MAY INCLUDE:
+- Account/snapshot setup as appropriate
+- Pipeline structure
+- Forms, calendars, and lead capture
+- Email/SMS automation
+- Basic onboarding workflows
+- Client journey setup
+- Templates and handoff training
+- Integration support as scoped
+
+IMPORTANT:
+Software subscription fees, third-party tools, messaging fees, paid-media costs, and other vendor expenses are separate from service fees unless expressly stated in a proposal.
+
+SERVICE GROUP 7:
+Multi-Location, Franchise, and Organizational Systems
+
+SERVICE NAME:
+Multi-Location Brand or Marketing Assessment
+
+TYPICAL PLANNING RANGE:
+$3,500–$7,500
+
+SERVICE NAME:
+Brand System, Rollout, or Franchise Support
+
+TYPICAL PLANNING RANGE:
+$10,000–$30,000+
+
+SCOPE DRIVERS:
+- Number of locations or divisions
+- Number of stakeholder groups
+- Parent/sub-brand architecture
+- Rollout timeline
+- Marketing templates
+- Training
+- Local marketing support
+- Website and location-page needs
+- Brand governance
+- Implementation and ongoing support needs
+
+--------------------------------------------------
+RECOMMENDATION LOGIC
+--------------------------------------------------
+
+RULE 1:
+If business_stage = “I have an idea, skill, or business concept and need clarity”
+AND investment_comfort_range = “Under $1,000”
+OR “$1,000–$3,000”
+THEN recommend:
+- Academy resources
+- Brand Coaching Session
+- Brand Clarity Intensive if budget supports it
+- Avoid recommending full website or full rebrand as the first primary action
+
+RESULT COPY:
+A larger project may be part of your future, but the strongest next step is likely clarity around your audience, offer, positioning, and message. Build the foundation first so future investment works harder.
+
+RULE 2:
+If primary_goal = website
+AND user lacks clear audience/positioning/messaging/offers
+THEN recommend:
+- Website Strategy and Roadmap
+OR
+- Brand Clarity Intensive
+before a full website build
+
+RESULT COPY:
+A website may be part of your path, but based on your answers, strategic clarity and messaging should come first. This helps ensure your website reflects the right audience, offer, and conversion path—not just a new look.
+
+RULE 3:
+If primary_goal = visual identity
+AND business is established or repositioning
+AND investment_comfort_range >= $3,000–$7,500
+THEN recommend:
+- Visual Identity Refresh
+OR
+- Complete Brand Identity System based on complexity and support level
+
+RULE 4:
+If primary_goal = complete brand and growth plan
+OR primary_goal = clarify business/audience/positioning
+AND support_level = “I need a team to lead”
+THEN recommend:
+- Brand Strategy and Messaging
+- Brand Coaching Partnership if ongoing executive-level guidance is a better fit
+
+RULE 5:
+If business_type = product/ecommerce
+AND primary_goal includes launch or website
+THEN recommend:
+- Offer or Launch Strategy Sprint
+- Strategic Website Build or Advanced Digital Experience based on functional needs
+- Note that product count, collections, checkout, photography, inventory, fulfillment, and email automation affect scope
+
+RULE 6:
+If business_type = multi-location/franchise
+THEN recommend:
+- Multi-Location Brand or Marketing Assessment
+- Brand System, Rollout, or Franchise Support
+- Do not display small-business fixed-package recommendations as the primary path
+
+RULE 7:
+If primary_goal = CRM, automation, or client journey
+THEN recommend:
+- CRM and Client Journey Assessment
+- GoHighLevel / CRM Setup and Automation Implementation if the user wants hands-on execution
+- Display relevant GoHighLevel or software option only after the recommendation, never as the only recommendation
+
+RULE 8:
+If support_level = “I need a clear plan and can handle most implementation myself”
+THEN elevate:
+- Academy
+- Brand Coaching
+- Strategy Session
+- Templates and tools
+- Relevant vetted partner support
+
+RULE 9:
+If support_level = “I need a team to lead the project from strategy through execution”
+THEN elevate:
+- Request a Project Conversation
+- Relevant Studio project range
+- Clear explanation that final scope follows discovery and review
+
+RULE 10:
+If investment_comfort_range is below the typical project range:
+Do NOT reject the user.
+Show:
+- “A phased approach may be a better fit right now.”
+- Academy resources
+- Brand Coaching
+- Focused strategy session
+- Relevant tools
+- Trusted specialists when appropriate
+- “Save this plan and return when you are ready for implementation.”
+
+--------------------------------------------------
+FRACTIONAL PROFESSIONALS / PARTNER NOTE
+--------------------------------------------------
+
+PLACE THIS SECTION DIRECTLY BELOW:
+“Investment for Our Team”
+or directly below the internal/studio services pricing section.
+
+SECTION TITLE:
+Support From Independent Experts
+
+COPY:
+Freedom Foundry also connects members with trusted independent professionals, including fractional CMOs, CFOs, business planners, operations specialists, legal and financial professionals, technology experts, and other qualified service providers.
+
+These professionals operate independently and set their own scope, availability, pricing, payment terms, and service agreements. Freedom Foundry does not maintain a standard fee schedule for independent experts, and their services are not included in Freedom Foundry or Studio project pricing unless specifically stated in writing.
+
+When we recommend an independent expert, we will help you understand why they may be a fit for your current needs and how to begin the conversation. Final service terms are arranged directly with that professional.
+
+OPTIONAL SHORT VERSION FOR PRICING CARDS:
+Independent expert pricing is set directly by each provider. We do not maintain a universal fee schedule for fractional professionals or third-party specialists.
+
+OPTIONAL CTA:
+Explore Trusted Support
+or
+Request an Expert Introduction
+
+--------------------------------------------------
+PROJECT REQUEST / BRIEF CREATION
+--------------------------------------------------
+
+WHEN USER CLICKS:
+Request a Project Conversation
+
+CREATE A PROJECT BRIEF WITH:
+- User name
+- Business name
+- Email
+- Phone, optional
+- Website/social links
+- Business type
+- Business stage
+- Primary goal
+- Existing assets
+- Selected project complexity inputs
+- Preferred support level
+- Investment comfort range
+- Desired timeline
+- Recommended starting point
+- Recommended planning range
+- All generated explanation text
+- Brand Portal links/assets selected by the user
+- Team members authorized to view the brief
+- Additional notes field:
+  “Tell us anything else that would help us understand what you are building.”
+
+DISPLAY THIS CONFIRMATION:
+Thank you. Your project conversation request has been received.
+
+We will review the information you shared—including your current stage, goals, existing assets, desired level of support, and planning range—before following up with the most appropriate next step.
+
+If a different path would serve you better, we may recommend coaching, Academy resources, a trusted specialist, a phased plan, or a focused strategy engagement before a larger project.
+
+ADMIN VIEW:
+Create an internal admin page with:
+- Project Brief status: New / Reviewing / Conversation Scheduled / Proposal in Development / Closed Won / Referred to Partner / Nurture / Not a Fit
+- Assigned Brand Director or team member
+- Internal notes
+- Recommended internal next action
+- Source attribution
+- Selected services
+- Budget range
+- Timeline
+- Brand Portal access links
+- Ability to export or generate a proposal-ready summary
+
+--------------------------------------------------
+DESIGN REQUIREMENTS
+--------------------------------------------------
+
+VISUAL STYLE:
+- Premium but approachable.
+- Clean cards, comfortable spacing, soft visual hierarchy.
+- Not overly corporate or overly techy.
+- Use progress indicator: “Step 1 of 7.”
+- One question per screen on mobile where possible.
+- Back button and editable answers.
+- Save and continue later for logged-in members.
+- Results should feel like a personalized plan, not a sales funnel.
+- Use practical icons sparingly.
+- Include clear, accessible labels and keyboard-friendly form controls.
+
+DO NOT:
+- Show every service and every price before the user completes the diagnostic.
+- Make members feel like they must spend thousands to receive help.
+- Call the result a “quote.”
+- Make promises about outcomes, revenue, traffic, sales, or approval.
+- Use generic “contact us” language as the primary conversion point.
+- Overuse Freedom Foundry / Foundry / Forge language in headings or buttons.
+
+SUCCESS METRICS TO TRACK:
+- Diagnostic starts
+- Diagnostic completion rate
+- Most selected business types
+- Most selected goals
+- Budget-range distribution
+- Recommended pathway distribution
+- Academy click-through rate
+- Coaching booking rate
+- Project-conversation request rate
+- Conversion from recommendation to paid engagement
+- Difference between recommended range and final signed project amount
+- Referrals to independent experts
+- Return visits to saved plans
+```
+
+## Recommended pricing approach
+
+Your instinct is right: brand coaching should not be priced like a low-cost “pick my brain” call. You are not offering generic motivation or accountability. You are offering senior-level brand direction, positioning experience, messaging judgment, creative-business insight, and access to the broader Freedom Foundry ecosystem.
+
+### Brand coaching starting point
+
+| Offer | Suggested launch pricing | Why it works |
+|---|---:|---|
+| **90-minute Brand Coaching Session** | $350 | Accessible enough to become a first paid step; premium enough to protect your expertise and preparation |
+| **Half-day Brand Clarity Intensive** | $750–$1,250 | Good for a deeper single-day strategic reset; can lead into a roadmap or larger project |
+| **Brand Coaching Partnership** | Starting at $1,250/month | A reasonable 3-month entry point for two structured sessions monthly plus limited portal-based support |
+| **Brand Advisory Partnership** | Starting at $2,500/month | Appropriate for established founders or teams who need closer strategic counsel, priority review, and higher-touch direction |
+| **Fractional Brand Director** | Custom scope; generally start conversations at $3,500–$5,000+/month | Reserve for clients needing consistent leadership across brand, campaigns, marketing decisions, vendors, and team direction |
+
+For context—not as a reason to price yourself by competitors—business and marketing coaching often falls around $150–$500 per hour, while executive coaching and experienced specialist advisory work can be materially higher. Your $350/90-minute session begins at about $233 per live coaching hour before preparation and follow-up, which is not overreaching for a specialist brand strategist; it is actually a sensible entry offer. [growthmentor](https://www.growthmentor.com/blog/marketing-coach)
+
+## A few implementation notes
+
+### Keep the price ranges editable
+
+Ask Replit to put all pricing, descriptions, included items, service names, and routing rules in an **admin-managed configuration area**, not hard-coded throughout the app.
+
+You should be able to update:
+
+- Starting prices and investment ranges.
+- Which services are actively offered.
+- Which questionnaire answers route to each service.
+- Results-page language.
+- The independent-expert disclaimer.
+- Academy resource recommendations.
+- GoHighLevel or other tool offers.
+- Available Brand Coaching session types.
+- Whether a service is shown publicly, only inside the member portal, or only when recommended.
+
+### Start with fewer visible services
+
+The internal catalog can hold everything, but the initial results screen should generally show no more than:
+
+- One primary recommendation.
+- One secondary option.
+- One lower-investment alternative.
+- One “talk with the team” option.
+
+For example:
+
+> **Primary recommendation:** Brand Strategy and Messaging — typical planning range $4,500–$9,500.  
+> **A lighter first step:** Brand Coaching Session — $350 for 90 minutes.  
+> **Build capacity first:** Recommended Academy pathway and resources.  
+> **Need a team to own execution?** Request a project conversation.
+
+That gives people choices without creating decision fatigue.
+
+### Keep partner pricing completely separate
+
+The independent-professional note belongs directly beneath your own service/pricing section, exactly as you described. The user should understand:
+
+- You can recommend a fractional CFO, CMO, business planner, legal professional, technology expert, or specialist.
+- You have vetted them for fit and quality.
+- You may facilitate a warm introduction.
+- Their contracts and fees are direct with them.
+- Their fee is not included in a Freedom Foundry Studio project unless you explicitly scope it that way.
+
+This protects the relationship with your partners and prevents a member from assuming Freedom Foundry controls their price or has added a hidden markup.

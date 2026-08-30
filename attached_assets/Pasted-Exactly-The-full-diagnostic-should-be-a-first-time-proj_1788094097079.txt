@@ -1,0 +1,592 @@
+Exactly. The full diagnostic should be a **first-time project-planning experience**, not a hurdle clients must clear every time they need help. Once someone has worked with you—or has an established Brand Portal—the platform should recognize them, retain their context, and make future requests feel like tapping an informed partner on the shoulder.
+
+That continuity is one of Freedom Foundry’s strongest differentiators: it remembers the brand, the work already completed, the assets available, the team involved, past decisions, and the client’s evolving goals.
+
+## Updated workflow model
+
+Use three distinct request pathways:
+
+| User type | Experience | Required effort |
+|---|---|---|
+| **New visitor or first-time client** | Full “Find My Best Starting Point” diagnostic | Approximately 5–7 guided questions plus conditional scope questions |
+| **Existing member / previous client** | Quick project request using existing Brand Portal information | Choose request type, desired outcome, timeline, and any changes |
+| **Returning after 12+ months** | Short “Business Update” check-in before a new request | 3–5 update questions, then the quick project request |
+
+This means the long-form planner becomes a strategic onboarding and qualification tool—not an annoying recurring intake form.
+
+## Ready-to-paste Replit update
+
+Paste this below the original Project Starting Point Finder build brief, or replace the original “Project Request / Brief Creation” section with the following.
+
+```text
+--------------------------------------------------
+RETURNING CLIENT AND EXISTING MEMBER WORKFLOW
+--------------------------------------------------
+
+CORE PRINCIPLE:
+The full Project Starting Point Finder diagnostic is required only for:
+1. First-time visitors or first-time clients who have no completed project-planning record.
+2. Users who explicitly choose “Retake My Starting Point Assessment.”
+3. Existing users whose business context has materially changed and who choose a complete reassessment.
+
+Do NOT require existing clients or established Brand Portal users to repeat the full diagnostic every time they request help.
+
+The app should recognize returning users and make future project requests fast, contextual, and easy.
+
+USER TYPES:
+- New Visitor
+- New Member
+- Existing Member With No Prior Project Request
+- Existing Client / Prior Project Request
+- Returning Client After 12+ Months
+- Returning Client With Material Business Changes
+
+--------------------------------------------------
+FIRST-TIME USER WORKFLOW
+--------------------------------------------------
+
+IF:
+User has no previous completed project-planning diagnostic
+OR
+User has no existing project request record
+
+THEN:
+Show the full “Find My Best Starting Point” diagnostic.
+
+After completion:
+- Save answers to Brand Portal.
+- Create a Business Snapshot.
+- Create a Project Planning record.
+- Show recommended starting point and planning range.
+- Offer Academy, Coaching, Partner Support, and Project Conversation next steps.
+- Mark diagnostic date as:
+  initial_diagnostic_completed_at
+
+--------------------------------------------------
+EXISTING CLIENT / RETURNING MEMBER WORKFLOW
+--------------------------------------------------
+
+IF:
+User has a previous project-planning record
+AND
+User has an active or completed Brand Portal profile
+AND
+Their most recent project request was less than 12 months ago
+
+THEN:
+Do NOT show the full diagnostic.
+
+Show a simplified page instead.
+
+PAGE TITLE:
+What would you like help with now?
+
+PAGE SUBHEAD:
+We already have the foundation of your brand and business on file. Tell us what you are working toward now, and we will use your existing Brand Portal information to help our team prepare.
+
+DISPLAY:
+- Last project type
+- Last project completion date, if available
+- Current business name
+- Current primary offer, if available
+- Existing brand assets available in Brand Portal
+- Existing team members with access, if available
+- A short message:
+  “Your Brand Portal helps us begin with context instead of starting from scratch.”
+
+QUICK PROJECT REQUEST QUESTIONS:
+
+QUESTION 1:
+What do you need help with now?
+
+ANSWER OPTIONS:
+- Brand strategy or direction
+- New or updated messaging
+- A new offer, product, service, or launch
+- Website updates or a new website
+- Visual design or marketing materials
+- Campaign, email, content, or lead-generation support
+- CRM, GoHighLevel, automation, or client journey support
+- Brand coaching or strategic guidance
+- A new project not listed here
+- I am not sure; I need help choosing
+
+DATA FIELD:
+returning_request_type
+
+QUESTION 2:
+What are you hoping to accomplish?
+
+FIELD TYPE:
+Short text area
+
+PROMPT:
+Tell us what you are trying to build, improve, launch, solve, or prepare for.
+
+DATA FIELD:
+current_goal
+
+QUESTION 3:
+What has changed since we last worked together?
+
+FIELD TYPE:
+Optional multi-select plus open text
+
+ANSWER OPTIONS:
+- New offer, product, service, or audience
+- New team members or leadership changes
+- New location, market, franchise, or expansion plans
+- New website, technology, CRM, or platform
+- A business rebrand or shift in direction
+- New revenue goals or growth priorities
+- No major changes; I need help with the next phase
+- Other
+
+OPTIONAL TEXT FIELD:
+Tell us anything else that has changed.
+
+DATA FIELD:
+business_changes_since_last_project
+
+QUESTION 4:
+How hands-on would you like us to be?
+
+ANSWER OPTIONS:
+- I need direction and can handle most of the work.
+- I need support with selected parts of the work.
+- I need a team to lead strategy and execution.
+- I am not sure yet.
+
+DATA FIELD:
+returning_support_level
+
+QUESTION 5:
+When would you like to begin?
+
+ANSWER OPTIONS:
+- As soon as possible
+- Within the next 30 days
+- Within 1–3 months
+- Within 3–6 months
+- I am planning ahead
+- I am not sure yet
+
+DATA FIELD:
+returning_timeline
+
+QUESTION 6:
+Is there anything in your Brand Portal you would like us to review?
+
+DISPLAY:
+- Allow user to select existing assets, past projects, pages, documents, brand guidelines, marketing assets, campaign plans, or team notes.
+- Allow user to upload new files.
+- Allow user to choose which team members can view or collaborate on the request.
+
+DATA FIELD:
+selected_portal_assets
+uploaded_files
+authorized_team_members
+
+CTA BUTTON:
+Send My Request
+
+DO NOT ASK:
+- Full business type questionnaire.
+- Full brand asset inventory.
+- Full budget questionnaire by default.
+- Repeated questions that are already answered accurately in their Brand Portal.
+- Generic contact-form questions such as “What is your business?” unless the stored information is missing or outdated.
+
+--------------------------------------------------
+12+ MONTH BUSINESS UPDATE WORKFLOW
+--------------------------------------------------
+
+IF:
+User has a prior project request or completed project
+AND
+Their last project request, project completion, or Business Snapshot update is 12 months old or older
+
+THEN:
+Before showing the quick project request form, show a brief “Business Update” check-in.
+
+PAGE TITLE:
+A quick update before we begin
+
+PAGE SUBHEAD:
+It has been a little while since your last project with us. A few quick updates will help us understand where your business is now and recommend the right next step.
+
+MESSAGE:
+Your prior brand work and project history are still available in your Brand Portal. We only need to understand what has changed—not start from scratch.
+
+BUSINESS UPDATE QUESTIONS:
+
+QUESTION 1:
+Which best describes your business today?
+
+ANSWER OPTIONS:
+- I am still in a similar stage, but ready for the next phase.
+- I have grown, added offers, or expanded my audience.
+- My business direction has changed significantly.
+- I have added a team, partners, locations, or new leadership.
+- I have launched new products, services, programs, or technology.
+- I am returning after a pause or transition.
+- I am not sure how to describe it; I need guidance.
+
+DATA FIELD:
+current_business_status
+
+QUESTION 2:
+What is your most important goal now?
+
+ANSWER OPTIONS:
+- Clarify my direction or next move.
+- Refresh my brand or messaging.
+- Launch something new.
+- Build or improve a website or digital experience.
+- Improve visibility, lead generation, or sales.
+- Improve systems, technology, automation, or client experience.
+- Expand into new markets, locations, or offers.
+- Get ongoing brand guidance.
+- Something else.
+
+DATA FIELD:
+current_primary_goal
+
+QUESTION 3:
+Has your audience, offer, or business model changed?
+
+ANSWER OPTIONS:
+- No meaningful change.
+- My audience has changed.
+- My offers, products, or services have changed.
+- My business model has changed.
+- My pricing or revenue model has changed.
+- More than one of these has changed.
+- I am not sure.
+
+OPTIONAL TEXT FIELD:
+Briefly tell us what has changed.
+
+DATA FIELD:
+core_business_changes
+
+QUESTION 4:
+What support level would be most helpful?
+
+ANSWER OPTIONS:
+- I need a clear plan.
+- I need coaching or strategic guidance.
+- I need help with selected deliverables.
+- I need a team to lead a larger project.
+- I am not sure yet.
+
+DATA FIELD:
+updated_support_level
+
+QUESTION 5:
+Would you like to update anything in your Brand Portal before we begin?
+
+DISPLAY:
+- Update business description
+- Update website and social links
+- Update offers
+- Upload new brand assets
+- Invite team members
+- Skip for now
+
+DATA FIELD:
+portal_update_choice
+
+CTA:
+Continue to My Project Request
+
+AFTER COMPLETION:
+- Update Business Snapshot date:
+  business_snapshot_updated_at
+- Preserve prior answers and prior project records.
+- Do not overwrite historical data.
+- Store new responses as a dated Business Update record.
+- Then show the short returning-client project request form.
+- Use the updated answers to refresh recommendations and internal routing.
+
+--------------------------------------------------
+MATERIAL CHANGE CHECK
+--------------------------------------------------
+
+AFTER A RETURNING USER SELECTS ANY OF THE FOLLOWING:
+- “My business direction has changed significantly”
+- “My business model has changed”
+- “More than one of these has changed”
+- “I represent a multi-location business, franchise, or organization”
+- “I need a team to lead strategy and execution”
+
+THEN:
+Display an optional recommendation:
+
+Your business may have changed enough that a focused strategy conversation could be the most valuable place to begin. We can still review your request, but a Brand Coaching Session, Brand Clarity Intensive, or Brand Strategy engagement may help ensure the next investment is built on the right foundation.
+
+ACTION BUTTONS:
+- Continue With My Request
+- Explore Brand Coaching
+- Book a Strategy Conversation
+
+Do NOT force the user to restart the full diagnostic unless:
+- They choose to do so, or
+- An admin determines a full reassessment is needed after review.
+
+--------------------------------------------------
+RETURNING USER RESULTS
+--------------------------------------------------
+
+AFTER QUICK PROJECT REQUEST:
+Show a results/confirmation screen that says:
+
+Thank you—your request is on its way.
+
+Because your Brand Portal already holds the foundation of your business, our team can begin with context. We will review your current goal, changes since your prior project, selected assets, timeline, and preferred level of support before recommending the right next step.
+
+Possible next steps may include:
+- A Brand Coaching Session
+- An ongoing Brand Coaching or Brand Advisory Partnership
+- A focused project scope
+- A larger Studio project
+- A phased plan
+- Academy resources
+- A warm introduction to a trusted independent expert
+
+DISPLAY:
+- Requested help category
+- Selected timeline
+- Selected Brand Portal assets
+- Optional editable “Anything else we should know?” field
+- “View My Project History” link
+- “Update My Brand Portal” link
+
+--------------------------------------------------
+DATA MODEL
+--------------------------------------------------
+
+CREATE OR UPDATE THE FOLLOWING RECORD TYPES:
+
+1. BUSINESS SNAPSHOT
+Fields:
+- user_id
+- business_name
+- business_type
+- business_stage
+- primary_goal
+- existing_assets
+- support_level
+- investment_comfort_range
+- website
+- social_links
+- current_offers
+- team_size
+- created_at
+- updated_at
+- initial_diagnostic_completed_at
+- business_snapshot_updated_at
+
+2. BUSINESS UPDATE
+Fields:
+- user_id
+- business_snapshot_id
+- created_at
+- current_business_status
+- current_primary_goal
+- core_business_changes
+- core_business_changes_notes
+- updated_support_level
+- portal_update_choice
+- submitted_by
+
+3. PROJECT REQUEST
+Fields:
+- user_id
+- business_snapshot_id
+- project_request_type
+- first_time_or_returning
+- request_date
+- current_goal
+- business_changes_since_last_project
+- returning_support_level
+- preferred_timeline
+- selected_portal_assets
+- uploaded_files
+- authorized_team_members
+- recommended_starting_point
+- recommended_planning_range
+- status
+- assigned_team_member
+- internal_notes
+- related_prior_project_ids
+- diagnostic_version_used
+- full_diagnostic_required_boolean
+
+4. PROJECT HISTORY
+Fields:
+- user_id
+- project_name
+- project_type
+- project_status
+- project_start_date
+- project_completion_date
+- final_scope_summary
+- relevant_brand_assets
+- project_files
+- team_members_involved
+- final_investment_range
+- notes_for_future_context
+
+--------------------------------------------------
+TIME-BASED LOGIC
+--------------------------------------------------
+
+CALCULATE:
+last_context_date = most recent of:
+- last project request date
+- last project completion date
+- business_snapshot_updated_at
+- initial_diagnostic_completed_at
+
+IF:
+current date minus last_context_date < 12 months:
+Use returning-client quick request workflow.
+
+IF:
+current date minus last_context_date >= 12 months:
+Use the 12+ month Business Update workflow before the quick request workflow.
+
+IF:
+no previous Business Snapshot exists:
+Use full first-time diagnostic.
+
+IF:
+a user starts the full diagnostic but does not complete it:
+Save progress for logged-in users.
+Allow them to resume later.
+
+ADMIN OVERRIDE:
+Allow admin to mark a Business Snapshot as:
+- Current
+- Needs Update
+- Full Reassessment Recommended
+- Archived
+
+If “Full Reassessment Recommended”:
+Show a gentle recommendation to complete the full diagnostic next time the user requests a project, but do not block their ability to contact the team.
+
+--------------------------------------------------
+ADMIN EXPERIENCE
+--------------------------------------------------
+
+IN ADMIN PROJECT REQUEST VIEW:
+Show:
+- New / Returning / 12+ Month Returning badge
+- Last project date
+- Last Business Snapshot update
+- Current business update responses
+- Prior projects and outcomes
+- Existing brand assets
+- Selected assets for this request
+- Changes since last project
+- Current goal
+- Support level
+- Timeline
+- Recommendation from system
+- Full diagnostic answers if available
+- Current Brand Portal link
+- Team permissions
+- Internal notes
+- Request routing recommendation
+
+INTERNAL ALERT:
+If a returning client has:
+- Major business change
+- New multi-location/franchise scope
+- New ecommerce or advanced platform need
+- Significant shift in business model
+- Team-led implementation need
+Then flag:
+“Strategic review recommended before pricing.”
+
+--------------------------------------------------
+COPY REQUIREMENTS
+--------------------------------------------------
+
+FOR EXISTING CLIENTS:
+Use supportive language like:
+“We already have the foundation. Tell us what is changing and where you would like to go next.”
+
+FOR 12+ MONTH RETURNING CLIENTS:
+Use:
+“Your business has likely evolved since we last worked together. A few quick updates help us support the business you have now—not the version of it from a year ago.”
+
+DO NOT USE:
+- “Complete the intake again”
+- “You must start over”
+- “Your information has expired”
+- “Fill out this form before we can help”
+- Overly bureaucratic or clinical language
+
+PRIMARY VALUE MESSAGE:
+Freedom Foundry remembers the work behind your business so your support can become more relevant over time.
+```
+
+## The client experience
+
+The key message is: **the Brand Portal compounds in value over time.**
+
+A first-time visitor needs to be guided through their stage, needs, assets, and priorities. A returning client should feel the payoff of having worked with you before:
+
+> “We already know your brand. What are you building now?”
+
+That is a profoundly better experience than requiring them to explain their business, find their logo, repeat their audience, and reconstruct prior project details every time they need a website update, campaign, new offer, coaching, automation, or design support.
+
+## Recommended project-request buttons
+
+Use different labels depending on relationship stage:
+
+| Context | Primary button |
+|---|---|
+| New visitor | **Find My Best Starting Point** |
+| New member with Brand Portal | **Explore Project Options** |
+| Existing client | **Start Something New** |
+| Existing client needing a quick change | **Request an Update** |
+| Client returning after a long gap | **Update My Business & Get Support** |
+| Member unsure what they need | **Help Me Choose My Next Step** |
+
+For logged-in clients, a simple dashboard card could say:
+
+> ### Need support with what comes next?  
+> Your brand, past work, and available assets are already here. Tell us what you are working toward, and we will help you identify the right next step.  
+>
+> **[Start Something New]**
+
+## Keep “year or more” flexible
+
+The 12-month trigger is smart, but I would make it configurable in admin settings—perhaps defaulting to 12 months. Some past clients may return after 8–10 months with a business that has changed dramatically; others may return after 18 months and need only a small update.
+
+Include this configuration field:
+
+```text
+BUSINESS UPDATE THRESHOLD:
+Default: 12 months
+Admin editable options: 6 months / 9 months / 12 months / 18 months / 24 months
+```
+
+The app should use the reminder as a helpful **context refresh**, not a gatekeeping device.
+
+## Why this becomes a major advantage
+
+Most agencies have a CRM record, a past email thread, and scattered folders. Freedom Foundry can give clients something materially different:
+
+- Their brand lives in one place.
+- Their team can access approved assets and context.
+- Past work remains visible.
+- Future requests are easier.
+- Recommendations improve as the platform learns what they are building.
+- Your team sees context before the client ever books a call.
+- The right next step may be Academy, coaching, a trusted partner, a focused project, or a full Studio engagement.
+
+That is not just a better intake process. It is the beginning of a **long-term brand relationship platform**.

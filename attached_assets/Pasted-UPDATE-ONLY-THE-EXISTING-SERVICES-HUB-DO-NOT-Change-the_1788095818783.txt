@@ -1,0 +1,403 @@
+UPDATE ONLY THE EXISTING SERVICES HUB.
+
+DO NOT:
+- Change the global app navigation.
+- Create a new app structure.
+- Create new public top-level navigation pages.
+- Replace or overhaul existing Freedom Foundry sections.
+- Add long “What We Build” pages, long educational blocks, or excessive service copy.
+- Require users to read a large explanation before they can request help.
+
+CONTEXT:
+The Freedom Foundry app already exists. This request is only to improve the existing Services Hub, which currently contains lists of service categories such as SaaS, Design, Branding, and related support.
+
+GOAL:
+Make the Services Hub more useful, more directional, and easier for members to use when they need help.
+
+The page should help people:
+1. Know where to start when they are unsure what service they need.
+2. See concise categories when they do know what they need.
+3. Get a realistic idea of possible starting points and investment before opening a conversation.
+4. Send a project/support request easily.
+5. Avoid repeating full intake information if they are returning clients.
+6. Ensure all submissions are sent to latricia@thebrandrevivalist.com.
+
+--------------------------------------------------
+SERVICES HUB PAGE UPDATE
+--------------------------------------------------
+
+KEEP:
+- Existing navigation.
+- Existing Services Hub route/page.
+- Existing service categories where possible.
+
+ADD:
+A high-priority “Start Here” card at the top of the Services Hub.
+
+TOP CARD TITLE:
+Not sure where to start?
+
+TOP CARD BODY:
+Tell us what you are building, what has changed, or where you feel stuck. We’ll help you identify the most sensible next step—whether that is a brand project, website, design support, coaching, a tool, a trusted specialist, or something you can work through inside Freedom Foundry.
+
+PRIMARY BUTTON:
+Find My Starting Point
+
+SECONDARY BUTTON:
+I Know What I Need
+
+BUTTON BEHAVIOR:
+- “Find My Starting Point” opens the Project Starting Point flow described below.
+- “I Know What I Need” scrolls down to the existing service-category cards/lists.
+
+--------------------------------------------------
+SERVICE CATEGORY CARDS
+--------------------------------------------------
+
+Use concise cards or expandable sections. Do not put long descriptions on the main hub page.
+
+Create/retain these categories:
+
+1. BRAND STRATEGY & BRANDING
+Short copy:
+Build or evolve a strategic brand system rooted in market insight, audience understanding, positioning, messaging, visual identity, and practical activation.
+
+Examples shown in expandable detail:
+- Strategic brand systems for service, product, and hybrid businesses
+- New brands, brand refreshes, and rebrands
+- Audience and market intelligence
+- Positioning and messaging
+- Visual identity and comprehensive Brand Guides
+- Brand Portal setup and asset organization
+
+CTA:
+Explore Branding Support
+This opens the Project Starting Point flow with category pre-selected as Branding.
+
+2. WEBSITE & DIGITAL EXPERIENCE
+Short copy:
+Bespoke digital experiences built around your audience, offers, customer journey, discoverability, and conversion goals.
+
+Examples shown in expandable detail:
+- Bespoke websites
+- Ecommerce, memberships, portals, and course experiences
+- AEO/SEO-informed strategy and content architecture
+- Landing pages and conversion paths
+- Integrations, analytics, and client handoff
+
+CTA:
+Plan My Website
+This opens the Project Starting Point flow with category pre-selected as Website / Digital Experience.
+
+3. DESIGN & ACTIVATION
+Short copy:
+Bring your brand to life across the materials, campaigns, touchpoints, and experiences your audience actually sees.
+
+Examples shown in expandable detail:
+- Sales and marketing collateral
+- Campaign creative and launch assets
+- Presentations, brochures, media kits, and proposals
+- Social templates and branded materials
+- Packaging, product, retail, and print support as appropriate
+
+CTA:
+Request Design Support
+This opens a short request form with category pre-selected as Design & Activation.
+
+4. BRAND GUIDANCE
+Short copy:
+Strategic support for business owners who need an experienced brand partner to help them make confident decisions and keep moving forward.
+
+Examples shown in expandable detail:
+- Focused Brand Strategy Sessions
+- New-client Brand Guidance Setup
+- Ongoing Brand Guidance for eligible clients
+
+IMPORTANT:
+New ongoing-guidance clients must complete Brand Guidance Setup before entering an ongoing relationship, unless they are an existing recent client with a current Brand Portal and sufficient context.
+
+CTA:
+Explore Brand Guidance
+This opens a short guidance-interest form or the Project Starting Point flow with category pre-selected as Brand Guidance.
+
+5. SaaS, CRM & AUTOMATION
+Short copy:
+Get practical tools and implementation support for lead flow, client experience, follow-up, automation, and business operations.
+
+Examples shown in expandable detail:
+- GoHighLevel and supported SaaS tools
+- CRM/client-journey assessment
+- Lead capture, calendars, pipelines, email/SMS, onboarding, and automation
+- Tool recommendations and implementation support
+
+CTA:
+Explore Tools & Setup
+This opens existing SaaS content or a request form with category pre-selected as SaaS / CRM / Automation.
+
+6. TRUSTED SUPPORT
+Short copy:
+When specialized expertise is needed, we can help you identify an independent professional who may be a fit.
+
+Examples shown in expandable detail:
+- Fractional CMOs and CFOs
+- Business planners and operations specialists
+- SEO specialists
+- Legal, accounting, financial, technology, production, and other vetted professionals
+
+IMPORTANT TEXT:
+Independent professionals set their own scope, availability, pricing, payment terms, and agreements directly with clients. Freedom Foundry does not maintain a standard fee schedule for their services, and their fees are not included in Freedom Foundry project pricing unless specifically stated in writing.
+
+CTA:
+Request an Introduction
+This opens a short “Trusted Support” request form.
+
+--------------------------------------------------
+PROJECT STARTING POINT FLOW
+--------------------------------------------------
+
+THIS FLOW IS FOR:
+- New members.
+- Members who have not previously requested a project.
+- Members who explicitly choose to reassess their needs.
+
+THIS FLOW IS NOT REQUIRED FOR:
+- Existing/recent clients with existing Brand Portal context.
+- Returning clients who simply need help with a new update or next project.
+
+FLOW TITLE:
+Find My Starting Point
+
+FLOW INTRO:
+Answer a few quick questions so we can understand what you are trying to accomplish and recommend the most appropriate next step. This is a planning tool—not a final quote.
+
+KEEP THIS SHORT:
+Use 5 core questions maximum, with optional conditional questions only when necessary.
+
+QUESTION 1:
+What do you need help with most right now?
+- Branding or rebranding
+- Website or digital experience
+- Design, collateral, campaign, or launch assets
+- Brand guidance or strategic direction
+- SaaS, CRM, automation, or client journey
+- Help connecting with a trusted specialist
+- I am not sure
+
+QUESTION 2:
+What type of business are you building?
+- Service business
+- Product business
+- Hybrid business: services, products, courses, membership, media, or multiple offers
+- Organization, franchise, nonprofit, or multi-location business
+- I am still figuring it out
+
+QUESTION 3:
+What best describes your current situation?
+- I am building a new brand or business foundation
+- I need a focused update or refresh
+- My business has changed and I likely need a rebrand
+- I am launching something new
+- I have a specific project in mind
+- I am not sure
+
+QUESTION 4:
+How hands-on do you need the support to be?
+- I need direction and can handle much of the implementation
+- I need help with selected parts
+- I need a team to lead the work
+- I am not sure
+
+QUESTION 5:
+When do you hope to begin?
+- As soon as possible
+- Within 30 days
+- Within 1–3 months
+- Planning ahead
+- Not sure
+
+OPTIONAL QUESTION:
+What are you trying to accomplish?
+Use a short text field.
+
+DO NOT ASK:
+- Full detailed persona questions.
+- Full asset inventory.
+- Long budget forms.
+- Full business-plan questions.
+- Every question already stored in the Brand Portal.
+
+RESULT:
+Show a concise result card, not a long report.
+
+EXAMPLE:
+Likely starting point: Strategic Brand System conversation
+
+Why:
+Based on your business type, current stage, and goal, your next move may involve clarifying your market position, message, visual identity, and the practical tools needed to activate the brand.
+
+What may be involved:
+- Strategic brand work
+- Market and audience intelligence
+- Messaging and visual identity
+- Website, launch, campaign, or activation planning as relevant
+
+Final scope is determined after review. This is not a quote.
+
+ACTIONS:
+- Start a Conversation
+- Explore Brand Guidance
+- Browse Relevant Resources
+- Save for Later
+
+Do not show public pricing amounts until the owner enters approved pricing into admin settings.
+
+--------------------------------------------------
+RETURNING CLIENT WORKFLOW
+--------------------------------------------------
+
+IF:
+User has a previous project request, past project, or current Brand Portal context
+AND:
+Their last project/context update is less than 12 months old
+
+THEN:
+Do NOT show the full Project Starting Point flow.
+
+Show a simple quick request form.
+
+TITLE:
+What do you need help with now?
+
+SUBHEAD:
+We already have context for your brand and business. Tell us what you are working on now, and we will begin with what is already in your Brand Portal.
+
+QUESTIONS:
+1. What do you need help with?
+2. What are you trying to accomplish?
+3. What has changed since we last worked together? Optional.
+4. When would you like to begin?
+5. What existing Brand Portal assets should we review? Optional asset selector/upload.
+
+CTA:
+Send My Request
+
+IF:
+It has been 12 months or more since the user’s last request, project completion, or Business Snapshot update
+
+THEN:
+Show a short Business Update before the quick request.
+
+BUSINESS UPDATE TITLE:
+A quick update before we begin
+
+BUSINESS UPDATE COPY:
+Your business may have evolved since we last worked together. A few quick updates will help us support the business you have now—not the version of it from a year ago.
+
+ASK ONLY:
+1. What has changed?
+   - Audience
+   - Offers/products/services
+   - Business direction
+   - Team/leadership
+   - Technology/website/CRM
+   - Expansion/locations
+   - No major changes
+   - Other
+2. What is your most important goal now?
+3. Would you like to update any brand assets, offers, website links, or team information?
+4. Continue to quick request form.
+
+DO NOT:
+- Tell users their data “expired.”
+- Require them to start over.
+- Block a project request because they do not complete a full reassessment.
+
+--------------------------------------------------
+SUBMISSIONS AND EMAIL NOTIFICATIONS
+--------------------------------------------------
+
+MANDATORY:
+Every form submission must be stored in the database and sent to:
+
+latricia@thebrandrevivalist.com
+
+SEND INTERNAL EMAIL FOR:
+- New Project Starting Point flow submission
+- Start a Conversation request
+- Returning-client quick request
+- 12+ month Business Update
+- Brand Guidance interest/application
+- Design support request
+- Website/digital request
+- SaaS/CRM/automation request
+- Trusted Support / independent-expert introduction request
+- “Help me choose” request
+
+INTERNAL SUBJECT FORMAT:
+[Freedom Foundry] {Submission Type} — {Business Name}
+
+INTERNAL EMAIL MUST INCLUDE:
+- Name
+- Business name
+- Email
+- Submission type
+- New or returning client
+- Selected category
+- Business type
+- Current situation
+- Desired support level
+- Timeline
+- Open-text objective
+- Selected Brand Portal assets/files
+- Link to internal request record
+- System recommendation if applicable
+
+USER CONFIRMATION EMAIL:
+Send a short confirmation to the user:
+
+Subject:
+We received your Freedom Foundry request
+
+Body:
+Thank you for sharing what you are working toward. We received your request and will review the information you provided before recommending the most appropriate next step.
+
+Because Freedom Foundry is designed to support different stages of business growth, that next step may be a project conversation, Brand Guidance, a phased plan, relevant resources, or an introduction to an independent specialist.
+
+Do not promise a response timeframe until the owner sets one.
+
+EMAIL IMPLEMENTATION:
+- Store submission first.
+- Send notification second.
+- If email fails, preserve the request and log the error.
+- Add internal resend capability.
+- Use server-side environment variables only.
+- Default internal recipient:
+  NOTIFICATION_EMAIL=latricia@thebrandrevivalist.com
+
+--------------------------------------------------
+ADMIN SETTINGS
+--------------------------------------------------
+
+Create/retain a simple admin configuration area only for this Services Hub feature.
+
+Admin must be able to edit:
+- Service category title
+- Short card copy
+- Expandable examples
+- CTA labels
+- Which form/flow a CTA opens
+- Approved pricing text when ready
+- Service visibility/status
+- 12-month update threshold
+- Internal notification email recipient
+- Email templates
+- Request routing/status
+- Internal notes
+
+DO NOT BUILD:
+- A new full app navigation.
+- A long public methodology page.
+- A full marketplace.
+- Complex proposal generation.
+- Partner payout tools.
+- A broad redesign of all existing pages.
