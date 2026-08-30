@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, BookOpen, Palette, Sparkles } from 'lucide-react';
+import { ArrowRight, BookOpen, Palette } from 'lucide-react';
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
 
@@ -53,7 +53,7 @@ export default function LandingPage() {
               ['Your foundation', 'Shape your personal and corporate brand profile with guidance that stays yours.'],
               ['Your resources', 'Keep your brand kit, workbooks, and creative references easy to find.'],
               ['Your next moves', 'Turn clarity into momentum with practical prompts and focused action.'],
-            ].map(([title, description], index) => <div key={title}><Sparkles className="mb-4 h-4 w-4 text-[#d9622c]" /><h2 className="font-heading text-xl text-[#f7f5f5]">{title}</h2><p className="mt-2 text-sm leading-6 text-[#8d8b89]">{description}</p></div>)}
+            ].map(([title, description]) => <div key={title}><h2 className="font-heading text-xl text-[#f7f5f5]">{title}</h2><p className="mt-2 text-sm leading-6 text-[#8d8b89]">{description}</p></div>)}
           </div>
         </section>
       </main>

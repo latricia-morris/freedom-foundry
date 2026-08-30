@@ -128,6 +128,18 @@ export const admin = {
   async getSupportReport(id) {
     return apiFetch(`/admin/support-reports/${encodeURIComponent(id)}`);
   },
+  async getServiceHubConfig() {
+    return apiFetch('/admin/service-hub/config');
+  },
+  async updateServiceHubConfig(data) {
+    return apiFetch('/admin/service-hub/config', { method: 'PATCH', body: JSON.stringify(data) });
+  },
+  async listServiceRequests() {
+    return apiFetch('/admin/service-requests');
+  },
+  async updateServiceRequest(id, data) {
+    return apiFetch(`/admin/service-requests/${encodeURIComponent(id)}`, { method: 'PATCH', body: JSON.stringify(data) });
+  },
 };
 
 export const support = {
@@ -140,6 +152,13 @@ export const support = {
   async createProviderEvent(data) {
     return apiFetch('/support/provider-events', { method: 'POST', body: JSON.stringify(data) });
   },
+};
+
+export const services = {
+  async getConfig() { return apiFetch('/service-hub/config'); },
+  async getContext() { return apiFetch('/service-requests/context'); },
+  async listRequests() { return apiFetch('/service-requests'); },
+  async createRequest(data) { return apiFetch('/service-requests', { method: 'POST', body: JSON.stringify(data) }); },
 };
 
 // ─── Generic entity factory ───────────────────────────────────────────────────
@@ -205,7 +224,7 @@ export const integrations = {
   },
 };
 
-const apiClient = { auth, admin, support, entities, integrations };
+const apiClient = { auth, admin, support, services, entities, integrations };
 export default apiClient;
 
 // Legacy compat
