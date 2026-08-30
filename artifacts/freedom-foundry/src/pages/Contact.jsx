@@ -25,7 +25,7 @@ export default function Contact() {
         <h1 className="font-heading text-3xl lg:text-4xl font-light text-foreground mb-2">
           <span className="molten-text italic">Contact</span>
         </h1>
-        <p className="text-sm text-muted-foreground">Connect with The Brand Revivalist. We're here to help you forge your legacy.</p>
+        <p className="text-sm text-muted-foreground">Connect with The Brand Revivalist®. We're here to help you forge your legacy.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -33,7 +33,7 @@ export default function Contact() {
         <div className="contact-card">
           <img
             src={TBR_LOGO}
-            alt="The Brand Revivalist"
+            alt="The Brand Revivalist®"
             className="contact-card__logo"
             style={{ height: '56px', width: '56px', borderRadius: '50%', objectFit: 'cover' }}
           />
@@ -91,7 +91,7 @@ export default function Contact() {
 
       {/* Social Links */}
       <div className="mt-8 pt-8 border-t border-border">
-        <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-4 text-center">Follow The Brand Revivalist</p>
+        <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-4 text-center">Follow The Brand Revivalist®</p>
         <div className="flex items-center justify-center gap-4">
           {socialLinks.map(social => {
             const Icon = social.icon;

@@ -4,6 +4,7 @@ import { useSignIn } from '@clerk/react';
 import { Apple, KeyRound, LoaderCircle, LockKeyhole, Mail } from 'lucide-react';
 import apiClient from '@/api/client';
 import RecaptchaWidget from './RecaptchaWidget';
+import { withAuthTimeout } from './authTimeout';
 
 function clerkErrorMessage(error, fallback) {
   return error?.longMessage || error?.errors?.[0]?.longMessage || error?.message || fallback;
@@ -32,7 +33,7 @@ const inputClassName = [
 ].join(' ');
 
 export default function FreedomSignInForm({ basePath }) {
-  const { signIn, fetchStatus } = useSignIn();
+  const { signIn } = useSignIn();
   const [mode, setMode] = useState('sign-in');
   const [resetStep, setResetStep] = useState('email');
   const [email, setEmail] = useState('');
@@ -43,8 +44,9 @@ export default function FreedomSignInForm({ basePath }) {
   const [captchaToken, setCaptchaToken] = useState('');
   const [captchaResetToken, setCaptchaResetToken] = useState(0);
   const [isVerifyingCaptcha, setIsVerifyingCaptcha] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const isSubmitting = fetchStatus === 'fetching' || isVerifyingCaptcha;
+  const isBusy = isSubmitting || isVerifyingCaptcha;
   const dashboardUrl = `${basePath}/dashboard`;
   const callbackUrl = `${basePath}/sign-in/sso-callback`;
 
@@ -96,11 +98,12 @@ export default function FreedomSignInForm({ basePath }) {
       return;
     }
 
+    setIsSubmitting(true);
     try {
-      const result = await signIn.password({
+      const result = await withAuthTimeout(signIn.password({
         emailAddress: email.trim(),
         password,
-      });
+      }), 'Sign-in timed out. Please try again.');
 
       if (result.error) throw result.error;
       if (signIn.status !== 'complete') {
@@ -111,20 +114,25 @@ export default function FreedomSignInForm({ basePath }) {
       await finishSignIn();
     } catch (signInError) {
       setError(clerkErrorMessage(signInError, 'We could not sign you in. Please check your details and try again.'));
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
   async function handleOAuth(strategy) {
     setError('');
+    setIsSubmitting(true);
     try {
-      const result = await signIn.sso({
+      const result = await withAuthTimeout(signIn.sso({
         strategy,
         redirectUrl: dashboardUrl,
         redirectCallbackUrl: callbackUrl,
-      });
+      }), 'The sign-in provider took too long to respond. Please try again.');
       if (result.error) throw result.error;
     } catch (signInError) {
       setError(clerkErrorMessage(signInError, 'We could not start that sign-in option. Please try again.'));
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -136,16 +144,19 @@ export default function FreedomSignInForm({ basePath }) {
       return;
     }
 
+    setIsSubmitting(true);
     try {
       if (!await verifyRecoveryHuman()) return;
-      const init = await signIn.create({ identifier: email.trim() });
+      const init = await withAuthTimeout(signIn.create({ identifier: email.trim() }), 'Password recovery timed out. Please try again.');
       if (init.error) throw init.error;
 
-      const result = await signIn.resetPasswordEmailCode.sendCode();
+      const result = await withAuthTimeout(signIn.resetPasswordEmailCode.sendCode(), 'The recovery email took too long to send. Please try again.');
       if (result.error) throw result.error;
       setResetStep('verify');
     } catch (resetError) {
       setError(clerkErrorMessage(resetError, 'We could not send a recovery code. Please check your email address and try again.'));
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -161,15 +172,16 @@ export default function FreedomSignInForm({ basePath }) {
       return;
     }
 
+    setIsSubmitting(true);
     try {
-      const verification = await signIn.resetPasswordEmailCode.verifyCode({ code: code.trim() });
+      const verification = await withAuthTimeout(signIn.resetPasswordEmailCode.verifyCode({ code: code.trim() }), 'Recovery verification timed out. Please try again.');
       if (verification.error) throw verification.error;
       if (signIn.status !== 'needs_new_password') {
         setError('That recovery code could not be verified. Please request a new one and try again.');
         return;
       }
 
-      const result = await signIn.resetPasswordEmailCode.submitPassword({ password });
+      const result = await withAuthTimeout(signIn.resetPasswordEmailCode.submitPassword({ password }), 'Password update timed out. Please try again.');
       if (result.error) throw result.error;
       if (signIn.status !== 'complete') {
         setError('Your password was updated, but we could not finish signing you in. Please return to sign in.');
@@ -179,6 +191,8 @@ export default function FreedomSignInForm({ basePath }) {
       await finishSignIn();
     } catch (resetError) {
       setError(clerkErrorMessage(resetError, 'We could not reset your password. Please try again.'));
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -241,13 +255,13 @@ export default function FreedomSignInForm({ basePath }) {
 
           {error && <p role="alert" className="rounded-xl border border-red-500/25 bg-red-950/45 px-4 py-3 text-sm text-red-100">{error}</p>}
 
-          <button type="submit" disabled={isSubmitting} className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#9f1f28] via-[#d9622c] to-[#e6c695] font-semibold tracking-wide text-white transition hover:brightness-110 disabled:cursor-wait disabled:opacity-70">
-            {isSubmitting && <LoaderCircle className="h-4 w-4 animate-spin" />}
+          <button type="submit" disabled={isBusy} className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#9f1f28] via-[#d9622c] to-[#e6c695] font-semibold tracking-wide text-white transition hover:brightness-110 disabled:cursor-wait disabled:opacity-70">
+            {isBusy && <LoaderCircle className="h-4 w-4 animate-spin" />}
             {verifying ? 'Update password' : 'Send recovery code'}
           </button>
         </form>
 
-        <button type="button" onClick={resetForm} className="mt-6 w-full text-sm text-[#f0d9b5] transition hover:text-white">
+        <button type="button" onClick={resetForm} disabled={isBusy} className="mt-6 w-full text-sm text-[#f0d9b5] transition hover:text-white disabled:opacity-60">
           ← Back to sign in
         </button>
       </section>
@@ -263,10 +277,10 @@ export default function FreedomSignInForm({ basePath }) {
       </header>
 
       <div className="grid grid-cols-2 gap-3">
-        <button type="button" onClick={() => handleOAuth('oauth_google')} disabled={isSubmitting} className="flex h-12 items-center justify-center gap-2 rounded-xl border border-white/[0.12] bg-white/[0.06] text-sm font-medium text-[#f7f2ea] transition hover:bg-white/[0.12] disabled:cursor-wait disabled:opacity-70">
+         <button type="button" onClick={() => handleOAuth('oauth_google')} disabled={isBusy} className="flex h-12 items-center justify-center gap-2 rounded-xl border border-white/[0.12] bg-white/[0.06] text-sm font-medium text-[#f7f2ea] transition hover:bg-white/[0.12] disabled:cursor-wait disabled:opacity-70">
           <GoogleMark /> Google
         </button>
-        <button type="button" onClick={() => handleOAuth('oauth_apple')} disabled={isSubmitting} className="flex h-12 items-center justify-center gap-2 rounded-xl border border-white/[0.12] bg-white/[0.06] text-sm font-medium text-[#f7f2ea] transition hover:bg-white/[0.12] disabled:cursor-wait disabled:opacity-70">
+         <button type="button" onClick={() => handleOAuth('oauth_apple')} disabled={isBusy} className="flex h-12 items-center justify-center gap-2 rounded-xl border border-white/[0.12] bg-white/[0.06] text-sm font-medium text-[#f7f2ea] transition hover:bg-white/[0.12] disabled:cursor-wait disabled:opacity-70">
           <Apple className="h-5 w-5" fill="currentColor" /> Apple
         </button>
       </div>
@@ -297,8 +311,8 @@ export default function FreedomSignInForm({ basePath }) {
 
         {error && <p role="alert" className="rounded-xl border border-red-500/25 bg-red-950/45 px-4 py-3 text-sm text-red-100">{error}</p>}
 
-        <button type="submit" disabled={isSubmitting} className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#9f1f28] via-[#d9622c] to-[#e6c695] font-semibold tracking-wide text-white transition hover:brightness-110 disabled:cursor-wait disabled:opacity-70">
-          {isSubmitting && <LoaderCircle className="h-4 w-4 animate-spin" />}
+         <button type="submit" disabled={isBusy} className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#9f1f28] via-[#d9622c] to-[#e6c695] font-semibold tracking-wide text-white transition hover:brightness-110 disabled:cursor-wait disabled:opacity-70">
+           {isBusy && <LoaderCircle className="h-4 w-4 animate-spin" />}
           Sign in
         </button>
       </form>

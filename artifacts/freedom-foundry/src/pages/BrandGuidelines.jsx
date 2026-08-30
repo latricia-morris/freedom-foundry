@@ -14,7 +14,7 @@ function ClientGate() {
       </div>
       <h2 className="font-heading text-2xl font-light text-[#f7f2ea] mb-3">Client Feature</h2>
       <p className="text-sm text-[#f7f2ea]/60 leading-relaxed max-w-sm mx-auto">
-        This feature is reserved for clients working directly with The Brand Revivalist and/or her agency, Ox & Iron.
+        This feature is reserved for clients working directly with The Brand Revivalist® and/or her agency, Ox & Iron.
       </p>
     </div>
   );

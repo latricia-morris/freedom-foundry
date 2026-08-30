@@ -74,7 +74,7 @@ export default function BrandUp() {
         <div className="editorial-container mb-8">
           <h2 className="font-heading text-xl text-[#1a1420] mb-4 leading-relaxed">{currentPrompt.prompt_text}</h2>
           {currentPrompt.type === 'note' ? (
-            <p className="text-sm text-[#1a1420]/50 italic mb-4">A note from The Brand Revivalist team.</p>
+            <p className="text-sm text-[#1a1420]/50 italic mb-4">A note from The Brand Revivalist® team.</p>
           ) : (
             <textarea
               value={response}

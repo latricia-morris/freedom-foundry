@@ -149,7 +149,7 @@ function AuthBackground({ children }) {
         />
         <div className="flex flex-col leading-tight">
           <div className="font-heading text-xl font-medium tracking-[0.04em] text-[#f7f2ea]">FREEDOM FOUNDRY</div>
-          <div className="text-[10px] uppercase tracking-[0.25em] text-[#d9c9a3]">BY THE BRAND REVIVALIST</div>
+          <div className="text-[10px] uppercase tracking-[0.25em] text-[#d9c9a3]">BY THE BRAND REVIVALIST®</div>
         </div>
       </div>
       <div className="relative z-10 my-8 w-full max-w-md">

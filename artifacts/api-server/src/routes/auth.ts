@@ -6,6 +6,7 @@ import { authMiddleware } from "../lib/auth";
 const router: IRouter = Router();
 
 const captchaPurposes = new Set(["sign-up", "password-recovery"]);
+const CAPTCHA_VERIFY_TIMEOUT_MS = 8000;
 type CaptchaVerificationResponse = {
   success?: boolean;
   score?: number;
@@ -33,11 +34,15 @@ router.post("/auth/captcha/verify", async (req, res): Promise<void> => {
   }
 
   try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), CAPTCHA_VERIFY_TIMEOUT_MS);
     const verification = await fetch("https://www.google.com/recaptcha/api/siteverify", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({ secret, response: token }),
+      signal: controller.signal,
     });
+    clearTimeout(timeout);
 
     if (!verification.ok) {
       req.log?.error({ status: verification.status, purpose }, "reCAPTCHA verification service failed");

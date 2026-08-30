@@ -26,7 +26,7 @@ export default function Sidebar() {
           />
           <div>
             <p className="font-heading text-sm tracking-wider text-foreground">FREEDOM FOUNDRY</p>
-            <p className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground">By The Brand Revivalist</p>
+            <p className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground">By The Brand Revivalist®</p>
           </div>
         </div>
       </Link>

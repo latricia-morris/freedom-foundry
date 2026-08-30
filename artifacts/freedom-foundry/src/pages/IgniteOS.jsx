@@ -30,7 +30,7 @@ function ClientGate() {
         </div>
         <h3 className="font-heading text-xl font-light text-[#f7f2ea] mb-2">Client Feature</h3>
         <p className="text-sm text-[#f7f2ea]/60 leading-relaxed max-w-sm mx-auto">
-          Ignite OS is reserved for clients working directly with The Brand Revivalist and/or Ox &amp; Iron.
+          Ignite OS is reserved for clients working directly with The Brand Revivalist® and/or Ox &amp; Iron.
         </p>
       </div>
     </div>

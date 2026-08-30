@@ -82,7 +82,7 @@ export function AuthScreen({ mode }: { mode: 'sign-in' | 'sign-up' }) {
   return (
     <LinearGradient colors={['#100e0c', '#2b1710', '#100e0c']} style={styles.canvas}>
       <KeyboardAwareScrollViewCompat contentContainerStyle={[styles.scroll, Platform.OS === 'web' && styles.webScroll]} bottomOffset={24}>
-        <View style={styles.brand}><Text style={styles.brandName}>FREEDOM FOUNDRY</Text><Text style={styles.byline}>BY THE BRAND REVIVALIST</Text></View>
+        <View style={styles.brand}><Text style={styles.brandName}>FREEDOM FOUNDRY</Text><Text style={styles.byline}>BY THE BRAND REVIVALIST®</Text></View>
         <View style={styles.card}>
           <Text style={styles.eyebrow}>{isSignIn ? 'WELCOME BACK' : 'BEGIN YOUR FORGE'}</Text>
           <Text style={styles.title}>{isSignIn ? 'Your portal awaits.' : 'Build what lasts.'}</Text>

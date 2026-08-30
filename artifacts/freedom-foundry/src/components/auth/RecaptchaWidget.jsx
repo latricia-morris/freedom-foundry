@@ -2,7 +2,18 @@ import { useEffect, useRef, useState } from 'react';
 
 const siteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY?.trim() || '';
 const mode = import.meta.env.VITE_RECAPTCHA_MODE?.trim().toLowerCase() === 'v3' ? 'v3' : 'checkbox';
+const RECAPTCHA_TIMEOUT_MS = 12000;
 const scriptPromises = new Map();
+
+function withRecaptchaTimeout(promise, message) {
+  let timer;
+  const timeout = new Promise((_, reject) => {
+    timer = window.setTimeout(() => reject(new Error(message)), RECAPTCHA_TIMEOUT_MS);
+  });
+  return Promise.race([Promise.resolve(promise), timeout]).finally(() => {
+    if (timer) window.clearTimeout(timer);
+  });
+}
 
 function loadRecaptcha() {
   if (typeof window === 'undefined') return Promise.reject(new Error('reCAPTCHA requires a browser.'));
@@ -72,8 +83,8 @@ export default function RecaptchaWidget({ action, resetToken = 0, onChange, onEx
       };
     }
 
-    loadRecaptcha()
-      .then(waitForRecaptchaReady)
+    withRecaptchaTimeout(loadRecaptcha(), 'Human verification could not load. Check that this site is allowed for the reCAPTCHA key.')
+      .then((grecaptcha) => withRecaptchaTimeout(waitForRecaptchaReady(grecaptcha), 'Human verification did not finish loading. Please try again.'))
       .then((grecaptcha) => {
         if (!active) return;
 
@@ -81,7 +92,7 @@ export default function RecaptchaWidget({ action, resetToken = 0, onChange, onEx
           challengeRef.current = () => {
             grecaptcha.ready(() => {
               if (!active) return;
-              grecaptcha.execute(siteKey, { action })
+              withRecaptchaTimeout(grecaptcha.execute(siteKey, { action }), 'Human verification timed out. Please try again.')
                 .then((token) => {
                   if (active && token) handleToken(token);
                   else if (active) handleError('Human verification could not be completed. Please try again.');

@@ -24,7 +24,7 @@ export default function Layout() {
             <span className="font-heading text-xl lg:text-2xl font-medium text-[#f7f2ea] tracking-[0.04em]">FREEDOM FOUNDRY
 
             </span>
-            <span className="uppercase tracking-[0.25em] text-[#d9c9a3] text-[11px]">BY THE BRAND REVIVALIST</span>
+            <span className="uppercase tracking-[0.25em] text-[#d9c9a3] text-[11px]">BY THE BRAND REVIVALIST®</span>
           </div>
         </Link>
         <div className="flex items-center gap-4">

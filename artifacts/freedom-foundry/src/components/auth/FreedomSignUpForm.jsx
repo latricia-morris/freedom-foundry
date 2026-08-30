@@ -4,6 +4,7 @@ import { useSignUp } from '@clerk/react';
 import { Apple, LoaderCircle, LockKeyhole, Mail, UserRound } from 'lucide-react';
 import apiClient from '@/api/client';
 import RecaptchaWidget from './RecaptchaWidget';
+import { withAuthTimeout } from './authTimeout';
 
 function clerkErrorMessage(error, fallback) {
   return error?.longMessage || error?.errors?.[0]?.longMessage || error?.message || fallback;
@@ -113,19 +114,19 @@ export default function FreedomSignUpForm({ basePath }) {
 
     setIsSubmitting(true);
     try {
-      if (!await verifyHuman('sign-up')) return;
+       if (!await withAuthTimeout(verifyHuman('sign-up'), 'Human verification timed out. Please try again.')) return;
 
-      const result = await signUp.create({
+       const result = await withAuthTimeout(signUp.create({
         emailAddress: email.trim(),
         password,
         ...(firstName.trim() ? { firstName: firstName.trim() } : {}),
         ...(lastName.trim() ? { lastName: lastName.trim() } : {}),
-      });
+       }), 'Account creation timed out. Please try again.');
 
       if (await finishSignUp(result)) return;
 
       if (result.unverifiedFields?.includes('email_address') || result.verifications?.emailAddress?.status === 'unverified') {
-        await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
+         await withAuthTimeout(signUp.prepareEmailAddressVerification({ strategy: 'email_code' }), 'The verification email took too long to send. Please try again.');
         setStep('verify');
         return;
       }
@@ -148,7 +149,7 @@ export default function FreedomSignUpForm({ basePath }) {
 
     setIsSubmitting(true);
     try {
-      const result = await signUp.attemptEmailAddressVerification({ code: code.trim() });
+       const result = await withAuthTimeout(signUp.attemptEmailAddressVerification({ code: code.trim() }), 'Email verification timed out. Please try again.');
       if (await finishSignUp(result)) return;
       setError('That code was not accepted. Please request a new code and try again.');
     } catch (verificationError) {
@@ -162,7 +163,7 @@ export default function FreedomSignUpForm({ basePath }) {
     setError('');
     setIsResending(true);
     try {
-      await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
+       await withAuthTimeout(signUp.prepareEmailAddressVerification({ strategy: 'email_code' }), 'The verification email took too long to send. Please try again.');
     } catch (resendError) {
       setError(clerkErrorMessage(resendError, 'We could not send another code. Please try again.'));
     } finally {
@@ -175,12 +176,12 @@ export default function FreedomSignUpForm({ basePath }) {
     if (!isLoaded) return;
     setIsSubmitting(true);
     try {
-      if (!await verifyHuman('sign-up')) return;
-      await signUp.authenticateWithRedirect({
+       if (!await withAuthTimeout(verifyHuman('sign-up'), 'Human verification timed out. Please try again.')) return;
+       await withAuthTimeout(signUp.authenticateWithRedirect({
         strategy,
         redirectUrl: dashboardUrl,
         actionCompleteRedirectUrl: callbackUrl,
-      });
+       }), 'The sign-in provider took too long to respond. Please try again.');
     } catch (oauthError) {
       setError(clerkErrorMessage(oauthError, 'We could not start that sign-up option. Please try again.'));
       setIsSubmitting(false);

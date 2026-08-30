@@ -64,7 +64,7 @@ export default function BrandUpCard() {
               {currentPrompt.prompt_text}
             </h2>
             {currentPrompt.type === 'note' ? (
-              <p className="text-sm text-[#f7f2ea]/40 italic mb-4">A note from The Brand Revivalist team.</p>
+            <p className="text-sm text-[#f7f2ea]/40 italic mb-4">A note from The Brand Revivalist® team.</p>
             ) : (
               <textarea
                 value={response}

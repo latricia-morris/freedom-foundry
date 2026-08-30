@@ -49,7 +49,7 @@ export default function LegalPage({ title, accent, effectiveDate, intro, section
             />
             <div className="leading-tight">
               <p className="font-heading text-lg tracking-[0.04em]">FREEDOM FOUNDRY</p>
-              <p className="text-[9px] uppercase tracking-[0.25em] text-[#d9c9a3]">By The Brand Revivalist</p>
+              <p className="text-[9px] uppercase tracking-[0.25em] text-[#d9c9a3]">By The Brand Revivalist®</p>
             </div>
           </Link>
           <Link to="/" className="text-sm text-[#b7b3b0] transition-colors hover:text-[#f7f5f5]">
@@ -85,7 +85,7 @@ export default function LegalPage({ title, accent, effectiveDate, intro, section
       </main>
 
       <footer className="mx-auto flex max-w-7xl flex-wrap justify-between gap-4 px-5 py-8 text-xs text-[#8d8b89] lg:px-8">
-        <span>© {new Date().getFullYear()} The Brand Revivalist</span>
+        <span>© {new Date().getFullYear()} The Brand Revivalist®</span>
         <div className="flex gap-4">
           <Link to="/privacy" className="hover:text-[#f7f5f5]">Privacy</Link>
           <Link to="/terms" className="hover:text-[#f7f5f5]">Terms</Link>

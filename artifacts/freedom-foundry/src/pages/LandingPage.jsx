@@ -13,7 +13,7 @@ export default function LandingPage() {
             <img src={`${basePath}/forge-logo.png`} alt="Freedom Foundry" className="h-10 w-10 rounded-xl object-cover shadow-[0_0_14px_rgba(217,98,44,0.4)]" />
             <div className="leading-tight">
               <p className="font-heading text-lg tracking-[0.04em]">FREEDOM FOUNDRY</p>
-              <p className="text-[9px] uppercase tracking-[0.25em] text-[#d9c9a3]">By The Brand Revivalist</p>
+              <p className="text-[9px] uppercase tracking-[0.25em] text-[#d9c9a3]">By The Brand Revivalist®</p>
             </div>
           </Link>
           <div className="flex items-center gap-4 text-sm">
@@ -59,7 +59,7 @@ export default function LandingPage() {
       </main>
 
       <footer className="mx-auto flex max-w-7xl flex-wrap justify-between gap-4 px-5 py-8 text-xs text-[#8d8b89] lg:px-8">
-        <span>© {new Date().getFullYear()} The Brand Revivalist</span>
+        <span>© {new Date().getFullYear()} The Brand Revivalist®</span>
         <div className="flex gap-4"><Link to="/privacy" className="hover:text-[#f7f5f5]">Privacy</Link><Link to="/terms" className="hover:text-[#f7f5f5]">Terms</Link></div>
       </footer>
     </div>

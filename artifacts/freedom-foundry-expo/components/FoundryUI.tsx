@@ -50,7 +50,7 @@ export function MemberShell({ children, title }: { children: React.ReactNode; ti
       <View style={[styles.header, { paddingTop: Math.max(insets.top, webInset) + 12 }]}>
         <Link href="/dashboard" style={styles.brand}>
           <LinearGradient colors={['#b3232c', '#d9622c', '#f0d9b5']} style={styles.mark}><Text style={styles.markText}>FF</Text></LinearGradient>
-          <View><Text style={styles.brandName}>FREEDOM FOUNDRY</Text><Text style={styles.brandByline}>BY THE BRAND REVIVALIST</Text></View>
+          <View><Text style={styles.brandName}>FREEDOM FOUNDRY</Text><Text style={styles.brandByline}>BY THE BRAND REVIVALIST®</Text></View>
         </Link>
         <Pressable accessibilityLabel="Open account settings" onPress={() => router.push('/settings')} style={styles.avatar}>
           <Text style={styles.avatarText}>{(user?.firstName?.[0] ?? user?.primaryEmailAddress?.emailAddress?.[0] ?? 'F').toUpperCase()}</Text>

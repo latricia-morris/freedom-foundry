@@ -61,7 +61,7 @@ export default function Login() {
         </div>
         <div className="flex flex-col leading-tight">
           <span className="font-heading text-xl font-medium text-[#f7f2ea] tracking-[0.04em]">FREEDOM FOUNDRY</span>
-          <span className="uppercase tracking-[0.25em] text-[#d9c9a3] text-[10px]">BY THE BRAND REVIVALIST</span>
+          <span className="uppercase tracking-[0.25em] text-[#d9c9a3] text-[10px]">BY THE BRAND REVIVALIST®</span>
         </div>
       </div>
 
