@@ -184,6 +184,7 @@ export default function FreedomSignUpForm({ basePath }) {
        }), 'The sign-in provider took too long to respond. Please try again.');
     } catch (oauthError) {
       setError(clerkErrorMessage(oauthError, 'We could not start that sign-up option. Please try again.'));
+    } finally {
       setIsSubmitting(false);
     }
   }

@@ -239,4 +239,22 @@ describe("reCAPTCHA verification", () => {
     expect(response.status).toBe(400);
     expect(response.body.code).toBe("CAPTCHA_FAILED");
   });
+
+  it("returns a bounded unavailable response when Google verification stalls", async () => {
+    process.env.GOOGLE_reCAPTCHA = "test-secret";
+    const fetchMock = vi.fn((_url: string, init?: RequestInit) => new Promise<Response>((_resolve, reject) => {
+      init?.signal?.addEventListener("abort", () => reject(new DOMException("Aborted", "AbortError")), { once: true });
+    }));
+    vi.stubGlobal("fetch", fetchMock);
+    const response = await request(app)
+      .post("/api/auth/captcha/verify")
+      .send({ token: "stalled-token", purpose: "sign-up" });
+
+    expect(response.status).toBe(502);
+    expect(response.body).toEqual({
+      error: "Human verification is temporarily unavailable",
+      code: "CAPTCHA_UNAVAILABLE",
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  }, 15000);
 });
