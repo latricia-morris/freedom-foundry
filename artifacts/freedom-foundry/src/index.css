@@ -318,6 +318,28 @@
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
   }
 
+  .admin-input {
+    width: 100%;
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.5rem;
+    background: hsl(var(--background) / 0.65);
+    color: hsl(var(--foreground));
+    padding: 0.65rem 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.4;
+    outline: none;
+    transition: border-color 150ms ease, box-shadow 150ms ease;
+  }
+
+  .admin-input::placeholder {
+    color: hsl(var(--muted-foreground) / 0.7);
+  }
+
+  .admin-input:focus {
+    border-color: hsl(var(--primary));
+    box-shadow: 0 0 0 2px hsl(var(--primary) / 0.14);
+  }
+
   /* Progress ring hotspot — light reflection on metal */
   .ring-hotspot {
     position: absolute;

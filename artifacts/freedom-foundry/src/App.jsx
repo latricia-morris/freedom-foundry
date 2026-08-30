@@ -45,7 +45,6 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import AdminRoute from '@/components/AdminRoute';
 import BrandUp from './pages/BrandUp';
 import BrandChecklist from './pages/BrandChecklist';
-import RequestServices from './pages/RequestServices';
 import BrandUpAdmin from './pages/BrandUpAdmin';
 import FreedomSignInForm from './components/auth/FreedomSignInForm';
 import FreedomSignUpForm from './components/auth/FreedomSignUpForm';
@@ -238,7 +237,7 @@ function AppRoutes() {
             <Route path="/brand-portal/ignite" element={<IgniteOS />} />
             <Route path="/brand-portal/brand-up" element={<BrandUp />} />
             <Route path="/brand-portal/checklist" element={<BrandChecklist />} />
-            <Route path="/brand-portal/request-services" element={<RequestServices />} />
+            <Route path="/brand-portal/request-services" element={<ServiceRequest />} />
           </Route>
           <Route element={<AdminRoute />}>
             <Route path="/admin" element={<AdminDashboard />} />

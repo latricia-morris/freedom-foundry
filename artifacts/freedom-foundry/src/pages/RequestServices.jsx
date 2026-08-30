@@ -16,13 +16,12 @@ const SERVICE_OPTIONS = [
   'Print Collateral (brochures, sell sheets, stationery)',
   'Packaging Design',
   'Trade Show & Event Materials',
-  'Social Assets and Ad Creative',
-  'Digital Design (email templates, digital ads)',
+  'Social Assets',
+  'Digital Design',
   'Custom Website Design and Development',
   'UX/UI and Information Architecture',
   'Website Copywriting',
   'SEO Copywriting',
-  'CRM Integration and Lead Capture Development',
 ];
 
 export default function RequestServices() {

@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import {
   ArrowRight,
   Check,
@@ -41,9 +42,9 @@ const CATEGORY_DEFAULTS = [
     category_key: 'design-activation',
     title: 'Design & Activation',
     shortTitle: 'Design + activation',
-    description: 'Make the work visible with the right creative assets, campaigns, and launch support.',
+    description: 'Make the work visible with the right creative assets and launch support.',
     prompt: 'When the idea is ready to move from thinking into the world.',
-    offerings: ['Campaign assets', 'Creative direction', 'Launch materials'],
+    offerings: ['Creative direction', 'Launch materials', 'Brand assets'],
     icon: Sparkles,
   },
   {
@@ -57,8 +58,8 @@ const CATEGORY_DEFAULTS = [
   },
   {
     category_key: 'saas-automation',
-    title: 'SaaS & Automation',
-    shortTitle: 'SaaS + automation',
+    title: 'Systems & Automation',
+    shortTitle: 'Systems + automation',
     description: 'Choose and connect the tools that give your team more room for meaningful work.',
     prompt: 'When repeatable work is ready to become a better system.',
     offerings: ['Tool selection', 'Workflow design', 'Automations'],
@@ -143,7 +144,7 @@ function getCategoryConfig(config) {
       offerings: asArray(match, ['offerings', 'services', 'examples']).length ? asArray(match, ['offerings', 'services', 'examples']) : fallback.offerings,
       pricing_text: match?.pricing_text || '',
     };
-  });
+  }).filter((category) => category.visible !== false);
 }
 
 function getRequestList(raw) {
@@ -265,6 +266,7 @@ function CategorySection({ category, expanded, onToggle, onStart }) {
 }
 
 export default function ServiceHub() {
+  const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
   const [config, setConfig] = useState({});
@@ -281,6 +283,21 @@ export default function ServiceHub() {
   const [submitState, setSubmitState] = useState('idle');
   const [successLabel, setSuccessLabel] = useState('');
   const lastPayload = useRef(null);
+  const initialCategory = searchParams.get('category') || '';
+  const checklistTasks = searchParams.get('tasks') || '';
+
+  useEffect(() => {
+    if (initialCategory || checklistTasks) {
+      setForm((previous) => ({
+        ...previous,
+        category_key: initialCategory || previous.category_key,
+        details: checklistTasks
+          ? (previous.details || `Selected checklist items:\n${checklistTasks}`)
+          : previous.details,
+      }));
+      if (initialCategory) setExpandedCategory(initialCategory);
+    }
+  }, [initialCategory, checklistTasks]);
 
   const loadWorkspace = async () => {
     setLoading(true);

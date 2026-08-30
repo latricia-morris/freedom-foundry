@@ -36,13 +36,17 @@ router.post("/auth/captcha/verify", async (req, res): Promise<void> => {
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), CAPTCHA_VERIFY_TIMEOUT_MS);
-    const verification = await fetch("https://www.google.com/recaptcha/api/siteverify", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({ secret, response: token }),
-      signal: controller.signal,
-    });
-    clearTimeout(timeout);
+    let verification: Response;
+    try {
+      verification = await fetch("https://www.google.com/recaptcha/api/siteverify", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({ secret, response: token }),
+        signal: controller.signal,
+      });
+    } finally {
+      clearTimeout(timeout);
+    }
 
     if (!verification.ok) {
       req.log?.error({ status: verification.status, purpose }, "reCAPTCHA verification service failed");
