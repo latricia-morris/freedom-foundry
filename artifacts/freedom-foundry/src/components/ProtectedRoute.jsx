@@ -1,5 +1,7 @@
-import { Outlet, Navigate } from 'react-router-dom';
+import { Outlet, Navigate, useLocation } from 'react-router-dom';
 import { useUser } from '@clerk/react';
+import { useQuery } from '@tanstack/react-query';
+import apiClient from '@/api/client';
 
 const Spinner = () => (
   <div className="fixed inset-0 flex items-center justify-center bg-[#0a0a12]">
@@ -7,10 +9,28 @@ const Spinner = () => (
   </div>
 );
 
-export default function ProtectedRoute({ unauthenticatedElement }) {
+export default function ProtectedRoute({ unauthenticatedElement, requireMember = false }) {
   const { isLoaded, isSignedIn } = useUser();
+  const location = useLocation();
 
-  if (!isLoaded) return <Spinner />;
-  if (!isSignedIn) return unauthenticatedElement ?? <Navigate to="/sign-in" replace />;
+  const { data: user, isLoading: isUserLoading } = useQuery({
+    queryKey: ['auth-me'],
+    queryFn: () => apiClient.auth.me(),
+    enabled: !!isSignedIn,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  if (!isLoaded || (isSignedIn && isUserLoading)) return <Spinner />;
+
+  if (!isSignedIn) {
+    const returnUrl = encodeURIComponent(location.pathname + location.search);
+    return unauthenticatedElement ?? <Navigate to={`/sign-in?return_url=${returnUrl}`} replace />;
+  }
+
+  // Redirect referral-only users away from member pages
+  if (requireMember && user?.referral_only) {
+    return <Navigate to="/referral-partner-program" replace />;
+  }
+
   return <Outlet />;
 }

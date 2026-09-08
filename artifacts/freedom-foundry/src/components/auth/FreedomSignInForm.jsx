@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useSignIn } from '@clerk/react';
 import { Apple, KeyRound, LoaderCircle, LockKeyhole, Mail } from 'lucide-react';
 import apiClient from '@/api/client';
 import RecaptchaWidget from './RecaptchaWidget';
 import { withAuthTimeout } from './authTimeout';
+import { safeReturnTo } from '@/lib/authReturnTo';
 
 function clerkErrorMessage(error, fallback) {
   return error?.longMessage || error?.errors?.[0]?.longMessage || error?.message || fallback;
@@ -45,10 +46,14 @@ export default function FreedomSignInForm({ basePath }) {
   const [captchaResetToken, setCaptchaResetToken] = useState(0);
   const [isVerifyingCaptcha, setIsVerifyingCaptcha] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const returnUrlParam = searchParams.get('return_url');
+  const returnUrl = safeReturnTo('return_url', `${basePath}/dashboard`);
 
   const isBusy = isSubmitting || isVerifyingCaptcha;
-  const dashboardUrl = `${basePath}/dashboard`;
-  const callbackUrl = `${basePath}/sign-in/sso-callback`;
+  const dashboardUrl = returnUrl;
+  const callbackUrl = `${basePath}/sign-in/sso-callback?return_url=${encodeURIComponent(returnUrl)}`;
 
   function resetForm() {
     setMode('sign-in');
@@ -298,16 +303,22 @@ export default function FreedomSignInForm({ basePath }) {
           </span>
         </label>
 
-        <label className="block">
-          <span className="mb-2 flex items-center justify-between text-[11px] uppercase tracking-[0.16em] text-white/55">
-            Password
-            <button type="button" onClick={() => { setMode('recovery'); setError(''); }} className="normal-case tracking-normal text-[#f0d9b5] transition hover:text-white">Forgot password?</button>
-          </span>
+        <div className="block">
+          <div className="mb-2 flex items-center justify-between text-[11px] uppercase tracking-[0.16em] text-white/55">
+            <label htmlFor="freedom-sign-in-password">Password</label>
+            <button
+              type="button"
+              onClick={() => { setMode('recovery'); setError(''); }}
+              className="normal-case tracking-normal text-[#f0d9b5] transition hover:text-white"
+            >
+              Forgot password?
+            </button>
+          </div>
           <span className="relative block">
             <LockKeyhole className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#d9c9a3]/70" />
-            <input className={inputClassName} type="password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Enter your password" />
+            <input id="freedom-sign-in-password" className={inputClassName} type="password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Enter your password" />
           </span>
-        </label>
+        </div>
 
         {error && <p role="alert" className="rounded-xl border border-red-500/25 bg-red-950/45 px-4 py-3 text-sm text-red-100">{error}</p>}
 
@@ -319,7 +330,7 @@ export default function FreedomSignInForm({ basePath }) {
 
       <p className="mt-7 text-center text-sm text-white/55">
         New to Freedom Foundry?{' '}
-        <Link to={`${basePath}/sign-up`} className="font-medium text-[#f0d9b5] transition hover:text-white">Create your account</Link>
+        <Link to={`${basePath}/sign-up${returnUrlParam ? `?return_url=${encodeURIComponent(returnUrl)}` : ''}`} className="font-medium text-[#f0d9b5] transition hover:text-white">Create your account</Link>
       </p>
     </section>
   );

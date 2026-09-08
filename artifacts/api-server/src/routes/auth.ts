@@ -126,6 +126,14 @@ router.get("/auth/me", authMiddleware, async (req, res): Promise<void> => {
           firstName: profile?.first_name ?? req.user.firstName,
           lastName: profile?.last_name ?? req.user.lastName,
           role: req.user.role,
+          referral_only: req.user.referralOnly ?? false,
+          referral_access: Boolean(req.user.referralPartnerId),
+          referral_partner: {
+            has_access: Boolean(req.user.referralPartnerId) && req.user.referralPartnerStatus === "active",
+            partner_id: req.user.referralPartnerId ?? null,
+            status: req.user.referralPartnerStatus ?? null,
+            referral_only: req.user.referralOnly ?? false,
+          },
         }
       : { id: req.userId },
     profile: profile ?? null,
@@ -181,6 +189,14 @@ router.patch("/auth/me", authMiddleware, async (req, res): Promise<void> => {
       firstName: profile?.first_name ?? req.user?.firstName ?? null,
       lastName: profile?.last_name ?? req.user?.lastName ?? null,
       role: req.user?.role ?? "user",
+      referral_only: req.user?.referralOnly ?? false,
+      referral_access: Boolean(req.user?.referralPartnerId),
+      referral_partner: {
+        has_access: Boolean(req.user?.referralPartnerId),
+        partner_id: req.user?.referralPartnerId ?? null,
+        status: req.user?.referralPartnerStatus ?? null,
+        referral_only: req.user?.referralOnly ?? false,
+      },
     },
     profile,
   });

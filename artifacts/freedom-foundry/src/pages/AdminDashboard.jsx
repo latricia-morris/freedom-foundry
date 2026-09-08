@@ -192,6 +192,31 @@ export default function AdminDashboard() {
             <span className="text-xs uppercase tracking-widest text-primary/80">Configuration + requests</span>
           </div>
         </Link>
+
+        {/* Navigation Card: Referral Partners */}
+        <Link
+          to="/admin/referral-partners"
+          className="dashboard-card p-6 flex flex-col justify-between group transition-all duration-300 hover:-translate-y-1 hover:ember-glow-strong relative overflow-hidden"
+        >
+          <div className="absolute -left-12 -bottom-12 w-48 h-48 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-colors" />
+          <div className="relative z-10">
+            <div className="flex items-center justify-between mb-4">
+              <div className="icon-tile">
+                <Users className="w-6 h-6 text-copper" strokeWidth={1.5} />
+              </div>
+              <ArrowRight className="w-5 h-5 text-muted-foreground opacity-50 group-hover:opacity-100 group-hover:text-primary transition-all transform group-hover:translate-x-1" strokeWidth={1.5} />
+            </div>
+            <h2 className="font-heading text-2xl text-foreground mb-2">Referral <span className="italic text-muted-foreground">Partners</span></h2>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Manage invitation-only referral partners, review submitted opportunities, and track payouts.
+            </p>
+          </div>
+          <div className="mt-6 flex items-center border-t border-border pt-4 relative z-10">
+            <span className="text-xs uppercase tracking-widest text-primary/80 flex items-center gap-2">
+              <Activity className="w-3.5 h-3.5" /> Partner Submissions
+            </span>
+          </div>
+        </Link>
       </div>
 
       {/* Recent Members Section */}

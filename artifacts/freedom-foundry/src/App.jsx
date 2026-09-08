@@ -46,6 +46,8 @@ import AdminRoute from '@/components/AdminRoute';
 import BrandUp from './pages/BrandUp';
 import BrandChecklist from './pages/BrandChecklist';
 import BrandUpAdmin from './pages/BrandUpAdmin';
+import ReferralProgramPage from './pages/ReferralProgramPage';
+import AdminReferralPartners from './pages/AdminReferralPartners';
 import FreedomSignInForm from './components/auth/FreedomSignInForm';
 import FreedomSignUpForm from './components/auth/FreedomSignUpForm';
 
@@ -212,8 +214,10 @@ function AppRoutes() {
         element={isSignedIn ? <Navigate to="/dashboard" replace /> : <LandingPage />}
       />
 
+      <Route path="/referral-partner-program" element={<ReferralProgramPage />} />
+
       {/* Protected routes */}
-      <Route element={<ProtectedRoute />}>
+      <Route element={<ProtectedRoute requireMember={true} />}>
         <Route element={<Layout />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/vault" element={<Vault />} />
@@ -248,6 +252,7 @@ function AppRoutes() {
             <Route path="/admin/client-setups" element={<ClientMigrations />} />
             <Route path="/admin/client-setups/:id" element={<ClientSetupWorkspace />} />
             <Route path="/admin/brand-up" element={<BrandUpAdmin />} />
+            <Route path="/admin/referral-partners" element={<AdminReferralPartners />} />
           </Route>
         </Route>
       </Route>

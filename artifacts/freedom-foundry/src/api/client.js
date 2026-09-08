@@ -29,6 +29,7 @@ export const auth = {
     const response = await apiFetch('/auth/me');
     const user = response?.user ?? response;
     const profile = response?.profile;
+    const referralPartner = profile?.referral_partner || user?.referral_partner;
     // Keep the imported app's snake_case user surface while Clerk's server
     // bridge returns a minimal modern profile.
     return {
@@ -37,6 +38,8 @@ export const auth = {
       last_name: user?.last_name ?? profile?.last_name ?? user?.lastName ?? '',
       phone: user?.phone ?? profile?.phone ?? '',
       headshot_image_url: user?.headshot_image_url ?? profile?.headshot_url ?? '',
+      referral_only: referralPartner?.referral_only ?? profile?.referral_only ?? user?.referral_only ?? false,
+      referral_partner: referralPartner,
     };
   },
   // These are no-ops / compatibility stubs. Clerk handles registration & login.
@@ -68,6 +71,12 @@ export const functions = {
 };
 
 export const admin = {
+  async listReferralPartners() { return apiFetch('/admin/referrals/partners'); },
+  async inviteReferralPartner(data) { return apiFetch('/admin/referrals/partners/invite', { method: 'POST', body: JSON.stringify(data) }); },
+  async updateReferralPartner(id, data) { return apiFetch(`/admin/referrals/partners/${encodeURIComponent(id)}`, { method: 'PATCH', body: JSON.stringify(data) }); },
+  async resendReferralInvitation(id) { return apiFetch(`/admin/referrals/partners/${encodeURIComponent(id)}/resend-invitation`, { method: 'POST' }); },
+  async listReferralSubmissions() { return apiFetch('/admin/referrals/submissions'); },
+  async updateReferralSubmission(id, data) { return apiFetch(`/admin/referrals/submissions/${encodeURIComponent(id)}`, { method: 'PATCH', body: JSON.stringify(data) }); },
   async inviteUser(email) {
     return apiFetch('/admin/invitations', {
       method: 'POST',
@@ -161,6 +170,12 @@ export const services = {
   async createRequest(data) { return apiFetch('/service-requests', { method: 'POST', body: JSON.stringify(data) }); },
 };
 
+export const referrals = {
+  async getAccess() { return apiFetch('/referrals/access'); },
+  async listSubmissions() { return apiFetch('/referrals/submissions'); },
+  async createSubmission(data) { return apiFetch('/referrals/submissions', { method: 'POST', body: JSON.stringify(data) }); },
+};
+
 // ─── Generic entity factory ───────────────────────────────────────────────────
 function entity(basePath) {
   return {
@@ -224,7 +239,7 @@ export const integrations = {
   },
 };
 
-const apiClient = { auth, admin, support, services, entities, integrations };
+const apiClient = { auth, admin, support, services, referrals, entities, integrations };
 export default apiClient;
 
 // Legacy compat

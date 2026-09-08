@@ -1,10 +1,11 @@
 import { useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useSignUp } from '@clerk/react';
 import { Apple, LoaderCircle, LockKeyhole, Mail, UserRound } from 'lucide-react';
 import apiClient from '@/api/client';
 import RecaptchaWidget from './RecaptchaWidget';
 import { withAuthTimeout } from './authTimeout';
+import { safeReturnTo } from '@/lib/authReturnTo';
 
 function clerkErrorMessage(error, fallback) {
   return error?.longMessage || error?.errors?.[0]?.longMessage || error?.message || fallback;
@@ -48,8 +49,13 @@ export default function FreedomSignUpForm({ basePath }) {
   const [isResending, setIsResending] = useState(false);
   const captchaErrorRef = useRef('');
 
-  const dashboardUrl = `${basePath}/dashboard`;
-  const callbackUrl = `${basePath}/sign-up/sso-callback`;
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const returnUrlParam = searchParams.get('return_url');
+  const returnUrl = safeReturnTo('return_url', `${basePath}/dashboard`);
+
+  const dashboardUrl = returnUrl;
+  const callbackUrl = `${basePath}/sign-up/sso-callback?return_url=${encodeURIComponent(returnUrl)}`;
 
   function handleCaptchaChange(token) {
     setCaptchaToken(token || '');
@@ -223,7 +229,7 @@ export default function FreedomSignUpForm({ basePath }) {
         <button type="button" onClick={resendCode} disabled={isResending} className="mt-5 w-full text-sm text-[#f0d9b5] transition hover:text-white disabled:opacity-60">
           {isResending ? 'Sending another code…' : 'Resend code'}
         </button>
-        <Link to={`${basePath}/sign-in`} className="mt-4 block text-center text-sm text-white/55 transition hover:text-white">← Back to sign in</Link>
+        <Link to={`${basePath}/sign-in${returnUrlParam ? `?return_url=${encodeURIComponent(returnUrl)}` : ''}`} className="mt-4 block text-center text-sm text-white/55 transition hover:text-white">← Back to sign in</Link>
       </section>
     );
   }
@@ -306,7 +312,7 @@ export default function FreedomSignUpForm({ basePath }) {
 
       <p className="mt-7 text-center text-sm text-white/55">
         Already have an account?{' '}
-        <Link to={`${basePath}/sign-in`} className="font-medium text-[#f0d9b5] transition hover:text-white">Sign in</Link>
+        <Link to={`${basePath}/sign-in${returnUrlParam ? `?return_url=${encodeURIComponent(returnUrl)}` : ''}`} className="font-medium text-[#f0d9b5] transition hover:text-white">Sign in</Link>
       </p>
     </section>
   );

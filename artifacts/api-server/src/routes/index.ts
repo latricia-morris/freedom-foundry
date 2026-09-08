@@ -6,6 +6,7 @@ import brandRouter from "./brand";
 import contentRouter from "./content";
 import clientSetupsRouter from "./client-setups";
 import supportRouter from "./support";
+import referralPartnerRouter from "./referral-partner";
 
 const router: IRouter = Router();
 
@@ -16,5 +17,6 @@ router.use(brandRouter);
 router.use(contentRouter);
 router.use(clientSetupsRouter);
 router.use(supportRouter);
+router.use(referralPartnerRouter);
 
 export default router;

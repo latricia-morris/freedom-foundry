@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { clerkClient, getAuth } from "@clerk/express";
+import { db, referralPartnersTable } from "@workspace/db";
+import { eq } from "drizzle-orm";
 
 declare global {
   namespace Express {
@@ -11,6 +13,9 @@ declare global {
         firstName: string | null;
         lastName: string | null;
         role: string;
+        referralPartnerId?: number;
+        referralPartnerStatus?: string;
+        referralOnly?: boolean;
       };
     }
   }
@@ -52,6 +57,31 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
       // Other roles can be assigned through Clerk public metadata.
       role: resolveAppRole(email, clerkUser.publicMetadata),
     };
+
+    // Referral-only access is tied to the verified Clerk email, not client input.
+    // Existing members are explicitly stored with referral_only=false when granted
+    // partner access, so their normal portal access remains unchanged.
+    if (email) {
+      const [partner] = await db.select({
+        id: referralPartnersTable.id,
+        status: referralPartnersTable.status,
+        referralOnly: referralPartnersTable.referral_only,
+      }).from(referralPartnersTable)
+        .where(eq(referralPartnersTable.email, email))
+        .limit(1);
+      if (partner) {
+        req.user.referralPartnerId = partner.id;
+        req.user.referralPartnerStatus = partner.status;
+        req.user.referralOnly = partner.referralOnly;
+      }
+    }
+
+    const path = new URL(req.originalUrl, "http://localhost").pathname.replace(/^\/api/, "");
+    const referralOnlyAllowed = path === "/auth/me" || path.startsWith("/referral-partner") || path.startsWith("/referrals");
+    if (req.user.role !== "admin" && req.user.referralOnly && !referralOnlyAllowed) {
+      res.status(403).json({ error: "This account only has referral partner access." });
+      return;
+    }
     next();
   } catch (error) {
     next(error);
