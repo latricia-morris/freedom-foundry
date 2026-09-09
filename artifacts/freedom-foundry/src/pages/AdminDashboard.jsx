@@ -172,6 +172,7 @@ export default function AdminDashboard() {
           </div>
         </Link>
 
+        {/* Navigation Card: Services */}
         <Link
           to="/admin/services"
           className="dashboard-card p-6 flex flex-col justify-between group transition-all duration-300 hover:-translate-y-1 hover:ember-glow-strong"
@@ -190,6 +191,28 @@ export default function AdminDashboard() {
           </div>
           <div className="mt-6 flex items-center border-t border-border pt-4">
             <span className="text-xs uppercase tracking-widest text-primary/80">Configuration + requests</span>
+          </div>
+        </Link>
+
+        {/* Navigation Card: Quiz Leads */}
+        <Link
+          to="/admin/quiz-leads"
+          className="dashboard-card p-6 flex flex-col justify-between group transition-all duration-300 hover:-translate-y-1 hover:ember-glow-strong"
+        >
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <div className="icon-tile">
+                <Activity className="w-6 h-6 text-copper" strokeWidth={1.5} />
+              </div>
+              <ArrowRight className="w-5 h-5 text-muted-foreground opacity-50 group-hover:opacity-100 group-hover:text-primary transition-all transform group-hover:translate-x-1" strokeWidth={1.5} />
+            </div>
+            <h2 className="font-heading text-2xl text-foreground">Quiz <span className="italic text-muted-foreground">Leads</span></h2>
+            <p className="text-sm text-muted-foreground leading-relaxed mt-2">
+              Review brand persona quiz completions, lead captures, and claimed accounts.
+            </p>
+          </div>
+          <div className="mt-6 flex items-center border-t border-border pt-4">
+            <span className="text-xs uppercase tracking-widest text-primary/80">Diagnostic Results</span>
           </div>
         </Link>
 

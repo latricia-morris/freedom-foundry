@@ -63,13 +63,14 @@ export default function Vault() {
             </div>
           ))}
         </div>
-      ) : items.length === 0 ? (
-        <div className="forged-border rounded-2xl bg-card p-12 text-center">
-          <h3 className="font-heading text-xl text-foreground mb-2">The Vault is being stocked</h3>
-          <p className="text-sm text-muted-foreground">Check back soon for premium brand resources.</p>
-        </div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {items.length === 0 && (
+            <div className="forged-border rounded-2xl bg-card p-8 text-center col-span-full">
+              <h3 className="font-heading text-xl text-foreground mb-2">More resources are on the way</h3>
+              <p className="text-sm text-muted-foreground">The Brand Persona Quiz is available now.</p>
+            </div>
+          )}
           {sortedItems.map((item) => {
             const isBpm = item === bpmItem;
             const to = isBpm ? '/workbooks' : `/vault/${item.id}`;
@@ -103,6 +104,23 @@ export default function Vault() {
               </Link>
             );
           })}
+
+          {/* Dedicated built-in card for Retake Quiz */}
+          <Link to="/brand-persona-quiz" className="vault-card group border border-primary/20">
+            <div className="vault-card__image-wrapper bg-gradient-to-br from-[#3a2119] to-[#120f0d]">
+               <div className="vault-card__image flex items-center justify-center">
+                 <span className="font-heading text-5xl molten-text opacity-50">Q</span>
+               </div>
+            </div>
+            <div className="vault-card__body">
+               <span className="text-[10px] uppercase tracking-widest text-[#d9622c]">Diagnostic</span>
+               <h3 className="font-heading text-base text-foreground mt-1 mb-1 line-clamp-2">Brand Persona Quiz</h3>
+               <p className="text-xs text-muted-foreground line-clamp-2">Retake the diagnostic to recalibrate your primary and secondary archetypes.</p>
+               <div className="flex items-center justify-between mt-3">
+                 <span className="text-xs text-primary/70">Included</span>
+               </div>
+            </div>
+          </Link>
         </div>
       )}
     </div>

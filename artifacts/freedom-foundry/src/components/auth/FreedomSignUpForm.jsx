@@ -35,10 +35,16 @@ const inputClassName = [
 
 export default function FreedomSignUpForm({ basePath }) {
   const { isLoaded, signUp, setActive } = useSignUp();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const returnUrlParam = searchParams.get('return_url');
+  const returnUrl = safeReturnTo('return_url', `${basePath}/dashboard`);
+  const emailParam = searchParams.get('email') || '';
+
   const [step, setStep] = useState('details');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(emailParam);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [code, setCode] = useState('');
@@ -48,11 +54,6 @@ export default function FreedomSignUpForm({ basePath }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isResending, setIsResending] = useState(false);
   const captchaErrorRef = useRef('');
-
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const returnUrlParam = searchParams.get('return_url');
-  const returnUrl = safeReturnTo('return_url', `${basePath}/dashboard`);
 
   const dashboardUrl = returnUrl;
   const callbackUrl = `${basePath}/sign-up/sso-callback?return_url=${encodeURIComponent(returnUrl)}`;
@@ -229,7 +230,10 @@ export default function FreedomSignUpForm({ basePath }) {
         <button type="button" onClick={resendCode} disabled={isResending} className="mt-5 w-full text-sm text-[#f0d9b5] transition hover:text-white disabled:opacity-60">
           {isResending ? 'Sending another code…' : 'Resend code'}
         </button>
-        <Link to={`${basePath}/sign-in${returnUrlParam ? `?return_url=${encodeURIComponent(returnUrl)}` : ''}`} className="mt-4 block text-center text-sm text-white/55 transition hover:text-white">← Back to sign in</Link>
+        <Link to={`${basePath}/sign-in?${new URLSearchParams({
+          ...(returnUrlParam ? { return_url: returnUrl } : {}),
+          ...(email ? { email } : {}),
+        }).toString()}`} className="mt-4 block text-center text-sm text-white/55 transition hover:text-white">← Back to sign in</Link>
       </section>
     );
   }
@@ -312,7 +316,10 @@ export default function FreedomSignUpForm({ basePath }) {
 
       <p className="mt-7 text-center text-sm text-white/55">
         Already have an account?{' '}
-        <Link to={`${basePath}/sign-in${returnUrlParam ? `?return_url=${encodeURIComponent(returnUrl)}` : ''}`} className="font-medium text-[#f0d9b5] transition hover:text-white">Sign in</Link>
+        <Link to={`${basePath}/sign-in?${new URLSearchParams({
+          ...(returnUrlParam ? { return_url: returnUrl } : {}),
+          ...(email ? { email } : {}),
+        }).toString()}`} className="font-medium text-[#f0d9b5] transition hover:text-white">Sign in</Link>
       </p>
     </section>
   );

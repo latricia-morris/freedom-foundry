@@ -46,7 +46,10 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
     }
 
     const clerkUser = await clerkClient.users.getUser(userId);
-    const email = clerkUser.primaryEmailAddress?.emailAddress?.toLowerCase() ?? null;
+    const primaryEmail = clerkUser.primaryEmailAddress;
+    const email = primaryEmail?.verification?.status === "verified"
+      ? primaryEmail.emailAddress.trim().toLowerCase()
+      : null;
     req.userId = userId;
     req.user = {
       id: clerkUser.id,
@@ -77,7 +80,8 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
     }
 
     const path = new URL(req.originalUrl, "http://localhost").pathname.replace(/^\/api/, "");
-    const referralOnlyAllowed = path === "/auth/me" || path.startsWith("/referral-partner") || path.startsWith("/referrals");
+    const referralOnlyAllowed = path === "/auth/me" || path.startsWith("/referral-partner") ||
+      path.startsWith("/referrals") || path.startsWith("/persona-quiz");
     if (req.user.role !== "admin" && req.user.referralOnly && !referralOnlyAllowed) {
       res.status(403).json({ error: "This account only has referral partner access." });
       return;

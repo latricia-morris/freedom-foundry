@@ -126,6 +126,26 @@ export const serviceRequestSubmissionsTable = pgTable("service_request_submissio
   updated_at: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),
 });
 
+/** Server-owned brand persona quiz submissions. Pending rows retain answers only
+ * until claimed; token material is stored as a hash, never in plaintext. */
+export const personaQuizAttemptsTable = pgTable("persona_quiz_attempts", {
+  id: serial("id").primaryKey(),
+  email: text("email").notNull(),
+  marketing_consent: boolean("marketing_consent").notNull().default(false),
+  answers: jsonb("answers").notNull(),
+  scores: jsonb("scores").notNull(),
+  primary_archetype: text("primary_archetype").notNull(),
+  primary_score: integer("primary_score").notNull(),
+  secondary_archetype: text("secondary_archetype").notNull(),
+  secondary_score: integer("secondary_score").notNull(),
+  token_hash: text("token_hash").notNull().unique(),
+  status: text("status").notNull().default("pending"),
+  user_id: text("user_id"),
+  expires_at: timestamp("expires_at", { withTimezone: true }).notNull(),
+  claimed_at: timestamp("claimed_at", { withTimezone: true }),
+  created_at: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
 export const insertVaultItemSchema = createInsertSchema(vaultItemsTable).omit({ id: true, created_at: true, updated_at: true });
 export const insertCourseModuleSchema = createInsertSchema(courseModulesTable).omit({ id: true, created_at: true, updated_at: true });
 export const insertCourseLessonSchema = createInsertSchema(courseLessonsTable).omit({ id: true, created_at: true, updated_at: true });
@@ -147,3 +167,4 @@ export type ChecklistTask = typeof checklistTasksTable.$inferSelect;
 export type BrandUpPrompt = typeof brandUpPromptsTable.$inferSelect;
 export type BrandUpEntry = typeof brandUpEntriesTable.$inferSelect;
 export type ServiceRequestSubmission = typeof serviceRequestSubmissionsTable.$inferSelect;
+export type PersonaQuizAttempt = typeof personaQuizAttemptsTable.$inferSelect;

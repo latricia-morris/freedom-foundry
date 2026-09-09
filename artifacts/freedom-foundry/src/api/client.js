@@ -149,6 +149,9 @@ export const admin = {
   async updateServiceRequest(id, data) {
     return apiFetch(`/admin/service-requests/${encodeURIComponent(id)}`, { method: 'PATCH', body: JSON.stringify(data) });
   },
+  async listQuizAttempts() {
+    return apiFetch('/admin/persona-quiz/attempts');
+  },
 };
 
 export const support = {
@@ -174,6 +177,14 @@ export const referrals = {
   async getAccess() { return apiFetch('/referrals/access'); },
   async listSubmissions() { return apiFetch('/referrals/submissions'); },
   async createSubmission(data) { return apiFetch('/referrals/submissions', { method: 'POST', body: JSON.stringify(data) }); },
+};
+
+export const quiz = {
+  async getDefinition() { return apiFetch('/persona-quiz/definition'); },
+  async submitAttempt(data) { return apiFetch('/persona-quiz/complete', { method: 'POST', body: JSON.stringify(data) }); },
+  async claimAttempt(token) { return apiFetch('/persona-quiz/claim', { method: 'POST', body: JSON.stringify({ token }) }); },
+  async getHistory() { return apiFetch('/persona-quiz/history'); },
+  async getLatest() { return apiFetch('/persona-quiz/latest'); },
 };
 
 // ─── Generic entity factory ───────────────────────────────────────────────────
@@ -239,7 +250,7 @@ export const integrations = {
   },
 };
 
-const apiClient = { auth, admin, support, services, referrals, entities, integrations };
+const apiClient = { auth, admin, support, services, referrals, entities, integrations, quiz };
 export default apiClient;
 
 // Legacy compat

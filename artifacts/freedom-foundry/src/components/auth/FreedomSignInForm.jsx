@@ -35,9 +35,15 @@ const inputClassName = [
 
 export default function FreedomSignInForm({ basePath }) {
   const { signIn } = useSignIn();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const returnUrlParam = searchParams.get('return_url');
+  const returnUrl = safeReturnTo('return_url', `${basePath}/dashboard`);
+  const emailParam = searchParams.get('email') || '';
+
   const [mode, setMode] = useState('sign-in');
   const [resetStep, setResetStep] = useState('email');
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(emailParam);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [code, setCode] = useState('');
@@ -46,10 +52,6 @@ export default function FreedomSignInForm({ basePath }) {
   const [captchaResetToken, setCaptchaResetToken] = useState(0);
   const [isVerifyingCaptcha, setIsVerifyingCaptcha] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const returnUrlParam = searchParams.get('return_url');
-  const returnUrl = safeReturnTo('return_url', `${basePath}/dashboard`);
 
   const isBusy = isSubmitting || isVerifyingCaptcha;
   const dashboardUrl = returnUrl;
@@ -330,7 +332,10 @@ export default function FreedomSignInForm({ basePath }) {
 
       <p className="mt-7 text-center text-sm text-white/55">
         New to Freedom Foundry?{' '}
-        <Link to={`${basePath}/sign-up${returnUrlParam ? `?return_url=${encodeURIComponent(returnUrl)}` : ''}`} className="font-medium text-[#f0d9b5] transition hover:text-white">Create your account</Link>
+        <Link to={`${basePath}/sign-up?${new URLSearchParams({
+          ...(returnUrlParam ? { return_url: returnUrl } : {}),
+          ...(email ? { email } : {}),
+        }).toString()}`} className="font-medium text-[#f0d9b5] transition hover:text-white">Create your account</Link>
       </p>
     </section>
   );

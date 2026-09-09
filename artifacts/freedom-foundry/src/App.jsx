@@ -48,6 +48,9 @@ import BrandChecklist from './pages/BrandChecklist';
 import BrandUpAdmin from './pages/BrandUpAdmin';
 import ReferralProgramPage from './pages/ReferralProgramPage';
 import AdminReferralPartners from './pages/AdminReferralPartners';
+import BrandPersonaQuiz from './pages/BrandPersonaQuiz';
+import BrandPersonaQuizResults from './pages/BrandPersonaQuizResults';
+import AdminQuizLeads from './pages/AdminQuizLeads';
 import FreedomSignInForm from './components/auth/FreedomSignInForm';
 import FreedomSignUpForm from './components/auth/FreedomSignUpForm';
 
@@ -207,6 +210,8 @@ function AppRoutes() {
       <Route path="/member/:brandSlug/:profileType" element={<SharePage />} />
       <Route path="/terms" element={<Terms />} />
       <Route path="/privacy" element={<Privacy />} />
+      <Route path="/brand-persona-quiz" element={<BrandPersonaQuiz />} />
+      <Route path="/brand-persona-quiz/results" element={<BrandPersonaQuizResults />} />
 
       {/* Root — redirect signed-in users to dashboard */}
       <Route
@@ -253,6 +258,7 @@ function AppRoutes() {
             <Route path="/admin/client-setups/:id" element={<ClientSetupWorkspace />} />
             <Route path="/admin/brand-up" element={<BrandUpAdmin />} />
             <Route path="/admin/referral-partners" element={<AdminReferralPartners />} />
+            <Route path="/admin/quiz-leads" element={<AdminQuizLeads />} />
           </Route>
         </Route>
       </Route>

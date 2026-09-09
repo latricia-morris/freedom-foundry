@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useMembership } from '@/lib/useMembership';
-import { Lock } from 'lucide-react';
+import { Lock, Sparkles } from 'lucide-react';
+import apiClient from '@/api/client';
 
 const sections = [
 { name: 'Big Picture', path: '/brand-portal/big-picture', desc: 'Your vision, mission, and brand direction.', open: true },
@@ -16,6 +17,13 @@ const sections = [
 
 export default function BrandPortal() {
   const { isClient, loading } = useMembership();
+  const [latestPersona, setLatestPersona] = useState(null);
+
+  useEffect(() => {
+    apiClient.quiz.getLatest()
+      .then(res => setLatestPersona(res))
+      .catch(() => setLatestPersona(null));
+  }, []);
 
   return (
     <div className="max-w-2xl animate-fade-in">
@@ -24,9 +32,29 @@ export default function BrandPortal() {
         <h1 className="font-heading text-3xl lg:text-4xl font-light text-[#f7f2ea] mt-1 mb-2">
           Your Brand <span className="molten-text italic">Space</span>
         </h1>
-        <p className="text-sm text-[#f7f2ea]/60 leading-relaxed max-w-md">Everything needed to build, communicate, and protect your brand, all in one place.
-
+        <p className="text-sm text-[#f7f2ea]/60 leading-relaxed max-w-md mb-6">
+          Everything needed to build, communicate, and protect your brand, all in one place.
         </p>
+
+        {latestPersona && (
+          <div className="p-5 rounded-2xl border border-[#d9622c]/20 bg-gradient-to-r from-[#d9622c]/10 to-transparent flex items-start gap-4">
+            <div className="w-10 h-10 rounded-full bg-[#d9622c]/20 flex items-center justify-center shrink-0 mt-1">
+               <Sparkles className="w-5 h-5 text-[#f0d9b5]" />
+            </div>
+            <div>
+              <p className="text-[10px] uppercase tracking-widest text-[#d9622c] mb-1">Active Archetype</p>
+              <h3 className="font-heading text-xl text-white mb-1">
+                 The {latestPersona.primaryArchetype}
+              </h3>
+              <p className="text-xs text-white/60 mb-3">
+                Secondary: {latestPersona.secondaryArchetype} · Completed {new Date(latestPersona.createdAt).toLocaleDateString()}
+              </p>
+              <Link to="/brand-persona-quiz/results" className="text-xs text-[#f0d9b5] hover:text-white transition underline underline-offset-4">
+                View Full Diagnostic
+              </Link>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="space-y-3">
