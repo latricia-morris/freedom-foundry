@@ -22,6 +22,7 @@ declare global {
 }
 
 const leadAdminEmail = process.env.LEAD_ADMIN_EMAIL?.trim().toLowerCase();
+export const SUPER_ADMIN_ROLE = "super_admin";
 
 export function resolveAppRole(email: string | null, publicMetadata: unknown): string {
   const metadataRole = publicMetadata
@@ -31,6 +32,60 @@ export function resolveAppRole(email: string | null, publicMetadata: unknown): s
     : "user";
 
   return leadAdminEmail && email === leadAdminEmail ? "admin" : metadataRole;
+}
+
+type ClerkUserRoleSource = {
+  primaryEmailAddress?: {
+    emailAddress?: string | null;
+    verification?: { status?: string | null } | null;
+  } | null;
+  publicMetadata?: unknown;
+};
+
+export function isSuperAdminRole(role: unknown): boolean {
+  return role === SUPER_ADMIN_ROLE;
+}
+
+/**
+ * Resolve the role of a user returned by Clerk. This deliberately uses only
+ * Clerk-owned fields; corporate account member roles are database data and
+ * must never grant agency administrator access.
+ */
+export function resolveClerkUserRole(user: ClerkUserRoleSource): string {
+  const primaryEmail = user.primaryEmailAddress;
+  const email = primaryEmail?.verification?.status === "verified"
+    && typeof primaryEmail.emailAddress === "string"
+    ? primaryEmail.emailAddress.trim().toLowerCase()
+    : null;
+  // A super-admin assignment is an explicit Clerk metadata assignment and
+  // must not be shadowed by the legacy lead-admin email compatibility rule.
+  if (
+    user.publicMetadata
+    && typeof user.publicMetadata === "object"
+    && isSuperAdminRole((user.publicMetadata as Record<string, unknown>).role)
+  ) {
+    return SUPER_ADMIN_ROLE;
+  }
+  return resolveAppRole(email, user.publicMetadata);
+}
+
+/**
+ * Protect mutating generic admin user routes from agency super-admin targets.
+ * The target role must come from a fresh Clerk user response, not a request
+ * body, query parameter, or corporate account membership record.
+ */
+export function requireManageableAdminTarget(
+  req: Request,
+  res: Response,
+  target: ClerkUserRoleSource,
+): boolean {
+  if (isSuperAdminRole(resolveClerkUserRole(target)) && !isSuperAdminRole(req.user?.role)) {
+    res.status(403).json({
+      error: "Only a super administrator can change a super administrator account.",
+    });
+    return false;
+  }
+  return true;
 }
 
 /**
@@ -58,7 +113,7 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
       lastName: clerkUser.lastName,
       // The one lead-admin identity is configured outside source control.
       // Other roles can be assigned through Clerk public metadata.
-      role: resolveAppRole(email, clerkUser.publicMetadata),
+      role: resolveClerkUserRole(clerkUser),
     };
 
     // Referral-only access is tied to the verified Clerk email, not client input.
@@ -82,7 +137,8 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
     const path = new URL(req.originalUrl, "http://localhost").pathname.replace(/^\/api/, "");
     const referralOnlyAllowed = path === "/auth/me" || path.startsWith("/referral-partner") ||
       path.startsWith("/referrals") || path.startsWith("/persona-quiz");
-    if (req.user.role !== "admin" && req.user.referralOnly && !referralOnlyAllowed) {
+    if (req.user.role !== "admin" && !isSuperAdminRole(req.user.role) &&
+      req.user.referralOnly && !referralOnlyAllowed) {
       res.status(403).json({ error: "This account only has referral partner access." });
       return;
     }
@@ -94,7 +150,7 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
 
 /** Middleware: requires authMiddleware to run first and permits administrators only. */
 export function requireAdmin(req: Request, res: Response, next: NextFunction): void {
-  if (req.user?.role !== "admin") {
+  if (req.user?.role !== "admin" && !isSuperAdminRole(req.user?.role)) {
     res.status(403).json({ error: "Forbidden" });
     return;
   }

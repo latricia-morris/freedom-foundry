@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2, CircleAlert, Copy, ExternalLink, FileUp, FolderOpen, Layers3, Plus, Save, Send, Shield, Sparkles, Trash2 } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, CircleAlert, Copy, ExternalLink, FileUp, FolderOpen, Layers3, Plus, Save, Send, Shield, Sparkles, Trash2, HardDrive } from 'lucide-react';
 import apiClient from '@/api/client';
+import { AdminDeliveryControls } from '@/components/delivery/AdminDeliveryControls';
 
 const emptyPayload = () => ({
   personal: {}, corporate: {}, guidelines: {}, mediaKit: {}, bigPicture: {},
@@ -32,6 +33,7 @@ export default function ClientSetupWorkspace() {
   const [importText, setImportText] = useState('');
   const [templateId, setTemplateId] = useState('');
   const [templateName, setTemplateName] = useState('');
+  const [corporateProfileId, setCorporateProfileId] = useState(null);
   const [asset, setAsset] = useState({ title: '', description: '', file_url: '', file_type: '' });
   const [brandColor, setBrandColor] = useState({ name: '', hex: '#000000' });
   const [task, setTask] = useState({ title: '', deadline_date: '', assignee: '' });
@@ -48,11 +50,21 @@ export default function ClientSetupWorkspace() {
     setSetup(current);
     setPayload(copyPayload(current.payload));
     setTemplates(availableTemplates);
+
+    if (current.status === 'claimed' && current.claimed_user_id) {
+      apiClient.entities.CorporateBrandProfile.list().then(profiles => {
+        const match = profiles.find(p => p.user_id === current.claimed_user_id);
+        if (match) setCorporateProfileId(match.id);
+      }).catch(console.error);
+    }
   };
+
+  const [userRole, setUserRole] = useState(null);
 
   useEffect(() => {
     apiClient.auth.me().then(async (me) => {
-      if (me.role !== 'admin') { setDenied(true); setLoading(false); return; }
+      setUserRole(me.role);
+      if (me.role !== 'admin' && me.role !== 'super_admin') { setDenied(true); setLoading(false); return; }
       try { await load(); } catch (requestError) { setError(requestError.message || 'This client setup could not be loaded.'); }
       setLoading(false);
     }).catch(() => { setDenied(true); setLoading(false); });
@@ -371,6 +383,16 @@ export default function ClientSetupWorkspace() {
             <textarea value={importText} onChange={(event) => setImportText(event.target.value)} rows={6} placeholder={'{ \"personal\": { \"short_bio\": \"…\" }, \"assets\": [{ \"title\": \"Logo\", \"file_url\": \"https://…\" }] }'} className="w-full rounded-lg border border-border bg-background px-3 py-2.5 font-mono text-xs text-foreground outline-none focus:border-primary" />
             <button type="button" onClick={importPayload} className="mt-3 inline-flex items-center gap-2 rounded-lg border border-primary/30 px-3 py-2 text-xs font-medium uppercase tracking-wider text-primary"><FileUp className="h-4 w-4" /> Validate and import</button>
           </Section>
+
+          {setup.status === 'claimed' && payload.corporate.drive_folder_id && corporateProfileId && (
+             <div className="mt-8 pt-8 border-t border-border">
+               <div className="mb-6">
+                 <h2 className="font-heading text-2xl text-foreground flex items-center gap-2"><HardDrive className="h-6 w-6 text-primary" /> Delivery & Approvals</h2>
+                 <p className="mt-1 text-sm text-muted-foreground">Manage visibility of items in the assigned Google Drive folder, request client review, and authorize final release upon payment.</p>
+               </div>
+               <AdminDeliveryControls profileId={corporateProfileId} corporateProfile={payload.corporate} userRole={userRole} />
+             </div>
+          )}
         </div>
 
         <aside className="space-y-5">

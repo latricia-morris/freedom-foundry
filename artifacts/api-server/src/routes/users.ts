@@ -31,8 +31,10 @@ import {
   ownedNotFound,
   ownedUpdatePayload,
   requireAdmin,
+  requireManageableAdminTarget,
   requireMemberId,
-  resolveAppRole,
+  resolveClerkUserRole,
+  SUPER_ADMIN_ROLE,
 } from "../lib/auth";
 
 const router: IRouter = Router();
@@ -58,7 +60,7 @@ function serializeUser(user: Awaited<ReturnType<typeof clerkClient.users.getUser
     email,
     ...(user.firstName ? { first_name: user.firstName } : {}),
     ...(user.lastName ? { last_name: user.lastName } : {}),
-    role: resolveAppRole(email || null, user.publicMetadata),
+    role: resolveClerkUserRole(user),
     created_at: new Date(user.createdAt).toISOString(),
   };
 }
@@ -124,6 +126,12 @@ router.get("/users", authMiddleware, requireAdmin, async (_req, res): Promise<vo
 
 // Admin: send a Clerk-managed invitation. The recipient chooses their own credentials.
 router.post("/admin/invitations", authMiddleware, requireAdmin, async (req, res): Promise<void> => {
+  if (req.body && typeof req.body === "object" && req.body.role === SUPER_ADMIN_ROLE) {
+    res.status(403).json({
+      error: "Super administrator access cannot be granted through a generic invitation.",
+    });
+    return;
+  }
   const email = typeof req.body?.email === "string" ? req.body.email.trim().toLowerCase() : "";
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     res.status(400).json({ error: "Enter a valid email address." });
@@ -253,7 +261,8 @@ router.post("/admin/users/:userId/portal-content", authMiddleware, requireAdmin,
 
   try {
     const userId = params.data.userId;
-    await clerkClient.users.getUser(userId);
+    const user = await clerkClient.users.getUser(userId);
+    if (!requireManageableAdminTarget(req, res, user)) return;
 
     if (kind === "checklist_task") {
       const title = optionalText(data, "title");
@@ -348,6 +357,7 @@ router.patch("/admin/users/:userId", authMiddleware, requireAdmin, async (req, r
 
   try {
     let user = await clerkClient.users.getUser(params.data.userId);
+    if (!requireManageableAdminTarget(req, res, user)) return;
     if (body.data.role !== undefined) {
       user = await clerkClient.users.updateUserMetadata(user.id, {
         publicMetadata: {

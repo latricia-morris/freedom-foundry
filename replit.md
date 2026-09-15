@@ -32,6 +32,8 @@ _Populate as you build — non-obvious choices a reader couldn't infer from the 
 
 _Describe the high-level user-facing capabilities of this app once they exist._
 
+The authorized agency-system expansion is specified in `docs/agency-system-scope.md` and its three linked source briefs. Build the complete scope sequentially; review, payment eligibility, file release and public publication are separate permissions. Preserve Drive folder names and nesting.
+
 ## User preferences
 
 _Populate as you build — explicit user instructions worth remembering across sessions._

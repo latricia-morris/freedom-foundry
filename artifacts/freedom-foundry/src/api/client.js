@@ -167,6 +167,31 @@ export const admin = {
   async listQuizAttempts() {
     return apiFetch('/admin/persona-quiz/attempts');
   },
+  async getDeliveryDriveFiles(profileId, folderId) {
+    const params = new URLSearchParams();
+    if (folderId) params.set('folder_id', folderId);
+    return apiFetch(`/admin/delivery-accounts/${encodeURIComponent(profileId)}/drive-files${params.toString() ? `?${params}` : ''}`);
+  },
+  async setFileVisibility(profileId, fileId, data) {
+    return apiFetch(`/admin/delivery-accounts/${encodeURIComponent(profileId)}/drive-files/${encodeURIComponent(fileId)}/visibility`, {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    });
+  },
+  async getPaymentEligibility(profileId) {
+    return apiFetch(`/admin/delivery-accounts/${encodeURIComponent(profileId)}/payment-eligibility`);
+  },
+  async setPaymentEligibility(profileId, data) {
+    return apiFetch(`/admin/delivery-accounts/${encodeURIComponent(profileId)}/payment-eligibility`, {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    });
+  },
+  async getDeliveryAudit(profileId, limit) {
+    const params = new URLSearchParams();
+    if (limit) params.set('limit', String(limit));
+    return apiFetch(`/admin/delivery-accounts/${encodeURIComponent(profileId)}/delivery-audit${params.toString() ? `?${params}` : ''}`);
+  },
 };
 
 export const support = {
@@ -213,6 +238,45 @@ export const driveFiles = {
     const params = new URLSearchParams({ profile_id: String(profileId) });
     return `${BASE}/api/drive/files/${encodeURIComponent(fileId)}/download?${params}`;
   },
+  async preview({ profileId, fileId, page = 1 }) {
+    const params = new URLSearchParams({ profile_id: String(profileId) });
+    const res = await fetch(`${BASE}/api/drive/files/${encodeURIComponent(fileId)}/preview?${params}`, {
+      headers: {
+        'X-Preview-Page': String(page)
+      },
+      credentials: 'include'
+    });
+    if (!res.ok) {
+      if (res.status === 415) throw new Error('Unsupported preview format');
+      let err;
+      try { err = await res.json(); } catch { err = { error: res.statusText }; }
+      const e = new Error(err.error || 'Could not load preview');
+      e.status = res.status;
+      e.data = err;
+      throw e;
+    }
+    const pageCount = parseInt(res.headers.get('X-Preview-Page-Count') || '1', 10);
+    const blob = await res.blob();
+    return { blob, pageCount };
+  },
+  async getComments({ profileId, fileId }) {
+    const params = new URLSearchParams({ profile_id: String(profileId) });
+    return apiFetch(`/drive/files/${encodeURIComponent(fileId)}/comments?${params}`);
+  },
+  async addComment({ profileId, fileId, data }) {
+    const params = new URLSearchParams({ profile_id: String(profileId) });
+    return apiFetch(`/drive/files/${encodeURIComponent(fileId)}/comments?${params}`, {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+  },
+  async makeDecision({ profileId, fileId, data }) {
+    const params = new URLSearchParams({ profile_id: String(profileId) });
+    return apiFetch(`/drive/files/${encodeURIComponent(fileId)}/decision?${params}`, {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+  }
 };
 
 // ─── Generic entity factory ───────────────────────────────────────────────────

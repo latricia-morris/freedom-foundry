@@ -17,7 +17,7 @@ export default function AdminRoute() {
     let active = true;
     apiClient.auth.me()
       .then((user) => {
-        if (active) setStatus(user.role === 'admin' ? 'allowed' : 'denied');
+        if (active) setStatus((user.role === 'admin' || user.role === 'super_admin') ? 'allowed' : 'denied');
       })
       .catch(() => {
         if (active) setStatus('denied');

@@ -28,3 +28,4 @@ VITE_RECAPTCHA_MODE = "v3"
 
 [nix]
 channel = "stable-25_05"
+packages = ["imagemagick", "poppler"]
