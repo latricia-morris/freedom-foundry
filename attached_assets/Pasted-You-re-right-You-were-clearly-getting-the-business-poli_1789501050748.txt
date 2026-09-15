@@ -1,0 +1,108 @@
+You’re right. You were clearly getting the business-policy notes out, and I unnecessarily derailed you into a legal correction you already understand.
+
+The actual product requirement to keep is simply:
+
+> **Until a client has paid in full, all concepts, drafts, strategy, copy, designs, working files, source files, and unreleased deliverables remain our work product. The client may review materials for feedback but does not receive final usage rights, ownership transfer, editable files, downloadable final assets, website publication, website transfer, or hosting/admin access until the account is paid in full.**
+
+Then, in your agreement language later, your attorney can translate that into the proper contract wording. The app only needs to enforce the commercial reality.
+
+## The actual app behavior
+
+### Before the initial payment clears
+
+```text
+Proposal: Signed — Awaiting Initial Payment
+Client portal: No project workspace yet, or welcome screen only
+Project work: Not scheduled/activated
+Onboarding: Optional “save for later,” but do not start production
+```
+
+### After deposit clears
+
+```text
+Proposal: Deposit Paid
+Project: Active / Onboarding
+Client portal: Brand intake and approved review spaces available
+Client can: submit information, upload existing assets, review drafts when shared,
+comment, approve, request revisions
+Client cannot: download final assets, access editable/source files,
+receive final rights, take hosting/admin control, or publish/transfer site
+```
+
+### During a payment plan
+
+```text
+Client can:
+Review current work
+Provide feedback
+Use portal for the active project
+
+Client cannot:
+Receive final files
+Download final assets
+Receive editable/source files
+Get website published/transferred
+Receive final ownership/usage rights
+
+If overdue:
+Work can pause
+Future review/delivery stages can lock
+Final-release actions remain locked
+```
+
+### After full payment
+
+```text
+Account: Paid in Full
+Final Release: Enabled
+Client can:
+Download released final delivery bundles
+Access included final files and documents
+Receive designated website/hosting handoff
+Use the approved final work under the agreement
+```
+
+### If a hosted-site payment plan becomes 30+ days overdue
+
+```text
+Account: Delinquent
+Website status: Suspension Eligible
+Admin sees:
+- Outstanding principal
+- Late fee
+- Total amount required to cure
+- Days overdue
+- Notice sent date
+- Suspension action
+- Republish/reinstatement status
+```
+
+Admin options:
+
+```text
+Send payment reminder
+Apply late fee
+Pause project work
+Send 30-day suspension notice
+Suspend site
+Restore site after cure
+Override policy
+```
+
+No automatic deletion. No automatic “pulling” a site without you choosing it. The app tracks it, warns you, and gives you controlled actions.
+
+## The exact brief language for Replit
+
+Paste this under **Payment + Release Rules**:
+
+> **Work-product and release rule:** Until the client’s account is paid in full, all work remains agency work product. Clients may access review-stage materials only for feedback and approval. They do not receive downloadable final files, editable/source files, final asset bundles, website publication, site transfer, hosting/admin access, or final usage/ownership rights until the account is paid in full.  
+>
+> **Final-release gate:** The system must block final asset release, final-file downloads, website publishing, website transfer, hosting/admin handoff, and final rights-release status whenever any required project payment remains outstanding. Super Admin may override any block, but the system must require an internal reason and create an audit-log entry.  
+>
+> **Payment-plan rule:** A payment plan changes when amounts are due; it does not allow final release before the balance is paid. Projects with a payment plan should normally begin with at least a 50% initial payment. The final installment must clear before final deliverables, publishing, transfer, or release.  
+>
+> **Delinquency rule:** The system must track each installment’s due date, grace period, days overdue, late fee, outstanding balance, reminders, pause status, and hosted-site suspension eligibility. For eligible agency-hosted sites, an account more than 30 days overdue may be marked `Suspension Eligible`; the Admin must manually initiate notice, suspension, restoration, or override actions.  
+>
+> **Restoration rule:** A suspended hosted site cannot be republished until all required past-due payments, approved late charges, and any configured restoration fee are paid or manually waived by Super Admin.
+
+That is the business policy you were articulating—cleanly translated into system behavior—without turning it into an unnecessary lecture.

@@ -1,0 +1,736 @@
+Yes. With a low project load, this is the right time to build the **core operating system**—but build it as an agency-specific command center, not a bloated “let’s recreate every app I use” monster.
+
+What you’re describing is a proprietary revenue-and-delivery system:
+
+```text
+Lead enters through TBR or Freedom Foundry
+        ↓
+Lead is qualified and tracked
+        ↓
+Client submits a project request / brief
+        ↓
+Your team scopes it and selects services
+        ↓
+Proposal is assembled from your service catalog and current pricing
+        ↓
+Client chooses an option, signs, pays
+        ↓
+Project, deliverables, review workflow, files, activation, and portfolio are managed
+        ↓
+Completed work becomes public proof
+```
+
+That is a legitimate platform vision. The important part is making it **phased, permission-safe, and financially reliable**, so it helps you sell now instead of becoming a six-month side quest.
+
+## The product architecture
+
+Freedom Foundry should have five connected internal modules.
+
+| Module | What it does | Priority |
+|---|---|---:|
+| **Pipeline** | Leads, inquiries, sources, qualification, follow-ups, next steps | Build now |
+| **Services + Pricing** | Your reusable service catalog, standard pricing, packages, add-ons, internal cost/profit notes | Build now |
+| **Proposals** | Scope, tiered offers, deadline, signature, payment, refresh/version history | Build now |
+| **Projects** | Deliverables, reviews, approvals, client access, releases, assets, portfolio review | Build second |
+| **Ignite OS + Portfolio** | Launch activation, post-launch proof, TBR/FF public content workflow | Build after the commercial core works |
+
+This is all one data system. A lead should not become a proposal by retyping the same company details; a signed proposal should not become a project by retyping scope; a closed project should not become a portfolio entry by reconstructing it from memory.
+
+## Pipeline: the revenue control center
+
+Create an internal top-level navigation item:
+
+```text
+Pipeline
+```
+
+This is where everyone who comes through:
+- The Brand Revivalist®
+- Freedom Foundry lead tools
+- Digital offers
+- A contact form
+- A referral
+- LinkedIn
+- Google Business Profile
+- A QR code
+- A social DM
+- A networking event
+- A direct referral
+
+becomes a visible lead record.
+
+### Pipeline stages
+
+Use a simple, sale-centered flow:
+
+```text
+New Inquiry
+Needs Review
+Qualified
+Discovery Scheduled
+Discovery Complete
+Scope / Quote Needed
+Proposal Drafting
+Proposal Sent
+Proposal Viewed
+Follow-Up Needed
+Proposal Expiring
+Proposal Refresh Requested
+Signed — Awaiting Payment
+Paid / Ready for Onboarding
+Nurture
+Not a Fit
+Lost
+```
+
+Do not make 30 pipeline stages. The goal is for you to see **where money is stuck**.
+
+### Lead record fields
+
+```text
+Company Name
+Contact Name
+Email
+Phone
+Website
+Location / Market
+Industry
+Business Type: Service | Product | Hybrid
+Lead Source
+Lead Source Detail
+Requested Service(s)
+Initial Budget / Investment Range
+Desired Start Date
+Desired Launch Date
+Primary Brand Challenge
+Notes
+Assigned Owner
+Pipeline Stage
+Next Follow-Up Date
+Discovery Call Date
+Proposal Link
+Project Link
+```
+
+### Lead-source tracking
+
+The source field matters because you need to know which visibility efforts produce actual opportunities.
+
+Use standard sources:
+
+```text
+The Brand Revivalist® Website
+Freedom Foundry Website
+Freedom Foundry Diagnostic
+Freedom Foundry Digital Offer
+Portfolio / Case Study
+Google Business Profile
+Organic Google Search
+AI Search / ChatGPT / Perplexity / Copilot
+LinkedIn
+Instagram
+Facebook
+Podcast / PR / Speaking
+Referral
+Existing Client
+Partner
+Networking / Event
+Outbound
+Other
+```
+
+Add:
+
+```text
+How did you hear about us?
+```
+
+as a required or strongly prompted lead-form field, even if you also capture UTM parameters automatically. This gives you human attribution when referral and AI-search traffic cannot be perfectly detected.
+
+## Client project-request portal
+
+People coming through Freedom Foundry should be able to submit a **Project Request**, not immediately see prices for every custom engagement or create a project themselves.
+
+Call it something premium and clear:
+
+```text
+Start a Project
+Request a Scope
+Build My Brand Brief
+Apply for Brand Support
+```
+
+My recommendation:
+
+> **Start a Project**
+
+The form creates a lead in the Pipeline. It does not create a live client project until you accept and scope it.
+
+### Project-request form
+
+Keep it intelligent and progressive—not a 60-question wall.
+
+#### Step 1: About the company
+
+```text
+Name
+Company
+Email
+Website
+Location
+Industry
+Business Type
+Current revenue/team size, optional
+```
+
+#### Step 2: What they need
+
+Let them select:
+
+```text
+Branding
+Rebranding
+Brand Refresh
+Brand Strategy
+Logo / Visual Identity
+Website Design
+Website Redesign
+Messaging / Copywriting
+Social Media Template Kit
+Business Cards / Brochures / Sales Collateral
+Trade Show / Signage
+Packaging / Product
+Campaign / Launch Support
+Ongoing Brand Support
+Not Sure — I Need Guidance
+```
+
+#### Step 3: The situation
+
+```text
+What has changed or stopped working?
+What do you want your brand to make possible?
+What does success look like?
+Who needs to be involved in the decision?
+```
+
+#### Step 4: Timing and investment
+
+```text
+Desired start date
+Desired launch date
+Investment comfort range
+Have you worked with a strategist/designer before?
+```
+
+#### Step 5: Optional early asset upload
+
+Allow them to upload or link:
+- Current logo
+- Existing brand guide
+- Website screenshots
+- Sales materials
+- A project brief
+- Reference imagery
+- Current marketing assets
+
+But make this explicitly optional:
+
+```text
+Upload materials now, or submit your request and add materials later.
+```
+
+Do not force an intake before a proposal or payment. At this stage you are qualifying and scoping, not asking them to do unpaid onboarding labor.
+
+## Services + pricing engine
+
+Create an internal top-level navigation item:
+
+```text
+Services
+```
+
+This is the master catalog that powers:
+- Project request options
+- Proposals
+- Tiered packages
+- Deliverables matrix
+- Internal planning
+- Pricing consistency
+- Future checkout/product offerings
+- Portfolio tags and related service links
+
+### Service record
+
+Every service needs its own record:
+
+```text
+Service Name
+Category
+Public Description
+Proposal Description
+Internal Delivery Description
+Default Scope / Deliverables
+Default Timeline Range
+Pricing Type
+Default Price
+Minimum Price
+Maximum Price, optional
+Deposit Rule
+Payment Plan Options
+Tax Treatment, if applicable
+Active / Archived
+Publicly Visible / Internal Only
+Related Work Type Tags
+Related TBR Service URL
+Related Freedom Foundry Service URL
+```
+
+### Pricing types
+
+```text
+Fixed Price
+Starting At
+Custom Quote
+Hourly
+Day Rate
+Monthly Retainer
+One-Time Payment
+Deposit + Balance
+Installment Plan
+Subscription
+```
+
+### Pricing permissions
+
+This is important: do not let every team member casually alter rates.
+
+Use a pricing-governance system:
+
+| Role | Can view internal pricing? | Can draft price? | Can change approved catalog pricing? | Can approve exception pricing? |
+|---|---:|---:|---:|---:|
+| Super Admin | Yes | Yes | Yes | Yes |
+| Senior Sales / Project Lead | Yes | Yes | No, unless granted | No, unless granted |
+| Internal Team Member | Only if needed | No | No | No |
+| Client | Only proposal pricing | No | No | No |
+
+### Price-change log
+
+Every catalog pricing change must create an immutable entry:
+
+```text
+Service
+Previous Price
+New Price
+Previous Pricing Type
+New Pricing Type
+Changed By
+Date/Time
+Reason
+Effective Date
+Affected Future Proposals Only? Yes/No
+```
+
+A price change must **never retroactively update**:
+- Signed proposals
+- Sent proposals
+- Active projects
+- Existing subscriptions
+- Historical invoices
+- Past portfolio scope/investment data
+
+Price changes apply only to newly created proposals after the effective date unless a Super Admin explicitly chooses a different rule.
+
+## Package and tier builder
+
+Your service catalog is the ingredient library. Your package builder is where you assemble offers.
+
+Create an internal section:
+
+```text
+Packages
+```
+
+Each package can be:
+
+```text
+Branding Package
+Rebranding Package
+Website Package
+Brand + Website Package
+Brand + Launch Package
+Product Brand Package
+Ongoing Brand Support Package
+Custom Package
+```
+
+### Package fields
+
+```text
+Package Name
+Public Positioning Name
+Public Description
+Internal Notes
+Included Services
+Included Deliverables
+Optional Add-Ons
+Default Price
+Pricing Type
+Recommended Deposit
+Payment-Plan Options
+Default Timeline
+Recommended Badge
+Best-Fit Buyer
+Active / Archived
+```
+
+Then a proposal can either:
+- Select one package,
+- Offer 2–3 package options,
+- Start from a package and customize it,
+- Or build a completely custom scope from services.
+
+### Tiered proposal example
+
+```text
+Option 1 — Brand Foundation
+$X
+Brand strategy, logo suite, color/type system, starter brand guide
+
+Option 2 — Brand + Digital Presence
+$Y
+Everything in Brand Foundation plus website strategy, copy, design,
+and development
+
+Option 3 — Brand Activation System
+$Z
+Everything in Brand + Digital Presence plus sales collateral, social
+template kit, launch assets, and Ignite OS activation
+```
+
+Each option must retain an immutable scope snapshot when sent and when signed.
+
+## Proposals: conversion, signature, and payment
+
+Build a top-level internal navigation item:
+
+```text
+Proposals
+```
+
+The proposal is where Pipeline turns into revenue.
+
+### Proposal statuses
+
+```text
+Draft
+Internal Review
+Sent
+Viewed
+Follow-Up Needed
+Expiring Soon
+Expired
+Refresh Requested
+Option Selected
+Awaiting Signature
+Signed — Awaiting Payment
+Deposit Paid
+Paid in Full
+Converted to Project
+Declined
+Archived
+```
+
+### What a proposal pulls automatically
+
+From the lead record:
+- Company details
+- Contact details
+- Requested services
+- Brand challenge
+- Timeline
+- Budget comfort level
+- Uploaded preliminary assets
+
+From the catalog/package:
+- Offer name
+- Service descriptions
+- Deliverables
+- Price
+- Deposit rules
+- Payment plan
+- Estimated timeline
+- Terms template
+- Scope-exclusion language
+- Related project proof/portfolio recommendations
+
+### Proposal expiration
+
+Every proposal must have:
+- Issue date
+- Expiration date
+- Expiration reminder logic
+- Refresh workflow
+
+After expiration, it should say:
+
+> This proposal has expired because availability, timeline, scope, and investment may have changed. Request a refresh and we will confirm the current version.
+
+Action:
+
+```text
+Request a Proposal Refresh
+```
+
+The system preserves the old proposal and duplicates it into a new version. It must not overwrite a historic sent, expired, or signed proposal.
+
+## Digital signature
+
+The proposal must include explicit signature and consent steps.
+
+Before signing, require:
+
+```text
+Full Legal Name
+Email
+Title / Authority to Sign
+Checkbox: I have authority to accept this agreement for the company.
+Checkbox: I consent to use electronic records and electronic signatures.
+Sign and Accept Proposal
+```
+
+Store a permanent audit record:
+
+```text
+Proposal ID
+Proposal Version
+Full HTML/PDF Snapshot at Signing
+Selected Package / Option
+Scope and Deliverables
+Price and Payment Schedule
+Signer Name
+Signer Email
+Signer Title
+Signature Timestamp
+Electronic Consent
+Terms Version
+IP/User-Agent if technically available and legally appropriate
+```
+
+A signed proposal should be immutable. Changes after signature require a new version or formal change order.
+
+## Stripe payment automation
+
+Your preferred flow is correct:
+
+```text
+Client selects tier
+        ↓
+Client signs the proposal
+        ↓
+Freedom Foundry creates payment for that exact signed scope
+        ↓
+Client pays immediately
+        ↓
+Verified payment confirmation triggers onboarding
+```
+
+### Required payment behavior
+
+After signature:
+
+1. Lock the signed proposal version.
+2. Create a Stripe Customer if needed.
+3. Create a unique payment record for the exact due-now amount.
+4. Create a Stripe Checkout Session or unique proposal-linked payment link.
+5. Redirect to hosted Stripe checkout or display the payment action.
+6. Attach proposal, client, option, project, and payment-schedule IDs as Stripe metadata.
+7. Confirm payment only through a verified Stripe webhook.
+8. Create a project only after confirmed payment, unless a Super Admin explicitly overrides.
+9. Preserve Stripe IDs, amount, date, and payment status in Freedom Foundry.
+10. Let QuickBooks remain the accounting system.
+
+Stripe requires webhook signature verification to confirm that an event actually came from Stripe, and Stripe recommends idempotency keys on POST requests to prevent duplicate payment objects or repeated side effects when requests retry. [docs.stripe](https://docs.stripe.com/webhooks)
+
+### Payment options
+
+Support per-proposal payment configurations:
+
+```text
+Full Amount Due at Signature
+Deposit Due at Signature
+First Installment Due at Signature
+Recurring Monthly Payment
+Manual Invoice
+No Payment Due at Signature
+```
+
+Do not hardcode deposits. You select exact amounts per proposal.
+
+## Conversion tracking
+
+This part is where your system gets very valuable.
+
+Track the entire conversion chain:
+
+```text
+Lead Source
+        ↓
+Project Request Submitted
+        ↓
+Qualified
+        ↓
+Proposal Sent
+        ↓
+Proposal Viewed
+        ↓
+Option Selected
+        ↓
+Signed
+        ↓
+Paid
+        ↓
+Project Started
+        ↓
+Project Delivered
+        ↓
+Portfolio Published
+```
+
+### Revenue dashboard
+
+Create an internal dashboard called:
+
+```text
+Revenue + Pipeline
+```
+
+Show:
+
+```text
+New Leads This Month
+Qualified Opportunities
+Proposal Value Sent
+Proposal Value Awaiting Follow-Up
+Proposals Expiring Soon
+Signed Revenue
+Payments Collected
+Average Proposal Value
+Proposal Acceptance Rate
+Payment Conversion Rate
+Lead-to-Proposal Rate
+Proposal-to-Paid Rate
+Revenue by Lead Source
+Revenue by Service
+Revenue by Package
+Revenue by Industry
+Open Opportunities by Expected Close Date
+```
+
+Use this as a management dashboard, not as fake precision. It needs filters for date range, owner, source, service, project type, and pipeline stage.
+
+### Key formulas
+
+\[
+\text{Lead-to-Proposal Rate} =
+\frac{\text{Leads sent a proposal}}{\text{Qualified leads}} \times 100
+\]
+
+\[
+\text{Proposal Acceptance Rate} =
+\frac{\text{Accepted proposals}}{\text{Proposals sent}} \times 100
+\]
+
+\[
+\text{Proposal-to-Paid Rate} =
+\frac{\text{Proposals with confirmed payment}}{\text{Proposals sent}} \times 100
+\]
+
+\[
+\text{Average Signed Project Value} =
+\frac{\text{Total signed project value}}{\text{Number of signed projects}}
+\]
+
+## What not to build yet
+
+This is the guardrail that protects your time, Replit usage, and sanity.
+
+Do **not** build these in the initial commercial-system release:
+
+- A full QuickBooks replacement
+- General ledger, tax reporting, financial statements, or reconciliation
+- Full CRM email-sequence platform
+- Full calendar scheduling system
+- Complete ClickUp replacement
+- Universal task automation builder
+- Gantt charts and resource-capacity planning
+- Full help desk/chat platform
+- Full e-signature legal platform for every possible document type
+- Automated client-credit checks
+- Complex commission or affiliate payouts
+
+Build the agency-specific revenue workflow first:
+
+```text
+Lead → Scope → Proposal → Signature → Payment → Onboarding → Project
+```
+
+## Core security requirements
+
+Because this app will store client information, business financial data, proposals, private deliverables, and payment-related records, design permissions from the start.
+
+- Enforce permissions on the server/database layer—not only by hiding buttons in the interface.
+- Every client-owned record must be scoped to the correct client organization.
+- Never trust a client-provided project/client ID without checking that the authenticated person belongs to that client organization.
+- Default deny: users can access only what is explicitly assigned to them.
+- Keep payment keys, Drive credentials, ClickUp credentials, and Stripe webhook secrets in protected environment variables—never in client code or GitHub.
+- Log sensitive status changes: proposal edits, price changes, signature events, payment events, release events, permission changes, and publication actions.
+- Use signed, verified Stripe webhooks and idempotent processing.
+- Never store raw card information; use Stripe-hosted payment collection only.
+
+OWASP recommends server-side authorization checks, least-privilege access, and tenant-scoped verification on every client-owned resource in multi-tenant apps. [cheatsheetseries.owasp](https://cheatsheetseries.owasp.org/cheatsheets/Multi_Tenant_Security_Cheat_Sheet.html)
+
+## Phased build plan
+
+### Phase 1: Revenue engine
+
+Build first, while your project load is light:
+
+1. Lead intake forms and Pipeline.
+2. Lead source tracking.
+3. Service Catalog with pricing governance/history.
+4. Package/tier builder.
+5. Proposal builder.
+6. Proposal sending, viewing, expiry, and refresh request.
+7. Digital signature with consent and audit snapshot.
+8. Stripe payment creation for exact signed scope.
+9. Stripe webhook payment confirmation.
+10. “Paid / Ready for Onboarding” conversion.
+11. Basic revenue/pipeline dashboard.
+
+This is the part that helps you sell now.
+
+### Phase 2: Onboarding and delivery system
+
+1. Conditional onboarding questionnaire.
+2. Save-and-return-later client intake.
+3. Project creation from signed/successfully paid proposal.
+4. Selected deliverables matrix.
+5. Drive folder connection.
+6. Client review, comments, approvals, revisions.
+7. Delivery bundles and release controls.
+
+### Phase 3: Ignite OS and public-proof engine
+
+1. Ignite OS launch-team mapping.
+2. Client-facing activation dashboard.
+3. Internal project/activation workflow.
+4. Portfolio Review queue.
+5. TBR case-study creator.
+6. Freedom Foundry proof page.
+7. SEO Reference Library/FatJoe report assistance.
+8. Case-study publishing and distribution prompts.
+
+## The final requirement for Replit
+
+> Build Freedom Foundry as a proprietary, agency-specific revenue and delivery operating system. It must let a qualified lead enter through The Brand Revivalist® or Freedom Foundry, submit a project request, be qualified and scoped internally, receive a clear proposal with one or more tiered offers, select an option, digitally sign, pay the exact required amount through Stripe, and begin onboarding immediately or save for later. The system must convert the accepted, paid scope into a client project with selected services and deliverables, preserve pricing and proposal history, protect client data through server-side role-based access, retain QuickBooks as the accounting system, and later feed client delivery, Ignite OS, and portfolio publication without re-entering the same data.

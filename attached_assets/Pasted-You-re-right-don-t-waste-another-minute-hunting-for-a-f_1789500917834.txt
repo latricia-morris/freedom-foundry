@@ -1,0 +1,1426 @@
+You’re right—don’t waste another minute hunting for a file panel that isn’t showing it. Below is the **clean, standalone Replit portfolio build brief** in one place so you can copy it directly into Replit.
+
+***
+
+# Freedom Foundry Portfolio Component  
+## Replit Build Brief
+
+## Purpose
+
+Build a complete **Portfolio Publishing Engine** inside Freedom Foundry.
+
+This component must make portfolio updates a normal part of project closeout—not a separate, manual marketing project that requires the agency to recreate project details, descriptions, visual selections, SEO fields, and page layouts over and over.
+
+Freedom Foundry already functions as the operational/client portal layer. It should use the project information, client assets, delivery records, and approved work inside the system to prepare portfolio content quickly.
+
+The system must support two public outcomes:
+
+1. A deeper, authority-building public case study for **The Brand Revivalist®**.
+2. A shorter, visually led public proof page for **Freedom Foundry**, so people who find the app through digital offers, tools, diagnostics, or resources can immediately see the agency’s work and inquire about services.
+
+The system must never automatically publish public content. AI can draft and organize; an authorized Admin must review, approve, and publish.
+
+***
+
+# Core Principle
+
+```text
+Client project is completed
+        ↓
+Final delivery is released
+        ↓
+Freedom Foundry automatically creates a private Portfolio Review record
+        ↓
+Admin selects public-safe visuals, verifies permissions, edits copy,
+reviews SEO and social metadata
+        ↓
+Admin approves public output
+        ↓
+TBR case study and/or Freedom Foundry proof page publishes
+```
+
+The portfolio system should make it possible to consistently publish portfolio work without making LaTricia or the agency team recreate the project from scratch.
+
+***
+
+# Brand Roles
+
+## The Brand Revivalist®
+
+The Brand Revivalist® is LaTricia Morris’s personal authority brand.
+
+The Brand Revivalist public case-study output must be the deeper, more strategic, authority-building version of each public project.
+
+Preferred final URL structure:
+
+```text
+https://thebrandrevivalist.com/work/[project-slug]
+```
+
+If that routing is not technically available at launch, support:
+
+```text
+https://work.thebrandrevivalist.com/[project-slug]
+```
+
+The public work library should look like a premium, design-forward, app-quality portfolio—not a generic WordPress archive.
+
+## Freedom Foundry
+
+Freedom Foundry is the operational platform, client portal, project-delivery system, and agency ecosystem.
+
+Freedom Foundry may also publish a shorter public proof page so visitors who enter through a digital offer, resource, assessment, or lead-generation tool can see the quality and range of agency work.
+
+Example URL:
+
+```text
+https://freedomfoundry.vip/work/[project-slug]
+```
+
+## Public-content rule
+
+One approved project record may create two public outputs:
+
+```text
+The Brand Revivalist® Authority Case Study
+        +
+Freedom Foundry Public Proof Page
+```
+
+The outputs may reuse accurate client facts, project scope, services, approved visuals, and permission records.
+
+They must not use identical long-form copy, identical metadata, or an identical page purpose.
+
+***
+
+# Portfolio Admin
+
+Create an internal, Admin-only navigation item:
+
+```text
+Portfolio
+```
+
+This is the command center for all portfolio work.
+
+Only Super Admin and internal users with Portfolio permission may access it.
+
+## Portfolio dashboard
+
+Create clickable overview cards:
+
+```text
+Published
+Pending Review
+Permission Pending
+Drafting Needed
+Missing Required Details
+Missing Featured Image
+Missing SEO
+Private Proof Only
+Archived
+```
+
+Each card filters the portfolio list when clicked.
+
+## Saved views
+
+Create these default views:
+
+```text
+All Portfolio Records
+Pending My Review
+Ready for Approval
+Published
+Permission Pending
+Missing Assets
+Missing Featured Image
+Missing SEO
+Private Proof Only
+Archived
+```
+
+## Portfolio list rows
+
+Every portfolio record should display:
+
+```text
+Featured-image thumbnail
+Client / company name
+Public project title
+Project type
+Work-type / service tags
+Industry
+Portfolio status
+TBR case-study status
+Freedom Foundry proof-page status
+Public-permission status
+Featured-image status
+SEO-completeness status
+Last updated date
+Assigned internal owner
+```
+
+Example:
+
+```text
+[Featured image thumbnail]
+
+Such & Such Company
+Rebranding: A cohesive identity, website, and sales system for growth
+
+Rebranding · Logo Design · Website Design · Business Cards · Brochures
+Industry: Commercial Construction
+
+Portfolio: Pending Admin Review
+TBR: Draft
+Freedom Foundry: Not Created
+Permission: Cleared
+Featured Image: Selected
+SEO: Needs Review
+```
+
+## Portfolio filters
+
+Allow Admin to filter by:
+
+```text
+Portfolio Status
+TBR Output Status
+Freedom Foundry Output Status
+Public Permission Status
+Project Type
+Work Type / Service Tag
+Industry
+Business Type
+Location / Market
+Project Year
+Client
+Assigned Owner
+Featured Image Status
+SEO Status
+Missing Required Field
+Publication Date
+Private Proof Only
+```
+
+***
+
+# Portfolio Lifecycle
+
+## Portfolio Review creation
+
+When a Super Admin releases final client deliverables, automatically create a private **Portfolio Review** record unless the project has been marked:
+
+```text
+Never Public
+Private Proof Only
+```
+
+Default status:
+
+```text
+Portfolio Candidate
+```
+
+Creating this record does **not** publish a project, expose an asset, or assume client permission.
+
+## Portfolio statuses
+
+Use these primary statuses:
+
+```text
+Not Eligible
+Permission Pending
+Portfolio Candidate
+Drafting Needed
+Draft Generated
+Pending Admin Review
+Ready for Approval
+Approved for Publishing
+Published
+Private Proof Only
+Archived
+```
+
+## Destination statuses
+
+Track output status separately:
+
+```text
+The Brand Revivalist® Case Study:
+Not Created
+Draft
+In Review
+Scheduled
+Published
+Unpublished
+Archived
+
+Freedom Foundry Proof Page:
+Not Created
+Draft
+In Review
+Scheduled
+Published
+Unpublished
+Archived
+```
+
+***
+
+# Portfolio Record Data
+
+## Auto-populate from confirmed project data
+
+When a Portfolio Review record is created, prefill:
+
+```text
+Client/company name
+Public client/company name, if already known
+Company website
+Project name
+Project type
+Project year
+Industry
+Business type
+Location / market
+Services selected in the proposal
+Services/deliverables completed in the project
+Internal project lead
+TBR leadership attribution
+Connected Drive folder reference
+Portfolio Candidate assets
+Public Cleared assets
+Approved testimonial, if already entered
+Admin-selected project notes
+Related TBR service page
+Related TBR method or insight page
+Related Freedom Foundry service page
+```
+
+## Information that cannot be assumed
+
+The system may suggest these items, but an Admin must confirm them:
+
+```text
+Permission to name the client publicly
+Permission to show logo publicly
+Permission to show visuals publicly
+Permission to show selected guideline pages publicly
+Permission to use client location/industry publicly
+Permission to publish a testimonial
+Business outcomes/results
+Public-facing company description
+Public-facing project title
+Final SEO title and meta description
+```
+
+## Required fields before indexable publishing
+
+Require all of the following before publishing an indexable page:
+
+```text
+Public company name OR approved anonymous case-study format
+Public project title / H1
+Project type
+At least one work-type/service tag
+Company/project context
+At least one Public Cleared featured image
+Public-permission status
+One-line transformation or project summary
+Primary CTA
+SEO title
+Meta description
+Canonical/indexing choice
+TBR attribution
+```
+
+***
+
+# Project Types
+
+Use these top-level project types:
+
+```text
+Branding
+Rebranding
+Brand Refresh
+Website Design
+Website Redesign
+Brand Strategy
+Messaging / Copywriting
+Creative Direction
+Campaign / Launch
+Design Support
+Ongoing Brand Management
+```
+
+Allow Super Admin to create/edit/archive project types later.
+
+Do **not** use “Brand Revival” as a project type.
+
+***
+
+# Work Types and Deliverable Tags
+
+Project types describe the broad engagement.
+
+Work types/service tags describe the actual work completed and should power the public portfolio gallery filters.
+
+Use this controlled vocabulary:
+
+```text
+Brand Strategy
+Brand Positioning
+Brand Messaging
+Naming
+Tagline
+Brand Story
+Logo Design
+Logo Suite
+Visual Identity
+Color Palette
+Typography System
+Brand Guidelines
+Brand Board
+Brand Kit
+Website Strategy
+Website Copywriting
+Website Design
+Website Development
+Website Launch
+SEO Foundations
+Google Business Profile
+Social Media Template Kit
+Social Profile Refresh
+Business Cards
+Brochures
+Sales Sheets
+Presentation Templates
+Email Signature
+Trade Show Graphics
+Booth Graphics
+Signage
+Packaging
+Product Labels
+Advertising Creative
+Photography Direction
+Video Direction
+Campaign Assets
+Press / Media Kit
+Launch Plan
+Ignite OS Activation
+Ongoing Brand Management
+```
+
+Allow Super Admin to manage this vocabulary later.
+
+***
+
+# Industry Rules
+
+Industry must be stored as a Project and Portfolio Record field.
+
+It should appear on individual public project pages when public permission allows.
+
+Example:
+
+```text
+Lancaster, Pennsylvania · Commercial Construction · Rebranding
+```
+
+Industry must be available for:
+
+```text
+Admin filtering
+AI drafting context
+Project-page company context
+Related project suggestions
+Proposal proof collections
+Optional future industry pages
+```
+
+Industry must **not** be a primary public filter in the portfolio gallery.
+
+The public portfolio should filter based on what someone needs you to do—not only by the industry of previous clients.
+
+***
+
+# Public Portfolio Filters
+
+Use the type of work/service delivered as the primary public filters.
+
+Default public filters:
+
+```text
+All Work
+Branding
+Rebranding
+Brand Strategy
+Logo + Visual Identity
+Websites + Digital Experience
+Messaging + Copywriting
+Social + Campaigns
+Print + Collateral
+Packaging + Product
+Launch + Activation
+```
+
+The Admin may map multiple service tags into these display categories.
+
+Examples:
+
+```text
+Logo Design + Logo Suite + Visual Identity
+→ Logo + Visual Identity
+
+Website Strategy + Website Copywriting + Website Design + Website Development
+→ Websites + Digital Experience
+
+Business Cards + Brochures + Sales Sheets + Presentation Templates + Signage
+→ Print + Collateral
+```
+
+***
+
+# Public Permissions
+
+## Public permission checklist
+
+Before approving a public page, require Admin answers for:
+
+```text
+May we name the company publicly?
+May we show the company logo publicly?
+May we show selected project visuals publicly?
+May we show selected guideline spreads publicly?
+May we use location/industry information publicly?
+May we publish the testimonial?
+Permission evidence / notes
+Permission date
+Approved by
+```
+
+## Publication formats
+
+Support:
+
+```text
+Publicly Named Case Study
+Anonymous Public Case Study
+Private Proof Link Only
+Never Public
+```
+
+## Never public by default
+
+The portfolio component must never expose:
+
+```text
+Source files
+Editable Adobe files
+Editable Canva files
+Raw logo downloads
+Full brand-guideline PDFs
+Contracts
+Invoices
+Receipts
+Internal notes
+Strategy workshop materials
+Client credentials
+Passwords
+Watermarked review assets
+Unapproved work
+Raw Google Drive URLs
+Unlicensed visual material
+Any asset marked Confidential or Never Public
+```
+
+## Brand-guideline rule
+
+Brand-guideline PDFs are private by default.
+
+The Admin may select individual approved guideline spreads/pages as flattened images for a public gallery.
+
+The system must never publish the entire guideline PDF or create a public download link unless the Admin explicitly selects a separate approval setting for that purpose.
+
+***
+
+# Assets and Gallery
+
+## Assets + Gallery tab
+
+Inside the Portfolio Editor, show only assets marked as:
+
+```text
+Portfolio Candidate
+Public Permission Pending
+Public Cleared
+Published
+```
+
+Admin controls:
+
+```text
+Select Featured Image
+Select Gallery Images
+Reorder Gallery
+Set Crop/Focal Point
+Choose Hero / Gallery / Card role
+Mark Decorative vs Meaningful
+Edit Web Export Filename
+Edit Alt Text
+Edit Caption
+Edit Rights/Visibility
+Remove Asset from Public Use
+```
+
+## Featured image
+
+Each public portfolio output must have one selected featured image.
+
+Use the featured image by default for:
+
+```text
+Portfolio dashboard card
+Open Graph/social-sharing image
+Project hero image, when enabled
+```
+
+Allow the Admin to override the hero image and/or Open Graph image separately.
+
+## Suggested featured-image order
+
+The system may suggest candidates, but Admin must choose.
+
+```text
+1. High-quality branded mockup or final application visual
+2. Strong website screenshot or device mockup
+3. Final visual-identity system image
+4. Environmental, packaging, signage, trade-show, or collateral visual
+5. Cleared guideline spread, only if visually strong and approved
+```
+
+Never use by default:
+
+```text
+Watermarked review work
+Low-resolution proof
+Raw logo on a blank white canvas
+Source-file screenshot
+Unlicensed photography
+Client-private content
+Generic placeholder visual
+```
+
+## Image metadata
+
+Every selected public image needs:
+
+```text
+Original Asset Reference
+Web Export Filename
+Alt Text
+Caption
+Decorative / Meaningful Toggle
+Image Rights Status
+Public Visibility Status
+```
+
+Rules:
+
+- Alt text describes the visual itself in real project context.
+- Alt text is not a keyword dump.
+- Captions appear only when they add useful context.
+- Decorative images can have empty alt text.
+- The body copy, headings, service tags, company context, location, and linked service pages carry broader relevance.
+
+Example:
+
+```text
+Filename:
+lancaster-commercial-contractor-brand-identity-website-design.webp
+
+Alt text:
+Homepage design and refreshed visual identity created for a Lancaster commercial contractor.
+
+Caption:
+A connected digital experience designed to bring the rebrand into the customer journey.
+```
+
+***
+
+# Portfolio Editor
+
+The editor must use tabs so the Admin is not overwhelmed by a giant form.
+
+```text
+Overview
+Project Facts
+Public Permissions
+Assets + Gallery
+TBR Case Study
+Freedom Foundry Proof Page
+SEO + Social
+Preview + Publish
+History
+```
+
+## Overview
+
+Display:
+
+```text
+Client and project identity
+Portfolio Review status
+Assigned owner
+TBR output status
+Freedom Foundry output status
+Readiness checklist
+Portfolio completeness score
+Last saved
+Last updated
+Link to client/project record
+Link to Drive root reference
+Link to ClickUp reference
+Link to client portal
+Links to published pages if available
+```
+
+Example:
+
+```text
+Portfolio Readiness: 9 of 13 items complete
+
+Missing:
+- Featured Image
+- Public visual permission
+- Meta description
+- Related service page
+```
+
+This score is a workflow cue only. It must never publish content automatically.
+
+## Project Facts
+
+Fields:
+
+```text
+Public client/company name
+Anonymous case-study option
+Public project title
+Project year
+Company website
+Location / Market
+Industry
+Business type
+Project type
+Work-type/service tags
+Company summary
+Services delivered
+Completed deliverables
+Public project context
+Approved testimonial + attribution
+Related TBR service page
+Related TBR method/insight page
+Related Freedom Foundry service page
+```
+
+## Public Permissions
+
+Contain all approval questions, permission evidence, notes, approval date, and approver.
+
+## Assets + Gallery
+
+Contain image selection, crop, sequence, metadata, and rights controls.
+
+## TBR Case Study
+
+Contain the deeper authority-building public content.
+
+## Freedom Foundry Proof Page
+
+Contain the concise visual/conversion page content.
+
+## SEO + Social
+
+Contain metadata, indexing, canonical, social preview, and sitemap controls per destination.
+
+## Preview + Publish
+
+Contain all visual previews, final review checklist, and explicit publishing controls.
+
+## History
+
+Maintain an immutable audit log for:
+
+```text
+Portfolio record creation
+Field edits
+Permission changes
+Asset additions/removals
+Featured-image changes
+SEO changes
+AI draft creation
+Approval-state changes
+Scheduling
+Publishing
+Unpublishing
+Archiving
+User and timestamp
+```
+
+***
+
+# The Brand Revivalist® Case Study Output
+
+## Purpose
+
+The TBR case study is the detailed, authority-building public project page.
+
+It must show strategic thinking and first-hand expertise—not simply list deliverables or display images.
+
+## Required page elements
+
+```text
+Hero Visual
+Client / Project Identity
+Location · Industry · Project Type, when approved
+One-Line Transformation
+Company Overview
+The Challenge
+Strategic Diagnosis
+The Work / Approach
+What Was Built
+What Changed / Outcome
+Selected Visual Proof
+Testimonial, if approved
+Related TBR Services
+Related TBR Insight or Method
+Visible TBR Attribution
+Apply CTA
+```
+
+## Required attribution
+
+Display this near the project story:
+
+```text
+Strategic direction led by LaTricia Morris, The Brand Revivalist®.
+```
+
+Link the name to a stable TBR About, Authority, or Method page.
+
+## Conditional page behavior
+
+```text
+No testimonial:
+Hide the testimonial section.
+
+No verified numerical result:
+Use “What Changed” and describe only factual outcomes.
+Never invent metrics.
+
+No public guideline permission:
+Hide guideline visuals.
+
+No detailed story yet:
+Allow a polished Selected Work page with actual project facts, services,
+visuals, and concise narrative.
+
+No permission to name client:
+Use approved anonymous case-study format.
+
+No public permission:
+Keep page private or Private Proof Only.
+```
+
+## Writing model
+
+Use clear, specific, natural language.
+
+The content should give prospects and search systems true context about the company, the challenge, the scope, and the strategic transformation.
+
+Base pattern:
+
+```text
+[Client Name] is a [location/market] [industry] business serving [audience].
+
+When the company outgrew [specific business or brand challenge], The Brand
+Revivalist® led a [project type] engagement spanning [actual services and
+deliverables]. Rather than treating the work as isolated design tasks, the
+engagement created [specific cohesive transformation] across [actual
+touchpoints].
+```
+
+Example:
+
+```text
+When a Lancaster, Pennsylvania business outgrew the logo and website that had
+carried it to this stage, it needed more than a cosmetic update. The Brand
+Revivalist® led a connected rebranding engagement across visual identity,
+website design, business cards, brochures, and trade-show materials—turning
+disconnected touchpoints into a cohesive brand system built to reflect the
+company’s expertise.
+```
+
+Every generated paragraph must be editable by Admin.
+
+***
+
+# Freedom Foundry Public Proof Page
+
+## Purpose
+
+Freedom Foundry visitors may find the brand through a digital offer, diagnostic, resource, tool, product, partner, or lead-generation experience.
+
+They should be able to see public agency proof immediately and understand that Freedom Foundry can support substantial branding and rebranding work.
+
+## Required page elements
+
+```text
+Hero Visual
+Client / Project Identity
+Location · Industry · Project Type, when approved
+One-Line Transformation
+Short Project Summary
+Services Delivered
+Selected Visual Gallery
+Visible TBR Strategic-Direction Attribution
+Freedom Foundry Service CTA
+Optional Link to Full TBR Case Study
+```
+
+## Page-copy rules
+
+Freedom Foundry’s public page must be:
+
+- Visual-first
+- Concise
+- Conversion-oriented
+- Distinct from the deeper TBR case study
+- Typically 150–400 words
+
+It should not copy/paste the TBR long-form narrative.
+
+The TBR output should carry the deeper strategy, diagnosis, methodology, and authority content.
+
+***
+
+# SEO, Social, and AI-Search Readiness
+
+## Guiding rule
+
+Write each public page for a real business owner first, while ensuring that the page clearly and truthfully communicates:
+
+```text
+Who the client is
+What kind of business they are
+Where they operate, when public and relevant
+What problem they faced
+What services were delivered
+What touchpoints changed
+What The Brand Revivalist® / LaTricia led
+What the transformation made possible
+Who should hire you for similar work
+```
+
+Do not generate SEO spam, keyword dumps, or unverified “best” claims.
+
+## Separate fields per destination
+
+Maintain separate editable fields for TBR and Freedom Foundry:
+
+```text
+URL Slug
+Public URL
+Index / Noindex
+Canonical URL
+SEO Title
+Meta Description
+Open Graph Title
+Open Graph Description
+Open Graph Image
+Social Image Override
+Primary Keyword/Theme — internal planning only
+Secondary Topical Terms — internal planning only
+Related Service Links
+Related Insight/Method Links
+Structured Data Values
+Sitemap Inclusion
+```
+
+## Default TBR output settings
+
+For an original, substantive TBR case study:
+
+```text
+Index: Yes
+Canonical: Self-referencing TBR URL
+Sitemap: Include after publication
+```
+
+## Default Freedom Foundry settings
+
+For a genuinely distinct, concise Freedom Foundry proof page:
+
+```text
+Index: Yes
+Canonical: Self-referencing Freedom Foundry URL
+Sitemap: Include after publication
+```
+
+If Freedom Foundry’s page is substantially similar to the TBR case study, the Admin must choose one:
+
+```text
+Create distinct, useful Freedom Foundry copy and keep it indexable
+
+OR
+
+Set Freedom Foundry page as Noindex, Follow and link prominently
+to the full TBR case study
+```
+
+## Requirements for every indexable page
+
+```text
+Stable permanent public URL
+No login required
+Meaningful crawlable text
+One clear H1
+Unique title
+Unique meta description
+Correct canonical URL
+Open Graph data
+Selected sharing image
+Descriptive alt text where appropriate
+Relevant internal/contextual links
+XML sitemap inclusion
+Responsive and accessible experience
+```
+
+***
+
+# SEO Reference Library
+
+Create a private, Admin-only area:
+
+```text
+SEO Reference Library
+```
+
+This should allow LaTricia to upload existing FatJoe reports and other approved SEO planning documents.
+
+These reports are reference inputs for drafting and optimization suggestions. They are not public content and cannot be treated as unquestioned fact.
+
+## Supported uploads
+
+```text
+PDF
+DOCX
+CSV
+XLSX
+Google Drive-linked File
+Plain Text / Internal Notes
+```
+
+## Required report tags
+
+```text
+Brand/Site:
+- The Brand Revivalist®
+- Freedom Foundry
+- Both / Ecosystem
+
+Report Type:
+- Keyword Research
+- Competitor Review
+- Technical SEO Audit
+- On-Page Audit
+- Backlink Report
+- Content Gap Analysis
+- Local SEO Report
+- Other
+
+Date
+Source
+Geographic / Market Focus
+Notes
+```
+
+## Drafting option
+
+Inside the portfolio editor’s SEO + Social tab, offer:
+
+```text
+Use SEO Reference Library for Suggestions
+```
+
+If enabled, AI may suggest:
+
+```text
+Topical vocabulary
+Service terminology
+Truthful geographic context
+Related TBR service pages
+Related TBR method/insight pages
+Title options
+Meta-description options
+Content-gap questions
+Internal planning keywords/themes
+```
+
+All suggestions must be clearly labeled:
+
+```text
+AI Suggestion — Review Before Publishing
+```
+
+## Hard limits
+
+AI may not:
+
+```text
+Auto-publish
+Copy SEO reports blindly
+Use keyword stuffing in page content
+Use keyword stuffing in alt text
+Invent rankings or search volume
+Invent traffic or performance outcomes
+Invent client details
+Invent industry/location
+Invent testimonials
+Invent project results
+Claim TBR is “#1,” “best,” “top,” or otherwise make unsupported rankings claims
+```
+
+***
+
+# AI Drafting
+
+## Inputs AI may use
+
+AI may only use:
+
+```text
+Confirmed project facts
+Approved public company information
+Admin-selected project notes
+Selected public-safe assets and metadata
+Confirmed project type
+Confirmed services and deliverables
+Approved testimonial content
+Approved location/industry permission
+Selected SEO Reference Library reports
+Selected related services, insights, and methodology links
+```
+
+## Outputs AI may suggest
+
+```text
+Project title / H1
+Portfolio-card title
+One-line transformation
+Company overview
+Project summary
+Challenge framing
+Strategic diagnosis starting point
+What was built
+What changed starting point
+Service summary
+Web image filenames
+Alt text
+Captions
+SEO title options
+Meta-description options
+Open Graph title/description
+Social post draft
+Related project/service/method links
+CTA copy
+```
+
+All generated content must remain editable.
+
+***
+
+# Preview and Publishing
+
+## Previews
+
+Show previews for:
+
+```text
+TBR Portfolio Dashboard Card
+TBR Project Case Study
+Freedom Foundry Portfolio Card
+Freedom Foundry Proof Page
+Google SERP Snippet
+LinkedIn/Open Graph Preview
+```
+
+## Publishing actions
+
+```text
+Save Draft
+Mark Ready for Review
+Approve for Publishing
+Schedule Publication
+Publish to TBR
+Publish to Freedom Foundry
+Unpublish
+Archive
+Create Private Proof Link
+```
+
+Only Super Admin or explicitly authorized Publisher roles may publish.
+
+## Final publish confirmation
+
+Before publishing, show:
+
+```text
+Destination
+Final Public URL
+Index/Noindex Choice
+Canonical URL
+SEO Title
+Meta Description
+Featured Image
+Open Graph Image
+Selected Gallery Images
+Public Client Naming Permission
+Public Visual Permission
+Testimonial Permission
+TBR Attribution
+Primary CTA Destination
+```
+
+Require explicit confirmation.
+
+***
+
+# Private Proof Links
+
+Some work cannot be publicly indexed but can still help close qualified prospects.
+
+Support a **Private Proof Only** setting.
+
+## Private proof features
+
+```text
+Optional password
+Optional expiration date
+Optional recipient email restriction
+View-only gallery
+No raw Drive links
+No downloads of source/final assets
+Confidentiality notice
+View analytics
+Admin access revocation
+```
+
+Private proof pages must be:
+
+```text
+Noindex
+Excluded from public sitemap
+Excluded from public work gallery
+Revocable
+```
+
+***
+
+# Portfolio Automation
+
+## Trigger from project delivery
+
+When final client deliverables are officially released:
+
+1. Create a private Portfolio Review record.
+2. Pull confirmed project, scope, service, and deliverable data.
+3. Pull existing Portfolio Candidate and Public Cleared assets.
+4. Suggest relevant portfolio evidence based on completed deliverables.
+5. Add record to Portfolio > Pending Review.
+6. Notify the assigned internal portfolio owner.
+
+## Deliverable-based suggestions
+
+| Completed deliverable | Suggested proof |
+|---|---|
+| Logo Suite | Approved logo/identity presentation, branded mockups |
+| Visual Identity | Color/type system and approved identity applications |
+| Website Design | Homepage, page, and mobile screens/device mockups |
+| Website Development | Approved live-site screenshots and launch note |
+| Brand Guidelines | Selected approved spreads only |
+| Business Cards | Card mockups |
+| Brochures | Cover/spread/mockup visuals |
+| Social Media Template Kit | Selected social template applications |
+| Sales Sheets | Branded sales-sheet mockup |
+| Trade Show / Booth Graphics | Booth, signage, or environmental mockup |
+| Packaging / Labels | Product or packaging imagery |
+| Ignite OS Activation | Scope/context statement only—never internal tasks |
+
+Suggestions are not automatic selection or publication.
+
+***
+
+# Public Portfolio Experience
+
+## Portfolio dashboard
+
+The public portfolio must look premium, visual, intentional, and app-quality.
+
+Required components:
+
+```text
+Featured Work
+Filterable Work Library
+Minimal image-forward cards
+Work-type/service filters
+Permanent project-page links
+Strong The Brand Revivalist® attribution
+CTA to start a project or apply for branding/rebranding support
+```
+
+## Portfolio cards
+
+Each card should show only:
+
+```text
+Featured Image
+Client/Company Name
+Project Type or Work Category
+One-Line Transformation
+```
+
+Example:
+
+```text
+North Star Home Services
+Rebranding · Website + Collateral
+A growth-ready identity and customer experience built to match the
+company’s expertise.
+```
+
+Do not crowd cards with every service tag, every metric, or a large industry filter system.
+
+## Individual TBR project page
+
+```text
+Hero Visual
+Client/Project Identity
+Location · Industry · Project Type
+One-Line Transformation
+Company/Project Context
+Challenge
+Strategic Diagnosis
+What TBR Delivered
+Selected Visual Proof
+What Changed
+Testimonial if approved
+Related Services/Method
+TBR Attribution
+Apply CTA
+```
+
+## Individual Freedom Foundry page
+
+```text
+Hero Visual
+Client/Project Identity
+Brief Context
+One-Line Transformation
+Services Delivered
+Selected Visual Proof
+Short Project Summary
+TBR Strategic Attribution
+Freedom Foundry CTA
+Optional Link to Full TBR Case Study
+```
+
+***
+
+# Build Order
+
+## Phase 1: Portfolio records and administration
+
+Build first:
+
+1. Portfolio navigation and access permissions
+2. Portfolio Review data model
+3. Portfolio statuses and destination statuses
+4. Automatic Portfolio Review creation after final delivery release
+5. Portfolio dashboard, saved views, filters, and completeness checks
+6. Project Facts and Public Permissions
+7. Assets + Gallery
+8. Featured image controls
+9. Private Proof Only workflow
+
+## Phase 2: Drafting and SEO workflow
+
+Build next:
+
+1. TBR Case Study editor
+2. Freedom Foundry Proof Page editor
+3. Separate content fields per public destination
+4. SEO + Social controls
+5. Preview screens
+6. SEO Reference Library
+7. AI drafting from approved inputs
+8. History/audit trail
+
+## Phase 3: Public portfolio library
+
+Build next:
+
+1. TBR-branded public Work Library
+2. Filterable cards based on work type/service
+3. Individual public project pages
+4. Metadata, canonical, indexing, sitemap behavior
+5. Freedom Foundry public proof library
+6. Private proof links
+7. Publish, unpublish, schedule, and archive controls
+
+## Phase 4: Later enhancements
+
+Do not build these until the core workflow is working:
+
+```text
+AI asset-classification suggestions
+AI suggested gallery selections
+WordPress companion-content automation
+Portfolio-to-social/email generation
+Proposal-specific proof collections
+Search Console / analytics dashboard
+Client-facing public-permission requests
+Related project recommendations
+Industry/service collection pages
+```
+
+***
+
+# Definition of Done
+
+The Portfolio Component is complete when:
+
+1. Final client delivery automatically creates a private Portfolio Review record unless the project is marked Never Public or Private Proof Only.
+2. The Portfolio Admin clearly shows what is published, pending, permission-pending, missing SEO, missing featured image, private proof only, and archived.
+3. The agency can filter work by project type, work type, industry, client, year, status, permission, featured image, and SEO completeness.
+4. Smaller deliverables—including logos, websites, social template kits, business cards, brochures, sales collateral, packaging, signage, and activation materials—are captured as work/service tags and portfolio evidence.
+5. Industry is shown on individual project pages but public gallery filters focus on the work/services delivered.
+6. The Admin can select public-safe visuals, choose a featured image, edit crop, reorder galleries, write captions, write alt text, and prevent private assets from appearing publicly.
+7. FatJoe SEO reports can be stored privately and used only for editable AI suggestions.
+8. AI never publishes automatically or invents client facts, permissions, testimonials, results, industries, locations, or rankings claims.
+9. One Portfolio Review record can create a detailed TBR case study and a distinct Freedom Foundry proof page.
+10. TBR and Freedom Foundry pages have separate titles, copy, metadata, CTAs, indexing settings, canonical settings, and social images.
+11. Every indexable public project page has a stable URL, crawlable text, unique H1/title/meta description, appropriate canonical, sitemap inclusion, accurate image metadata, and TBR attribution.
+12. Every publication requires explicit Admin approval.
+13. Private proof pages are noindex, excluded from sitemaps/galleries, view-only, and revocable.
+14. The system never exposes source files, raw Drive URLs, internal notes, contracts, invoices, credentials, unapproved work, or client-private assets publicly.
+
+***
+
+# Final Requirement
+
+> Freedom Foundry’s Portfolio Publishing Engine must turn approved project work into a continuously growing, visually exceptional, truthful, searchable body of proof for The Brand Revivalist®—while also allowing Freedom Foundry visitors to see agency-level capability. It must reuse structured project data, approved assets, public-permission controls, and SEO reference material so portfolio updates become fast and repeatable, but it must require human review and explicit Admin approval before any public content goes live.
