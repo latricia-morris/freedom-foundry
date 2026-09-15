@@ -8,6 +8,7 @@ import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import PageNotFound from './lib/PageNotFound';
 import LandingPage from './pages/LandingPage';
+import PortfolioPage from './pages/PortfolioPage';
 import ScrollToTop from './components/ScrollToTop';
 import { Toaster } from '@/components/ui/toaster';
 import Layout from '@/components/layout/Layout';
@@ -212,6 +213,7 @@ function AppRoutes() {
       <Route path="/member/:brandSlug/:profileType" element={<SharePage />} />
       <Route path="/terms" element={<Terms />} />
       <Route path="/privacy" element={<Privacy />} />
+      <Route path="/portfolio" element={<PortfolioPage />} />
       <Route path="/brand-persona-quiz" element={<BrandPersonaQuiz />} />
       <Route path="/brand-persona-quiz/results" element={<BrandPersonaQuizResults />} />
 

@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
   ArrowRight,
   Check,
@@ -193,9 +194,9 @@ function chooseRecommendation(answers) {
 
 function Button({ children, variant = 'primary', className = '', ...props }) {
   const variants = {
-    primary: 'bg-[#d9c9a3] text-[#211b27] hover:bg-[#eadcba]',
-    secondary: 'border border-[#665b67] text-[#f2e8d5] hover:border-[#d9c9a3] hover:text-[#d9c9a3]',
-    quiet: 'text-[#d9c9a3] hover:text-[#f2e8d5]',
+    primary: 'bg-[#7d292f] text-[#fff7ed] hover:bg-[#983637] shadow-[0_6px_16px_rgba(125,41,47,0.16)]',
+    secondary: 'border border-[#7d292f]/45 text-[#6f282e] hover:border-[#7d292f] hover:bg-[#f1dfca]',
+    quiet: 'text-[#7d292f] hover:text-[#a23835]',
   };
   return (
     <button
@@ -223,9 +224,9 @@ function ErrorNotice({ message, onRetry }) {
 function LoadingSkeleton() {
   return (
     <div aria-label="Loading services" className="space-y-6 animate-pulse">
-      <div className="h-48 bg-[#2a2230] border border-[#453a49]" />
+      <div className="h-48 bg-[#f0dfcc] border border-[#d4bda8]" />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {[1, 2, 3, 4, 5, 6].map((item) => <div key={item} className="h-36 bg-[#2a2230] border border-[#453a49]" />)}
+        {[1, 2, 3, 4, 5, 6].map((item) => <div key={item} className="h-36 bg-[#f0dfcc] border border-[#d4bda8]" />)}
       </div>
     </div>
   );
@@ -234,7 +235,7 @@ function LoadingSkeleton() {
 function CategorySection({ category, expanded, onToggle, onStart }) {
   const Icon = category.icon;
   return (
-    <section className={`dashboard-card overflow-hidden transition-colors ${expanded ? 'border-[#9b7d65]' : ''}`}>
+    <section className={`dashboard-card bg-[#fffaf3] border border-[#d5bda6] overflow-hidden transition-colors ${expanded ? 'border-[#8f3534] shadow-[0_8px_22px_rgba(125,41,47,0.12)]' : ''}`}>
       <button
         type="button"
         aria-expanded={expanded}
@@ -243,21 +244,21 @@ function CategorySection({ category, expanded, onToggle, onStart }) {
       >
         <span className="icon-tile shrink-0"><Icon className="w-5 h-5 icon-warm" strokeWidth={1.5} /></span>
         <span className="min-w-0 flex-1">
-          <span className="block text-[10px] uppercase tracking-[0.22em] text-[#d9c9a3] mb-2">{category.shortTitle || category.title}</span>
-          <span className="block font-heading text-xl text-foreground">{category.title}</span>
-          <span className="block text-sm text-muted-foreground leading-relaxed mt-2 max-w-xl">{category.description}</span>
+          <span className="block text-xs uppercase tracking-[0.22em] text-[#8f3534] mb-2">{category.shortTitle || category.title}</span>
+          <span className="block font-heading text-2xl text-[#241a20]">{category.title}</span>
+          <span className="block text-base text-[#514149] leading-relaxed mt-2 max-w-xl">{category.description}</span>
         </span>
-        <ChevronDown className={`w-4 h-4 mt-1 text-[#d9c9a3] shrink-0 transition-transform ${expanded ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`w-4 h-4 mt-1 text-[#8f3534] shrink-0 transition-transform ${expanded ? 'rotate-180' : ''}`} />
       </button>
       {expanded && (
-        <div className="px-5 pb-5 sm:px-6 sm:pb-6 border-t border-[#453a49] pt-4 ml-0">
-          <p className="text-xs text-[#b9aeb8] mb-3">{category.prompt}</p>
+        <div className="px-5 pb-5 sm:px-6 sm:pb-6 border-t border-[#e2cfbb] pt-5 ml-0">
+          <p className="text-sm text-[#514149] mb-3">{category.prompt}</p>
           <div className="flex flex-wrap gap-2 mb-5">
             {category.offerings.map((offering) => (
-              <span key={offering} className="border border-[#514653] px-2.5 py-1 text-[11px] text-[#d8ced4]">{offering}</span>
+              <span key={offering} className="border border-[#cdb29d] bg-[#f7eadb] px-2.5 py-1 text-xs text-[#5e3e42]">{offering}</span>
             ))}
           </div>
-          {category.pricing_text && <p className="text-xs text-[#b9aeb8] leading-relaxed mb-5">{category.pricing_text}</p>}
+          {category.pricing_text && <p className="text-sm text-[#514149] leading-relaxed mb-5">{category.pricing_text}</p>}
           <Button onClick={() => onStart(category)}><MessageCircle className="w-3.5 h-3.5" /> Start a Conversation</Button>
         </div>
       )}
@@ -421,22 +422,27 @@ export default function ServiceHub() {
   const updateForm = (key, value) => setForm((previous) => ({ ...previous, [key]: value }));
 
   return (
-    <div className="editorial-container max-w-6xl mx-auto animate-fade-in pb-16">
-      <header className="mb-8 md:mb-10">
-        <div className="flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-[0.28em] text-[#d9c9a3] mb-4">
-          <span>Member services</span><span className="text-[#786b79]">/</span><span className="text-muted-foreground">A considered next move</span>
+    <div className="editorial-container max-w-7xl mx-auto animate-fade-in pb-16 px-5 sm:px-8 lg:px-10">
+      <header className="mb-10 md:mb-14">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-7">
+          <div className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-[0.24em] text-[#8f3534]">
+            <span>Member services</span><span className="text-[#b99680]">/</span><span className="text-[#625057]">A considered next move</span>
+          </div>
+          <Link to="/portfolio" data-testid="link-services-portfolio" className="inline-flex items-center gap-2 text-sm font-semibold text-[#7d292f] transition-colors hover:text-[#a23835]">
+            View portfolio <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
         <div className="grid lg:grid-cols-[1fr_280px] gap-7 items-end">
           <div>
-            <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-light leading-[0.98] text-foreground">
-              Find the work that<br /><span className="molten-text italic">moves you forward.</span>
+            <h1 className="font-heading text-5xl sm:text-6xl lg:text-7xl font-light leading-[0.92] text-[#241a20]">
+              Find the work that<br /><span className="text-[#9d3a34] italic">moves you forward.</span>
             </h1>
-            <p className="text-sm text-muted-foreground leading-relaxed max-w-xl mt-5">
+            <p className="text-base text-[#514149] leading-relaxed max-w-xl mt-6">
               A quiet place to choose your next useful step, ask for a capable hand, or simply get a clearer read on what comes next.
             </p>
           </div>
-          <div className="border-l border-[#574c5a] pl-5 text-sm text-[#c8bdc6] leading-relaxed">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-[#d9c9a3] mb-2">The studio promise</p>
+          <div className="border-l-2 border-[#bb704f] pl-5 text-base text-[#514149] leading-relaxed">
+            <p className="text-xs uppercase tracking-[0.2em] text-[#8f3534] mb-2">The studio promise</p>
             <p>No pressure. No package maze. Just a thoughtful starting point.</p>
           </div>
         </div>
@@ -448,13 +454,13 @@ export default function ServiceHub() {
       {!loading && (
         <>
           {returningClient && (
-            <section className="forged-gradient border border-[#806b5c] p-5 sm:p-7 mb-6" aria-labelledby="returning-client-title">
+            <section className="border border-[#c78961] bg-[#f0d8c2] p-6 sm:p-8 mb-8" aria-labelledby="returning-client-title">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
                 <div>
-                  <p className="text-[10px] uppercase tracking-[0.24em] text-[#e2c68f] mb-2">Welcome back</p>
-                  <h2 id="returning-client-title" className="font-heading text-2xl text-foreground">What do you need help with now?</h2>
+                  <p className="text-xs uppercase tracking-[0.24em] text-[#7d292f] mb-2">Welcome back</p>
+                  <h2 id="returning-client-title" className="font-heading text-3xl text-[#241a20]">What do you need help with now?</h2>
                   {staleContext && (
-                    <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
+                    <p className="text-base text-[#514149] mt-2 max-w-2xl">
                       It has been a little while since your last update. What has changed in the business since then?
                     </p>
                   )}
@@ -463,25 +469,25 @@ export default function ServiceHub() {
               </div>
               {staleContext && (
                 <label className="block mt-5 max-w-2xl">
-                  <span className="text-xs text-[#d8c5b6]">Business update <span className="text-[#a9959c]">(optional)</span></span>
+                   <span className="text-sm text-[#5e3e42]">Business update <span className="text-[#825c60]">(optional)</span></span>
                   <textarea
                     value={form.details}
                     onChange={(event) => updateForm('details', event.target.value)}
                     rows={2}
                     placeholder="A sentence or two is plenty."
-                    className="mt-2 w-full bg-[#241d2a]/70 border border-[#685765] px-3 py-2 text-sm text-foreground placeholder:text-[#897b88] focus:outline-none focus:border-[#d9c9a3]"
+                     className="mt-2 w-full bg-[#fffaf3] border border-[#cdb29d] px-3 py-2 text-base text-[#241a20] placeholder:text-[#80656a] focus:outline-none focus:border-[#8f3534]"
                   />
                 </label>
               )}
             </section>
           )}
 
-          <section className="dashboard-card forged-gradient p-6 sm:p-8 mb-10" aria-labelledby="starting-title">
+           <section className="dashboard-card bg-[#7b292f] border border-[#8f3534] p-6 sm:p-9 mb-12" aria-labelledby="starting-title">
             <div className="grid lg:grid-cols-[1fr_auto] gap-7 items-center">
               <div>
-                <div className="flex items-center gap-2 text-[#e2c68f] text-[10px] uppercase tracking-[0.24em] mb-3"><Sparkles className="w-3.5 h-3.5" /> Your first move</div>
-                <h2 id="starting-title" className="font-heading text-2xl sm:text-3xl text-foreground">Not sure where to start?</h2>
-                <p className="text-sm text-muted-foreground mt-2 max-w-xl">Answer five short questions. We will point you toward the most useful conversation, not the biggest one.</p>
+                 <div className="flex items-center gap-2 text-[#f4d2aa] text-xs uppercase tracking-[0.24em] mb-3"><Sparkles className="w-3.5 h-3.5" /> Your first move</div>
+                 <h2 id="starting-title" className="font-heading text-3xl sm:text-4xl text-[#fff6eb]">Not sure where to start?</h2>
+                 <p className="text-base text-[#f0d9c8] mt-2 max-w-xl">Answer five short questions. We will point you toward the most useful conversation, not the biggest one.</p>
               </div>
               <div className="flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-3">
                 <Button onClick={beginStartingPoint}>Find My Starting Point <ArrowRight className="w-3.5 h-3.5" /></Button>
@@ -491,24 +497,24 @@ export default function ServiceHub() {
           </section>
 
           {flow === 'starting' && (
-            <section id="starting-point" className="dashboard-card border-[#806b5c] p-5 sm:p-8 mb-10 scroll-mt-6" aria-labelledby="starting-point-title">
+             <section id="starting-point" className="dashboard-card bg-[#fffaf3] border border-[#c78961] p-6 sm:p-9 mb-12 scroll-mt-6" aria-labelledby="starting-point-title">
               <div className="flex items-center justify-between gap-4 mb-7">
                 <div>
-                  <p className="text-[10px] uppercase tracking-[0.24em] text-[#d9c9a3] mb-2">Starting point / {questionIndex + 1} of {STARTING_POINT_QUESTIONS.length}</p>
-                  <h2 id="starting-point-title" className="font-heading text-2xl text-foreground">{currentQuestion.question}</h2>
+                   <p className="text-xs uppercase tracking-[0.24em] text-[#8f3534] mb-2">Starting point / {questionIndex + 1} of {STARTING_POINT_QUESTIONS.length}</p>
+                   <h2 id="starting-point-title" className="font-heading text-3xl text-[#241a20]">{currentQuestion.question}</h2>
                 </div>
-                <button type="button" aria-label="Close starting point flow" onClick={() => setFlow('idle')} className="text-[#a99aa7] hover:text-foreground"><X className="w-5 h-5" /></button>
+                 <button type="button" aria-label="Close starting point flow" onClick={() => setFlow('idle')} className="text-[#7d5a60] hover:text-[#7d292f]"><X className="w-5 h-5" /></button>
               </div>
-              <div className="h-1 bg-[#3c3241] mb-6"><div className="h-1 bg-[#d9c9a3] transition-all" style={{ width: `${((questionIndex + 1) / STARTING_POINT_QUESTIONS.length) * 100}%` }} /></div>
+               <div className="h-1 bg-[#ead7c4] mb-6"><div className="h-1 bg-[#8f3534] transition-all" style={{ width: `${((questionIndex + 1) / STARTING_POINT_QUESTIONS.length) * 100}%` }} /></div>
               <div className="grid sm:grid-cols-2 gap-3">
                 {currentQuestion.options.map((option) => (
                   <button
                     type="button"
                     key={option}
                     onClick={() => setAnswers((previous) => ({ ...previous, [currentQuestion.key]: option }))}
-                    className={`text-left border px-4 py-4 text-sm transition-colors ${answers[currentQuestion.key] === option ? 'border-[#d9c9a3] bg-[#5a493e] text-[#f3e5c7]' : 'border-[#514653] text-muted-foreground hover:border-[#a89678]'}`}
+                     className={`text-left border px-4 py-4 text-base transition-colors ${answers[currentQuestion.key] === option ? 'border-[#8f3534] bg-[#f0d8c2] text-[#5c272d]' : 'border-[#d5bda6] text-[#514149] hover:border-[#8f3534]'}`}
                   >
-                    <span className="flex items-center justify-between gap-4">{option}{answers[currentQuestion.key] === option && <Check className="w-4 h-4 text-[#e2c68f]" />}</span>
+                   <span className="flex items-center justify-between gap-4">{option}{answers[currentQuestion.key] === option && <Check className="w-4 h-4 text-[#8f3534]" />}</span>
                   </button>
                 ))}
               </div>
@@ -524,15 +530,15 @@ export default function ServiceHub() {
           )}
 
           {flow === 'recommendation' && recommendation && (
-            <section className="dashboard-card border-[#b99467] p-5 sm:p-8 mb-10" aria-labelledby="recommendation-title">
+             <section className="dashboard-card bg-[#fffaf3] border border-[#c78961] p-6 sm:p-9 mb-12" aria-labelledby="recommendation-title">
               <div className="grid lg:grid-cols-[1fr_300px] gap-8">
                 <div>
-                  <p className="text-[10px] uppercase tracking-[0.24em] text-[#e2c68f] mb-3">Your considered next move</p>
-                  <h2 id="recommendation-title" className="font-heading text-3xl text-foreground">{recommendation.title}</h2>
-                  <p className="text-sm text-muted-foreground leading-relaxed mt-3 max-w-xl">{recommendation.reason}</p>
+                   <p className="text-xs uppercase tracking-[0.24em] text-[#8f3534] mb-3">Your considered next move</p>
+                   <h2 id="recommendation-title" className="font-heading text-4xl text-[#241a20]">{recommendation.title}</h2>
+                   <p className="text-base text-[#514149] leading-relaxed mt-3 max-w-xl">{recommendation.reason}</p>
                   <label className="block mt-6 max-w-xl">
-                    <span className="text-xs text-[#d8c5b6]">Anything specific you want this to help unlock? <span className="text-[#a9959c]">(optional)</span></span>
-                    <textarea value={objective} onChange={(event) => setObjective(event.target.value)} rows={3} placeholder="For example: a clearer offer before our next launch." className="mt-2 w-full bg-[#241d2a]/70 border border-[#685765] px-3 py-2 text-sm text-foreground placeholder:text-[#897b88] focus:outline-none focus:border-[#d9c9a3]" />
+                     <span className="text-sm text-[#5e3e42]">Anything specific you want this to help unlock? <span className="text-[#825c60]">(optional)</span></span>
+                     <textarea value={objective} onChange={(event) => setObjective(event.target.value)} rows={3} placeholder="For example: a clearer offer before our next launch." className="mt-2 w-full bg-[#fffaf3] border border-[#cdb29d] px-3 py-2 text-base text-[#241a20] placeholder:text-[#80656a] focus:outline-none focus:border-[#8f3534]" />
                   </label>
                 </div>
                 <div className="flex flex-col items-stretch gap-2 lg:pt-6">
@@ -546,49 +552,49 @@ export default function ServiceHub() {
           )}
 
           {flow === 'request' && (
-            <section id="conversation-form" className="dashboard-card border-[#806b5c] p-5 sm:p-8 mb-10 scroll-mt-6" aria-labelledby="conversation-title">
+             <section id="conversation-form" className="dashboard-card bg-[#fffaf3] border border-[#c78961] p-6 sm:p-9 mb-12 scroll-mt-6" aria-labelledby="conversation-title">
               <div className="flex items-start justify-between gap-4 mb-7">
                 <div>
-                  <p className="text-[10px] uppercase tracking-[0.24em] text-[#d9c9a3] mb-2">A conversation, not a funnel</p>
-                  <h2 id="conversation-title" className="font-heading text-2xl sm:text-3xl text-foreground">Tell us what would be useful.</h2>
-                  <p className="text-sm text-muted-foreground mt-2">A few details help us bring the right thought partner into the room.</p>
+                   <p className="text-xs uppercase tracking-[0.24em] text-[#8f3534] mb-2">A conversation, not a funnel</p>
+                   <h2 id="conversation-title" className="font-heading text-3xl sm:text-4xl text-[#241a20]">Tell us what would be useful.</h2>
+                   <p className="text-base text-[#514149] mt-2">A few details help us bring the right thought partner into the room.</p>
                 </div>
-                <button type="button" aria-label="Close conversation form" onClick={() => setFlow('idle')} className="text-[#a99aa7] hover:text-foreground"><X className="w-5 h-5" /></button>
+                 <button type="button" aria-label="Close conversation form" onClick={() => setFlow('idle')} className="text-[#7d5a60] hover:text-[#7d292f]"><X className="w-5 h-5" /></button>
               </div>
               <form onSubmit={(event) => submitConversation(event, false)} className="space-y-5">
                 <div className="grid md:grid-cols-2 gap-5">
                   <label className="block">
-                    <span className="block text-xs text-[#d8c5b6] mb-2">Where should we focus?</span>
-                    <select value={form.category_key} onChange={(event) => { updateForm('category_key', event.target.value); updateForm('service_type', ''); }} className="w-full h-11 bg-[#241d2a] border border-[#685765] px-3 text-sm text-foreground focus:outline-none focus:border-[#d9c9a3]">
+                    <span className="block text-sm text-[#5e3e42] mb-2">Where should we focus?</span>
+                    <select value={form.category_key} onChange={(event) => { updateForm('category_key', event.target.value); updateForm('service_type', ''); }} className="w-full h-12 bg-[#fffaf3] border border-[#cdb29d] px-3 text-base text-[#241a20] focus:outline-none focus:border-[#8f3534]">
                       <option value="">Choose an area</option>
                       {categories.map((category) => <option key={category.category_key} value={category.category_key}>{category.title}</option>)}
                     </select>
                   </label>
                   <label className="block">
-                    <span className="block text-xs text-[#d8c5b6] mb-2">What kind of support?</span>
-                    <input value={form.service_type} onChange={(event) => updateForm('service_type', event.target.value)} placeholder={activeCategory?.offerings?.[0] || 'A useful starting point'} className="w-full h-11 bg-[#241d2a] border border-[#685765] px-3 text-sm text-foreground placeholder:text-[#897b88] focus:outline-none focus:border-[#d9c9a3]" />
+                    <span className="block text-sm text-[#5e3e42] mb-2">What kind of support?</span>
+                    <input value={form.service_type} onChange={(event) => updateForm('service_type', event.target.value)} placeholder={activeCategory?.offerings?.[0] || 'A useful starting point'} className="w-full h-12 bg-[#fffaf3] border border-[#cdb29d] px-3 text-base text-[#241a20] placeholder:text-[#80656a] focus:outline-none focus:border-[#8f3534]" />
                   </label>
                   <label className="block">
-                    <span className="block text-xs text-[#d8c5b6] mb-2">When are you thinking?</span>
-                    <select value={form.timeline} onChange={(event) => updateForm('timeline', event.target.value)} className="w-full h-11 bg-[#241d2a] border border-[#685765] px-3 text-sm text-foreground focus:outline-none focus:border-[#d9c9a3]">
+                    <span className="block text-sm text-[#5e3e42] mb-2">When are you thinking?</span>
+                    <select value={form.timeline} onChange={(event) => updateForm('timeline', event.target.value)} className="w-full h-12 bg-[#fffaf3] border border-[#cdb29d] px-3 text-base text-[#241a20] focus:outline-none focus:border-[#8f3534]">
                       {TIMELINES.map((timeline) => <option key={timeline.value} value={timeline.value}>{timeline.label}</option>)}
                     </select>
                   </label>
                   <label className="block">
-                    <span className="block text-xs text-[#d8c5b6] mb-2">Your relationship to the Foundry</span>
-                    <select value={form.client_status} onChange={(event) => updateForm('client_status', event.target.value)} className="w-full h-11 bg-[#241d2a] border border-[#685765] px-3 text-sm text-foreground focus:outline-none focus:border-[#d9c9a3]">
+                    <span className="block text-sm text-[#5e3e42] mb-2">Your relationship to the Foundry</span>
+                    <select value={form.client_status} onChange={(event) => updateForm('client_status', event.target.value)} className="w-full h-12 bg-[#fffaf3] border border-[#cdb29d] px-3 text-base text-[#241a20] focus:outline-none focus:border-[#8f3534]">
                       <option value="returning">Returning member</option>
                       <option value="new">New member request</option>
                     </select>
                   </label>
                 </div>
                 <label className="block">
-                  <span className="block text-xs text-[#d8c5b6] mb-2">Objective <span className="text-[#a9959c]">(optional)</span></span>
-                  <input value={form.objective} onChange={(event) => updateForm('objective', event.target.value)} placeholder="What would a good outcome make possible?" className="w-full h-11 bg-[#241d2a] border border-[#685765] px-3 text-sm text-foreground placeholder:text-[#897b88] focus:outline-none focus:border-[#d9c9a3]" />
+                  <span className="block text-sm text-[#5e3e42] mb-2">Objective <span className="text-[#825c60]">(optional)</span></span>
+                  <input value={form.objective} onChange={(event) => updateForm('objective', event.target.value)} placeholder="What would a good outcome make possible?" className="w-full h-12 bg-[#fffaf3] border border-[#cdb29d] px-3 text-base text-[#241a20] placeholder:text-[#80656a] focus:outline-none focus:border-[#8f3534]" />
                 </label>
                 <label className="block">
-                  <span className="block text-xs text-[#d8c5b6] mb-2">A little context</span>
-                  <textarea value={form.details} onChange={(event) => updateForm('details', event.target.value)} rows={4} placeholder="What is happening, and where would another perspective help?" className="w-full bg-[#241d2a] border border-[#685765] px-3 py-3 text-sm text-foreground placeholder:text-[#897b88] focus:outline-none focus:border-[#d9c9a3]" />
+                  <span className="block text-sm text-[#5e3e42] mb-2">A little context</span>
+                  <textarea value={form.details} onChange={(event) => updateForm('details', event.target.value)} rows={4} placeholder="What is happening, and where would another perspective help?" className="w-full bg-[#fffaf3] border border-[#cdb29d] px-3 py-3 text-base text-[#241a20] placeholder:text-[#80656a] focus:outline-none focus:border-[#8f3534]" />
                 </label>
                 {submitError && (
                   <div role="alert" className="border border-[#9b5b59]/60 bg-[#34242d] px-4 py-3 text-sm text-[#f2d7cb] flex items-start gap-2">
@@ -616,10 +622,10 @@ export default function ServiceHub() {
             </section>
           )}
 
-          <section id="service-categories" className="scroll-mt-6 mb-10" aria-labelledby="category-title">
+           <section id="service-categories" className="scroll-mt-6 mb-12" aria-labelledby="category-title">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-4">
-              <div><p className="text-[10px] uppercase tracking-[0.28em] text-[#d9c9a3] mb-2">The service shelf</p><h2 id="category-title" className="font-heading text-3xl text-foreground">Choose a direction.</h2></div>
-              <p className="text-xs text-muted-foreground max-w-xs sm:text-right">Open a category to see the shape of the work. Nothing here commits you to a package.</p>
+               <div><p className="text-xs uppercase tracking-[0.28em] text-[#8f3534] mb-2">The service shelf</p><h2 id="category-title" className="font-heading text-4xl text-[#241a20]">Choose a direction.</h2></div>
+               <p className="text-sm text-[#514149] max-w-xs sm:text-right">Open a category to see the shape of the work. Nothing here commits you to a package.</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {categories.map((category) => (
@@ -629,35 +635,35 @@ export default function ServiceHub() {
           </section>
 
           {pricingText && (
-            <aside className="border-l-2 border-[#d9c9a3] pl-4 mb-10 max-w-2xl">
-              <p className="text-[10px] uppercase tracking-[0.24em] text-[#d9c9a3] mb-2">A note on investment</p>
-              <p className="text-sm text-muted-foreground leading-relaxed">{pricingText}</p>
+             <aside className="border-l-2 border-[#bb704f] pl-4 mb-12 max-w-2xl">
+               <p className="text-xs uppercase tracking-[0.24em] text-[#8f3534] mb-2">A note on investment</p>
+               <p className="text-base text-[#514149] leading-relaxed">{pricingText}</p>
             </aside>
           )}
 
           <section className="grid lg:grid-cols-[1fr_1.2fr] gap-6 items-start" aria-labelledby="history-title">
             <div>
-              <p className="text-[10px] uppercase tracking-[0.28em] text-[#d9c9a3] mb-2">Your thread with us</p>
-              <h2 id="history-title" className="font-heading text-3xl text-foreground">Request history.</h2>
-              <p className="text-sm text-muted-foreground leading-relaxed mt-3 max-w-sm">Only you can see these notes. Saved ideas stay here until they are ready to become a conversation.</p>
+               <p className="text-xs uppercase tracking-[0.28em] text-[#8f3534] mb-2">Your thread with us</p>
+               <h2 id="history-title" className="font-heading text-4xl text-[#241a20]">Request history.</h2>
+               <p className="text-base text-[#514149] leading-relaxed mt-3 max-w-sm">Only you can see these notes. Saved ideas stay here until they are ready to become a conversation.</p>
             </div>
-            <div className="dashboard-card divide-y divide-[#453a49]">
+            <div className="dashboard-card bg-[#fffaf3] border border-[#d5bda6] divide-y divide-[#e2cfbb]">
               {requests.length ? requests.slice(0, 8).map((request, index) => (
                 <div key={request.id || `${request.category_key}-${index}`} className="p-4 sm:p-5 flex items-start justify-between gap-4">
                   <div className="min-w-0">
-                    <p className="text-sm text-foreground">{request.service_type || request.category_key || 'Member services request'}</p>
-                    <p className="text-xs text-muted-foreground mt-1">{formatDate(request.created_at || request.createdAt || request.requested_at)}</p>
+                     <p className="text-base text-[#241a20]">{request.service_type || request.category_key || 'Member services request'}</p>
+                     <p className="text-sm text-[#6a565d] mt-1">{formatDate(request.created_at || request.createdAt || request.requested_at)}</p>
                   </div>
-                  <span className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.12em] text-[#d9c9a3] shrink-0"><Clock3 className="w-3 h-3" /> {statusLabel(request.status, request.save_for_later)}</span>
+                   <span className="inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.12em] text-[#8f3534] shrink-0"><Clock3 className="w-3 h-3" /> {statusLabel(request.status, request.save_for_later)}</span>
                 </div>
               )) : (
-                <div className="p-6 text-sm text-muted-foreground flex items-start gap-3"><FileText className="w-4 h-4 text-[#d9c9a3] mt-0.5 shrink-0" /><span>Your first conversation will appear here.</span></div>
+                 <div className="p-6 text-base text-[#514149] flex items-start gap-3"><FileText className="w-4 h-4 text-[#8f3534] mt-0.5 shrink-0" /><span>Your first conversation will appear here.</span></div>
               )}
             </div>
           </section>
 
-          <p className="text-[11px] text-[#938592] leading-relaxed mt-10 max-w-3xl border-t border-[#453a49] pt-5">
-            <span className="text-[#d9c9a3]">Trusted support:</span> {config?.trusted_support_disclaimer || config?.disclaimer || 'Trusted support may include independent specialists and partners. We will always be clear about who is involved before any work begins.'}
+           <p className="text-sm text-[#6a565d] leading-relaxed mt-12 max-w-3xl border-t border-[#d8c5b3] pt-5">
+             <span className="text-[#7d292f] font-semibold">Trusted support:</span> {config?.trusted_support_disclaimer || config?.disclaimer || 'Trusted support may include independent specialists and partners. We will always be clear about who is involved before any work begins.'}
           </p>
         </>
       )}
