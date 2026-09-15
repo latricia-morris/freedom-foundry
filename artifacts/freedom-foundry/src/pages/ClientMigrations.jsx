@@ -11,10 +11,10 @@ const STATUS_LABELS = {
 };
 
 const STATUS_STYLES = {
-  draft: 'border-white/10 bg-white/5 text-muted-foreground',
-  ready_to_invite: 'border-amber-400/25 bg-amber-400/10 text-amber-200',
-  invited: 'border-sky-400/25 bg-sky-400/10 text-sky-200',
-  claimed: 'border-emerald-400/25 bg-emerald-400/10 text-emerald-200',
+  draft: 'border-border bg-muted/60 text-muted-foreground',
+  ready_to_invite: 'border-primary/30 bg-primary/10 text-foreground',
+  invited: 'border-border bg-secondary text-secondary-foreground',
+  claimed: 'border-primary/40 bg-primary/15 text-foreground',
 };
 
 export default function ClientMigrations() {

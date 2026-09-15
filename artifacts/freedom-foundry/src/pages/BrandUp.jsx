@@ -63,31 +63,31 @@ export default function BrandUp() {
   return (
     <div className="max-w-3xl mx-auto animate-fade-in">
       <div className="mb-8">
-        <span className="text-[10px] uppercase tracking-[0.3em] text-[#d9c9a3]">Brand Portal</span>
-        <h1 className="font-heading text-3xl font-light text-[#f7f2ea] mt-1 mb-1">
+        <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">Brand Portal</span>
+        <h1 className="font-heading text-3xl font-light text-foreground mt-1 mb-1">
           Brand <span className="molten-text italic">Up</span>
         </h1>
-        <p className="text-sm text-[#f7f2ea]/60">Thoughtful prompts to empower your thinking. Save your reflections and revisit them anytime.</p>
+        <p className="text-sm text-muted-foreground">Thoughtful prompts to empower your thinking. Save your reflections and revisit them anytime.</p>
       </div>
 
       {currentPrompt && (
-        <div className="editorial-container mb-8">
-          <h2 className="font-heading text-xl text-[#1a1420] mb-4 leading-relaxed">{currentPrompt.prompt_text}</h2>
+        <div className="bg-card text-card-foreground border border-border rounded-2xl p-6 md:p-8 shadow-sm mb-8">
+          <h2 className="font-heading text-xl text-foreground mb-4 leading-relaxed">{currentPrompt.prompt_text}</h2>
           {currentPrompt.type === 'note' ? (
-            <p className="text-sm text-[#1a1420]/50 italic mb-4">A note from The Brand Revivalist® team.</p>
+            <p className="text-sm text-foreground/50 italic mb-4">A note from The Brand Revivalist® team.</p>
           ) : (
             <textarea
               value={response}
               onChange={e => setResponse(e.target.value)}
               placeholder="Your response..."
               rows={4}
-              className="w-full rounded-xl bg-white border border-black/10 px-4 py-3 text-sm text-[#1a1420] placeholder:text-black/30 outline-none focus:border-[#b3232c] transition-colors resize-y mb-4"
+              className="w-full rounded-xl bg-background border border-border px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-primary transition-colors resize-y mb-4"
             />
           )}
           <div className="flex items-center gap-3">
             <button
               onClick={handleShuffle}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-black/10 text-xs uppercase tracking-widest text-[#1a1420]/60 hover:bg-black/5 transition-colors"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border text-xs uppercase tracking-widest text-foreground/60 hover:bg-accent transition-colors"
             >
               <Shuffle className="w-4 h-4" /> Shuffle
             </button>
@@ -95,8 +95,7 @@ export default function BrandUp() {
               <button
                 onClick={handleSave}
                 disabled={saving || !response.trim()}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-xs uppercase tracking-widest text-white disabled:opacity-30"
-                style={{ background: 'linear-gradient(131deg, #b3232c, #d9622c, #f0d9b5)' }}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-xs uppercase tracking-widest text-primary-foreground disabled:opacity-30 bg-primary hover:bg-primary/90 transition-colors"
               >
                 <Save className="w-4 h-4" /> {saved ? 'Saved!' : saving ? 'Saving...' : 'Save Response'}
               </button>
@@ -106,22 +105,22 @@ export default function BrandUp() {
       )}
 
       <div>
-        <h3 className="font-heading text-lg text-[#f7f2ea] mb-4">Your Entries</h3>
+        <h3 className="font-heading text-lg text-foreground mb-4">Your Entries</h3>
         {entries.length === 0 ? (
-          <p className="text-sm text-[#f7f2ea]/40 italic">No saved entries yet. Respond to a prompt above to get started.</p>
+          <p className="text-sm text-muted-foreground/70 italic">No saved entries yet. Respond to a prompt above to get started.</p>
         ) : (
           <div className="space-y-4">
             {entries.map(entry => (
-              <div key={entry.id} className="editorial-container group">
-                <p className="font-heading text-base text-[#1a1420] mb-2 italic">"{entry.prompt_text}"</p>
-                <p className="text-sm text-[#2c2c33] leading-relaxed">{entry.response_text}</p>
-                <div className="flex items-center justify-between mt-4 pt-3 border-t border-black/5">
-                  <span className="text-xs text-[#1a1420]/40">
+              <div key={entry.id} className="bg-card text-card-foreground border border-border rounded-2xl p-6 md:p-8 shadow-sm group">
+                <p className="font-heading text-base text-foreground mb-2 italic">"{entry.prompt_text}"</p>
+                <p className="text-sm text-foreground leading-relaxed">{entry.response_text}</p>
+                <div className="flex items-center justify-between mt-4 pt-3 border-t border-border">
+                  <span className="text-xs text-foreground/40">
                     {entry.created_date ? new Date(entry.created_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : ''}
                   </span>
                   <button
                     onClick={() => handleDelete(entry.id)}
-                    className="text-[#1a1420]/30 hover:text-[#b3232c] transition-colors"
+                    className="text-foreground/30 hover:text-primary transition-colors"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>

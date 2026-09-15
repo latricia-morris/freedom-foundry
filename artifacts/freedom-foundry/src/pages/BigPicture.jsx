@@ -114,21 +114,21 @@ export default function BigPicture() {
 
   if (loading) return <div className="flex justify-center py-20"><div className="w-8 h-8 border-2 border-border border-t-primary rounded-full animate-spin" /></div>;
 
-  const inputClass = "w-full rounded-xl px-4 py-2.5 text-sm text-[#1a1420] bg-white border border-black/10 placeholder:text-black/30 outline-none focus:border-[#b3232c] transition-colors";
-  const textareaClass = "w-full rounded-xl px-4 py-3 text-sm text-[#1a1420] bg-white border border-black/10 placeholder:text-black/30 outline-none focus:border-[#b3232c] transition-colors resize-y";
-  const labelClass = "block text-xs uppercase tracking-wider text-[#1a1420]/50 mb-1.5";
+  const inputClass = "w-full rounded-xl px-4 py-2.5 text-sm text-foreground bg-background border border-border placeholder:text-muted-foreground outline-none focus:border-primary transition-colors";
+  const textareaClass = "w-full rounded-xl px-4 py-3 text-sm text-foreground bg-background border border-border placeholder:text-muted-foreground outline-none focus:border-primary transition-colors resize-y";
+  const labelClass = "block text-xs uppercase tracking-wider text-muted-foreground mb-1.5";
 
   return (
     <div className="max-w-3xl mx-auto animate-fade-in">
       <div className="mb-6">
-        <span className="text-[10px] uppercase tracking-[0.3em] text-[#d9c9a3]">Brand Portal</span>
-        <h1 className="font-heading text-3xl font-light text-[#f7f2ea] mt-1 mb-1">Big <span className="molten-text italic">Picture</span></h1>
-        <p className="text-sm text-[#f7f2ea]/60">Your vision, goals, and the plan to get there.</p>
+        <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">Brand Portal</span>
+        <h1 className="font-heading text-3xl font-light text-foreground mt-1 mb-1">Big <span className="molten-text italic">Picture</span></h1>
+        <p className="text-sm text-muted-foreground">Your vision, goals, and the plan to get there.</p>
       </div>
 
       <PrivacyNote />
 
-      <div className="editorial-container space-y-8">
+      <div className="bg-card text-card-foreground border border-border rounded-2xl p-6 md:p-8 shadow-sm space-y-8">
 
         {/* Tabbed section header with file-folder tabs */}
         <div>
@@ -145,8 +145,8 @@ export default function BigPicture() {
                 onClick={() => setActiveTab(tab.key)}
                 className={`px-5 py-2.5 text-xs uppercase tracking-wider font-medium transition-all rounded-t-lg ${
                   activeTab === tab.key
-                    ? 'bg-white text-[#1a1420] border-t border-l border-r border-black/10 -mb-px relative z-10'
-                    : 'bg-[#1a1420]/5 text-[#1a1420]/50 hover:text-[#1a1420]/70 border-t border-l border-r border-transparent'
+                    ? 'bg-background text-foreground border-t border-l border-r border-border -mb-px relative z-10'
+                    : 'bg-accent text-muted-foreground hover:text-foreground/70 border-t border-l border-r border-transparent'
                 }`}
               >
                 {tab.label}
@@ -155,7 +155,7 @@ export default function BigPicture() {
           </div>
 
           {/* Tab content panel */}
-          <div className="bg-white rounded-b-xl rounded-tr-xl border border-black/10 p-6 -mt-px relative space-y-4">
+          <div className="bg-background rounded-b-xl rounded-tr-xl border border-border p-6 -mt-px relative space-y-4">
 
             {/* SHORT TERM */}
             {activeTab === 'short' && (
@@ -191,9 +191,9 @@ export default function BigPicture() {
                   <div><label className={labelClass}>I will learn</label><input className={inputClass} value={form.learning_goals} onChange={e => update('learning_goals', e.target.value)} /></div>
                   <div><label className={labelClass}>I will meet</label><input className={inputClass} value={form.meeting_goals} onChange={e => update('meeting_goals', e.target.value)} /></div>
                 </div>
-                <div className="h-px bg-black/10" />
+                <div className="h-px bg-border" />
                 <div>
-                  <p className="text-sm text-[#1a1420]/60 mb-3 italic">I will:</p>
+                  <p className="text-sm text-muted-foreground mb-3 italic">I will:</p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {PLANNING_ITEMS.map(item => {
                       const checked = (form.planning_checklist || []).includes(item);
@@ -202,12 +202,12 @@ export default function BigPicture() {
                           key={item}
                           onClick={() => toggleChecklist(item)}
                           className={`flex items-center gap-3 px-4 py-2.5 rounded-xl border text-left text-sm transition-all ${checked
-                            ? 'border-[#b3232c] bg-[#b3232c]/8 text-[#1a1420]'
-                            : 'border-black/10 text-[#1a1420]/60 hover:border-[#b3232c]/40'
+                            ? 'border-primary bg-primary/10 text-foreground'
+                            : 'border-border text-muted-foreground hover:border-primary/50'
                           }`}
                         >
-                          <div className={`w-5 h-5 rounded-md border flex items-center justify-center flex-shrink-0 ${checked ? 'bg-[#b3232c] border-[#b3232c]' : 'border-black/20'}`}>
-                            {checked && <Check className="w-3.5 h-3.5 text-white" />}
+                          <div className={`w-5 h-5 rounded-md border flex items-center justify-center flex-shrink-0 ${checked ? 'bg-primary border-primary' : 'border-border'}`}>
+                            {checked && <Check className="w-3.5 h-3.5 text-primary-foreground" />}
                           </div>
                           {item}
                         </button>
@@ -221,7 +221,7 @@ export default function BigPicture() {
             {/* LONG TERM (3-5 Years) */}
             {activeTab === 'long' && (
               <>
-                <p className="text-sm text-[#1a1420]/60 italic mb-4">Where do you see your brand in 3-5 years?</p>
+                <p className="text-sm text-muted-foreground italic mb-4">Where do you see your brand in 3-5 years?</p>
                 <div><label className={labelClass}>In 3 years, my brand will have achieved</label><textarea className={textareaClass} rows={3} value={form.long_term_goal_3yr} onChange={e => update('long_term_goal_3yr', e.target.value)} placeholder="Define your 3-year milestones..." /></div>
                 <div><label className={labelClass}>In 5 years, my brand will be</label><textarea className={textareaClass} rows={3} value={form.long_term_goal_5yr} onChange={e => update('long_term_goal_5yr', e.target.value)} placeholder="Describe your 5-year vision..." /></div>
                 <div><label className={labelClass}>Target revenue in 3-5 years</label><input className={inputClass} value={form.long_term_revenue} onChange={e => update('long_term_revenue', e.target.value)} placeholder="e.g. $500K/year" /></div>
@@ -234,8 +234,8 @@ export default function BigPicture() {
               <>
                 <div><label className={labelClass}>The impact I will make</label><textarea className={textareaClass} rows={3} value={form.impact_statement} onChange={e => update('impact_statement', e.target.value)} /></div>
                 <div><label className={labelClass}>The legacy I will leave</label><textarea className={textareaClass} rows={3} value={form.legacy_statement} onChange={e => update('legacy_statement', e.target.value)} /></div>
-                <div className="h-px bg-black/10" />
-                <p className="text-sm text-[#1a1420]/60 italic">What does success look like in each area?</p>
+                <div className="h-px bg-border" />
+                <p className="text-sm text-muted-foreground italic">What does success look like in each area?</p>
                 <div className="space-y-3">
                   {VISION_CATEGORIES.map(({ key, label }) => (
                     <div key={key}>
@@ -252,8 +252,7 @@ export default function BigPicture() {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="flex items-center gap-2 px-6 py-2.5 rounded-lg text-xs uppercase tracking-widest text-white disabled:opacity-50"
-          style={{ background: 'linear-gradient(131deg, #b3232c, #d9622c, #f0d9b5)' }}
+          className="flex items-center gap-2 px-6 py-2.5 rounded-lg text-xs uppercase tracking-widest text-primary-foreground disabled:opacity-50 bg-primary hover:bg-primary/90 transition-colors"
         >
           {saved ? <Check className="w-4 h-4" /> : null}
           {saving ? 'Saving...' : saved ? 'Saved!' : 'Save Big Picture'}

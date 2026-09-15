@@ -262,7 +262,7 @@ export default function AdminDashboard() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="bg-black/20">
+                <tr className="bg-muted/60">
                   <th className="text-left px-6 py-4 text-[10px] uppercase tracking-[0.2em] text-muted-foreground/70 font-medium">Member</th>
                   <th className="text-left px-6 py-4 text-[10px] uppercase tracking-[0.2em] text-muted-foreground/70 font-medium hidden sm:table-cell">Contact</th>
                   <th className="text-left px-6 py-4 text-[10px] uppercase tracking-[0.2em] text-muted-foreground/70 font-medium">Clearance</th>
@@ -271,7 +271,7 @@ export default function AdminDashboard() {
               </thead>
               <tbody>
                 {recentUsers.map(u => (
-                  <tr key={u.id} className="border-t border-border/30 hover:bg-white/[0.02] transition-colors group">
+                  <tr key={u.id} className="border-t border-border/30 hover:bg-accent/50 transition-colors group">
                     <td className="px-6 py-4">
                       <div className="flex flex-col">
                         <span className="text-sm font-medium text-foreground">
@@ -293,7 +293,7 @@ export default function AdminDashboard() {
                           <Crown className="w-3 h-3" /> Admin
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-[10px] uppercase tracking-wider text-muted-foreground">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-muted/60 border border-border text-[10px] uppercase tracking-wider text-muted-foreground">
                           Member
                         </span>
                       )}
@@ -301,7 +301,7 @@ export default function AdminDashboard() {
                     <td className="px-6 py-4 text-right">
                       <Link 
                         to={`/admin/users/${u.id}`}
-                        className="inline-flex p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-white/10 transition-colors"
+                        className="inline-flex p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
                       >
                         <ChevronRight className="w-4 h-4" />
                       </Link>

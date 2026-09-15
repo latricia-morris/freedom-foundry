@@ -133,7 +133,7 @@ function PartnersTab() {
             <button 
               type="submit" 
               disabled={invite.isPending}
-              className="h-[42px] px-6 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium disabled:opacity-50 flex items-center gap-2"
+              className="h-[42px] px-6 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-medium disabled:cursor-not-allowed disabled:opacity-50 flex items-center gap-2"
             >
               <Send className="w-4 h-4" /> Invite
             </button>
@@ -148,7 +148,7 @@ function PartnersTab() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="bg-black/20">
+                <tr className="bg-muted/60">
                   <th className="text-left px-6 py-4 text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-medium">Partner</th>
                   <th className="text-left px-6 py-4 text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-medium">Status</th>
                   <th className="text-left px-6 py-4 text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-medium">Joined</th>
@@ -157,7 +157,7 @@ function PartnersTab() {
               </thead>
               <tbody className="divide-y divide-border/30">
                 {partners.map(p => (
-                  <tr key={p.id} className="hover:bg-white/[0.02] transition-colors">
+                  <tr key={p.id} className="hover:bg-accent/50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex flex-col">
                         <span className="text-sm font-medium text-foreground">{p.name || p.email}</span>
@@ -168,7 +168,7 @@ function PartnersTab() {
                       <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border text-[10px] uppercase tracking-wider ${
                         p.status === 'active' ? 'bg-[#a3d9b4]/10 border-[#a3d9b4]/20 text-[#a3d9b4]' :
                         p.status === 'revoked' ? 'bg-[#d9a3a3]/10 border-[#d9a3a3]/20 text-[#d9a3a3]' :
-                        'bg-white/5 border-white/10 text-muted-foreground'
+                        'bg-muted/60 border-border text-muted-foreground'
                       }`}>
                         {p.status}
                       </span>
@@ -295,7 +295,7 @@ function SubmissionsTab() {
             <div className="flex items-start justify-between">
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <span className={`text-[10px] uppercase tracking-widest px-2 py-0.5 rounded ${sub.kind === 'referral' ? 'bg-primary/20 text-primary' : 'bg-white/10 text-muted-foreground'}`}>
+                  <span className={`text-[10px] uppercase tracking-widest px-2 py-0.5 rounded ${sub.kind === 'referral' ? 'bg-primary/20 text-primary' : 'bg-muted/60 text-muted-foreground'}`}>
                     {sub.kind}
                   </span>
                   <span className="text-xs text-muted-foreground">{new Date(sub.created_at).toLocaleString()}</span>
@@ -321,9 +321,9 @@ function SubmissionsTab() {
                 <div className="flex gap-4">
                   <div className="flex flex-col">
                     <label className="text-[10px] uppercase tracking-widest text-muted-foreground mb-1">Referral Status</label>
-                    <select 
-                      className="admin-input py-1 text-sm bg-black/40 h-8" 
-                      value={sub.status || 'submitted'} 
+                    <select
+                      className="admin-input py-1 text-sm h-8"
+                      value={sub.status || 'submitted'}
                       onChange={e => handleUpdate(sub.id, 'status', e.target.value)}
                     >
                       <option value="submitted">Submitted</option>
@@ -335,9 +335,9 @@ function SubmissionsTab() {
                   </div>
                   <div className="flex flex-col">
                     <label className="text-[10px] uppercase tracking-widest text-muted-foreground mb-1">Payout Status</label>
-                    <select 
-                      className="admin-input py-1 text-sm bg-black/40 h-8" 
-                      value={sub.payout_status || 'pending'} 
+                    <select
+                      className="admin-input py-1 text-sm h-8"
+                      value={sub.payout_status || 'pending'}
                       onChange={e => handleUpdate(sub.id, 'payout_status', e.target.value)}
                     >
                       <option value="pending">Pending</option>
@@ -350,7 +350,7 @@ function SubmissionsTab() {
               )}
             </div>
 
-            <div className="bg-black/20 p-4 rounded-xl text-sm text-foreground/80 mt-2">
+            <div className="bg-muted/60 border border-border p-4 rounded-xl text-sm text-foreground/80 mt-2">
               {sub.kind === 'referral' ? (
                 <>
                   <div className="mb-2"><strong className="text-muted-foreground font-normal">Relationship:</strong> {sub.relationship}</div>

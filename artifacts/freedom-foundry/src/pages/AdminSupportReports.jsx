@@ -78,7 +78,7 @@ export default function AdminSupportReports() {
                     type="button"
                     key={report.id}
                     onClick={() => openReport(report)}
-                    className={`w-full text-left p-5 transition-colors hover:bg-white/[0.04] ${selected?.report?.id === report.id ? 'bg-white/[0.06]' : ''}`}
+                    className={`w-full text-left p-5 transition-colors hover:bg-accent/50 ${selected?.report?.id === report.id ? 'bg-accent' : ''}`}
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div>
@@ -111,21 +111,21 @@ export default function AdminSupportReports() {
                     <p className="text-xs uppercase tracking-widest text-primary">QuickBooks report #{selected.report.id}</p>
                     <h2 className="font-heading text-3xl text-foreground mt-1">Troubleshooting details</h2>
                   </div>
-                  <button type="button" onClick={copyReport} className="inline-flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-xs uppercase tracking-wider text-foreground hover:bg-white/10">
+                  <button type="button" onClick={copyReport} className="inline-flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-xs uppercase tracking-wider text-foreground hover:bg-accent">
                     {copied ? <Check className="w-3.5 h-3.5" /> : <Clipboard className="w-3.5 h-3.5" />}
                     {copied ? 'Copied' : 'Copy safe summary'}
                   </button>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 text-sm">
-                  <div className="rounded-lg border border-border/50 bg-black/10 p-3">
+                  <div className="rounded-lg border border-border/50 bg-muted/60 p-3">
                     <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1">Reported</p>
                     <p className="text-foreground">{formatDate(selected.report.occurred_at)}</p>
                   </div>
-                  <div className="rounded-lg border border-border/50 bg-black/10 p-3">
+                  <div className="rounded-lg border border-border/50 bg-muted/60 p-3">
                     <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1">Intuit TID</p>
                     <p className="font-mono text-foreground break-all">{selected.report.intuit_tid || 'Not available'}</p>
                   </div>
-                  <div className="rounded-lg border border-border/50 bg-black/10 p-3 sm:col-span-2">
+                  <div className="rounded-lg border border-border/50 bg-muted/60 p-3 sm:col-span-2">
                     <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1">Page context</p>
                     <p className="font-mono text-xs text-foreground break-all">{selected.report.page_context || 'Not provided'}</p>
                   </div>

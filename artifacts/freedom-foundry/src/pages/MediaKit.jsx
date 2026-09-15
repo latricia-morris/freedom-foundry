@@ -145,21 +145,21 @@ export default function MediaKit() {
 
   if (loading) return <div className="flex justify-center py-20"><div className="w-8 h-8 border-2 border-border border-t-primary rounded-full animate-spin" /></div>;
 
-  const inputClass = "w-full rounded-xl px-4 py-2.5 text-sm text-[#1a1420] bg-white border border-black/10 placeholder:text-black/30 outline-none focus:border-[#b3232c] transition-colors";
-  const textareaClass = "w-full rounded-xl px-4 py-3 text-sm text-[#1a1420] bg-white border border-black/10 placeholder:text-black/30 outline-none focus:border-[#b3232c] transition-colors resize-y";
+  const inputClass = "w-full rounded-xl px-4 py-2.5 text-sm text-foreground bg-background border border-border placeholder:text-muted-foreground outline-none focus:border-primary transition-colors";
+  const textareaClass = "w-full rounded-xl px-4 py-3 text-sm text-foreground bg-background border border-border placeholder:text-muted-foreground outline-none focus:border-primary transition-colors resize-y";
 
   return (
     <div className="max-w-3xl animate-fade-in">
       <div className="mb-6 flex items-start justify-between flex-wrap gap-3">
         <div>
-          <span className="text-[10px] uppercase tracking-[0.3em] text-[#d9c9a3]">Brand Portal</span>
-          <h1 className="font-heading text-3xl font-light text-[#f7f2ea] mt-1 mb-1">Media <span className="molten-text italic">Kit</span></h1>
-          <p className="text-sm text-[#f7f2ea]/60">Press-ready bios, headshots, and contact info.</p>
+          <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">Brand Portal</span>
+          <h1 className="font-heading text-3xl font-light text-foreground mt-1 mb-1">Media <span className="molten-text italic">Kit</span></h1>
+          <p className="text-sm text-muted-foreground">Press-ready bios, headshots, and contact info.</p>
         </div>
         <button
           onClick={handleGenerateShare}
           disabled={generatingShare}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 text-sm text-[#f7f2ea]/70 hover:text-[#f7f2ea] hover:border-white/20 transition-colors disabled:opacity-40"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border text-sm text-muted-foreground hover:text-foreground hover:border-foreground/50 transition-colors disabled:opacity-40"
         >
           <Share2 className="w-4 h-4" />
           {generatingShare ? 'Creating link...' : 'Create share link'}
@@ -170,15 +170,14 @@ export default function MediaKit() {
 
       {/* Populate from Personal Brand */}
       {!populated && !kit?.id && (
-        <div className="mb-6 p-4 rounded-xl border border-white/[0.06] bg-white/[0.02] flex items-center justify-between gap-4 flex-wrap">
+        <div className="mb-6 p-4 rounded-xl border border-border bg-card flex items-center justify-between gap-4 flex-wrap">
           <div>
-            <p className="text-sm text-[#f7f2ea]/70 font-medium">Already filled out your Personal Brand?</p>
-            <p className="text-xs text-[#f7f2ea]/40 mt-0.5">Pull shared fields (name, bio, contact, headshots, books) into this media kit.</p>
+            <p className="text-sm text-foreground/70 font-medium">Already filled out your Personal Brand?</p>
+            <p className="text-xs text-muted-foreground/70 mt-0.5">Pull shared fields (name, bio, contact, headshots, books) into this media kit.</p>
           </div>
           <button
             onClick={handlePopulateFromPersonal}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg text-white text-sm whitespace-nowrap"
-            style={{ background: 'linear-gradient(131deg, #b3232c, #d9622c, #f0d9b5)' }}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-primary-foreground bg-primary hover:opacity-90 transition-opacity text-sm whitespace-nowrap"
           >
             <Sparkles className="w-4 h-4" /> Populate from Personal Brand
           </button>
@@ -186,45 +185,45 @@ export default function MediaKit() {
       )}
 
       {shareLink && (
-        <div className="mb-6 p-4 rounded-xl border border-white/10 bg-white/[0.03] flex items-center gap-3">
-          <span className="text-sm text-[#f7f2ea]/70 flex-1 truncate">{shareLink}</span>
-          <button onClick={() => copyText(shareLink)} className="text-xs font-semibold text-[#f7f2ea]/50 transition-colors hover:text-[#f7f2ea]">Copy link</button>
-          <a href={shareLink} target="_blank" rel="noopener noreferrer" className="text-[#f7f2ea]/50 hover:text-[#f7f2ea] transition-colors"><ExternalLink className="w-3.5 h-3.5" /></a>
+        <div className="mb-6 p-4 rounded-xl border border-border bg-card flex items-center gap-3">
+          <span className="text-sm text-foreground/70 flex-1 truncate">{shareLink}</span>
+          <button onClick={() => copyText(shareLink)} className="text-xs font-semibold text-muted-foreground/80 transition-colors hover:text-foreground">Copy link</button>
+          <a href={shareLink} target="_blank" rel="noopener noreferrer" className="text-muted-foreground/80 hover:text-foreground transition-colors"><ExternalLink className="w-3.5 h-3.5" /></a>
         </div>
       )}
 
-      <div className="editorial-container space-y-8">
+      <div className="bg-card text-card-foreground border border-border rounded-2xl p-6 md:p-8 shadow-sm space-y-8">
 
         {/* Name */}
         <section>
           <h2 className="font-heading text-lg mb-4">Name</h2>
           <div className="grid grid-cols-2 gap-4">
-            <div><label className="block text-xs uppercase tracking-wider text-[#1a1420]/50 mb-1.5">First Name</label><input className={inputClass} value={form.first_name} onChange={e => update('first_name', e.target.value)} /></div>
-            <div><label className="block text-xs uppercase tracking-wider text-[#1a1420]/50 mb-1.5">Last Name</label><input className={inputClass} value={form.last_name} onChange={e => update('last_name', e.target.value)} /></div>
+            <div><label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5">First Name</label><input className={inputClass} value={form.first_name} onChange={e => update('first_name', e.target.value)} /></div>
+            <div><label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5">Last Name</label><input className={inputClass} value={form.last_name} onChange={e => update('last_name', e.target.value)} /></div>
           </div>
-          <div className="mt-4"><label className="block text-xs uppercase tracking-wider text-[#1a1420]/50 mb-1.5">Business Name</label><input className={inputClass} value={form.business_name} onChange={e => update('business_name', e.target.value)} placeholder="Your business or practice name" /></div>
+          <div className="mt-4"><label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5">Business Name</label><input className={inputClass} value={form.business_name} onChange={e => update('business_name', e.target.value)} placeholder="Your business or practice name" /></div>
         </section>
 
-        <div className="h-px bg-black/10" />
+        <div className="h-px bg-border" />
 
         {/* Contact */}
         <section>
           <h2 className="font-heading text-lg mb-4">Contact</h2>
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
-              <div><label className="block text-xs uppercase tracking-wider text-[#1a1420]/50 mb-1.5">Email</label><input className={inputClass} value={form.email} onChange={e => update('email', e.target.value)} /></div>
-              <div><label className="block text-xs uppercase tracking-wider text-[#1a1420]/50 mb-1.5">Phone (with country code)</label><input className={inputClass} value={form.phone} onChange={e => update('phone', e.target.value)} placeholder="+1 555-555-5555" /></div>
+              <div><label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5">Email</label><input className={inputClass} value={form.email} onChange={e => update('email', e.target.value)} /></div>
+              <div><label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5">Phone (with country code)</label><input className={inputClass} value={form.phone} onChange={e => update('phone', e.target.value)} placeholder="+1 555-555-5555" /></div>
             </div>
-            <div><label className="block text-xs uppercase tracking-wider text-[#1a1420]/50 mb-1.5">Website</label><input className={inputClass} value={form.website} onChange={e => update('website', e.target.value)} placeholder="https://" /></div>
+            <div><label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5">Website</label><input className={inputClass} value={form.website} onChange={e => update('website', e.target.value)} placeholder="https://" /></div>
             <div className="grid grid-cols-3 gap-4">
-              <div><label className="block text-xs uppercase tracking-wider text-[#1a1420]/50 mb-1.5">City</label><input className={inputClass} value={form.location_city} onChange={e => update('location_city', e.target.value)} /></div>
-              <div><label className="block text-xs uppercase tracking-wider text-[#1a1420]/50 mb-1.5">State / Region</label><input className={inputClass} value={form.location_state} onChange={e => update('location_state', e.target.value)} /></div>
-              <div><label className="block text-xs uppercase tracking-wider text-[#1a1420]/50 mb-1.5">Country</label><input className={inputClass} value={form.location_country} onChange={e => update('location_country', e.target.value)} /></div>
+              <div><label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5">City</label><input className={inputClass} value={form.location_city} onChange={e => update('location_city', e.target.value)} /></div>
+              <div><label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5">State / Region</label><input className={inputClass} value={form.location_state} onChange={e => update('location_state', e.target.value)} /></div>
+              <div><label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5">Country</label><input className={inputClass} value={form.location_country} onChange={e => update('location_country', e.target.value)} /></div>
             </div>
           </div>
         </section>
 
-        <div className="h-px bg-black/10" />
+        <div className="h-px bg-border" />
 
         {/* Bios */}
         <section>
@@ -232,14 +231,14 @@ export default function MediaKit() {
           <div className="space-y-4">
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-xs uppercase tracking-wider text-[#1a1420]/50">Short Bio</label>
+                <label className="text-xs uppercase tracking-wider text-muted-foreground">Short Bio</label>
                 {form.short_bio && <button onClick={() => copyText(form.short_bio)} className="text-xs flex items-center gap-1"><Copy className="w-3 h-3" style={{ stroke: '#d9622c' }} /> <span className="link-molten">Copy</span></button>}
               </div>
               <textarea className={textareaClass} rows={3} value={form.short_bio} onChange={e => update('short_bio', e.target.value)} placeholder="One or two sentence bio..." />
             </div>
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-xs uppercase tracking-wider text-[#1a1420]/50">Long Bio</label>
+                <label className="text-xs uppercase tracking-wider text-muted-foreground">Long Bio</label>
                 {form.long_bio && <button onClick={() => copyText(form.long_bio)} className="text-xs flex items-center gap-1"><Copy className="w-3 h-3" style={{ stroke: '#d9622c' }} /> <span className="link-molten">Copy</span></button>}
               </div>
               <textarea className={textareaClass} rows={8} value={form.long_bio} onChange={e => update('long_bio', e.target.value)} placeholder="Full bio for press, speaking, and partnerships..." />
@@ -247,17 +246,17 @@ export default function MediaKit() {
           </div>
         </section>
 
-        <div className="h-px bg-black/10" />
+        <div className="h-px bg-border" />
 
         {/* Headshots — up to 12 */}
         <section>
-          <h2 className="font-heading text-lg mb-4">Headshots <span className="font-body text-sm text-[#1a1420]/40 font-normal">(up to 12)</span></h2>
+          <h2 className="font-heading text-lg mb-4">Headshots <span className="font-body text-sm text-muted-foreground font-normal">(up to 12)</span></h2>
           <div className="flex flex-wrap gap-3">
             {form.headshot_urls.map((url, i) => (
               <AssetPreview key={i} url={url} size="md" onRemove={() => removeItem('headshot_urls', i)} />
             ))}
             {form.headshot_urls.length < 12 && (
-              <label className="w-20 h-20 rounded-xl border border-dashed border-black/20 flex items-center justify-center cursor-pointer hover:border-[#b3232c] transition-colors">
+              <label className="w-20 h-20 rounded-xl border border-dashed border-border flex items-center justify-center cursor-pointer hover:border-primary transition-colors">
                 <Upload className="w-4 h-4 opacity-40" />
                 <input type="file" accept={FILE_ACCEPT} className="hidden" onChange={e => e.target.files[0] && handleUpload('headshot_urls', e.target.files[0])} />
               </label>
@@ -265,17 +264,17 @@ export default function MediaKit() {
           </div>
         </section>
 
-        <div className="h-px bg-black/10" />
+        <div className="h-px bg-border" />
 
         {/* Logos — up to 12 */}
         <section>
-          <h2 className="font-heading text-lg mb-4">Logos <span className="font-body text-sm text-[#1a1420]/40 font-normal">(up to 12)</span></h2>
+          <h2 className="font-heading text-lg mb-4">Logos <span className="font-body text-sm text-muted-foreground font-normal">(up to 12)</span></h2>
           <div className="flex flex-wrap gap-3">
             {form.logo_urls.map((url, i) => (
               <AssetPreview key={i} url={url} size="md" contain onRemove={() => removeItem('logo_urls', i)} />
             ))}
             {form.logo_urls.length < 12 && (
-              <label className="w-20 h-20 rounded-xl border border-dashed border-black/20 flex items-center justify-center cursor-pointer hover:border-[#b3232c] transition-colors">
+              <label className="w-20 h-20 rounded-xl border border-dashed border-border flex items-center justify-center cursor-pointer hover:border-primary transition-colors">
                 <Upload className="w-4 h-4 opacity-40" />
                 <input type="file" accept={FILE_ACCEPT} className="hidden" onChange={e => e.target.files[0] && handleUpload('logo_urls', e.target.files[0])} />
               </label>
@@ -283,7 +282,7 @@ export default function MediaKit() {
           </div>
         </section>
 
-        <div className="h-px bg-black/10" />
+        <div className="h-px bg-border" />
 
         {/* Social Links */}
         <section>
@@ -293,26 +292,26 @@ export default function MediaKit() {
               <div key={i} className="flex gap-2">
                 <input className={`${inputClass} flex-1`} value={link.platform || ''} onChange={e => updateItem('social_links', i, 'platform', e.target.value)} placeholder="Platform" />
                 <input className={`${inputClass} flex-[2]`} value={link.url || ''} onChange={e => updateItem('social_links', i, 'url', e.target.value)} placeholder="URL or handle" />
-                {link.url && <button onClick={() => copyText(link.url)} className="px-2 text-[#1a1420]/30 hover:text-[#1a1420]/60"><Copy className="w-3.5 h-3.5" /></button>}
-                <button onClick={() => removeItem('social_links', i)} className="px-2 text-[#1a1420]/30 hover:text-[#1a1420]/60"><X className="w-4 h-4" /></button>
+                {link.url && <button onClick={() => copyText(link.url)} className="px-2 text-muted-foreground hover:text-muted-foreground"><Copy className="w-3.5 h-3.5" /></button>}
+                <button onClick={() => removeItem('social_links', i)} className="px-2 text-muted-foreground hover:text-muted-foreground"><X className="w-4 h-4" /></button>
               </div>
             ))}
             <button onClick={() => addItem('social_links', { platform: '', url: '' })} className="flex items-center gap-1.5 text-sm link-molten hover:opacity-80 transition-opacity"><Plus className="w-4 h-4" style={{ stroke: '#d9622c' }} /> Add Social</button>
           </div>
         </section>
 
-        <div className="h-px bg-black/10" />
+        <div className="h-px bg-border" />
 
         {/* Custom Links — up to 5 */}
         <section>
-          <h2 className="font-heading text-lg mb-4">Custom Links <span className="font-body text-sm text-[#1a1420]/40 font-normal">(up to 5)</span></h2>
+          <h2 className="font-heading text-lg mb-4">Custom Links <span className="font-body text-sm text-muted-foreground font-normal">(up to 5)</span></h2>
           <div className="space-y-2">
             {form.feature_links.map((link, i) => (
               <div key={i} className="flex gap-2">
                 <input className={`${inputClass} flex-1`} value={link.label || ''} onChange={e => updateItem('feature_links', i, 'label', e.target.value)} placeholder="Label" />
                 <input className={`${inputClass} flex-[2]`} value={link.url || ''} onChange={e => updateItem('feature_links', i, 'url', e.target.value)} placeholder="URL" />
-                {link.url && <button onClick={() => copyText(link.url)} className="px-2 text-[#1a1420]/30 hover:text-[#1a1420]/60"><Copy className="w-3.5 h-3.5" /></button>}
-                <button onClick={() => removeItem('feature_links', i)} className="px-2 text-[#1a1420]/30 hover:text-[#1a1420]/60"><X className="w-4 h-4" /></button>
+                {link.url && <button onClick={() => copyText(link.url)} className="px-2 text-muted-foreground hover:text-muted-foreground"><Copy className="w-3.5 h-3.5" /></button>}
+                <button onClick={() => removeItem('feature_links', i)} className="px-2 text-muted-foreground hover:text-muted-foreground"><X className="w-4 h-4" /></button>
               </div>
             ))}
             {form.feature_links.length < 5 && (
@@ -321,7 +320,7 @@ export default function MediaKit() {
           </div>
         </section>
 
-        <div className="h-px bg-black/10" />
+        <div className="h-px bg-border" />
 
         {/* Books */}
         <section>
@@ -336,7 +335,7 @@ export default function MediaKit() {
           />
         </section>
 
-        <div className="h-px bg-black/10" />
+        <div className="h-px bg-border" />
 
         {/* Podcasts */}
         <section>
@@ -352,8 +351,7 @@ export default function MediaKit() {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="flex items-center gap-2 px-6 py-2.5 rounded-lg text-xs uppercase tracking-widest text-white disabled:opacity-50"
-          style={{ background: 'linear-gradient(131deg, #b3232c, #d9622c, #f0d9b5)' }}
+          className="flex items-center gap-2 px-6 py-2.5 rounded-lg text-xs uppercase tracking-widest text-primary-foreground bg-primary hover:bg-primary/90 transition-colors disabled:opacity-50"
         >
           {saved ? <Check className="w-4 h-4" /> : null}
           {saving ? 'Saving...' : saved ? 'Saved!' : 'Save Media Kit'}

@@ -50,31 +50,33 @@
   }
 
   html.light-mode {
-    --background: 38 32% 96%;
-    --foreground: 20 18% 14%;
-    --card: 38 36% 99%;
-    --card-foreground: 20 18% 14%;
-    --popover: 38 36% 99%;
-    --popover-foreground: 20 18% 14%;
-    --primary: 18 65% 45%;
-    --primary-foreground: 38 36% 99%;
-    --secondary: 35 25% 90%;
-    --secondary-foreground: 20 18% 14%;
-    --muted: 35 24% 91%;
-    --muted-foreground: 20 12% 40%;
-    --accent: 30 35% 88%;
-    --accent-foreground: 20 18% 14%;
-    --border: 30 20% 80%;
-    --input: 30 20% 80%;
-    --ring: 18 65% 45%;
-    --sidebar-background: 38 32% 96%;
-    --sidebar-foreground: 20 18% 14%;
-    --sidebar-primary: 18 65% 45%;
-    --sidebar-primary-foreground: 38 36% 99%;
-    --sidebar-accent: 35 25% 90%;
-    --sidebar-accent-foreground: 20 18% 14%;
-    --sidebar-border: 30 20% 80%;
-    --sidebar-ring: 18 65% 45%;
+    --background: 37 45% 94%;
+    --foreground: 270 23% 10%;
+    --card: 37 100% 97%;
+    --card-foreground: 270 23% 10%;
+    --popover: 37 100% 97%;
+    --popover-foreground: 270 23% 10%;
+    --primary: 19 69% 51%;
+    --primary-foreground: 270 23% 10%;
+    --secondary: 36 52% 83%;
+    --secondary-foreground: 270 23% 10%;
+    --muted: 37 66% 83%;
+    --muted-foreground: 356 56% 28%;
+    --accent: 37 66% 83%;
+    --accent-foreground: 270 23% 10%;
+    --destructive: 356 67% 42%;
+    --destructive-foreground: 37 100% 97%;
+    --border: 36 52% 83%;
+    --input: 36 52% 83%;
+    --ring: 19 69% 51%;
+    --sidebar-background: 37 45% 94%;
+    --sidebar-foreground: 270 23% 10%;
+    --sidebar-primary: 19 69% 51%;
+    --sidebar-primary-foreground: 270 23% 10%;
+    --sidebar-accent: 37 66% 83%;
+    --sidebar-accent-foreground: 270 23% 10%;
+    --sidebar-border: 36 52% 83%;
+    --sidebar-ring: 19 69% 51%;
   }
 }
 
@@ -484,26 +486,53 @@
     background: linear-gradient(131deg, #14110f 0%, #201510 45%, #2b1710 100%);
   }
 
-  .brand-portal-page.light-mode {
-    background: #f7f2ea;
+  html.light-mode .brand-portal-page {
+    background: linear-gradient(135deg, #f6f0e7 0%, #fffcf5 50%, #f1e4d5 100%);
+    color: hsl(var(--foreground));
+  }
+
+  html.light-mode .editorial-container,
+  html.light-mode .editorial-card,
+  html.light-mode .dash-editorial-block,
+  html.light-mode .contact-card {
+    background: #fffcf7;
+    box-shadow:
+      0 1px 2px rgba(15, 15, 26, 0.04),
+      0 4px 12px rgba(15, 15, 26, 0.05),
+      inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(15, 15, 26, 0.08);
+  }
+
+  html.light-mode .smoked-glass {
+    background: rgba(240, 217, 181, 0.42);
+  }
+
+  html.light-mode .dashboard-card {
+    background: rgba(255, 250, 242, 0.9);
+    border: 1px solid rgba(110, 31, 36, 0.16);
+    box-shadow: 0 4px 20px rgba(110, 31, 36, 0.08);
+  }
+
+  html.light-mode .vault-card {
+    background:
+      linear-gradient(#fffaf2, #fffaf2) padding-box,
+      linear-gradient(131deg, #b3232c, #d9622c, #f0d9b5) border-box;
     color: #1a1420;
   }
 
-  .brand-portal-toggle {
-    position: absolute;
-    top: 20px;
-    right: 24px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.75rem;
-    color: rgba(247, 245, 245, 0.6);
-    z-index: 10;
-    cursor: pointer;
+  html.light-mode .icon-tile {
+    background: #f0d9b5;
+    border-color: rgba(110, 31, 36, 0.28);
+    color: #6e1f24;
   }
 
-  .brand-portal-page.light-mode .brand-portal-toggle {
-    color: rgba(26, 20, 32, 0.5);
+  html.light-mode .bp-nav-item {
+    color: #6e1f24;
+  }
+
+  html.light-mode .bp-nav-item:hover,
+  html.light-mode .bp-nav-item--active {
+    color: #1a1420;
   }
 }
 
@@ -545,7 +574,7 @@ p, li, span, label {
 }
 
 .text-muted-foreground {
-  color: rgba(247, 242, 234, 0.75) !important;
+  color: hsl(var(--muted-foreground)) !important;
 }
 
 .editorial-container .text-primary,

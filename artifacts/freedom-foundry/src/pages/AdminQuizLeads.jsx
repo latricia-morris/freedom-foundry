@@ -40,7 +40,7 @@ export default function AdminQuizLeads() {
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="bg-black/20 border-b border-border/30">
+              <tr className="bg-muted/60 border-b border-border/30">
                 <th className="text-left px-6 py-4 text-[10px] uppercase tracking-[0.2em] text-muted-foreground/70 font-medium">Email</th>
                 <th className="text-left px-6 py-4 text-[10px] uppercase tracking-[0.2em] text-muted-foreground/70 font-medium">Persona Results</th>
                 <th className="text-left px-6 py-4 text-[10px] uppercase tracking-[0.2em] text-muted-foreground/70 font-medium">Marketing Consent</th>
@@ -57,10 +57,10 @@ export default function AdminQuizLeads() {
                 </tr>
               ) : (
                 leads.map(lead => (
-                  <tr key={lead.id} className="border-b border-border/10 hover:bg-white/[0.02] transition-colors">
+                  <tr key={lead.id} className="border-b border-border/10 hover:bg-accent/50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
+                        <div className="w-8 h-8 rounded-full bg-muted/60 border border-border flex items-center justify-center">
                           <Mail className="w-3.5 h-3.5 text-muted-foreground" />
                         </div>
                         <span className="text-sm font-medium text-foreground">{lead.email}</span>
@@ -68,11 +68,11 @@ export default function AdminQuizLeads() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex flex-col gap-1">
-                        <span className="inline-flex w-fit items-center px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-xs text-foreground">
+                        <span className="inline-flex w-fit items-center px-2.5 py-1 rounded-md bg-muted/60 border border-border text-xs text-foreground">
                           1st: {lead.primary_archetype || 'Pending'}
                         </span>
                         {lead.secondary_archetype && (
-                          <span className="inline-flex w-fit items-center px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-xs text-muted-foreground">
+                          <span className="inline-flex w-fit items-center px-2.5 py-1 rounded-md bg-muted/60 border border-border text-xs text-muted-foreground">
                             2nd: {lead.secondary_archetype}
                           </span>
                         )}
