@@ -31,6 +31,7 @@ function adminResult(row: typeof personaQuizAttemptsTable.$inferSelect) {
   return {
     id: row.id,
     email: row.email,
+    first_name: row.first_name,
     marketing_consent: row.marketing_consent,
     primary_archetype: row.primary_archetype,
     primary_score: row.primary_score,
@@ -63,6 +64,7 @@ router.get("/persona-quiz/definition", (_req, res) => {
 router.post("/persona-quiz/complete", optionalAuth, async (req, res): Promise<void> => {
   const body = req.body && typeof req.body === "object" ? req.body as Record<string, unknown> : {};
   const answers = parseAnswers(body.answers);
+  const firstName = typeof body.firstName === "string" ? body.firstName.trim() : "";
   let email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
   const token = randomBytes(32).toString("base64url");
   const now = new Date();
@@ -79,8 +81,8 @@ router.post("/persona-quiz/complete", optionalAuth, async (req, res): Promise<vo
     }
     email = verifiedEmail;
   }
-  if (!answers || !emailPattern.test(email) || email.length > 320) {
-    res.status(400).json({ error: "Exactly 18 valid answers and a valid email are required" }); return;
+  if (!answers || firstName.length < 1 || firstName.length > 100 || !emailPattern.test(email) || email.length > 320) {
+    res.status(400).json({ error: "Exactly 18 valid answers, a first name, and a valid email are required" }); return;
   }
   if (body.marketingConsent !== true) {
     res.status(400).json({ error: "Marketing consent is required to receive the Brand Persona report and selected insights." });
@@ -88,7 +90,7 @@ router.post("/persona-quiz/complete", optionalAuth, async (req, res): Promise<vo
   }
   const scored = scoreQuizAnswers(answers);
   const [row] = await db.insert(personaQuizAttemptsTable).values({
-    email, marketing_consent: body.marketingConsent === true,
+    first_name: firstName, email, marketing_consent: body.marketingConsent === true,
     answers, scores: scored.scores, primary_archetype: scored.primary, primary_score: scored.primaryScore,
     secondary_archetype: scored.secondary, secondary_score: scored.secondaryScore,
     token_hash: tokenHash(token), status: userId ? "claimed" : "pending", user_id: userId,

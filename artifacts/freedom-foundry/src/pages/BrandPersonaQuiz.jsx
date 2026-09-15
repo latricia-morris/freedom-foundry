@@ -23,13 +23,14 @@ export default function BrandPersonaQuiz() {
   const [loading, setLoading] = useState(true);
   const [answers, setAnswers] = useState({});
   const [currentStep, setCurrentStep] = useState(0); // 0 to definition.questions.length
+  const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [marketingConsent, setMarketingConsent] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { isSignedIn } = useUser();
+  const { isSignedIn, user } = useUser();
   const basePath = import.meta.env.BASE_URL?.replace(/\/$/, '') || '';
 
   useEffect(() => {
@@ -43,6 +44,12 @@ export default function BrandPersonaQuiz() {
       })
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    if (!isSignedIn || !user) return;
+    setFirstName(user.firstName ?? '');
+    setEmail(user.primaryEmailAddress?.emailAddress ?? '');
+  }, [isSignedIn, user]);
 
   const totalQuestions = definition?.questions?.length || 0;
   const isGate = currentStep === totalQuestions;
@@ -74,8 +81,12 @@ export default function BrandPersonaQuiz() {
       });
       return;
     }
-    if (!isSignedIn && !email.trim()) {
-      toast({ title: 'Email required', description: 'Please enter your email to see your results.', variant: 'destructive' });
+    if (!firstName.trim() || !email.trim()) {
+      toast({
+        title: 'Contact details required',
+        description: 'Please enter your first name and email to see your results.',
+        variant: 'destructive',
+      });
       return;
     }
     
@@ -97,7 +108,8 @@ export default function BrandPersonaQuiz() {
     setSubmitting(true);
     try {
       const response = await apiClient.quiz.submitAttempt({
-        ...(isSignedIn ? {} : { email: email.trim() }),
+        firstName: firstName.trim(),
+        email: email.trim(),
         answers: answerArray,
         marketingConsent,
       });
@@ -166,11 +178,28 @@ export default function BrandPersonaQuiz() {
             </div>
             <div className="grid grid-cols-3 gap-2.5" role="list" aria-label="Three-part quiz progress">
               {QUIZ_SECTIONS.map((section, index) => {
-                const isComplete = isGate || index < activeSectionIndex;
+                const sectionLength = section.end - section.start;
+                const answeredInSection = isGate
+                  ? sectionLength
+                  : Math.min(sectionLength, Math.max(0, currentStep - section.start));
+                const fillPercent = (answeredInSection / sectionLength) * 100;
+                const isComplete = fillPercent === 100;
                 const isCurrent = !isGate && index === activeSectionIndex;
                 return (
                   <div key={section.label} role="listitem" aria-current={isCurrent ? 'step' : undefined}>
-                    <div className={`h-2 rounded-full border transition-all duration-300 ${isComplete ? 'border-[#f0d9b5] bg-gradient-to-r from-[#9f1f28] via-[#d9622c] to-[#f0d9b5]' : isCurrent ? 'border-[#d9622c] bg-[#d9622c]/25 shadow-[0_0_14px_rgba(217,98,44,0.35)]' : 'border-white/15 bg-white/[0.06]'}`} />
+                    <div
+                      className={`relative h-2 overflow-hidden rounded-full border transition-all duration-300 ${isCurrent ? 'border-[#d9622c]/70 bg-[#d9622c]/15 shadow-[0_0_14px_rgba(217,98,44,0.25)]' : isComplete ? 'border-[#f0d9b5]/70 bg-[#f0d9b5]/10' : 'border-white/15 bg-white/[0.06]'}`}
+                      role="progressbar"
+                      aria-label={`${section.label} progress`}
+                      aria-valuemin={0}
+                      aria-valuemax={sectionLength}
+                      aria-valuenow={answeredInSection}
+                    >
+                      <span
+                        className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-[#9f1f28] via-[#d9622c] to-[#f0d9b5] transition-[width] duration-300 ease-out"
+                        style={{ width: `${fillPercent}%` }}
+                      />
+                    </div>
                     <p className={`mt-1.5 truncate text-[10px] uppercase tracking-[0.12em] ${isComplete || isCurrent ? 'text-[#f0d9b5]' : 'text-white/35'}`}>
                       {index + 1}. {section.shortLabel}
                     </p>
@@ -191,7 +220,7 @@ export default function BrandPersonaQuiz() {
                   <h2 className="max-w-4xl font-heading text-2xl font-light leading-[1.05] text-[#f7f2ea] sm:text-4xl lg:text-[2.8rem]">{currentQuestion.text}</h2>
                 </div>
 
-                <div className="grid min-h-0 flex-1 grid-cols-2 gap-2.5 px-4 pb-3 sm:gap-3 sm:px-8 sm:pb-4">
+                <div className="grid min-h-0 flex-1 auto-rows-min grid-cols-1 content-start gap-2.5 overflow-y-auto px-4 pb-3 sm:grid-cols-2 sm:gap-3 sm:px-8 sm:pb-4">
                   {currentQuestion.answers.map((answer, optionIndex) => {
                     const isSelected = answers[currentQuestion.id] === optionIndex;
                     return (
@@ -200,11 +229,11 @@ export default function BrandPersonaQuiz() {
                         type="button"
                         aria-pressed={isSelected}
                         onClick={() => handleSelectOption(currentQuestion.id, optionIndex)}
-                        className={`group flex min-h-0 items-start justify-between gap-2 rounded-xl border p-3 text-left transition-all duration-300 sm:rounded-2xl sm:p-4 ${isSelected ? 'border-[#d9622c] bg-gradient-to-br from-[#6e2522]/80 to-[#d9622c]/15 shadow-[0_0_24px_rgba(217,98,44,0.2)]' : 'border-white/[0.1] bg-white/[0.035] hover:-translate-y-0.5 hover:border-[#d9622c]/60 hover:bg-white/[0.08] hover:shadow-[0_10px_24px_rgba(0,0,0,0.24)]'}`}
+                         className={`group flex min-h-[4.25rem] items-center justify-between gap-3 rounded-lg border px-3.5 py-3 text-left transition-all duration-300 sm:min-h-[4.5rem] sm:rounded-xl sm:px-4 ${isSelected ? 'border-[#d9622c] bg-gradient-to-r from-[#6e2522]/75 to-[#d9622c]/10 shadow-[0_0_24px_rgba(217,98,44,0.16)]' : 'border-white/[0.1] bg-white/[0.035] hover:border-[#d9622c]/60 hover:bg-white/[0.075] hover:shadow-[0_8px_20px_rgba(0,0,0,0.2)]'}`}
                       >
                         <span className="flex min-w-0 items-start gap-2.5">
-                          <span className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-[10px] font-semibold ${isSelected ? 'border-[#f0d9b5] bg-[#f0d9b5] text-[#331512]' : 'border-white/20 text-white/45 group-hover:border-[#d9622c] group-hover:text-[#f0d9b5]'}`}>{optionIndex + 1}</span>
-                          <span className={`text-[13px] leading-[1.25] sm:text-[15px] ${isSelected ? 'text-[#fff0d3]' : 'text-white/75 group-hover:text-white'}`}>{answer.text}</span>
+                           <span className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[11px] font-semibold ${isSelected ? 'border-[#f0d9b5] bg-[#f0d9b5] text-[#331512]' : 'border-white/20 text-white/45 group-hover:border-[#d9622c] group-hover:text-[#f0d9b5]'}`}>{optionIndex + 1}</span>
+                           <span className={`text-sm leading-snug sm:text-[15px] ${isSelected ? 'text-[#fff0d3]' : 'text-white/75 group-hover:text-white'}`}>{answer.text}</span>
                         </span>
                         {isSelected && <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#f0d9b5] sm:h-5 sm:w-5" />}
                       </button>
@@ -232,27 +261,45 @@ export default function BrandPersonaQuiz() {
                     <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full border border-[#d9622c]/40 bg-[#d9622c]/15 shadow-[0_0_28px_rgba(217,98,44,0.18)] sm:mb-4 sm:h-14 sm:w-14">
                       <CheckCircle2 className="h-6 w-6 text-[#f0d9b5] sm:h-7 sm:w-7" />
                     </div>
-                    <h2 className="font-heading text-3xl font-light text-[#f7f2ea] sm:text-4xl">Your profile is ready.</h2>
+                     <h2 className="font-heading text-3xl font-light text-[#f7f2ea] sm:text-4xl">Your profile is ready.</h2>
                     <p className="mx-auto mt-2 max-w-lg text-sm leading-relaxed text-white/60 sm:mt-3">
-                      Enter your email below to unlock your comprehensive brand persona archetype and discover how to wield it.
+                       Enter your name and email below to unlock your comprehensive brand persona archetype and discover how to wield it.
                     </p>
                   </div>
 
                   <form onSubmit={handleSubmit} className="mt-5 space-y-4 sm:mt-6 sm:space-y-5">
-                    {!isSignedIn && (
-                      <div>
-                        <label className="mb-1.5 block text-[11px] uppercase tracking-[0.16em] text-white/55" htmlFor="quiz-email">Email address</label>
-                        <input
-                          id="quiz-email"
-                          type="email"
-                          required
-                          value={email}
-                          onChange={e => setEmail(e.target.value)}
-                          placeholder="Enter your email"
-                          className="h-12 w-full rounded-xl border border-white/[0.12] bg-black/40 px-4 text-[#f7f2ea] outline-none transition placeholder:text-white/30 focus:border-[#d9622c]/70 focus:ring-2 focus:ring-[#d9622c]/20 sm:h-14 sm:px-5"
-                        />
-                      </div>
-                    )}
+                     <div className="grid gap-4 sm:grid-cols-2">
+                       <div>
+                         <label className="mb-1.5 block text-[11px] uppercase tracking-[0.16em] text-white/55" htmlFor="quiz-first-name">First name</label>
+                         <input
+                           id="quiz-first-name"
+                           type="text"
+                           required
+                           autoComplete="given-name"
+                           minLength={1}
+                           maxLength={100}
+                           value={firstName}
+                           onChange={e => setFirstName(e.target.value)}
+                           placeholder="Enter your first name"
+                           className="h-12 w-full rounded-xl border border-white/[0.12] bg-black/40 px-4 text-[#f7f2ea] outline-none transition placeholder:text-white/30 focus:border-[#d9622c]/70 focus:ring-2 focus:ring-[#d9622c]/20 sm:h-14 sm:px-5"
+                         />
+                       </div>
+                       <div>
+                         <label className="mb-1.5 block text-[11px] uppercase tracking-[0.16em] text-white/55" htmlFor="quiz-email">Email address</label>
+                         <input
+                           id="quiz-email"
+                           type="email"
+                           required
+                           autoComplete="email"
+                           value={email}
+                           onChange={e => setEmail(e.target.value)}
+                           placeholder="Enter your email"
+                           readOnly={isSignedIn}
+                           className={`h-12 w-full rounded-xl border border-white/[0.12] bg-black/40 px-4 text-[#f7f2ea] outline-none transition placeholder:text-white/30 focus:border-[#d9622c]/70 focus:ring-2 focus:ring-[#d9622c]/20 sm:h-14 sm:px-5 ${isSignedIn ? 'cursor-not-allowed opacity-75' : ''}`}
+                         />
+                         {isSignedIn && <p className="mt-1.5 text-[11px] text-white/40">Using your verified account email.</p>}
+                       </div>
+                     </div>
 
                     <div className="flex items-start gap-3 rounded-xl border border-white/[0.08] bg-white/[0.03] p-3 text-left sm:p-4">
                       <input

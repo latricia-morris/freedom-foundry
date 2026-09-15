@@ -130,6 +130,7 @@ export const serviceRequestSubmissionsTable = pgTable("service_request_submissio
  * until claimed; token material is stored as a hash, never in plaintext. */
 export const personaQuizAttemptsTable = pgTable("persona_quiz_attempts", {
   id: serial("id").primaryKey(),
+  first_name: text("first_name").notNull().default(""),
   email: text("email").notNull(),
   marketing_consent: boolean("marketing_consent").notNull().default(false),
   answers: jsonb("answers").notNull(),
