@@ -137,6 +137,15 @@ export const admin = {
       body: JSON.stringify({ members }),
     });
   },
+  async assignClientDriveFolder(id, folder) {
+    return apiFetch(`/admin/client-setups/${encodeURIComponent(id)}/drive-folder`, {
+      method: 'PUT',
+      body: JSON.stringify(folder),
+    });
+  },
+  async removeClientDriveFolder(id) {
+    return apiFetch(`/admin/client-setups/${encodeURIComponent(id)}/drive-folder`, { method: 'DELETE' });
+  },
   async listSupportReports() {
     return apiFetch('/admin/support-reports');
   },
@@ -191,6 +200,19 @@ export const quiz = {
   async claimAttempt(token) { return apiFetch('/persona-quiz/claim', { method: 'POST', body: JSON.stringify({ token }) }); },
   async getHistory() { return apiFetch('/persona-quiz/history'); },
   async getLatest() { return apiFetch('/persona-quiz/latest'); },
+};
+
+export const driveFiles = {
+  async browse({ profileId, folderId } = {}) {
+    const params = new URLSearchParams();
+    if (profileId) params.set('profile_id', String(profileId));
+    if (folderId) params.set('folder_id', folderId);
+    return apiFetch(`/drive/files${params.toString() ? `?${params}` : ''}`);
+  },
+  downloadUrl(profileId, fileId) {
+    const params = new URLSearchParams({ profile_id: String(profileId) });
+    return `${BASE}/api/drive/files/${encodeURIComponent(fileId)}/download?${params}`;
+  },
 };
 
 // ─── Generic entity factory ───────────────────────────────────────────────────
@@ -256,7 +278,7 @@ export const integrations = {
   },
 };
 
-const apiClient = { auth, admin, support, services, referrals, entities, integrations, quiz };
+const apiClient = { auth, admin, support, services, referrals, entities, integrations, quiz, driveFiles };
 export default apiClient;
 
 // Legacy compat

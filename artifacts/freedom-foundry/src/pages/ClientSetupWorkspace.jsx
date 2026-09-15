@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2, CircleAlert, Copy, FileUp, Layers3, Plus, Save, Send, Shield, Sparkles } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, CircleAlert, Copy, ExternalLink, FileUp, FolderOpen, Layers3, Plus, Save, Send, Shield, Sparkles, Trash2 } from 'lucide-react';
 import apiClient from '@/api/client';
 
 const emptyPayload = () => ({
@@ -37,6 +37,8 @@ export default function ClientSetupWorkspace() {
   const [task, setTask] = useState({ title: '', deadline_date: '', assignee: '' });
   const [service, setService] = useState({ service_type: '', details: '' });
   const [member, setMember] = useState({ email: '', role: 'user' });
+  const [driveFolder, setDriveFolder] = useState('');
+  const [driveSaving, setDriveSaving] = useState(false);
 
   const load = async () => {
     const [current, availableTemplates] = await Promise.all([
@@ -132,6 +134,42 @@ export default function ClientSetupWorkspace() {
     } catch (requestError) {
       setError(requestError.message || 'Account access could not be updated.');
     }
+  };
+
+  const assignDriveFolder = async () => {
+    if (!driveFolder.trim()) return;
+    setDriveSaving(true); setError(''); setNotice('');
+    try {
+      const result = await apiClient.admin.assignClientDriveFolder(id, { folder: driveFolder.trim() });
+      setPayload((current) => ({
+        ...current,
+        corporate: {
+          ...current.corporate,
+          drive_folder_id: result.folder.id,
+          drive_folder_name: result.folder.name,
+        },
+      }));
+      setDriveFolder('');
+      setNotice(`Google Drive folder “${result.folder.name}” is assigned and accessible.`);
+    } catch (requestError) {
+      setError(requestError.message || 'The Google Drive folder could not be assigned.');
+    }
+    setDriveSaving(false);
+  };
+
+  const removeDriveFolder = async () => {
+    setDriveSaving(true); setError(''); setNotice('');
+    try {
+      await apiClient.admin.removeClientDriveFolder(id);
+      setPayload((current) => ({
+        ...current,
+        corporate: { ...current.corporate, drive_folder_id: '', drive_folder_name: '' },
+      }));
+      setNotice('Google Drive folder access removed.');
+    } catch (requestError) {
+      setError(requestError.message || 'The Google Drive folder could not be removed.');
+    }
+    setDriveSaving(false);
   };
 
   const addBrandColor = () => {
@@ -271,6 +309,29 @@ export default function ClientSetupWorkspace() {
               {(payload.corporate.account_members || []).length === 0 && <p className="text-sm text-muted-foreground">Only the primary client account will have access until you add another person.</p>}
             </div>
             {setup.status === 'claimed' && <button type="button" onClick={saveMembers} className="mt-4 inline-flex items-center gap-2 rounded-lg bg-primary px-3 py-2.5 text-xs font-medium uppercase tracking-wider text-primary-foreground"><Save className="h-4 w-4" /> Save access changes</button>}
+          </Section>
+
+          <Section title="Google Drive client files" description="Assign one existing Drive folder. Clients can browse and download its contents, but files stay in Google Drive.">
+            {payload.corporate.drive_folder_id ? (
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-primary/25 bg-primary/5 p-4">
+                <div className="flex min-w-0 items-center gap-3">
+                  <FolderOpen className="h-5 w-5 shrink-0 text-primary" />
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-medium text-foreground">{payload.corporate.drive_folder_name || 'Assigned Drive folder'}</p>
+                    <p className="truncate text-xs text-muted-foreground">{payload.corporate.drive_folder_id}</p>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <a href={`https://drive.google.com/drive/folders/${encodeURIComponent(payload.corporate.drive_folder_id)}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-lg border border-border px-3 py-2 text-xs text-muted-foreground hover:text-foreground"><ExternalLink className="h-3.5 w-3.5" /> Preview</a>
+                  <button type="button" onClick={removeDriveFolder} disabled={driveSaving} className="inline-flex items-center gap-1 rounded-lg border border-destructive/30 px-3 py-2 text-xs text-destructive disabled:opacity-50"><Trash2 className="h-3.5 w-3.5" /> Remove</button>
+                </div>
+              </div>
+            ) : <p className="mb-3 text-sm text-muted-foreground">No Drive folder is assigned.</p>}
+            <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+              <input value={driveFolder} onChange={(event) => setDriveFolder(event.target.value)} placeholder="Paste a Google Drive folder URL or folder ID" className="min-w-0 flex-1 rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary" />
+              <button type="button" onClick={assignDriveFolder} disabled={!driveFolder.trim() || driveSaving} className="rounded-lg bg-primary px-4 py-2.5 text-xs font-medium uppercase tracking-wider text-primary-foreground disabled:opacity-50">{driveSaving ? 'Checking…' : payload.corporate.drive_folder_id ? 'Replace folder' : 'Assign folder'}</button>
+            </div>
+            <p className="mt-2 text-xs text-muted-foreground">The connected Google account must be able to open this folder. Access is checked before it is saved.</p>
           </Section>
 
           <Section title="Vision and media kit" description="Optional details to make the dedicated portal feel considered from day one.">

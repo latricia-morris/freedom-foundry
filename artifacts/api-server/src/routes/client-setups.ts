@@ -135,12 +135,16 @@ function normalizeAccountMembers(value: unknown) {
   }, []);
 }
 
-function normalizePayload(value: unknown): SetupPayload {
+function normalizePayload(value: unknown, includeDriveFolder = false): SetupPayload {
   const source = isRecord(value) ? value : {};
   const corporate = pickSection(source.corporate, editableSections.corporate);
   const sourceCorporate = isRecord(source.corporate) ? source.corporate : {};
   if (Array.isArray(sourceCorporate.account_members)) {
     corporate.account_members = normalizeAccountMembers(sourceCorporate.account_members);
+  }
+  if (includeDriveFolder && text(sourceCorporate.drive_folder_id) && text(sourceCorporate.drive_folder_name)) {
+    corporate.drive_folder_id = text(sourceCorporate.drive_folder_id);
+    corporate.drive_folder_name = text(sourceCorporate.drive_folder_name);
   }
   return {
     personal: pickSection(source.personal, editableSections.personal),
@@ -203,7 +207,7 @@ function completeness(payload: SetupPayload) {
 }
 
 function serializeSetup(row: typeof clientSetupsTable.$inferSelect) {
-  const payload = normalizePayload(row.payload);
+  const payload = normalizePayload(row.payload, true);
   return {
     ...row,
     payload,
@@ -240,7 +244,7 @@ async function upsertSingleton(tx: any, table: any, userId: string, values: Reco
 }
 
 async function promotePayload(tx: any, setup: typeof clientSetupsTable.$inferSelect, userId: string) {
-  const payload = normalizePayload(setup.payload);
+  const payload = normalizePayload(setup.payload, true);
   await upsertSingleton(tx, userProfilesTable, userId, {
     ...(text(setup.first_name) ? { first_name: text(setup.first_name) } : {}),
     ...(text(setup.last_name) ? { last_name: text(setup.last_name) } : {}),
@@ -326,13 +330,24 @@ router.patch("/admin/client-setups/:id", authMiddleware, requireAdmin, async (re
   const status = typeof body.status === "string" && STATUSES.has(body.status) && body.status !== "claimed"
     ? body.status
     : setup.status;
+  const normalizedBodyPayload = body.payload !== undefined ? normalizePayload(body.payload) : null;
+  const savedCorporate = normalizePayload(setup.payload, true).corporate as Record<string, unknown>;
+  const payloadWithSavedDrive = normalizedBodyPayload ? {
+    ...normalizedBodyPayload,
+    corporate: {
+      ...(normalizedBodyPayload.corporate as Record<string, unknown>),
+      ...(savedCorporate.drive_folder_id && savedCorporate.drive_folder_name
+        ? { drive_folder_id: savedCorporate.drive_folder_id, drive_folder_name: savedCorporate.drive_folder_name }
+        : {}),
+    },
+  } : null;
   const [updated] = await db.update(clientSetupsTable).set({
     ...(body.email !== undefined ? { email: normalizeEmail(body.email) || setup.email } : {}),
     ...(body.first_name !== undefined ? { first_name: text(body.first_name) || null } : {}),
     ...(body.last_name !== undefined ? { last_name: text(body.last_name) || null } : {}),
     ...(body.business_name !== undefined ? { business_name: text(body.business_name) || null } : {}),
     ...(body.notes !== undefined ? { notes: text(body.notes) || null } : {}),
-    ...(body.payload !== undefined ? { payload: normalizePayload(body.payload) } : {}),
+    ...(payloadWithSavedDrive ? { payload: payloadWithSavedDrive } : {}),
     status,
   }).where(eq(clientSetupsTable.id, setup.id)).returning();
   res.json(serializeSetup(updated));
@@ -345,7 +360,19 @@ router.post("/admin/client-setups/:id/import", authMiddleware, requireAdmin, asy
   if (!setup) { res.status(404).json({ error: "Client setup not found." }); return; }
   if (setup.status === "claimed") { res.status(409).json({ error: "This portal has already been activated. Edit it from the member account instead." }); return; }
   if (!isRecord(body.payload)) { res.status(400).json({ error: "Paste a valid setup object before importing." }); return; }
-  const [updated] = await db.update(clientSetupsTable).set({ payload: normalizePayload(body.payload) })
+  const imported = normalizePayload(body.payload);
+  const savedCorporate = normalizePayload(setup.payload, true).corporate as Record<string, unknown>;
+  const [updated] = await db.update(clientSetupsTable).set({
+    payload: {
+      ...imported,
+      corporate: {
+        ...(imported.corporate as Record<string, unknown>),
+        ...(savedCorporate.drive_folder_id && savedCorporate.drive_folder_name
+          ? { drive_folder_id: savedCorporate.drive_folder_id, drive_folder_name: savedCorporate.drive_folder_name }
+          : {}),
+      },
+    },
+  })
     .where(eq(clientSetupsTable.id, setup.id)).returning();
   res.json(serializeSetup(updated));
 });
@@ -380,7 +407,7 @@ router.post("/admin/client-setups/:id/apply-template", authMiddleware, requireAd
   if (setup.status === "claimed") { res.status(409).json({ error: "This portal has already been activated. Edit it from the member account instead." }); return; }
   if (!template) { res.status(404).json({ error: "Agency template not found." }); return; }
   const [updated] = await db.update(clientSetupsTable).set({
-    payload: mergePayload(normalizeTemplatePayload(template.payload), normalizePayload(setup.payload)),
+    payload: mergePayload(normalizeTemplatePayload(template.payload), normalizePayload(setup.payload, true)),
   }).where(eq(clientSetupsTable.id, setup.id)).returning();
   res.json(serializeSetup(updated));
 });

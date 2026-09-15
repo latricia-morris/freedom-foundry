@@ -145,6 +145,17 @@ describe("pending client setup payloads", () => {
     expect(payload.checklist).toEqual([{ title: "Review the portal" }]);
   });
 
+  it("does not accept unvalidated Drive folder metadata through generic setup payloads", () => {
+    const payload = clientSetupTestables.normalizePayload({
+      corporate: {
+        company_name: "Client Co.",
+        drive_folder_id: "unvalidated-folder",
+        drive_folder_name: "Injected folder",
+      },
+    });
+    expect(payload.corporate).toEqual({ company_name: "Client Co." });
+  });
+
   it("does not let reusable templates retain client identity or Big Picture data", () => {
     const template = clientSetupTestables.normalizeTemplatePayload({
       personal: { first_name: "Client", email: "client@example.com" },

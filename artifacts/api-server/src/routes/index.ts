@@ -8,6 +8,7 @@ import clientSetupsRouter from "./client-setups";
 import supportRouter from "./support";
 import referralPartnerRouter from "./referral-partner";
 import personaQuizRouter from "./persona-quiz";
+import driveFilesRouter from "./drive-files";
 
 const router: IRouter = Router();
 
@@ -20,5 +21,6 @@ router.use(clientSetupsRouter);
 router.use(supportRouter);
 router.use(referralPartnerRouter);
 router.use(personaQuizRouter);
+router.use(driveFilesRouter);
 
 export default router;

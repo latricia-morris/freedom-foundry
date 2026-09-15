@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet, NavLink } from 'react-router-dom';
-import { ChevronDown, Flame, Send } from 'lucide-react';
+import { ChevronDown, Flame, Send, FolderOpen } from 'lucide-react';
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -15,6 +15,7 @@ const strategyNav = [
 const buildNav = [
   { name: 'Brand Guidelines', path: '/brand-portal/guidelines' },
   { name: 'Brand Assets', path: '/brand-portal/assets' },
+  { name: 'Client Files', path: '/brand-portal/files', icon: 'folder' },
   { name: 'Brand Up', path: '/brand-portal/brand-up' },
   { name: 'Checklist', path: '/brand-portal/checklist' },
   { name: 'Ignite OS', path: '/brand-portal/ignite', icon: 'flame' },
@@ -57,6 +58,12 @@ function NavItem({ item }) {
           strokeWidth={1.5}
           />
 
+        }
+          {item.icon === 'folder' &&
+        <FolderOpen
+          className="w-4 h-4 flex-shrink-0"
+          strokeWidth={1.5}
+          />
         }
         </>
       }

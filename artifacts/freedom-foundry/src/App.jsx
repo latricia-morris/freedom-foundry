@@ -30,6 +30,7 @@ import BigPicture from './pages/BigPicture';
 import MediaKit from './pages/MediaKit';
 import BrandGuidelines from './pages/BrandGuidelines';
 import BrandAssets from './pages/BrandAssets';
+import DriveFiles from './pages/DriveFiles';
 import IgniteOS from './pages/IgniteOS';
 import SharePage from './pages/SharePage';
 import AdminUsers from './pages/AdminUsers';
@@ -243,6 +244,7 @@ function AppRoutes() {
             <Route path="/brand-portal/corporate" element={<CorporateBrandProfile />} />
             <Route path="/brand-portal/guidelines" element={<BrandGuidelines />} />
             <Route path="/brand-portal/assets" element={<BrandAssets />} />
+            <Route path="/brand-portal/files" element={<DriveFiles />} />
             <Route path="/brand-portal/media-kit" element={<MediaKit />} />
             <Route path="/brand-portal/ignite" element={<IgniteOS />} />
             <Route path="/brand-portal/brand-up" element={<BrandUp />} />

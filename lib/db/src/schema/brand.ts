@@ -64,6 +64,8 @@ export const corporateBrandProfilesTable = pgTable("corporate_brand_profiles", {
   positioning: text("positioning"),
   target_audience: text("target_audience"),
   account_members: jsonb("account_members").notNull().default([]),
+  drive_folder_id: text("drive_folder_id"),
+  drive_folder_name: text("drive_folder_name"),
   created_at: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updated_at: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),
 });

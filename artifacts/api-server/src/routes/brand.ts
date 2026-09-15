@@ -9,6 +9,7 @@ import {
   ownedUpdatePayload,
   requireMemberId,
 } from "../lib/auth";
+import { stripCorporateDriveFields } from "../lib/corporate-drive-fields";
 
 const router: IRouter = Router();
 
@@ -129,8 +130,9 @@ router.get("/corporate-brand-profiles", authMiddleware, async (req, res): Promis
 });
 
 router.post("/corporate-brand-profiles", authMiddleware, async (req, res): Promise<void> => {
-  const data = ownedCreatePayload<typeof corporateBrandProfilesTable.$inferInsert>(req);
-  if (!data) { res.status(401).json({ error: "Unauthorized" }); return; }
+  const ownedData = ownedCreatePayload<typeof corporateBrandProfilesTable.$inferInsert>(req);
+  if (!ownedData) { res.status(401).json({ error: "Unauthorized" }); return; }
+  const data = stripCorporateDriveFields(ownedData);
   const [row] = await db.insert(corporateBrandProfilesTable).values(data).returning();
   res.status(201).json(row);
 });
@@ -139,7 +141,7 @@ router.patch("/corporate-brand-profiles/:id", authMiddleware, async (req, res): 
   const userId = requireMemberId(req, res);
   if (!userId) return;
   const id = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id, 10);
-  const data = ownedUpdatePayload<typeof corporateBrandProfilesTable.$inferInsert>(req);
+  const data = stripCorporateDriveFields(ownedUpdatePayload<typeof corporateBrandProfilesTable.$inferInsert>(req));
   const [accessible] = (await getCorporateAccess(userId, req.user?.email || null, true))
     .filter((profile) => profile.id === id);
   if (!accessible) { ownedNotFound(res); return; }
