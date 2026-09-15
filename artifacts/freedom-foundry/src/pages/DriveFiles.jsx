@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ChevronRight, Download, File, Folder, FolderOpen, RefreshCw, Search, Eye } from 'lucide-react';
-import { useAuth } from '@clerk/react';
 import { useDriveFiles } from '@/hooks/use-drive-delivery';
 import { ClientDriveReviewModal } from '@/components/delivery/ClientDriveReviewModal';
 import apiClient from '@/api/client';
@@ -14,6 +13,7 @@ function formatBytes(value) {
 
 export default function DriveFiles() {
   const [profileId, setProfileId] = useState(null);
+  const [profiles, setProfiles] = useState([]);
   const [folderId, setFolderId] = useState(null);
   const [filter, setFilter] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
@@ -21,24 +21,35 @@ export default function DriveFiles() {
 
   // We need the profile ID first. We fetch it via auth me.
   useEffect(() => {
-    apiClient.auth.me().then(me => {
-      // In a real app this might come from route params or context.
-      // Assuming for now the corporate brand profile is attached to the user or accessible.
-      // Fallback to fetching the first corporate profile if needed.
-      apiClient.entities.CorporateBrandProfile.list().then(profiles => {
-        if (profiles.length > 0) {
-          setProfileId(profiles[0].id);
-          // check role
-          const member = profiles[0].account_members?.find(m => m.email === me.email);
-          if (member) setMemberRole(member.role);
-          if (profiles[0].owner_id === me.id) setMemberRole('owner');
+    let active = true;
+    Promise.all([apiClient.auth.me(), apiClient.entities.CorporateBrandProfile.list()])
+      .then(([me, accessibleProfiles]) => {
+        if (!active) return;
+        setProfiles(accessibleProfiles);
+        if (accessibleProfiles.length > 0) {
+          const nextProfile = accessibleProfiles[0];
+          setProfileId(nextProfile.id);
+          const member = nextProfile.account_members?.find((item) => item.email === me.email);
+          setMemberRole(nextProfile.owner_id === me.id ? 'owner' : member?.role || 'user');
         } else {
-            // handle no profile error
-            setProfileId(-1); // dummy to stop loading
+          setProfileId(-1);
         }
-      }).catch(() => setProfileId(-1));
-    });
+      })
+      .catch(() => active && setProfileId(-1));
+    return () => { active = false; };
   }, []);
+
+  useEffect(() => {
+    if (!profileId || profileId < 1) return;
+    setFolderId(null);
+    const selected = profiles.find((profile) => profile.id === profileId);
+    if (selected) {
+      apiClient.auth.me().then((me) => {
+        const member = selected.account_members?.find((item) => item.email === me.email);
+        setMemberRole(selected.owner_id === me.id ? 'owner' : member?.role || 'user');
+      }).catch(() => setMemberRole('user'));
+    }
+  }, [profileId, profiles]);
 
   const { data, isLoading, isError, error, refetch } = useDriveFiles(profileId > 0 ? profileId : null, folderId);
 
@@ -53,12 +64,15 @@ export default function DriveFiles() {
   return (
     <div className="max-w-5xl animate-fade-in text-foreground relative z-0">
       <div className="mb-6 flex flex-wrap items-start justify-between gap-3 relative z-10">
-        <div>
+         <div className="min-w-0">
           <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">Brand Portal</span>
           <h1 className="mt-1 font-heading text-3xl font-light">Client <span className="molten-text italic">Files</span></h1>
           <p className="mt-1 text-sm text-muted-foreground">Review drafts and download released assets from your corporate brand.</p>
         </div>
-        <button type="button" onClick={() => refetch()} disabled={loading} className="inline-flex items-center gap-2 rounded-xl border border-border px-3 py-2.5 text-sm text-muted-foreground hover:text-foreground disabled:opacity-50"><RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} /> Refresh</button>
+         <div className="flex flex-wrap items-center gap-2">
+           {profiles.length > 1 && <label className="flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-sm text-muted-foreground"><span className="sr-only">Client account</span><select value={profileId || ''} onChange={(event) => setProfileId(Number(event.target.value))} className="max-w-48 bg-transparent text-foreground outline-none"><option value="" disabled>Choose client account</option>{profiles.map((profile) => <option key={profile.id} value={profile.id}>{profile.company_name || profile.name || `Client ${profile.id}`}</option>)}</select></label>}
+           <button type="button" onClick={() => refetch()} disabled={loading} className="inline-flex items-center gap-2 rounded-xl border border-border px-3 py-2.5 text-sm text-muted-foreground hover:text-foreground disabled:opacity-50"><RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} /> Refresh</button>
+         </div>
       </div>
 
       {loadError ? <div role="alert" className="rounded-2xl border border-destructive/30 bg-destructive/10 p-8 text-center"><p className="text-sm text-destructive">{loadError}</p><button type="button" onClick={() => refetch()} className="mt-3 rounded-lg border border-destructive/30 px-3 py-2 text-sm text-destructive">Try again</button></div>

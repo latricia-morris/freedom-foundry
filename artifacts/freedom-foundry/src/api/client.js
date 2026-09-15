@@ -239,11 +239,8 @@ export const driveFiles = {
     return `${BASE}/api/drive/files/${encodeURIComponent(fileId)}/download?${params}`;
   },
   async preview({ profileId, fileId, page = 1 }) {
-    const params = new URLSearchParams({ profile_id: String(profileId) });
+    const params = new URLSearchParams({ profile_id: String(profileId), page: String(page) });
     const res = await fetch(`${BASE}/api/drive/files/${encodeURIComponent(fileId)}/preview?${params}`, {
-      headers: {
-        'X-Preview-Page': String(page)
-      },
       credentials: 'include'
     });
     if (!res.ok) {

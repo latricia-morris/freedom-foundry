@@ -69,7 +69,7 @@ export default function UserAvatar() {
           <Bug className="w-4 h-4 mr-2" strokeWidth={1.5} />
           <span>Report QuickBooks Issue</span>
         </DropdownMenuItem>
-        {user?.role === 'admin' && (
+        {(user?.role === 'admin' || user?.role === 'super_admin') && (
           <>
              <DropdownMenuSeparator className="bg-border" />
              <DropdownMenuItem onClick={() => navigate('/admin')} className="cursor-pointer text-primary focus:bg-accent focus:text-foreground">

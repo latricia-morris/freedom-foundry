@@ -189,11 +189,11 @@ export function ClientDriveReviewModal({ isOpen, onClose, file, profileId, curre
               <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {commentsLoading ? (
                   <div className="flex justify-center py-8"><div className="h-5 w-5 animate-spin rounded-full border-2 border-border border-t-primary" /></div>
-                ) : comments?.length > 0 ? (
-                  comments.map((comment) => (
+                ) : (comments?.comments || comments || []).length > 0 ? (
+                  (comments?.comments || comments || []).map((comment) => (
                     <div key={comment.id} className="text-sm">
                       <div className="flex items-baseline justify-between mb-1">
-                        <span className="font-medium text-foreground">{comment.author?.name || 'Unknown User'}</span>
+                        <span className="font-medium text-foreground">{comment.author?.name || comment.author_email || 'Client team member'}</span>
                         <span className="text-[10px] text-muted-foreground">{formatDistanceToNow(new Date(comment.created_at))} ago</span>
                       </div>
                       <p className="text-muted-foreground bg-white/5 rounded-lg p-3 rounded-tl-none">{comment.body}</p>
