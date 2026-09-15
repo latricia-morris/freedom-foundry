@@ -32,7 +32,7 @@ export default function BrandPortal() {
         <h1 className="font-heading text-3xl lg:text-4xl font-light text-[#f7f2ea] mt-1 mb-2">
           Your Brand <span className="molten-text italic">Space</span>
         </h1>
-        <p className="text-sm text-[#f7f2ea]/60 leading-relaxed max-w-md mb-6">
+        <p className="text-base text-[#f7f2ea]/60 leading-relaxed max-w-md mb-6">
           Everything needed to build, communicate, and protect your brand, all in one place.
         </p>
 
@@ -46,7 +46,7 @@ export default function BrandPortal() {
               <h3 className="font-heading text-xl text-white mb-1">
                  The {latestPersona.primaryArchetype}
               </h3>
-              <p className="text-xs text-white/60 mb-3">
+              <p className="text-sm text-white/60 mb-3">
                 Secondary: {latestPersona.secondaryArchetype} · Completed {new Date(latestPersona.createdAt).toLocaleDateString()}
               </p>
               <Link to="/brand-persona-quiz/results" className="text-xs text-[#f0d9b5] hover:text-white transition underline underline-offset-4">
@@ -69,7 +69,7 @@ export default function BrandPortal() {
                       <h3 className="font-heading text-base text-[#f7f2ea]">{section.name}</h3>
                       <Lock className="w-3.5 h-3.5 text-[#d9c9a3]" strokeWidth={1.5} />
                     </div>
-                    <p className="text-xs text-[#f7f2ea]/40">{section.desc}</p>
+                    <p className="text-sm text-[#f7f2ea]/50 leading-relaxed">{section.desc}</p>
                   </div>
                 </div> :
 
@@ -78,8 +78,8 @@ export default function BrandPortal() {
                 className="flex items-center justify-between p-5 rounded-2xl border border-white/[0.04] bg-white/[0.02] hover:bg-white/[0.04] transition-colors group">
                 
                   <div>
-                    <h3 className="font-heading text-base text-[#f7f2ea] mb-1 group-hover:molten-text transition-colors">{section.name}</h3>
-                    <p className="text-xs text-[#f7f2ea]/50">{section.desc}</p>
+                    <h3 className="font-heading text-lg text-[#f7f2ea] mb-1 group-hover:molten-text transition-colors">{section.name}</h3>
+                    <p className="text-sm text-[#f7f2ea]/60 leading-relaxed">{section.desc}</p>
                   </div>
                   <span className="text-[#f7f2ea]/20 group-hover:text-[#f7f2ea]/50 transition-colors text-lg">›</span>
                 </Link>

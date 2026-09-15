@@ -82,6 +82,10 @@ router.post("/persona-quiz/complete", optionalAuth, async (req, res): Promise<vo
   if (!answers || !emailPattern.test(email) || email.length > 320) {
     res.status(400).json({ error: "Exactly 18 valid answers and a valid email are required" }); return;
   }
+  if (body.marketingConsent !== true) {
+    res.status(400).json({ error: "Marketing consent is required to receive the Brand Persona report and selected insights." });
+    return;
+  }
   const scored = scoreQuizAnswers(answers);
   const [row] = await db.insert(personaQuizAttemptsTable).values({
     email, marketing_consent: body.marketingConsent === true,

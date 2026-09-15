@@ -36,6 +36,7 @@ export default function ClientSetupWorkspace() {
   const [brandColor, setBrandColor] = useState({ name: '', hex: '#000000' });
   const [task, setTask] = useState({ title: '', deadline_date: '', assignee: '' });
   const [service, setService] = useState({ service_type: '', details: '' });
+  const [member, setMember] = useState({ email: '', role: 'user' });
 
   const load = async () => {
     const [current, availableTemplates] = await Promise.all([
@@ -91,6 +92,47 @@ export default function ClientSetupWorkspace() {
   };
 
   const remove = (collection, index) => setPayload((current) => ({ ...current, [collection]: current[collection].filter((_, itemIndex) => itemIndex !== index) }));
+
+  const addMember = () => {
+    const email = member.email.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email === setup.email?.toLowerCase()) return;
+    const current = Array.isArray(payload.corporate.account_members) ? payload.corporate.account_members : [];
+    if (current.some((item) => item.email === email)) return;
+    setPayload((currentPayload) => ({
+      ...currentPayload,
+      corporate: {
+        ...currentPayload.corporate,
+        account_members: [...(Array.isArray(currentPayload.corporate.account_members) ? currentPayload.corporate.account_members : []), {
+          email,
+          role: member.role,
+          permissions: member.role === 'admin' ? ['view_corporate', 'edit_corporate', 'manage_users'] : ['view_corporate'],
+        }],
+      },
+    }));
+    setMember({ email: '', role: 'user' });
+  };
+
+  const removeMember = (email) => setPayload((currentPayload) => ({
+    ...currentPayload,
+    corporate: {
+      ...currentPayload.corporate,
+      account_members: (currentPayload.corporate.account_members || []).filter((item) => item.email !== email),
+    },
+  }));
+
+  const saveMembers = async () => {
+    try {
+      const result = await apiClient.admin.updateClientSetupMembers(id, payload.corporate.account_members || []);
+      setPayload((currentPayload) => ({
+        ...currentPayload,
+        corporate: { ...currentPayload.corporate, account_members: result.members || [] },
+      }));
+      setNotice('Corporate account access updated. New members were invited where needed.');
+      setError('');
+    } catch (requestError) {
+      setError(requestError.message || 'Account access could not be updated.');
+    }
+  };
 
   const addBrandColor = () => {
     if (!brandColor.name.trim() || !/^#[0-9a-fA-F]{6}$/.test(brandColor.hex)) return;
@@ -211,6 +253,24 @@ export default function ClientSetupWorkspace() {
               <div className="sm:col-span-2"><Field label="Voice and tone notes" value={payload.guidelines.tone_notes} onChange={(value) => setSection('guidelines', 'tone_notes', value)} placeholder="How this brand should sound" multiline /></div>
             </div>
             {Array.isArray(payload.corporate.colors) && payload.corporate.colors.length > 0 && <div className="mt-4 flex flex-wrap gap-2">{payload.corporate.colors.map((color, index) => <button type="button" onClick={() => removeBrandColor(index)} key={`${color.name}-${index}`} className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-1.5 text-xs text-foreground" title="Remove color"><span className="h-3 w-3 rounded-full border border-black/20" style={{ backgroundColor: color.hex }} />{color.name} <span className="text-muted-foreground">{color.hex}</span></button>)}</div>}
+          </Section>
+
+          <Section title="Account access" description="Add another person to this corporate brand. Admins can edit the corporate brand and manage future access; users can view it.">
+            <div className="grid gap-3 sm:grid-cols-[1fr_150px_auto]">
+              <Field label="Team member email" value={member.email} onChange={(value) => setMember((current) => ({ ...current, email: value }))} placeholder="colleague@company.com" />
+              <label className="block"><span className="mb-1.5 block text-[10px] font-medium uppercase tracking-widest text-muted-foreground">Permission</span><select value={member.role} onChange={(event) => setMember((current) => ({ ...current, role: event.target.value }))} className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary"><option value="user">User · view</option><option value="admin">Admin · edit</option></select></label>
+              <button type="button" onClick={addMember} className="self-end rounded-lg border border-primary/30 px-3 py-2.5 text-xs font-medium uppercase tracking-wider text-primary"><Plus className="mr-1 inline h-4 w-4" /> Add</button>
+            </div>
+            <div className="mt-4 space-y-2">
+              {(payload.corporate.account_members || []).map((item) => (
+                <div key={item.email} className="flex items-center justify-between gap-3 rounded-lg bg-background/70 px-3 py-2.5">
+                  <div className="min-w-0"><p className="truncate text-sm text-foreground">{item.email}</p><p className="text-xs text-muted-foreground">{item.role === 'admin' ? 'Admin · can edit corporate brand' : 'User · view corporate brand'}</p></div>
+                  <button type="button" onClick={() => removeMember(item.email)} className="shrink-0 text-xs text-muted-foreground hover:text-red-300">Remove</button>
+                </div>
+              ))}
+              {(payload.corporate.account_members || []).length === 0 && <p className="text-sm text-muted-foreground">Only the primary client account will have access until you add another person.</p>}
+            </div>
+            {setup.status === 'claimed' && <button type="button" onClick={saveMembers} className="mt-4 inline-flex items-center gap-2 rounded-lg bg-primary px-3 py-2.5 text-xs font-medium uppercase tracking-wider text-primary-foreground"><Save className="h-4 w-4" /> Save access changes</button>}
           </Section>
 
           <Section title="Vision and media kit" description="Optional details to make the dedicated portal feel considered from day one.">

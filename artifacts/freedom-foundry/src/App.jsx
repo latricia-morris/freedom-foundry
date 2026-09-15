@@ -53,6 +53,7 @@ import BrandPersonaQuizResults from './pages/BrandPersonaQuizResults';
 import AdminQuizLeads from './pages/AdminQuizLeads';
 import FreedomSignInForm from './components/auth/FreedomSignInForm';
 import FreedomSignUpForm from './components/auth/FreedomSignUpForm';
+import { ThemeProvider } from './lib/theme';
 
 // ─── Clerk config ─────────────────────────────────────────────────────────────
 const basePath = import.meta.env.BASE_URL?.replace(/\/$/, '') || '';
@@ -283,14 +284,16 @@ function App() {
         signUp: { start: { title: 'Create your account', subtitle: 'Join Freedom Foundry' } },
       }}
     >
-      <QueryClientProvider client={queryClientInstance}>
-        <ClerkCacheInvalidator />
-        <Router>
-          <ScrollToTop />
-          <AppRoutes />
-        </Router>
-        <Toaster />
-      </QueryClientProvider>
+      <ThemeProvider>
+        <QueryClientProvider client={queryClientInstance}>
+          <ClerkCacheInvalidator />
+          <Router>
+            <ScrollToTop />
+            <AppRoutes />
+          </Router>
+          <Toaster />
+        </QueryClientProvider>
+      </ThemeProvider>
     </ClerkProvider>
   );
 }

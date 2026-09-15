@@ -31,7 +31,7 @@ const editableSections = {
     "company_name", "tagline", "mission_statement", "phone", "email", "website",
     "heading_font", "subheading_font", "body_font", "accent_font", "colors", "logo_urls",
     "moodboard_urls", "brand_voice", "brand_tonality", "brand_personality", "brand_prompts",
-    "brand_specs", "positioning", "target_audience",
+    "brand_specs", "positioning", "target_audience", "account_members",
   ],
   guidelines: [
     "heading_font", "subheading_font", "body_font", "accent_font", "logo_usage_notes",
@@ -116,11 +116,35 @@ function normalizeServices(value: unknown) {
   }, []);
 }
 
+function normalizeAccountMembers(value: unknown) {
+  if (!Array.isArray(value)) return [];
+  return value.reduce<Record<string, unknown>[]>((members, item) => {
+    if (!isRecord(item)) return members;
+    const email = normalizeEmail(item.email);
+    const role = item.role === "admin" ? "admin" : "user";
+    if (!email) return members;
+    if (members.some((member) => member.email === email)) return members;
+    members.push({
+      email,
+      role,
+      permissions: role === "admin"
+        ? ["view_corporate", "edit_corporate", "manage_users"]
+        : ["view_corporate"],
+    });
+    return members;
+  }, []);
+}
+
 function normalizePayload(value: unknown): SetupPayload {
   const source = isRecord(value) ? value : {};
+  const corporate = pickSection(source.corporate, editableSections.corporate);
+  const sourceCorporate = isRecord(source.corporate) ? source.corporate : {};
+  if (Array.isArray(sourceCorporate.account_members)) {
+    corporate.account_members = normalizeAccountMembers(sourceCorporate.account_members);
+  }
   return {
     personal: pickSection(source.personal, editableSections.personal),
-    corporate: pickSection(source.corporate, editableSections.corporate),
+    corporate,
     guidelines: pickSection(source.guidelines, editableSections.guidelines),
     mediaKit: pickSection(source.mediaKit, editableSections.mediaKit),
     bigPicture: pickSection(source.bigPicture, editableSections.bigPicture),
@@ -372,8 +396,25 @@ router.post("/admin/client-setups/:id/invite", authMiddleware, requireAdmin, asy
   if (setup.status === "claimed") { res.status(409).json({ error: "This client portal is already active." }); return; }
   try {
     await clerkClient.invitations.createInvitation({ emailAddress: setup.email });
+    const normalized = normalizePayload(setup.payload);
+    const corporate = isRecord(normalized.corporate) ? normalized.corporate : {};
+    const members = Array.isArray(corporate.account_members)
+      ? corporate.account_members as Record<string, unknown>[]
+      : [];
+    const secondaryInvites = [];
+    for (const member of members) {
+      const email = normalizeEmail(member.email);
+      if (!email || email === setup.email) continue;
+      try {
+        await clerkClient.invitations.createInvitation({ emailAddress: email });
+        secondaryInvites.push(email);
+      } catch {
+        // An existing account can join by signing in; only the primary setup
+        // invitation determines whether this operation is considered failed.
+      }
+    }
     const [updated] = await db.update(clientSetupsTable).set({ status: "invited" }).where(eq(clientSetupsTable.id, setup.id)).returning();
-    res.json(serializeSetup(updated));
+    res.json({ ...serializeSetup(updated), invited_member_emails: secondaryInvites });
   } catch {
     res.status(409).json({ error: "An invitation or account already exists for this email. Use Activate when the client account is available." });
   }
@@ -415,6 +456,36 @@ router.post("/admin/client-setups/:id/claim", authMiddleware, requireAdmin, asyn
   }
   const claimed = await getSetup(setup.id);
   res.json(serializeSetup(claimed!));
+});
+
+router.patch("/admin/client-setups/:id/members", authMiddleware, requireAdmin, async (req, res): Promise<void> => {
+  const id = parseId(req.params.id);
+  const setup = id ? await getSetup(id) : undefined;
+  if (!setup) { res.status(404).json({ error: "Client setup not found." }); return; }
+  if (setup.status !== "claimed" || !setup.claimed_user_id) {
+    res.status(409).json({ error: "Activate the client portal before changing its account access." });
+    return;
+  }
+
+  const members = normalizeAccountMembers(req.body?.members);
+  const [profile] = await db.update(corporateBrandProfilesTable)
+    .set({ account_members: members })
+    .where(eq(corporateBrandProfilesTable.user_id, setup.claimed_user_id))
+    .returning();
+  if (!profile) { res.status(404).json({ error: "Corporate brand profile not found." }); return; }
+
+  const invitedMemberEmails: string[] = [];
+  for (const member of members) {
+    const email = normalizeEmail(member.email);
+    if (!email || email === setup.email) continue;
+    try {
+      await clerkClient.invitations.createInvitation({ emailAddress: email });
+      invitedMemberEmails.push(email);
+    } catch {
+      // Existing accounts do not need a second invitation to use access.
+    }
+  }
+  res.json({ members, invited_member_emails: invitedMemberEmails });
 });
 
 export const clientSetupTestables = {

@@ -131,6 +131,12 @@ export const admin = {
   async claimClientSetup(id) {
     return apiFetch(`/admin/client-setups/${encodeURIComponent(id)}/claim`, { method: 'POST' });
   },
+  async updateClientSetupMembers(id, members) {
+    return apiFetch(`/admin/client-setups/${encodeURIComponent(id)}/members`, {
+      method: 'PATCH',
+      body: JSON.stringify({ members }),
+    });
+  },
   async listSupportReports() {
     return apiFetch('/admin/support-reports');
   },

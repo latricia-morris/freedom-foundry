@@ -65,6 +65,34 @@ function normalizeColors(value: unknown) {
     .filter(color => color.name || color.hex);
 }
 
+type CorporateMember = {
+  email?: unknown;
+  role?: unknown;
+  permissions?: unknown;
+};
+
+function corporateMemberAccess(row: typeof corporateBrandProfilesTable.$inferSelect, email: string | null) {
+  if (!email || !Array.isArray(row.account_members)) return null;
+  const member = (row.account_members as CorporateMember[]).find(
+    (item) => typeof item?.email === "string" && item.email.toLowerCase() === email,
+  );
+  if (!member) return null;
+  const permissions = Array.isArray(member.permissions) ? member.permissions : [];
+  return {
+    role: member.role === "admin" ? "admin" : "user",
+    canEdit: member.role === "admin" || permissions.includes("edit_corporate"),
+  };
+}
+
+async function getCorporateAccess(userId: string, email: string | null, canEdit = false) {
+  const rows = await db.select().from(corporateBrandProfilesTable);
+  return rows.filter((row) => {
+    if (row.user_id === userId) return true;
+    const access = corporateMemberAccess(row, email);
+    return Boolean(access && (!canEdit || access.canEdit));
+  });
+}
+
 // ─── Personal Brand Profiles ─────────────────────────────────────────────────
 router.get("/personal-brand-profiles", authMiddleware, async (req, res): Promise<void> => {
   const userId = requireMemberId(req, res);
@@ -96,8 +124,7 @@ router.patch("/personal-brand-profiles/:id", authMiddleware, async (req, res): P
 router.get("/corporate-brand-profiles", authMiddleware, async (req, res): Promise<void> => {
   const userId = requireMemberId(req, res);
   if (!userId) return;
-  const rows = await db.select().from(corporateBrandProfilesTable)
-    .where(eq(corporateBrandProfilesTable.user_id, userId));
+  const rows = await getCorporateAccess(userId, req.user?.email || null);
   res.json(rows);
 });
 
@@ -113,8 +140,11 @@ router.patch("/corporate-brand-profiles/:id", authMiddleware, async (req, res): 
   if (!userId) return;
   const id = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id, 10);
   const data = ownedUpdatePayload<typeof corporateBrandProfilesTable.$inferInsert>(req);
+  const [accessible] = (await getCorporateAccess(userId, req.user?.email || null, true))
+    .filter((profile) => profile.id === id);
+  if (!accessible) { ownedNotFound(res); return; }
   const [row] = await db.update(corporateBrandProfilesTable).set(data)
-    .where(and(eq(corporateBrandProfilesTable.id, id), eq(corporateBrandProfilesTable.user_id, userId))).returning();
+    .where(eq(corporateBrandProfilesTable.id, id)).returning();
   if (!row) { ownedNotFound(res); return; }
   res.json(row);
 });

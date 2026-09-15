@@ -10,9 +10,9 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 export default function Layout() {
   return (
-    <div className="min-h-screen bg-[#14110f]">
+    <div className="min-h-screen bg-background text-foreground">
       <WarmGradientDefs />
-      <header className="sticky top-0 z-30 border-b border-[#f0d9b5]/10 bg-[#14110f]/95 backdrop-blur">
+      <header className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-5 lg:px-8">
         <Link to="/dashboard" className="flex items-center gap-3 group">
           <img
@@ -21,14 +21,14 @@ export default function Layout() {
             className="h-9 w-9 rounded-xl object-cover shadow-[0_0_14px_rgba(217,98,44,0.28)] transition-transform group-hover:scale-105"
           />
           <div className="flex flex-col leading-tight">
-            <span className="font-heading text-xl lg:text-2xl font-medium text-[#f7f2ea] tracking-[0.04em]">FREEDOM FOUNDRY
+            <span className="font-heading text-xl lg:text-2xl font-medium text-foreground tracking-[0.04em]">FREEDOM FOUNDRY
 
             </span>
-            <span className="uppercase tracking-[0.25em] text-[#d9c9a3] text-[11px]">BY THE BRAND REVIVALIST®</span>
+            <span className="uppercase tracking-[0.25em] text-muted-foreground text-[11px]">BY THE BRAND REVIVALIST®</span>
           </div>
         </Link>
         <div className="flex items-center gap-4">
-          <button className="relative p-2 text-[#f7f2ea]/70 hover:text-[#f7f2ea] transition-colors">
+          <button className="relative p-2 text-muted-foreground hover:text-foreground transition-colors">
             <Bell className="w-5 h-5" strokeWidth={1.5} />
           </button>
           <UserAvatar />

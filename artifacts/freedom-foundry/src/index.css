@@ -48,6 +48,34 @@
     --sidebar-border: 20 10% 13%;
     --sidebar-ring: 168 7% 74%;
   }
+
+  html.light-mode {
+    --background: 38 32% 96%;
+    --foreground: 20 18% 14%;
+    --card: 38 36% 99%;
+    --card-foreground: 20 18% 14%;
+    --popover: 38 36% 99%;
+    --popover-foreground: 20 18% 14%;
+    --primary: 18 65% 45%;
+    --primary-foreground: 38 36% 99%;
+    --secondary: 35 25% 90%;
+    --secondary-foreground: 20 18% 14%;
+    --muted: 35 24% 91%;
+    --muted-foreground: 20 12% 40%;
+    --accent: 30 35% 88%;
+    --accent-foreground: 20 18% 14%;
+    --border: 30 20% 80%;
+    --input: 30 20% 80%;
+    --ring: 18 65% 45%;
+    --sidebar-background: 38 32% 96%;
+    --sidebar-foreground: 20 18% 14%;
+    --sidebar-primary: 18 65% 45%;
+    --sidebar-primary-foreground: 38 36% 99%;
+    --sidebar-accent: 35 25% 90%;
+    --sidebar-accent-foreground: 20 18% 14%;
+    --sidebar-border: 30 20% 80%;
+    --sidebar-ring: 18 65% 45%;
+  }
 }
 
 @layer base {
@@ -61,6 +89,10 @@
     color: hsl(var(--foreground));
     font-family: var(--font-body);
     line-height: 1.6;
+  }
+
+  html.light-mode body {
+    background: linear-gradient(135deg, #f6f0e7 0%, #fffdf8 55%, #f1e4d5 100%);
   }
 
   h1, h2, h3, h4, h5, h6 {

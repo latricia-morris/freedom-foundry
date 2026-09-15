@@ -17,9 +17,9 @@ export default function MobileNav() {
   return (
     <nav
       aria-label="Primary navigation"
-      className="fixed bottom-0 left-0 right-0 z-50 border-t border-white/[0.12] bg-[#100d0b]/95 px-2 py-2 backdrop-blur-xl"
+      className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-background/95 px-3 py-2.5 backdrop-blur-xl"
     >
-      <div className="mx-auto flex max-w-4xl items-stretch justify-between gap-1">
+      <div className="mx-auto flex max-w-4xl items-stretch justify-between gap-3">
         {navItems.map((item) => {
           const active = isActive(item.path);
           return (
@@ -27,13 +27,13 @@ export default function MobileNav() {
               key={item.path}
               to={item.path}
               aria-current={active ? 'page' : undefined}
-                className={`flex min-w-0 flex-1 items-center justify-center rounded-lg px-1 py-2 text-center text-[10px] font-medium leading-tight tracking-normal transition-colors sm:px-2 sm:text-[11px] ${
+                className={`flex shrink-0 items-center justify-center rounded-lg px-1.5 py-2 text-center text-xs font-medium leading-tight tracking-normal transition-colors sm:px-2 sm:text-[13px] ${
                 active
-                   ? 'text-[#f7f5f5]'
-                   : 'text-[#b7bfbd] hover:text-[#e0e4e3]'
+                   ? 'text-primary'
+                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >
-               <span className="max-w-full whitespace-normal font-normal text-[10px] uppercase tracking-[0.1em] sm:text-[11px]">{item.label}</span>
+                <span className="whitespace-nowrap font-medium text-xs uppercase tracking-[0.08em] sm:text-[13px]">{item.label}</span>
             </Link>
           );
         })}

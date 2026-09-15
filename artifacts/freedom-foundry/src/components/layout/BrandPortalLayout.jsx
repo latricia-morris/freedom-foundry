@@ -1,6 +1,8 @@
 import React from 'react';
 import { Outlet, NavLink } from 'react-router-dom';
-import { Flame, Send } from 'lucide-react';
+import { ChevronDown, Flame, Send } from 'lucide-react';
+import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 const strategyNav = [
   { name: 'Overview', path: '/brand-portal', end: true },
@@ -31,8 +33,8 @@ function NavItem({ item }) {
       className={({ isActive }) =>
         `flex items-center justify-between border-l-2 px-3 py-2.5 text-sm transition-colors duration-200 ${
           isActive
-            ? 'border-[#f7f5f5] font-medium text-[#f7f5f5]'
-            : 'border-transparent text-[#b7bfbd] hover:bg-white/[0.035] hover:text-[#e0e4e3]'
+             ? 'border-primary font-medium text-foreground bg-primary/5'
+             : 'border-transparent text-muted-foreground hover:bg-accent hover:text-foreground'
         }`
       }
     >
@@ -63,21 +65,52 @@ function NavItem({ item }) {
 }
 
 export default function BrandPortalLayout() {
+  const location = useLocation();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const currentItem = [...strategyNav, ...buildNav, ...supportNav]
+    .find((item) => location.pathname === item.path) || strategyNav[0];
+
+  const renderItems = (items) => items.map((item) => <NavItem key={item.path} item={item} />);
+
   return (
     <div className="flex min-h-[calc(100vh-10rem)] flex-col gap-6 lg:flex-row lg:gap-10">
-      <aside className="flex flex-shrink-0 flex-col border border-white/[0.08] bg-[#1a1c1b]/75 p-3 lg:sticky lg:top-28 lg:h-fit lg:w-60 lg:p-4">
-        <p className="mb-3 px-3 text-[10px] uppercase tracking-[0.24em] text-[#b7bfbd]">
+      <aside className="hidden flex-shrink-0 flex-col border border-border bg-card/75 p-4 lg:sticky lg:top-28 lg:flex lg:h-fit lg:w-60">
+        <p className="mb-3 px-3 text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
           Brand Portal
         </p>
-        <nav aria-label="Brand Portal pages" className="flex gap-1 overflow-x-auto pb-1 lg:flex-col lg:overflow-visible">
-          {strategyNav.map((item) => <NavItem key={item.path} item={item} />)}
-          <div className="mx-3 my-2 hidden border-t border-white/[0.1] lg:block" />
-          {buildNav.map((item) => <NavItem key={item.path} item={item} />)}
+        <nav aria-label="Brand Portal pages" className="flex flex-col gap-1">
+          {renderItems(strategyNav)}
+          <div className="mx-3 my-2 border-t border-border" />
+          {renderItems(buildNav)}
+          <div className="mt-3 border-t border-border pt-3">
+            {renderItems(supportNav)}
+          </div>
         </nav>
-        <div className="mt-3 border-t border-white/[0.1] pt-3">
-          {supportNav.map((item) => <NavItem key={item.path} item={item} />)}
-        </div>
       </aside>
+
+      <div className="lg:hidden">
+        <button
+          type="button"
+          onClick={() => setMobileOpen((open) => !open)}
+          aria-expanded={mobileOpen}
+          className="flex min-h-14 w-full items-center justify-between rounded-xl border border-border bg-card px-4 text-left"
+        >
+          <span>
+            <span className="block text-[11px] font-medium uppercase tracking-[0.2em] text-muted-foreground">Brand Portal</span>
+            <span className="mt-1 block text-base font-medium text-foreground">{currentItem.name}</span>
+          </span>
+          <ChevronDown className={`h-5 w-5 text-primary transition-transform ${mobileOpen ? 'rotate-180' : ''}`} />
+        </button>
+        {mobileOpen && (
+          <nav aria-label="Mobile Brand Portal pages" className="mt-2 grid grid-cols-1 gap-1 rounded-xl border border-border bg-card p-2">
+            {renderItems(strategyNav)}
+            <div className="my-1 border-t border-border" />
+            {renderItems(buildNav)}
+            <div className="my-1 border-t border-border" />
+            {renderItems(supportNav)}
+          </nav>
+        )}
+      </div>
 
       <main className="min-w-0 flex-1 lg:py-2">
         <Outlet />

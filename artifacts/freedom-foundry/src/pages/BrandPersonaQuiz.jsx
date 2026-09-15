@@ -53,6 +53,14 @@ export default function BrandPersonaQuiz() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!marketingConsent) {
+      toast({
+        title: 'Consent required',
+        description: 'Please opt in so we can deliver your report and selected brand insights.',
+        variant: 'destructive',
+      });
+      return;
+    }
     if (!isSignedIn && !email.trim()) {
       toast({ title: 'Email required', description: 'Please enter your email to see your results.', variant: 'destructive' });
       return;
@@ -211,12 +219,13 @@ export default function BrandPersonaQuiz() {
                   <input
                     type="checkbox"
                     id="marketingConsent"
+                    required
                     checked={marketingConsent}
                     onChange={(e) => setMarketingConsent(e.target.checked)}
                     className="mt-1 flex-shrink-0"
                   />
-                  <label htmlFor="marketingConsent" className="text-sm text-white/60 leading-relaxed cursor-pointer select-none">
-                    Yes, keep me updated on future resources, guides, and services from Freedom Foundry.
+                  <label htmlFor="marketingConsent" className="text-sm text-white/70 leading-relaxed cursor-pointer select-none">
+                    I agree to receive my Brand Persona report and occasional selected insights, resources, and services to help me leverage my brand. I can unsubscribe at any time.
                   </label>
                 </div>
                 
