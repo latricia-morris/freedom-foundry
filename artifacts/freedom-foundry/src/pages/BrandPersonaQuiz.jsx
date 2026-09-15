@@ -1,10 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '@clerk/react';
-import { ArrowRight, ChevronLeft, LoaderCircle, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, LoaderCircle, CheckCircle2 } from 'lucide-react';
 import apiClient from '@/api/client';
 import { useToast } from '@/components/ui/use-toast';
 
+const QUIZ_SECTIONS = [
+  { label: 'Core Drivers', shortLabel: 'Drivers', start: 0, end: 7 },
+  { label: 'Behavior & Strategy', shortLabel: 'Strategy', start: 7, end: 14 },
+  { label: 'Personality Nuances', shortLabel: 'Nuance', start: 14, end: 18 },
+];
+
+function getSectionIndex(step) {
+  const sectionIndex = QUIZ_SECTIONS.findIndex(
+    (section) => step >= section.start && step < section.end,
+  );
+  return sectionIndex === -1 ? QUIZ_SECTIONS.length - 1 : sectionIndex;
+}
 
 export default function BrandPersonaQuiz() {
   const [definition, setDefinition] = useState(null);
@@ -34,7 +46,8 @@ export default function BrandPersonaQuiz() {
 
   const totalQuestions = definition?.questions?.length || 0;
   const isGate = currentStep === totalQuestions;
-  const progress = isGate ? 100 : (currentStep / totalQuestions) * 100;
+  const activeSectionIndex = isGate ? QUIZ_SECTIONS.length - 1 : getSectionIndex(currentStep);
+  const activeSection = QUIZ_SECTIONS[activeSectionIndex];
 
   const handleSelectOption = (questionId, optionIndex) => {
     if (isTransitioning) return;
@@ -118,136 +131,166 @@ export default function BrandPersonaQuiz() {
   const currentQuestion = !isGate ? definition.questions[currentStep] : null;
 
   return (
-    <div className="min-h-[100dvh] bg-[#100e0c] flex flex-col font-sans relative overflow-hidden">
+    <div className="relative flex h-[100dvh] min-h-0 flex-col overflow-hidden bg-[#100e0c] font-sans">
       {/* Background elements */}
       <div className="absolute inset-0 pointer-events-none opacity-40">
         <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-[#d9622c]/10 blur-[120px]" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-[#9f1f28]/10 blur-[100px]" />
       </div>
 
-      {/* Header with progress */}
-      <header className="relative z-10 w-full max-w-3xl mx-auto px-6 py-6 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <img src={`${basePath}/forge-logo.png`} alt="Freedom Foundry" className="w-8 h-8 rounded-lg shadow-[0_0_12px_rgba(217,98,44,0.3)]" />
-          <span className="font-heading text-sm text-[#f7f2ea] tracking-wider uppercase">Brand Persona Discovery</span>
-        </div>
-        <div className="text-xs uppercase tracking-[0.2em] text-white/40">
-          {isGate ? 'Final Step' : `${currentStep + 1} / ${totalQuestions}`}
+      <header className="relative z-10 shrink-0 border-b border-white/[0.08]">
+        <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-8 sm:py-4">
+          <div className="flex min-w-0 items-center gap-3">
+            <img src={`${basePath}/forge-logo.png`} alt="Freedom Foundry" className="h-8 w-8 shrink-0 rounded-lg shadow-[0_0_12px_rgba(217,98,44,0.3)] sm:h-9 sm:w-9" />
+            <div className="min-w-0">
+              <p className="truncate font-heading text-sm tracking-[0.14em] text-[#f7f2ea] uppercase sm:text-base">Brand Persona Discovery</p>
+              <p className="mt-0.5 text-[10px] uppercase tracking-[0.2em] text-[#d9622c]">Freedom Foundry</p>
+            </div>
+          </div>
+          <div className="shrink-0 text-right">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-white/45">{isGate ? 'Results gate' : `Question ${currentStep + 1} of ${totalQuestions}`}</p>
+            <p className="mt-1 text-xs text-[#f0d9b5]">{isGate ? 'Ready to reveal' : `Part ${activeSectionIndex + 1} of ${QUIZ_SECTIONS.length}`}</p>
+          </div>
         </div>
       </header>
 
-      {/* Progress Bar */}
-      <div className="w-full max-w-3xl mx-auto h-0.5 bg-white/5 relative z-10">
-        <div 
-          className="h-full bg-gradient-to-r from-[#d9622c] to-[#e6c695] transition-all duration-500 ease-out"
-          style={{ width: `${progress}%` }}
-        />
-      </div>
-
-      {/* Main Content */}
-      <main className="flex-1 flex flex-col items-center justify-center relative z-10 px-6 py-12">
-        <div className="w-full max-w-2xl animate-fade-in relative">
-          
-          {currentStep > 0 && (
-            <button 
-              onClick={handleBack}
-              disabled={submitting}
-              className="absolute -top-16 left-0 flex items-center gap-2 text-xs uppercase tracking-[0.15em] text-white/40 hover:text-white/80 transition-colors disabled:opacity-50"
-            >
-              <ChevronLeft className="w-4 h-4" /> Back
-            </button>
-          )}
-
-          {!isGate && currentQuestion ? (
-            <div key={currentQuestion.id} className="animate-in slide-in-from-right-4 fade-in duration-500">
-              <h2 className="font-heading text-3xl md:text-4xl lg:text-5xl font-light text-[#f7f2ea] mb-10 leading-tight">
-                {currentQuestion.text}
-              </h2>
-              
-              <div className="space-y-4">
-                {currentQuestion.answers.map((answer, optionIndex) => {
-                  const isSelected = answers[currentQuestion.id] === optionIndex;
-                  return (
-                    <button
-                      key={optionIndex}
-                      onClick={() => handleSelectOption(currentQuestion.id, optionIndex)}
-                      className={`w-full text-left p-6 rounded-2xl border transition-all duration-300 flex items-center justify-between group
-                        ${isSelected 
-                          ? 'border-[#d9622c] bg-[#d9622c]/10 shadow-[0_0_20px_rgba(217,98,44,0.15)]' 
-                          : 'border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/20'
-                        }`}
-                    >
-                      <span className={`text-lg ${isSelected ? 'text-[#f0d9b5]' : 'text-white/80 group-hover:text-white'}`}>
-                        {answer.text}
-                      </span>
-                      {isSelected && <CheckCircle2 className="w-5 h-5 text-[#d9622c]" />}
-                    </button>
-                  );
-                })}
+      <main className="relative z-10 flex min-h-0 flex-1 items-center justify-center px-3 py-3 sm:px-6 sm:py-5">
+        <div className="flex h-full max-h-[780px] w-full max-w-5xl flex-col gap-3 sm:gap-4">
+          <section className="shrink-0 rounded-2xl border border-white/[0.1] bg-[#1a1412]/90 px-4 py-3 shadow-[0_14px_50px_rgba(0,0,0,0.28)] backdrop-blur sm:px-6 sm:py-4" aria-label="Quiz progress">
+            <div className="mb-3 flex items-end justify-between gap-4">
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#d9622c]">Your brand profile</p>
+                <p className="mt-1 font-heading text-xl leading-none text-[#f7f2ea] sm:text-2xl">{isGate ? 'All three parts complete' : activeSection.label}</p>
               </div>
+              <p className="text-right text-xs text-white/45">{isGate ? '18 of 18 answered' : `${currentStep} of ${totalQuestions} answered`}</p>
             </div>
-          ) : (
-            <div className="animate-in slide-in-from-bottom-4 fade-in duration-700 text-center max-w-md mx-auto">
-              <div className="mx-auto w-16 h-16 rounded-full border border-[#d9622c]/30 bg-[#d9622c]/10 flex items-center justify-center mb-6">
-                <CheckCircle2 className="w-8 h-8 text-[#f0d9b5]" />
-              </div>
-              <h2 className="font-heading text-4xl font-light text-[#f7f2ea] mb-4">
-                Your profile is ready.
-              </h2>
-              <p className="text-sm text-white/60 mb-10 leading-relaxed">
-                Enter your email below to unlock your comprehensive brand persona archetype and discover how to wield it.
-              </p>
-
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {!isSignedIn && (
-                  <div className="text-left">
-                    <label className="block text-[11px] uppercase tracking-[0.16em] text-white/55 mb-2">
-                      Email address
-                    </label>
-                    <input
-                      type="email"
-                      required
-                      value={email}
-                      onChange={e => setEmail(e.target.value)}
-                      placeholder="Enter your email"
-                      className="h-14 w-full rounded-xl border border-white/[0.12] bg-black/40 px-5 text-[#f7f2ea] outline-none transition placeholder:text-white/30 focus:border-[#d9622c]/70 focus:ring-2 focus:ring-[#d9622c]/20"
-                    />
+            <div className="grid grid-cols-3 gap-2.5" role="list" aria-label="Three-part quiz progress">
+              {QUIZ_SECTIONS.map((section, index) => {
+                const isComplete = isGate || index < activeSectionIndex;
+                const isCurrent = !isGate && index === activeSectionIndex;
+                return (
+                  <div key={section.label} role="listitem" aria-current={isCurrent ? 'step' : undefined}>
+                    <div className={`h-2 rounded-full border transition-all duration-300 ${isComplete ? 'border-[#f0d9b5] bg-gradient-to-r from-[#9f1f28] via-[#d9622c] to-[#f0d9b5]' : isCurrent ? 'border-[#d9622c] bg-[#d9622c]/25 shadow-[0_0_14px_rgba(217,98,44,0.35)]' : 'border-white/15 bg-white/[0.06]'}`} />
+                    <p className={`mt-1.5 truncate text-[10px] uppercase tracking-[0.12em] ${isComplete || isCurrent ? 'text-[#f0d9b5]' : 'text-white/35'}`}>
+                      {index + 1}. {section.shortLabel}
+                    </p>
                   </div>
-                )}
-                
-                <div className="flex items-start gap-3 text-left">
-                  <input
-                    type="checkbox"
-                    id="marketingConsent"
-                    required
-                    checked={marketingConsent}
-                    onChange={(e) => setMarketingConsent(e.target.checked)}
-                    className="mt-1 flex-shrink-0"
-                  />
-                  <label htmlFor="marketingConsent" className="text-sm text-white/70 leading-relaxed cursor-pointer select-none">
-                    I agree to receive my Brand Persona report and occasional selected insights, resources, and services to help me leverage my brand. I can unsubscribe at any time.
-                  </label>
-                </div>
-                
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#9f1f28] via-[#d9622c] to-[#e6c695] font-semibold tracking-wide text-white transition hover:brightness-110 disabled:cursor-wait disabled:opacity-70"
-                >
-                  {submitting ? (
-                    <LoaderCircle className="w-5 h-5 animate-spin" />
-                  ) : (
-                    <>
-                      Reveal My Persona <ArrowRight className="w-5 h-5" />
-                    </>
-                  )}
-                </button>
-              </form>
-              <p className="mt-6 text-xs text-white/40">
-                Your results will be delivered securely.
-              </p>
+                );
+              })}
             </div>
-          )}
+          </section>
+
+          <section className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[1.5rem] border border-white/[0.12] bg-gradient-to-br from-[#241916] via-[#15100f] to-[#0e0b0a] shadow-[0_22px_80px_rgba(0,0,0,0.45)]">
+            {!isGate && currentQuestion ? (
+              <div key={currentQuestion.id} className="flex min-h-0 flex-1 flex-col animate-in slide-in-from-right-4 fade-in duration-500">
+                <div className="shrink-0 px-4 pb-3 pt-4 sm:px-8 sm:pb-4 sm:pt-6">
+                  <div className="mb-2 flex items-center justify-between gap-4">
+                    <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#d9622c]">{String(currentQuestion.id).padStart(2, '0')} / 18</span>
+                    <span className="text-[10px] uppercase tracking-[0.16em] text-white/35">{activeSection.label}</span>
+                  </div>
+                  <h2 className="max-w-4xl font-heading text-2xl font-light leading-[1.05] text-[#f7f2ea] sm:text-4xl lg:text-[2.8rem]">{currentQuestion.text}</h2>
+                </div>
+
+                <div className="grid min-h-0 flex-1 grid-cols-2 gap-2.5 px-4 pb-3 sm:gap-3 sm:px-8 sm:pb-4">
+                  {currentQuestion.answers.map((answer, optionIndex) => {
+                    const isSelected = answers[currentQuestion.id] === optionIndex;
+                    return (
+                      <button
+                        key={optionIndex}
+                        type="button"
+                        aria-pressed={isSelected}
+                        onClick={() => handleSelectOption(currentQuestion.id, optionIndex)}
+                        className={`group flex min-h-0 items-start justify-between gap-2 rounded-xl border p-3 text-left transition-all duration-300 sm:rounded-2xl sm:p-4 ${isSelected ? 'border-[#d9622c] bg-gradient-to-br from-[#6e2522]/80 to-[#d9622c]/15 shadow-[0_0_24px_rgba(217,98,44,0.2)]' : 'border-white/[0.1] bg-white/[0.035] hover:-translate-y-0.5 hover:border-[#d9622c]/60 hover:bg-white/[0.08] hover:shadow-[0_10px_24px_rgba(0,0,0,0.24)]'}`}
+                      >
+                        <span className="flex min-w-0 items-start gap-2.5">
+                          <span className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-[10px] font-semibold ${isSelected ? 'border-[#f0d9b5] bg-[#f0d9b5] text-[#331512]' : 'border-white/20 text-white/45 group-hover:border-[#d9622c] group-hover:text-[#f0d9b5]'}`}>{optionIndex + 1}</span>
+                          <span className={`text-[13px] leading-[1.25] sm:text-[15px] ${isSelected ? 'text-[#fff0d3]' : 'text-white/75 group-hover:text-white'}`}>{answer.text}</span>
+                        </span>
+                        {isSelected && <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#f0d9b5] sm:h-5 sm:w-5" />}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <div className="flex shrink-0 items-center justify-between gap-3 border-t border-white/[0.1] px-4 py-3 sm:px-8 sm:py-4">
+                  <button
+                    type="button"
+                    onClick={handleBack}
+                    disabled={submitting || isTransitioning || currentStep === 0}
+                    className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-white/[0.14] bg-white/[0.04] px-4 text-xs font-semibold uppercase tracking-[0.14em] text-[#f0d9b5] transition hover:border-[#d9622c] hover:bg-[#d9622c]/10 disabled:cursor-not-allowed disabled:opacity-35"
+                  >
+                    <ArrowLeft className="h-4 w-4" /> Back
+                  </button>
+                  <p className="hidden text-xs text-white/35 sm:block">Choose one answer to continue</p>
+                  <span className="text-[10px] uppercase tracking-[0.14em] text-white/35 sm:hidden">{currentStep + 1} / {totalQuestions}</span>
+                </div>
+              </div>
+            ) : (
+              <div className="flex min-h-0 flex-1 flex-col items-center justify-center overflow-y-auto px-4 py-5 sm:px-8">
+                <div className="w-full max-w-xl animate-in slide-in-from-bottom-4 fade-in duration-700">
+                  <div className="text-center">
+                    <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full border border-[#d9622c]/40 bg-[#d9622c]/15 shadow-[0_0_28px_rgba(217,98,44,0.18)] sm:mb-4 sm:h-14 sm:w-14">
+                      <CheckCircle2 className="h-6 w-6 text-[#f0d9b5] sm:h-7 sm:w-7" />
+                    </div>
+                    <h2 className="font-heading text-3xl font-light text-[#f7f2ea] sm:text-4xl">Your profile is ready.</h2>
+                    <p className="mx-auto mt-2 max-w-lg text-sm leading-relaxed text-white/60 sm:mt-3">
+                      Enter your email below to unlock your comprehensive brand persona archetype and discover how to wield it.
+                    </p>
+                  </div>
+
+                  <form onSubmit={handleSubmit} className="mt-5 space-y-4 sm:mt-6 sm:space-y-5">
+                    {!isSignedIn && (
+                      <div>
+                        <label className="mb-1.5 block text-[11px] uppercase tracking-[0.16em] text-white/55" htmlFor="quiz-email">Email address</label>
+                        <input
+                          id="quiz-email"
+                          type="email"
+                          required
+                          value={email}
+                          onChange={e => setEmail(e.target.value)}
+                          placeholder="Enter your email"
+                          className="h-12 w-full rounded-xl border border-white/[0.12] bg-black/40 px-4 text-[#f7f2ea] outline-none transition placeholder:text-white/30 focus:border-[#d9622c]/70 focus:ring-2 focus:ring-[#d9622c]/20 sm:h-14 sm:px-5"
+                        />
+                      </div>
+                    )}
+
+                    <div className="flex items-start gap-3 rounded-xl border border-white/[0.08] bg-white/[0.03] p-3 text-left sm:p-4">
+                      <input
+                        type="checkbox"
+                        id="marketingConsent"
+                        required
+                        checked={marketingConsent}
+                        onChange={(e) => setMarketingConsent(e.target.checked)}
+                        className="mt-1 h-4 w-4 shrink-0 accent-[#d9622c]"
+                      />
+                      <label htmlFor="marketingConsent" className="cursor-pointer select-none text-xs leading-relaxed text-white/70 sm:text-sm">
+                        I agree to receive my Brand Persona report and occasional selected insights, resources, and services to help me leverage my brand. I can unsubscribe at any time.
+                      </label>
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={submitting}
+                      className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#9f1f28] via-[#d9622c] to-[#e6c695] font-semibold tracking-wide text-white shadow-[0_10px_26px_rgba(217,98,44,0.2)] transition hover:-translate-y-0.5 hover:brightness-110 disabled:cursor-wait disabled:opacity-70 sm:h-14"
+                    >
+                      {submitting ? <LoaderCircle className="h-5 w-5 animate-spin" /> : <>Reveal My Persona <ArrowRight className="h-5 w-5" /></>}
+                    </button>
+                  </form>
+                  <div className="mt-3 flex items-center justify-between gap-3 sm:mt-4">
+                    <button
+                      type="button"
+                      onClick={handleBack}
+                      disabled={submitting}
+                      className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-white/[0.14] bg-white/[0.04] px-4 text-xs font-semibold uppercase tracking-[0.14em] text-[#f0d9b5] transition hover:border-[#d9622c] hover:bg-[#d9622c]/10 disabled:cursor-not-allowed disabled:opacity-35"
+                    >
+                      <ArrowLeft className="h-4 w-4" /> Back
+                    </button>
+                    <p className="text-right text-[11px] text-white/35">Your results will be delivered securely.</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </section>
         </div>
       </main>
     </div>
