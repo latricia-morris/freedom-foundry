@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
-import { useUser } from '@clerk/react';
+import { useAuth } from '@/lib/AuthContext';
 import { LoaderCircle, Lock, ArrowRight, ShieldCheck } from 'lucide-react';
 import apiClient from '@/api/client';
 
@@ -8,17 +8,17 @@ export default function BrandPersonaQuizResults() {
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
   const navigate = useNavigate();
-  const { isSignedIn, isLoaded } = useUser();
+  const { isAuthenticated, isLoadingAuth } = useAuth();
   const [claiming, setClaiming] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
   const [history, setHistory] = useState([]);
 
   useEffect(() => {
-    if (!isLoaded) return;
+    if (isLoadingAuth) return;
     
     // If authenticated, automatically claim the result
-    if (isSignedIn) {
+    if (isAuthenticated) {
       if (token) {
         setClaiming(true);
         apiClient.quiz.claimAttempt(token)
@@ -39,7 +39,7 @@ export default function BrandPersonaQuizResults() {
         fetchHistory();
       }
     }
-  }, [isSignedIn, isLoaded, token]);
+  }, [isAuthenticated, isLoadingAuth, token]);
 
   const fetchLatest = () => {
     setClaiming(true);
@@ -57,7 +57,7 @@ export default function BrandPersonaQuizResults() {
 
   const emailParam = searchParams.get('email') || '';
 
-  if (!isLoaded || claiming) {
+  if (isLoadingAuth || claiming) {
     return (
       <div className="min-h-[100dvh] bg-[#100e0c] flex flex-col items-center justify-center">
         <LoaderCircle className="w-10 h-10 animate-spin text-[#d9622c] mb-6" />
@@ -67,7 +67,7 @@ export default function BrandPersonaQuizResults() {
   }
 
   // If not signed in, show the gate page
-  if (!isSignedIn) {
+  if (!isAuthenticated) {
     return (
       <div className="min-h-[100dvh] bg-[#100e0c] flex items-center justify-center p-6 relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none opacity-40">
@@ -85,13 +85,13 @@ export default function BrandPersonaQuizResults() {
           </p>
           
           <Link 
-            to={`/sign-up?return_url=${encodeURIComponent(`/brand-persona-quiz/results${token ? `?token=${token}` : ''}`)}${emailParam ? `&email=${encodeURIComponent(emailParam)}` : ''}`}
+            to={`/register?returnTo=${encodeURIComponent(`/brand-persona-quiz/results${token ? `?token=${token}` : ''}`)}${emailParam ? `&email=${encodeURIComponent(emailParam)}` : ''}`}
             className="flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#9f1f28] via-[#d9622c] to-[#e6c695] font-semibold tracking-wide text-white transition hover:brightness-110 mb-4"
           >
             Create Free Account
           </Link>
           <p className="text-xs text-white/40">
-            Already have an account? <Link to={`/sign-in?return_url=${encodeURIComponent(`/brand-persona-quiz/results${token ? `?token=${token}` : ''}`)}${emailParam ? `&email=${encodeURIComponent(emailParam)}` : ''}`} className="text-[#f0d9b5] hover:text-white transition">Sign in</Link>
+            Already have an account? <Link to={`/login?returnTo=${encodeURIComponent(`/brand-persona-quiz/results${token ? `?token=${token}` : ''}`)}${emailParam ? `&email=${encodeURIComponent(emailParam)}` : ''}`} className="text-[#f0d9b5] hover:text-white transition">Sign in</Link>
           </p>
         </div>
       </div>

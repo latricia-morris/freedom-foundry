@@ -63,9 +63,6 @@ export default function AdminUsers() {
           <p className="text-sm text-muted-foreground">Manage app users, access, and account content.</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Link to="/admin/client-setups" className="inline-flex items-center gap-2 rounded-lg border border-primary/30 bg-card px-4 py-2.5 text-xs font-medium uppercase tracking-wider text-foreground hover:border-primary">
-            <Layers3 className="h-4 w-4 text-primary" /> Client migrations
-          </Link>
           <button
             onClick={() => { setInviteOpen(true); setInviteMessage(''); }}
             className="inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-xs font-medium uppercase tracking-wider text-white"

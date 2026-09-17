@@ -5,6 +5,15 @@
     "description": {
       "type": "string"
     },
+    "provider": {
+      "type": "string"
+    },
+    "page_url": {
+      "type": "string"
+    },
+    "extra": {
+      "type": "object"
+    },
     "status": {
       "type": "string",
       "enum": [

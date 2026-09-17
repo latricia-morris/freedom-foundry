@@ -2,6 +2,9 @@
   "name": "BrandUpEntry",
   "type": "object",
   "properties": {
+    "user_id": {
+      "type": "string"
+    },
     "prompt_id": {
       "type": "string"
     },

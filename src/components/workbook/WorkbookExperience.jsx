@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Copy, Printer, Check, ChevronLeft, ChevronRight } from 'lucide-react';
-import { useUser } from '@clerk/react';
+import { useAuth } from '@/lib/AuthContext';
 import apiClient from '@/api/client';
 import WorkbookField from '@/components/workbook/WorkbookField';
 import ChecklistAddBox from '@/components/workbook/ChecklistAddBox';
@@ -88,7 +88,7 @@ function WorkbookPagination({ pageCount, activePageIndex, onPageChange }) {
 }
 
 export default function WorkbookExperience({ workbook }) {
-  const { user } = useUser();
+  const { user } = useAuth();
   const [responses, setResponses] = useState({});
   const [responseRecord, setResponseRecord] = useState(null);
   const [activePageIndex, setActivePageIndex] = useState(0);

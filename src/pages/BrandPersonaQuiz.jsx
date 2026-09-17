@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useUser } from '@clerk/react';
+import { useAuth } from '@/lib/AuthContext';
 import { ArrowLeft, ArrowRight, LoaderCircle, CheckCircle2 } from 'lucide-react';
 import apiClient from '@/api/client';
 import { useToast } from '@/components/ui/use-toast';
@@ -30,7 +30,7 @@ export default function BrandPersonaQuiz() {
   const [marketingConsent, setMarketingConsent] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { isSignedIn, user } = useUser();
+  const { isAuthenticated, user } = useAuth();
   const basePath = import.meta.env.BASE_URL?.replace(/\/$/, '') || '';
 
   useEffect(() => {
@@ -46,10 +46,10 @@ export default function BrandPersonaQuiz() {
   }, []);
 
   useEffect(() => {
-    if (!isSignedIn || !user) return;
-    setFirstName(user.firstName ?? '');
-    setEmail(user.primaryEmailAddress?.emailAddress ?? '');
-  }, [isSignedIn, user]);
+    if (!isAuthenticated || !user) return;
+    setFirstName((user.full_name || '').split(' ')[0] || '');
+    setEmail(user.email ?? '');
+  }, [isAuthenticated, user]);
 
   const totalQuestions = definition?.questions?.length || 0;
   const isGate = currentStep === totalQuestions;
@@ -114,7 +114,7 @@ export default function BrandPersonaQuiz() {
         marketingConsent,
       });
       
-      if (isSignedIn) {
+      if (isAuthenticated) {
         // Results are ready, navigate directly without a token (or with the token if it exists)
         navigate(`/brand-persona-quiz/results`);
       } else {
@@ -294,10 +294,10 @@ export default function BrandPersonaQuiz() {
                            value={email}
                            onChange={e => setEmail(e.target.value)}
                            placeholder="Enter your email"
-                           readOnly={isSignedIn}
-                           className={`h-12 w-full rounded-xl border border-white/[0.12] bg-black/40 px-4 text-[#f7f2ea] outline-none transition placeholder:text-white/30 focus:border-[#d9622c]/70 focus:ring-2 focus:ring-[#d9622c]/20 sm:h-14 sm:px-5 ${isSignedIn ? 'cursor-not-allowed opacity-75' : ''}`}
+                           readOnly={isAuthenticated}
+                           className={`h-12 w-full rounded-xl border border-white/[0.12] bg-black/40 px-4 text-[#f7f2ea] outline-none transition placeholder:text-white/30 focus:border-[#d9622c]/70 focus:ring-2 focus:ring-[#d9622c]/20 sm:h-14 sm:px-5 ${isAuthenticated ? 'cursor-not-allowed opacity-75' : ''}`}
                          />
-                         {isSignedIn && <p className="mt-1.5 text-[11px] text-white/40">Using your verified account email.</p>}
+                         {isAuthenticated && <p className="mt-1.5 text-[11px] text-white/40">Using your verified account email.</p>}
                        </div>
                      </div>
 

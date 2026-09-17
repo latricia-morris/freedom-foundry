@@ -15,7 +15,6 @@ const strategyNav = [
 const buildNav = [
   { name: 'Brand Guidelines', path: '/brand-portal/guidelines' },
   { name: 'Brand Assets', path: '/brand-portal/assets' },
-  { name: 'Client Files', path: '/brand-portal/files', icon: 'folder' },
   { name: 'Brand Up', path: '/brand-portal/brand-up' },
   { name: 'Checklist', path: '/brand-portal/checklist' },
   { name: 'Ignite OS', path: '/brand-portal/ignite', icon: 'flame' },

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Check, Lock, Loader2, Sparkles, Users } from 'lucide-react';
 import apiClient from '@/api/client';
+import { base44 } from '@/api/base44Client';
 
 const PRO_PRICE_ID = 'price_1TyQ2EDMNCPQozJEfFmrfjX5';
 const TEAM_PRICE_ID = 'price_1TyQ2EDMNCPQozJEnfNqBdlL';
@@ -17,8 +18,13 @@ export default function Billing() {
     }
     setLoadingPrice(priceId);
     try {
-      // Payments are not yet configured in this deployment.
-      alert('Checkout is not available yet. Please contact us to upgrade your plan.');
+      const response = await base44.functions.invoke('create-checkout-session', {
+        price_id: priceId,
+        mode: 'subscription',
+      });
+      if (response.data?.url) {
+        window.location.href = response.data.url;
+      }
     } finally {
       setLoadingPrice(null);
     }

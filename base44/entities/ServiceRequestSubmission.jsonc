@@ -2,14 +2,52 @@
   "name": "ServiceRequestSubmission",
   "type": "object",
   "properties": {
+    "request_kind": {
+      "type": "string",
+      "default": "service_hub"
+    },
+    "category_key": {
+      "type": "string"
+    },
     "service_type": {
       "type": "string",
-      "enum": [
-        "Branding",
-        "Graphic Design",
-        "Software & Assets"
-      ],
       "default": "Branding"
+    },
+    "client_status": {
+      "type": "string"
+    },
+    "objective": {
+      "type": "string"
+    },
+    "timeline": {
+      "type": "string"
+    },
+    "recommendation": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "submitted",
+        "save_for_later",
+        "in_progress",
+        "scheduled",
+        "completed"
+      ],
+      "default": "submitted"
+    },
+    "save_for_later": {
+      "type": "boolean",
+      "default": false
+    },
+    "answers": {
+      "type": "object"
+    },
+    "details": {
+      "type": "object"
+    },
+    "user_id": {
+      "type": "string"
     },
     "submission_data": {
       "type": "object"
@@ -38,16 +76,6 @@
     "deposit_acknowledged": {
       "type": "boolean",
       "default": false
-    },
-    "status": {
-      "type": "string",
-      "enum": [
-        "submitted",
-        "in_progress",
-        "scheduled",
-        "completed"
-      ],
-      "default": "submitted"
     }
   },
   "required": [
