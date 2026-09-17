@@ -1,0 +1,31 @@
+{
+  "name": "BrandUpPrompt",
+  "type": "object",
+  "properties": {
+    "prompt_text": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "prompt",
+        "note"
+      ],
+      "default": "prompt"
+    },
+    "category": {
+      "type": "string"
+    },
+    "order": {
+      "type": "number",
+      "default": 0
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "prompt_text"
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "name": "WorkbookResponse",
+  "type": "object",
+  "properties": {
+    "workbook_id": {
+      "type": "string"
+    },
+    "field_id": {
+      "type": "string"
+    },
+    "page_id": {
+      "type": "string"
+    },
+    "value": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "workbook_id",
+    "field_id"
+  ]
+}

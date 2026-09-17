@@ -1,0 +1,56 @@
+{
+  "name": "ServiceRequestSubmission",
+  "type": "object",
+  "properties": {
+    "service_type": {
+      "type": "string",
+      "enum": [
+        "Branding",
+        "Graphic Design",
+        "Software & Assets"
+      ],
+      "default": "Branding"
+    },
+    "submission_data": {
+      "type": "object"
+    },
+    "project_type": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "service_options": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "notes": {
+      "type": "string"
+    },
+    "inspiration_file_uris": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "deposit_acknowledged": {
+      "type": "boolean",
+      "default": false
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "submitted",
+        "in_progress",
+        "scheduled",
+        "completed"
+      ],
+      "default": "submitted"
+    }
+  },
+  "required": [
+    "service_type"
+  ]
+}
