@@ -261,6 +261,48 @@ html.light-mode .dash-editorial-block {
       inset 0 -1px 0 hsl(0 0% 100% / 0.9);
   }
 
+  /* App-wide forged depth — every raised card surface */
+  .border.border-border.bg-card,
+  .forged-border.bg-card,
+  .border.border-border.bg-card\/75,
+  .vault-card {
+    box-shadow:
+      inset 0 1px 0 hsl(45 42% 88% / 0.16),
+      inset 0 -1px 0 hsl(20 60% 2% / 0.65),
+      0 2px 4px hsl(20 60% 2% / 0.6),
+      0 8px 18px hsl(20 60% 2% / 0.5),
+      0 22px 46px hsl(20 60% 2% / 0.65);
+  }
+
+  html.light-mode .border.border-border.bg-card,
+  html.light-mode .forged-border.bg-card,
+  html.light-mode .border.border-border.bg-card\/75,
+  html.light-mode .vault-card {
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.95),
+      inset 0 -1px 0 hsl(220 14% 65% / 0.35),
+      0 2px 4px hsl(220 16% 25% / 0.12),
+      0 8px 20px hsl(220 16% 25% / 0.12),
+      0 22px 46px hsl(220 16% 25% / 0.14);
+  }
+
+  /* App-wide sunken wells — standard form controls */
+  input.border-input,
+  textarea.border-input,
+  select.border-input {
+    box-shadow:
+      inset 0 2px 5px hsl(20 60% 2% / 0.45),
+      inset 0 1px 2px hsl(20 60% 2% / 0.35);
+  }
+
+  html.light-mode input.border-input,
+  html.light-mode textarea.border-input,
+  html.light-mode select.border-input {
+    box-shadow:
+      inset 0 2px 5px hsl(220 16% 30% / 0.13),
+      inset 0 -1px 0 hsl(0 0% 100% / 0.8);
+  }
+
 .dash-editorial-block h3 {
   font-family: 'Cormorant Garamond', serif;
   color: hsl(var(--card-foreground));
@@ -447,19 +489,22 @@ html.light-mode .dash-editorial-block {
   html.light-mode .text-warm,
   html.light-mode .link-warm,
   html.light-mode .dash-editorial-block .link-warm {
-    background: linear-gradient(131deg, #9f1f28, #d9622c);
+    background-image: linear-gradient(131deg, #9f1f28, #d9622c);
   }
 
   /* Dashboard cards — dark glass with gradient border */
   .dashboard-card {
-    background: hsl(var(--card) / 0.72);
+    background: hsl(var(--card) / 0.9);
     border: 1px solid hsl(var(--border) / 0.9);
     border-radius: 2px;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     box-shadow:
-      inset 0 1px 0 hsl(0 0% 100% / 0.04),
-      0 6px 20px hsl(20 60% 2% / 0.35);
+      inset 0 1px 0 hsl(45 42% 88% / 0.16),
+      inset 0 -1px 0 hsl(20 60% 2% / 0.65),
+      0 2px 4px hsl(20 60% 2% / 0.6),
+      0 8px 18px hsl(20 60% 2% / 0.5),
+      0 22px 46px hsl(20 60% 2% / 0.65);
   }
 
   .admin-input {
@@ -627,9 +672,11 @@ html.light-mode .dash-editorial-block {
     background: hsl(var(--card) / 0.92);
     border: 1px solid hsl(220 10% 82% / 0.8);
     box-shadow:
-      inset 0 1px 0 hsl(0 0% 100% / 0.9),
-      0 4px 12px hsl(220 16% 25% / 0.12),
-      0 14px 32px hsl(220 16% 25% / 0.12);
+      inset 0 1px 0 hsl(0 0% 100% / 0.95),
+      inset 0 -1px 0 hsl(220 14% 65% / 0.35),
+      0 2px 4px hsl(220 16% 25% / 0.12),
+      0 8px 20px hsl(220 16% 25% / 0.12),
+      0 22px 46px hsl(220 16% 25% / 0.14);
   }
 
   html.light-mode .vault-card {
