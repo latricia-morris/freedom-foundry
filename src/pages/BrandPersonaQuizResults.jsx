@@ -3,7 +3,9 @@ import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
 import { LoaderCircle, Lock, ArrowRight, ShieldCheck } from 'lucide-react';
 import apiClient from '@/api/client';
-import { ARCHETYPES, MAX_QUIZ_POINTS } from '@/lib/archetypeData';
+import { MAX_QUIZ_POINTS } from '@/lib/archetypeData';
+import { ARCHETYPE_REPORTS } from '@/lib/archetypeReports';
+import ArchetypeReport from '@/components/quiz/ArchetypeReport';
 
 export default function BrandPersonaQuizResults() {
   const [searchParams] = useSearchParams();
@@ -114,49 +116,39 @@ export default function BrandPersonaQuizResults() {
   }
 
   // Render the actual result
+  const primaryReport = ARCHETYPE_REPORTS[result.primaryArchetype];
+  const primaryDisplay = primaryReport?.display || result.primaryArchetype;
+  const primaryPct = Math.round(((result.primaryScore ?? 0) / MAX_QUIZ_POINTS) * 100);
+  const secondaryReport = ARCHETYPE_REPORTS[result.secondaryArchetype];
+  const secondaryDisplay = secondaryReport?.display || result.secondaryArchetype;
+  const secondaryPct = Math.round(((result.secondaryScore ?? 0) / MAX_QUIZ_POINTS) * 100);
+
   return (
     <div className="min-h-[100dvh] bg-[#100e0c] py-20 px-6 relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-20">
          <div className="absolute -top-20 left-1/4 w-[600px] h-[600px] rounded-full bg-[#d9622c] blur-[150px]" />
       </div>
 
-      <div className="max-w-4xl mx-auto relative z-10">
-        <div className="mb-12 text-center select-none" onCopy={(e) => e.preventDefault()}>
+      <div className="max-w-4xl mx-auto relative z-10 select-none" onCopy={(e) => e.preventDefault()}>
+        <div className="mb-12 text-center">
           <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#d9622c]/30 bg-[#d9622c]/10 text-xs uppercase tracking-widest text-[#f0d9b5] mb-6">
             <ShieldCheck className="w-4 h-4" /> Authenticated Result
           </span>
-          <p className="font-heading text-[30px] leading-none font-light text-white/70 whitespace-nowrap">Your brand's archetype is:</p>
+          <p className="font-heading text-[30px] leading-none font-light text-white/70">You are the</p>
           <h1 className="mt-3 font-heading text-6xl md:text-7xl font-light italic bg-clip-text text-transparent bg-gradient-to-r from-[#e6c695] to-[#d9622c]">
-            {result.primaryArchetype || 'Visionary'}
+            {primaryDisplay}
           </h1>
-          <p className="mt-4 text-lg text-white/60 max-w-2xl mx-auto">
-            Your dominant brand archetype has been calculated based on your responses.
+          {primaryReport && <p className="mt-5 text-lg italic text-white/50">{primaryReport.slogan}</p>}
+          <p className="mt-4 text-sm text-white/40 tabular-nums">
+            {result.primaryScore} points · {primaryPct}% alignment with your primary archetype
           </p>
         </div>
 
-        {[
-          { name: result.primaryArchetype, score: result.primaryScore, role: 'Primary' },
-          { name: result.secondaryArchetype, score: result.secondaryScore, role: 'Secondary' },
-        ].filter(a => a.name).map(({ name, score, role }) => {
-          const data = ARCHETYPES[name];
-          const pct = Math.round(((score ?? 0) / MAX_QUIZ_POINTS) * 100);
-          return (
-            <div key={name} className="bg-black/40 border border-white/10 rounded-3xl p-8 mb-6 select-none" onCopy={(e) => e.preventDefault()}>
-              <div className="flex items-baseline justify-between mb-3 flex-wrap gap-2">
-                <p className="text-[10px] uppercase tracking-widest text-[#d9622c]">{role} Archetype</p>
-                <p className="text-sm text-white/40 tabular-nums">{score} points · {pct}%</p>
-              </div>
-              <h3 className="font-heading text-2xl text-[#f7f2ea] mb-1">The {name}{data ? <span className="ml-3 font-body text-xs uppercase tracking-widest text-white/30 align-middle">{data.heart}</span> : null}</h3>
-              {data && (
-                <>
-                  <p className="text-sm italic text-white/50 mb-3">{data.slogan}</p>
-                  <p className="text-sm text-white/70 leading-relaxed mb-3">{data.description}</p>
-                  <p className="text-xs text-white/40">Sample brands: {data.brands.join(', ')}</p>
-                </>
-              )}
-            </div>
-          );
-        })}
+        {primaryReport && <ArchetypeReport report={primaryReport} />}
+
+        {result.secondaryArchetype && secondaryReport && (
+          <ArchetypeReport compact report={secondaryReport} name={secondaryDisplay} score={result.secondaryScore} pct={secondaryPct} />
+        )}
 
         <div className="bg-gradient-to-b from-[#3a2119] to-black/60 border border-[#d9622c]/20 rounded-3xl p-8 mb-6">
           <h3 className="font-heading text-xl text-[#f7f2ea] mb-2">Next Steps</h3>
@@ -176,9 +168,9 @@ export default function BrandPersonaQuizResults() {
               {history.map((h, i) => (
                 <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-6">
                   <div className="text-xs text-white/40 mb-3">{new Date(h.createdAt).toLocaleDateString()}</div>
-                  <div className="text-lg text-[#f0d9b5] mb-1">{h.primaryArchetype} ({h.primaryScore} points)</div>
+                  <div className="text-lg text-[#f0d9b5] mb-1">{ARCHETYPE_REPORTS[h.primaryArchetype]?.display || h.primaryArchetype} ({h.primaryScore} points)</div>
                   {h.secondaryArchetype && (
-                    <div className="text-sm text-white/60">Secondary: {h.secondaryArchetype} ({h.secondaryScore} points)</div>
+                    <div className="text-sm text-white/60">Secondary: {ARCHETYPE_REPORTS[h.secondaryArchetype]?.display || h.secondaryArchetype} ({h.secondaryScore} points)</div>
                   )}
                 </div>
               ))}
