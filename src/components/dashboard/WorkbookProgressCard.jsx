@@ -6,8 +6,8 @@ import { useMembership } from '@/lib/useMembership';
 import { Image } from '@/components/ui/image';
 import ReviewAskModals from './ReviewAskModals';
 
-const COVER_FALLBACK =
-  'https://media.base44.com/images/public/6a6982f0647238bf2b5d67bf/227d4a0ca_flatbookright.png';
+const COVER_URL =
+  'https://media.base44.com/images/public/6a6982f0647238bf2b5d67bf/b65182e14_1bookrightdownsized.png';
 
 /**
  * Brand Power Moves — the dashboard companion card for the book.
@@ -17,15 +17,8 @@ const COVER_FALLBACK =
 export default function WorkbookProgressCard() {
   const [workbooks, setWorkbooks] = useState([]);
   const [responses, setResponses] = useState([]);
-  const [cover, setCover] = useState(COVER_FALLBACK);
   const [loading, setLoading] = useState(true);
   const { isBpmUnlocked, loading: memberLoading } = useMembership();
-
-  useEffect(() => {
-    apiClient.entities.VaultItem.filter({ title: 'Brand Power Moves' })
-      .then((items) => setCover(items?.[0]?.featured_image_url || COVER_FALLBACK))
-      .catch(() => {});
-  }, []);
 
   useEffect(() => {
     if (memberLoading || !isBpmUnlocked) {
@@ -58,12 +51,12 @@ export default function WorkbookProgressCard() {
   const nextWorkbook = workbooks.find((w) => (responsesByWorkbook[w.id]?.length || 0) === 0);
 
   const coverImage = (
-    <div className="w-20 sm:w-24 flex-shrink-0">
+    <div className="w-24 sm:w-28 flex-shrink-0 self-center">
       <Image
-        src={cover}
+        src={COVER_URL}
         alt="Brand Power Moves book cover"
         fittingType="fit"
-        className="w-full aspect-[2/3]"
+        className="w-full aspect-square"
       />
     </div>
   );
@@ -75,8 +68,7 @@ export default function WorkbookProgressCard() {
           <BookOpen className="w-4 h-4" style={{ stroke: 'url(#warmGradient)' }} strokeWidth={1.5} />
           <h3 className="font-heading text-lg">Brand Power Moves</h3>
         </div>
-        <div className="flex gap-5 items-start">
-          {coverImage}
+        <div className="flex gap-5 items-center">
           <div className="flex-1 min-w-0">
             <p className="text-sm text-muted-foreground leading-relaxed mb-3">
               Your free companion resource to the book — twelve guided workbooks that put each
@@ -92,6 +84,7 @@ export default function WorkbookProgressCard() {
               <Lock className="w-4 h-4" /> Unlock With Book Code
             </Link>
           </div>
+          {coverImage}
         </div>
       </div>
     );
@@ -115,8 +108,7 @@ export default function WorkbookProgressCard() {
         <p className="text-sm italic text-muted-foreground">Workbooks coming soon.</p>
       ) : (
         <>
-          <div className="flex gap-5 items-start mb-5">
-            {coverImage}
+          <div className="flex gap-5 items-center mb-5">
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-foreground">Overall Progress</span>
@@ -132,10 +124,11 @@ export default function WorkbookProgressCard() {
                 {startedCount} of {totalWorkbooks} moves in motion
               </p>
             </div>
+            {coverImage}
           </div>
 
           {nextWorkbook ? (
-            <div className="bg-input rounded-xl p-4 border border-border/50">
+            <div className="forged-well p-4">
               <p className="text-[10px] uppercase tracking-[0.2em] text-primary mb-1.5">Next Up</p>
               <div className="flex items-center justify-between gap-3">
                 <p className="font-heading text-base text-foreground">{nextWorkbook.title}</p>
@@ -148,7 +141,7 @@ export default function WorkbookProgressCard() {
               </div>
             </div>
           ) : (
-            <div className="bg-input rounded-xl p-4 border border-border/50">
+            <div className="forged-well p-4">
               <p className="text-sm text-muted-foreground">
                 All {totalWorkbooks} moves in motion — bring it home.
               </p>

@@ -49,7 +49,7 @@ export default function SetupProgressCard() {
   const allComplete = completedTasks === SETUP_TASKS.length;
 
   return (
-    <div className="relative rounded-2xl overflow-hidden bg-card border border-border p-6 lg:p-8 h-full flex flex-col">
+    <div className="relative rounded-2xl overflow-hidden bg-card border border-border p-6 lg:p-8 h-full flex flex-col forged-panel">
       <div className="absolute -bottom-20 -left-20 w-64 h-64 ember-glow-bg opacity-30" />
       <div className="relative z-10 flex flex-col items-center gap-5 flex-1">
         <div className="flex-shrink-0">

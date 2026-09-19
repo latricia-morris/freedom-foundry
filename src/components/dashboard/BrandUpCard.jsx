@@ -49,7 +49,7 @@ export default function BrandUpCard() {
   if (prompts.length === 0) return null;
 
   return (
-    <div className="relative rounded-2xl overflow-hidden bg-card border border-border p-8 lg:p-10">
+    <div className="relative rounded-2xl overflow-hidden bg-card border border-border p-8 lg:p-10 h-full flex flex-col forged-panel">
       <div className="absolute -top-20 -right-20 w-64 h-64 ember-glow-bg opacity-40" />
       <div className="relative z-10">
         <div className="flex items-center justify-between mb-6">
@@ -71,7 +71,7 @@ export default function BrandUpCard() {
                 onChange={e => setResponse(e.target.value)}
                 placeholder="Your response..."
                 rows={3}
-                className="w-full rounded-xl bg-input border border-border px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary transition-colors resize-none mb-4"
+                className="forged-well w-full px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary transition-colors resize-none mb-4"
               />
             )}
             <div className="flex items-center gap-3">
