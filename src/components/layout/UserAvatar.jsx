@@ -65,10 +65,10 @@ export default function UserAvatar() {
           <Mail className="w-4 h-4 mr-2" strokeWidth={1.5} />
           <span>Contact</span>
         </DropdownMenuItem>
-         <DropdownMenuItem onClick={() => navigate('/settings#quickbooks-support')} className="cursor-pointer text-foreground focus:bg-accent focus:text-foreground">
+         <DropdownMenuItem onClick={() => navigate('/support')} className="cursor-pointer text-foreground focus:bg-accent focus:text-foreground">
           <Bug className="w-4 h-4 mr-2" strokeWidth={1.5} />
-          <span>Report QuickBooks Issue</span>
-        </DropdownMenuItem>
+          <span>Report a Bug or Suggest a Feature</span>
+         </DropdownMenuItem>
         {(user?.role === 'admin' || user?.role === 'super_admin') && (
           <>
              <DropdownMenuSeparator className="bg-border" />
