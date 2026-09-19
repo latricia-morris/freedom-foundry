@@ -8,18 +8,18 @@ import { pageKeyFromPath } from '@/lib/portalPages';
 
 const strategyNav = [
   { name: 'Overview', path: '/brand-portal', end: true },
+  { name: 'Brand Up', path: '/brand-portal/brand-up' },
   { name: 'Big Picture', path: '/brand-portal/big-picture' },
   { name: 'Corporate Brand', path: '/brand-portal/corporate' },
   { name: 'Personal Brand', path: '/brand-portal/personal' },
   { name: 'Media Kit', path: '/brand-portal/media-kit' },
+  { name: 'Checklist', path: '/brand-portal/checklist' },
 ];
 
 const buildNav = [
+  { name: 'Ignite OS', path: '/brand-portal/ignite', icon: 'flame' },
   { name: 'Brand Guidelines', path: '/brand-portal/guidelines' },
   { name: 'Brand Assets', path: '/brand-portal/assets' },
-  { name: 'Brand Up', path: '/brand-portal/brand-up' },
-  { name: 'Checklist', path: '/brand-portal/checklist' },
-  { name: 'Ignite OS', path: '/brand-portal/ignite', icon: 'flame' },
 ];
 
 const supportNav = [
@@ -50,6 +50,7 @@ function NavItem({ item }) {
         <Flame
           className="w-4 h-4 flex-shrink-0"
           strokeWidth={1.5}
+          style={{ stroke: 'url(#bp-nav-warm-gradient)' }}
           />
 
         }
@@ -83,6 +84,15 @@ export default function BrandPortalLayout() {
 
   return (
     <div className="flex min-h-[calc(100vh-10rem)] flex-col gap-6 lg:flex-row lg:gap-10">
+      <svg width="0" height="0" style={{ position: 'absolute' }} aria-hidden="true">
+        <defs>
+          <linearGradient id="bp-nav-warm-gradient" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#b3232c" />
+            <stop offset="55%" stopColor="#d9622c" />
+            <stop offset="100%" stopColor="#f0d9b5" />
+          </linearGradient>
+        </defs>
+      </svg>
       <aside className="hidden flex-shrink-0 flex-col border border-border bg-card/75 p-4 lg:sticky lg:top-28 lg:flex lg:h-fit lg:w-60">
         <p className="mb-3 px-3 text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
           Brand Portal
