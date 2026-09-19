@@ -73,7 +73,7 @@ export default function openPrintFriendly(workbook, responses = {}) {
     background: #f7f2ea;
     border: 1px solid rgba(15,15,26,0.08);
     border-left: 3px solid #b3232c;
-    border-radius: 8px;
+    border-radius: 2px;
     padding: 14px 16px;
     margin: 0 0 24px;
     font-family: 'Helvetica', Arial, sans-serif;

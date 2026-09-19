@@ -183,7 +183,7 @@
 .dash-editorial-block {
   background: hsl(var(--card));
   color: hsl(var(--card-foreground));
-  border-radius: 16px;
+  border-radius: 2px;
   padding: 28px 24px;
   border: 1px solid hsl(var(--border));
   box-shadow:

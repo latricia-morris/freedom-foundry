@@ -63,7 +63,7 @@ export default function LandingPage() {
               </div>
             </div>
             <div className="relative mx-auto w-full max-w-lg lg:pb-3">
-              <div className="absolute -inset-6 rounded-[2rem] bg-[#b3232c]/20 blur-3xl" />
+              <div className="absolute -inset-6 rounded-[2px] bg-[#b3232c]/20 blur-3xl" />
               <div className="relative border border-[#efd8b5]/25 bg-[#211714]/95 p-5 shadow-2xl sm:p-7">
                 <div className="flex items-center justify-between border-b border-[#efd8b5]/15 pb-5">
                   <span className="text-xs uppercase tracking-[0.24em] text-[#d9c5b2]">Inside the Foundry</span>

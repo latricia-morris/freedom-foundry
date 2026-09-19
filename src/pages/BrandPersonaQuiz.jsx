@@ -249,7 +249,7 @@ export default function BrandPersonaQuiz() {
             </div>
           </section>
 
-          <section className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[1.5rem] border border-white/[0.12] bg-gradient-to-br from-[#241916] via-[#15100f] to-[#0e0b0a] shadow-[0_22px_80px_rgba(0,0,0,0.45)]">
+          <section className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[2px] border border-white/[0.12] bg-gradient-to-br from-[#241916] via-[#15100f] to-[#0e0b0a] shadow-[0_22px_80px_rgba(0,0,0,0.45)]">
             {!isGate && currentQuestion ? (
               <div key={currentQuestion.id} className="flex min-h-0 flex-1 flex-col animate-in slide-in-from-right-4 fade-in duration-500">
                 <div className="shrink-0 px-4 pb-3 pt-4 sm:px-8 sm:pb-4 sm:pt-6">
