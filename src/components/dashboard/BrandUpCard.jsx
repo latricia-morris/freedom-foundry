@@ -49,35 +49,35 @@ export default function BrandUpCard() {
   if (prompts.length === 0) return null;
 
   return (
-    <div className="relative rounded-2xl overflow-hidden bg-[#15151f] border border-[#f7f2ea]/[0.04] p-8 lg:p-10">
+    <div className="relative rounded-2xl overflow-hidden bg-card border border-border p-8 lg:p-10">
       <div className="absolute -top-20 -right-20 w-64 h-64 ember-glow-bg opacity-40" />
       <div className="relative z-10">
         <div className="flex items-center justify-between mb-6">
-          <span className="text-xs uppercase tracking-[0.3em] text-[#d9c9a3]">Brand Up</span>
-          <Link to="/brand-portal/brand-up" className="text-xs text-[#f7f2ea]/40 hover:text-[#f7f2ea]/70 transition-colors flex items-center gap-1">
+          <span className="text-xs uppercase tracking-[0.3em] text-primary">Brand Up</span>
+          <Link to="/brand-portal/brand-up" className="text-xs text-muted-foreground/70 hover:text-foreground transition-colors flex items-center gap-1">
             <BookOpen className="w-3.5 h-3.5" /> My Entries
           </Link>
         </div>
         {currentPrompt && (
           <>
-            <h2 className="font-heading text-2xl lg:text-3xl font-light text-[#f7f2ea] leading-tight mb-6">
+            <h2 className="font-heading text-2xl lg:text-3xl font-light text-foreground leading-tight mb-6">
               {currentPrompt.prompt_text}
             </h2>
             {currentPrompt.type === 'note' ? (
-            <p className="text-sm text-[#f7f2ea]/40 italic mb-4">A note from The Brand Revivalist® team.</p>
+            <p className="text-sm text-muted-foreground/70 italic mb-4">A note from The Brand Revivalist® team.</p>
             ) : (
               <textarea
                 value={response}
                 onChange={e => setResponse(e.target.value)}
                 placeholder="Your response..."
                 rows={3}
-                className="w-full rounded-xl bg-[#0f0f1a] border border-[#f7f2ea]/10 px-4 py-3 text-sm text-[#f7f2ea] placeholder:text-[#f7f2ea]/30 outline-none focus:border-[#d9622c] transition-colors resize-none mb-4"
+                className="w-full rounded-xl bg-input border border-border px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary transition-colors resize-none mb-4"
               />
             )}
             <div className="flex items-center gap-3">
               <button
                 onClick={handleShuffle}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-[#f7f2ea]/10 text-xs uppercase tracking-widest text-[#f7f2ea]/60 hover:text-[#f7f2ea] hover:border-[#f7f2ea]/20 transition-colors"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border text-xs uppercase tracking-widest text-muted-foreground/80 hover:text-foreground hover:border-muted-foreground/40 transition-colors"
               >
                 <Shuffle className="w-4 h-4" /> Shuffle
               </button>

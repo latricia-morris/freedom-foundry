@@ -49,20 +49,20 @@ export default function SetupProgressCard() {
   const allComplete = completedTasks === SETUP_TASKS.length;
 
   return (
-    <div className="relative rounded-2xl overflow-hidden bg-[#15151f] border border-[#f7f2ea]/[0.04] p-6 lg:p-8 h-full flex flex-col">
+    <div className="relative rounded-2xl overflow-hidden bg-card border border-border p-6 lg:p-8 h-full flex flex-col">
       <div className="absolute -bottom-20 -left-20 w-64 h-64 ember-glow-bg opacity-30" />
       <div className="relative z-10 flex flex-col items-center gap-5 flex-1">
         <div className="flex-shrink-0">
           <ProgressRing percentage={loading ? 0 : overallProgress} size={140} strokeWidth={8} />
         </div>
         <div className="flex-1 text-center flex flex-col items-center justify-start">
-          <span className="text-xs uppercase tracking-[0.3em] text-[#d9c9a3]">Brand Portal Setup</span>
-          <h3 className="font-heading text-lg font-light text-[#f7f2ea] mt-1 mb-3">
+          <span className="text-xs uppercase tracking-[0.3em] text-primary">Brand Portal Setup</span>
+          <h3 className="font-heading text-lg font-light text-foreground mt-1 mb-3">
             {allComplete ? 'Your brand portal is ready.' : 'Build your brand foundation.'}
           </h3>
           {nextTask ? (
             <>
-              <p className="text-sm text-[#f7f2ea]/60 mb-4">
+              <p className="text-sm text-muted-foreground mb-4">
                 Next: {nextTask.cta}
               </p>
               <Link
@@ -74,7 +74,7 @@ export default function SetupProgressCard() {
               </Link>
             </>
           ) : (
-            <div className="flex items-center gap-2 text-sm text-[#d9c9a3]">
+            <div className="flex items-center gap-2 text-sm text-primary">
               <Check className="w-4 h-4" /> All setup tasks complete
             </div>
           )}

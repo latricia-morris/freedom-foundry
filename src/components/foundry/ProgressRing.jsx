@@ -32,8 +32,7 @@ export default function ProgressRing({ percentage = 0, size = 220, strokeWidth =
           cy={size / 2}
           r={radius}
           fill="none"
-          stroke="#f7f2ea"
-          strokeOpacity="0.15"
+          stroke="hsl(var(--border))"
           strokeWidth={strokeWidth}
         />
         <circle
@@ -52,9 +51,9 @@ export default function ProgressRing({ percentage = 0, size = 220, strokeWidth =
       </svg>
       <div className="ring-hotspot" style={{ left: hotspotX - 24, top: hotspotY - 24 }} />
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
-        <span className="font-heading text-4xl font-light text-[#f7f2ea]">{percentage}%</span>
-        {label && <span className="font-heading text-xl font-light text-[#f7f2ea] mt-1">{label}</span>}
-        {sublabel && <span className="text-[10px] uppercase tracking-[0.2em] text-[#d9c9a3] mt-1">{sublabel}</span>}
+        <span className="font-heading text-4xl font-light text-foreground">{percentage}%</span>
+        {label && <span className="font-heading text-xl font-light text-foreground mt-1">{label}</span>}
+        {sublabel && <span className="text-[10px] uppercase tracking-[0.2em] text-primary mt-1">{sublabel}</span>}
       </div>
     </div>
   );

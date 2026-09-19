@@ -4,12 +4,12 @@
 
 @layer base {
   :root {
-    --background: 20 14% 7%;
-    --foreground: 0 9% 96%;
-    --card: 20 13% 10%;
-    --card-foreground: 0 9% 96%;
-    --popover: 20 14% 6%;
-    --popover-foreground: 0 9% 96%;
+    --background: 20 12% 6%;
+    --foreground: 30 12% 95%;
+    --card: 20 11% 9%;
+    --card-foreground: 30 12% 95%;
+    --popover: 20 12% 7%;
+    --popover-foreground: 30 12% 95%;
     --primary: 24 62% 64%;
     --primary-foreground: 20 30% 11%;
     --secondary: 20 10% 13%;
@@ -20,8 +20,8 @@
     --accent-foreground: 0 9% 96%;
     --destructive: 8 57% 43%;
     --destructive-foreground: 0 9% 96%;
-    --border: 20 9% 18%;
-    --input: 20 9% 18%;
+    --border: 26 10% 17%;
+    --input: 20 12% 6%;
     --ring: 24 62% 64%;
     --copper: 28 47% 59%;
     --brass: 43 30% 57%;
@@ -66,8 +66,8 @@
     --accent-foreground: 270 23% 10%;
     --destructive: 356 67% 42%;
     --destructive-foreground: 37 100% 97%;
-    --border: 36 52% 83%;
-    --input: 36 52% 83%;
+    --border: 35 30% 76%;
+    --input: 37 45% 88%;
     --ring: 19 69% 51%;
     --sidebar-background: 37 45% 94%;
     --sidebar-foreground: 270 23% 10%;
@@ -157,42 +157,58 @@
     box-shadow: 0 4px 24px rgba(179, 35, 44, 0.15);
   }
 
-  /* Editorial cards — warm cream with layered depth */
+  /* Editorial cards — forged panels: raised surface, layered depth */
   .editorial-container,
   .editorial-card {
-    background: #f7f2ea;
-    color: #1a1420;
+    background: hsl(var(--card));
+    color: hsl(var(--card-foreground));
     border-radius: 16px;
     padding: 28px 24px;
+    border: 1px solid hsl(var(--border));
     box-shadow:
-      0 1px 2px rgba(15, 15, 26, 0.04),
-      0 8px 24px rgba(15, 15, 26, 0.10),
-      inset 0 1px 0 rgba(255, 255, 255, 0.4);
-    border: 1px solid rgba(15, 15, 26, 0.05);
+      inset 0 1px 0 hsl(0 0% 100% / 0.05),
+      0 1px 2px hsl(20 60% 2% / 0.5),
+      0 10px 28px hsl(20 60% 2% / 0.4);
   }
 
-/* Dashboard editorial blocks — light cream containers, rebuilt from scratch */
+  html.light-mode .editorial-container,
+  html.light-mode .editorial-card {
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.65),
+      0 1px 2px hsl(28 40% 20% / 0.08),
+      0 8px 22px hsl(28 40% 20% / 0.07);
+  }
+
+/* Dashboard editorial blocks — forged panels, theme-inverted */
 .dash-editorial-block {
-  background: #f7f2ea;
+  background: hsl(var(--card));
+  color: hsl(var(--card-foreground));
   border-radius: 16px;
   padding: 28px 24px;
+  border: 1px solid hsl(var(--border));
   box-shadow:
-    0 1px 2px rgba(15, 15, 26, 0.04),
-    0 8px 24px rgba(15, 15, 26, 0.10),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4);
-  border: 1px solid rgba(15, 15, 26, 0.05);
+    inset 0 1px 0 hsl(0 0% 100% / 0.05),
+    0 1px 2px hsl(20 60% 2% / 0.5),
+    0 10px 28px hsl(20 60% 2% / 0.4);
+}
+
+html.light-mode .dash-editorial-block {
+  box-shadow:
+    inset 0 1px 0 hsl(0 0% 100% / 0.65),
+    0 1px 2px hsl(28 40% 20% / 0.08),
+    0 8px 22px hsl(28 40% 20% / 0.07);
 }
 
 .dash-editorial-block h3 {
   font-family: 'Cormorant Garamond', serif;
-  color: #1a1420;
+  color: hsl(var(--card-foreground));
   font-weight: 500;
 }
 
 .dash-editorial-block p,
 .dash-editorial-block span {
   font-family: 'Urbanist', 'DM Sans', sans-serif;
-  color: #2c2c33;
+  color: hsl(var(--muted-foreground));
 }
 
 .dash-editorial-block .link-warm {
@@ -213,7 +229,7 @@
   .editorial-card h3,
   .editorial-card h4 {
     font-family: 'Cormorant Garamond', serif;
-    color: #1a1420;
+    color: hsl(var(--card-foreground));
     font-weight: 500;
   }
 
@@ -226,7 +242,7 @@
   .editorial-card label,
   .editorial-card span {
     font-family: 'Urbanist', sans-serif;
-    color: #2c2c33;
+    color: hsl(var(--muted-foreground));
   }
 
   .editorial-container p,
@@ -242,14 +258,24 @@
   .editorial-card input,
   .editorial-card textarea,
   .editorial-card select {
-    background: #ffffff;
-    color: #1a1420;
-    border: 1px solid rgba(15, 15, 26, 0.1);
+    background: hsl(var(--input));
+    color: hsl(var(--foreground));
+    border: 1px solid hsl(var(--border));
     border-radius: 8px;
     padding: 10px 14px;
     font-family: 'Urbanist', sans-serif;
     width: 100%;
-    transition: border-color 0.2s;
+    box-shadow: inset 0 2px 5px hsl(20 60% 2% / 0.4);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  html.light-mode .editorial-container input,
+  html.light-mode .editorial-container textarea,
+  html.light-mode .editorial-container select,
+  html.light-mode .editorial-card input,
+  html.light-mode .editorial-card textarea,
+  html.light-mode .editorial-card select {
+    box-shadow: inset 0 2px 4px hsl(28 40% 20% / 0.1);
   }
 
   .editorial-container input:focus,
@@ -258,7 +284,8 @@
   .editorial-card input:focus,
   .editorial-card textarea:focus,
   .editorial-card select:focus {
-    border-color: #b3232c;
+    border-color: hsl(var(--primary));
+    box-shadow: 0 0 0 2px hsl(var(--primary) / 0.15);
     outline: none;
   }
 
@@ -355,25 +382,32 @@
 
   /* Dashboard cards — dark glass with gradient border */
   .dashboard-card {
-    background: rgba(15, 15, 26, 0.5);
-    border: none;
+    background: hsl(var(--card) / 0.72);
+    border: 1px solid hsl(var(--border) / 0.9);
     border-radius: 14px;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.04),
+      0 6px 20px hsl(20 60% 2% / 0.35);
   }
 
   .admin-input {
     width: 100%;
     border: 1px solid hsl(var(--border));
     border-radius: 0.5rem;
-    background: hsl(var(--background) / 0.65);
+    background: hsl(var(--input));
     color: hsl(var(--foreground));
     padding: 0.65rem 0.75rem;
     font-size: 0.875rem;
     line-height: 1.4;
     outline: none;
+    box-shadow: inset 0 2px 4px hsl(20 60% 2% / 0.35);
     transition: border-color 150ms ease, box-shadow 150ms ease;
+  }
+
+  html.light-mode .admin-input {
+    box-shadow: inset 0 2px 4px hsl(28 40% 20% / 0.1);
   }
 
   .admin-input::placeholder {
@@ -448,18 +482,25 @@
 
   /* Contact cards — warm cream on dark shell */
   .contact-card {
-    background: #f7f2ea;
-    color: #1a1420;
+    background: hsl(var(--card));
+    color: hsl(var(--card-foreground));
     border-radius: 16px;
     padding: 32px 28px;
     display: flex;
     flex-direction: column;
     gap: 16px;
+    border: 1px solid hsl(var(--border));
     box-shadow:
-      0 1px 2px rgba(15, 15, 26, 0.04),
-      0 8px 24px rgba(15, 15, 26, 0.10),
-      inset 0 1px 0 rgba(255, 255, 255, 0.4);
-    border: 1px solid rgba(15, 15, 26, 0.05);
+      inset 0 1px 0 hsl(0 0% 100% / 0.05),
+      0 1px 2px hsl(20 60% 2% / 0.5),
+      0 10px 28px hsl(20 60% 2% / 0.4);
+  }
+
+  html.light-mode .contact-card {
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.65),
+      0 1px 2px hsl(28 40% 20% / 0.08),
+      0 8px 22px hsl(28 40% 20% / 0.07);
   }
 
   .contact-card__logo {
@@ -473,24 +514,24 @@
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: #6e1f24;
+    color: hsl(var(--primary));
   }
 
   .contact-card__button {
     align-self: flex-start;
     padding: 12px 24px;
     border-radius: 8px;
-    border: 1px solid rgba(179, 35, 44, 0.4);
+    border: 1px solid hsl(var(--primary) / 0.4);
     background: transparent;
-    color: #1a1420;
+    color: hsl(var(--card-foreground));
     font-size: 0.9rem;
     transition: all 0.2s ease;
     cursor: pointer;
   }
 
   .contact-card__button:hover {
-    background: rgba(179, 35, 44, 0.08);
-    border-color: rgba(179, 35, 44, 0.6);
+    background: hsl(var(--primary) / 0.1);
+    border-color: hsl(var(--primary) / 0.6);
   }
 
   .brand-portal-page {
@@ -502,26 +543,18 @@
     color: hsl(var(--foreground));
   }
 
-  html.light-mode .editorial-container,
-  html.light-mode .editorial-card,
-  html.light-mode .dash-editorial-block,
-  html.light-mode .contact-card {
-    background: #fffcf7;
-    box-shadow:
-      0 1px 2px rgba(15, 15, 26, 0.04),
-      0 4px 12px rgba(15, 15, 26, 0.05),
-      inset 0 1px 0 rgba(255, 255, 255, 0.6);
-    border: 1px solid rgba(15, 15, 26, 0.08);
-  }
+  /* Light-mode panel elevation lives with each forged panel rule above. */
 
   html.light-mode .smoked-glass {
     background: rgba(240, 217, 181, 0.42);
   }
 
   html.light-mode .dashboard-card {
-    background: rgba(255, 250, 242, 0.9);
-    border: 1px solid rgba(110, 31, 36, 0.16);
-    box-shadow: 0 4px 20px rgba(110, 31, 36, 0.08);
+    background: hsl(var(--card) / 0.92);
+    border: 1px solid hsl(35 30% 76% / 0.8);
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.7),
+      0 4px 16px hsl(28 40% 20% / 0.07);
   }
 
   html.light-mode .vault-card {
@@ -562,6 +595,16 @@
     background: #5c3324;
 }
 
+html.light-mode ::-webkit-scrollbar-track {
+  background: #efe8dc;
+}
+html.light-mode ::-webkit-scrollbar-thumb {
+  background: #cbb9a2;
+}
+html.light-mode ::-webkit-scrollbar-thumb:hover {
+  background: #b39a7d;
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -591,5 +634,5 @@ p, li, span, label {
 .editorial-container .text-primary,
 .editorial-card .text-primary,
 .dash-editorial-block .text-primary {
-  color: #7d4028;
+  color: hsl(var(--primary));
 }
