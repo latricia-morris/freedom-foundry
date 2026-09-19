@@ -108,6 +108,7 @@ const entityNames = [
   'VaultItem', 'CourseModule', 'CourseLesson', 'LessonProgress',
   'WorkbookDefinition', 'WorkbookResponse', 'ChecklistTask', 'BrandUpPrompt',
   'BrandUpEntry', 'ServiceRequestSubmission', 'ShareLink', 'PortalContent', 'BugReport',
+  'ContactSubmission',
 ];
 
 const entities = {};
@@ -541,5 +542,52 @@ export const drive = {
   },
 };
 
-const apiClient = { auth, admin, support, services, entities, integrations, functions, quiz, drive };
+// ─── Contact form submissions ────────────────────────────────────────────────
+const CONTACT_TOPIC_LABELS = {
+  general: 'General question',
+  brand_consulting: 'Brand consulting',
+  design: 'Design services',
+  speaking_media: 'Speaking & media',
+  support: 'Support',
+};
+const CONTACT_NOTIFY_EMAIL = 'latricia@thebrandrevivalist.com';
+
+export const contact = {
+  async submit({ first_name, last_name, email, category, message }) {
+    let me = null;
+    try { me = await base44.auth.me(); } catch { /* not signed in */ }
+    const record = await baseEntities.ContactSubmission.create({
+      first_name: first_name || '',
+      last_name: last_name || '',
+      email: email || '',
+      category: category || 'general',
+      message: message || '',
+      user_id: me?.id || undefined,
+    });
+    const topic = CONTACT_TOPIC_LABELS[category] || 'General question';
+    let emailed = true;
+    try {
+      await base44.integrations.Core.SendEmail({
+        to: CONTACT_NOTIFY_EMAIL,
+        subject: `New contact submission — ${topic}`,
+        text: [
+          'New contact form submission',
+          '',
+          `Name: ${first_name || ''} ${last_name || ''}`.trim(),
+          `Email: ${email || ''}`,
+          `Topic: ${topic}`,
+          `Date: ${new Date().toLocaleString()}`,
+          '',
+          'Message:',
+          message || '',
+          '',
+          'Reply from the admin Contact Inbox.',
+        ].join('\n'),
+      });
+    } catch { emailed = false; }
+    return { record, emailed };
+  },
+};
+
+const apiClient = { auth, admin, support, services, entities, integrations, functions, quiz, drive, contact };
 export default apiClient;

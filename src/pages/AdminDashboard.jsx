@@ -11,10 +11,11 @@ import {
   ChevronRight,
   Bug,
   Wrench,
-  UploadCloud,
+  UploadCloud, 
   FolderOpen,
-  Briefcase
-} from 'lucide-react';
+  Briefcase,
+  Mail
+  } from 'lucide-react';
 import apiClient from '@/api/client';
 
 export default function AdminDashboard() {
@@ -22,6 +23,7 @@ export default function AdminDashboard() {
   const [denied, setDenied] = useState(false);
   const [users, setUsers] = useState([]);
   const [reports, setReports] = useState([]);
+  const [contactSubs, setContactSubs] = useState([]);
 
   useEffect(() => {
     apiClient.auth.me()
@@ -33,6 +35,9 @@ export default function AdminDashboard() {
         }
         apiClient.entities.BugReport.list('-created_date', 200)
           .then(r => setReports(r || []))
+          .catch(() => {});
+        apiClient.entities.ContactSubmission.list('-created_date', 200)
+          .then(r => setContactSubs(r || []))
           .catch(() => {});
         return apiClient.entities.User.list();
       })
@@ -180,6 +185,36 @@ export default function AdminDashboard() {
             <div className="w-px h-8 bg-border" />
             <div className="flex items-center gap-2">
               <span className="text-xl font-light text-foreground">{reports.length}</span>
+              <span className="text-xs uppercase tracking-widest text-muted-foreground">Total</span>
+            </div>
+          </div>
+        </Link>
+
+        {/* Navigation Card: Contact Inbox */}
+        <Link
+          to="/admin/contact-inbox"
+          className="dashboard-card p-6 flex flex-col justify-between group transition-all duration-300 hover:-translate-y-1 hover:ember-glow-strong"
+        >
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <div className="icon-tile">
+                <Mail className="w-6 h-6 text-copper" strokeWidth={1.5} />
+              </div>
+              <ArrowRight className="w-5 h-5 text-muted-foreground opacity-50 group-hover:opacity-100 group-hover:text-primary transition-all transform group-hover:translate-x-1" strokeWidth={1.5} />
+            </div>
+            <h2 className="font-heading text-2xl text-foreground">Contact <span className="italic text-muted-foreground">Inbox</span></h2>
+            <p className="text-sm text-muted-foreground leading-relaxed mt-2">
+              Member messages from the Get in Touch page — read, reply, and keep every conversation in one place.
+            </p>
+          </div>
+          <div className="mt-6 flex items-center gap-4 border-t border-border pt-4">
+            <div className="flex items-center gap-2">
+              <span className="text-2xl font-light text-foreground">{contactSubs.filter(s => (s.status || 'new') === 'new').length}</span>
+              <span className="text-xs uppercase tracking-widest text-muted-foreground">New</span>
+            </div>
+            <div className="w-px h-8 bg-border" />
+            <div className="flex items-center gap-2">
+              <span className="text-xl font-light text-foreground">{contactSubs.length}</span>
               <span className="text-xs uppercase tracking-widest text-muted-foreground">Total</span>
             </div>
           </div>

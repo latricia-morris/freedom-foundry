@@ -62,6 +62,7 @@ import AdminQuizLeads from './pages/AdminQuizLeads';
 import AdminClientImport from './pages/AdminClientImport';
 import AdminPortalContent from './pages/AdminPortalContent';
 import AdminSupportReports from './pages/AdminSupportReports';
+import AdminContactInbox from './pages/AdminContactInbox';
 import AdminPortfolioManager from './pages/AdminPortfolioManager';
 import AdminPortfolioEditor from './pages/AdminPortfolioEditor';
 
@@ -145,6 +146,7 @@ const AuthenticatedApp = () => {
             <Route path="/admin/client-import" element={<AdminClientImport />} />
             <Route path="/admin/portal-content" element={<AdminPortalContent />} />
             <Route path="/admin/support-reports" element={<AdminSupportReports />} />
+            <Route path="/admin/contact-inbox" element={<AdminContactInbox />} />
             <Route path="/admin/portfolio" element={<AdminPortfolioManager />} />
             <Route path="/admin/portfolio/:id" element={<AdminPortfolioEditor />} />
           </Route>
