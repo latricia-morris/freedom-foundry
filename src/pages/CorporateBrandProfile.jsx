@@ -7,7 +7,6 @@ import PrivacyNote from '@/components/brand/PrivacyNote';
 import SetupTaskFooter from '@/components/brand/SetupTaskFooter';
 import AssetPreview from '@/components/brand/AssetPreview';
 import BookLinks from '@/components/brand/BookLinks';
-import ArchetypeSummary from '@/components/brand/ArchetypeSummary';
 
 const FILE_ACCEPT = ".png,.jpg,.jpeg,.pdf,.ai,.eps,.webp";
 
@@ -201,9 +200,6 @@ export default function CorporateBrandProfile() {
         {/* Voice & Strategy */}
         <section>
           <h2 className="font-heading text-lg mb-4">Voice & Strategy</h2>
-          <div className="mb-5">
-            <ArchetypeSummary view="corporate" />
-          </div>
           <div className="space-y-4">
             <div><label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5">Brand Voice</label><textarea className={textareaClass} rows={3} value={form.brand_voice} onChange={e => update('brand_voice', e.target.value)} placeholder="Describe how the brand communicates..." /></div>
             <div><label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5">Tonality</label><textarea className={textareaClass} rows={3} value={form.brand_tonality} onChange={e => update('brand_tonality', e.target.value)} placeholder="The emotional register and energy..." /></div>

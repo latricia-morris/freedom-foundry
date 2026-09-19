@@ -48,7 +48,6 @@ import MediaKit from './pages/MediaKit';
 import IgniteOS from './pages/IgniteOS';
 import BrandUp from './pages/BrandUp';
 import BrandChecklist from './pages/BrandChecklist';
-import ArchetypeGuide from './pages/ArchetypeGuide';
 
 // Admin pages
 import AdminDashboard from './pages/AdminDashboard';
@@ -127,7 +126,6 @@ const AuthenticatedApp = () => {
             <Route path="/brand-portal/brand-up" element={<BrandUp />} />
             <Route path="/brand-portal/checklist" element={<BrandChecklist />} />
             <Route path="/brand-portal/request-services" element={<ServiceRequest />} />
-            <Route path="/brand-portal/archetype-guide" element={<ArchetypeGuide />} />
           </Route>
           <Route element={<AdminRoute />}>
             <Route path="/admin" element={<AdminDashboard />} />
