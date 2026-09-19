@@ -1,4 +1,6 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { LifeBuoy } from 'lucide-react';
 import BrandUpCard from '@/components/dashboard/BrandUpCard';
 import SetupProgressCard from '@/components/dashboard/SetupProgressCard';
 import WorkbookProgressCard from '@/components/dashboard/WorkbookProgressCard';
@@ -18,6 +20,11 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <ActivityCard />
         <WorkbookProgressCard />
+      </div>
+      <div className="flex flex-wrap items-center justify-center gap-2 py-2 text-xs text-muted-foreground">
+        <LifeBuoy className="w-3.5 h-3.5" />
+        <span>Found a bug or have an idea?</span>
+        <Link to="/support" className="link-warm">Report an issue or suggest a feature</Link>
       </div>
       <div className="flex items-center justify-center gap-3 py-6">
         <div className="h-px w-12 bg-border" />

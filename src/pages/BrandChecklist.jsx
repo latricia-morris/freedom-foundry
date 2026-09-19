@@ -204,7 +204,7 @@ export default function BrandChecklist() {
           <button
             onClick={handleAdd}
             disabled={!newTitle.trim()}
-            className="ml-auto px-5 py-1.5 rounded-lg text-xs uppercase tracking-widest text-primary-foreground disabled:opacity-30 bg-primary hover:bg-primary/90 transition-colors"
+            className="btn-forge ml-auto px-5 py-1.5 rounded-lg text-xs uppercase tracking-widest disabled:opacity-30"
           >
             Add Task
           </button>
@@ -259,7 +259,7 @@ export default function BrandChecklist() {
                             onChange={e => setEditDeadline(e.target.value)}
                             className="rounded-lg px-3 py-1.5 text-xs text-foreground bg-background border border-border outline-none focus:border-primary"
                           />
-                          <button onClick={() => saveEdit(task.id)} className="px-3 py-1.5 rounded-lg text-xs uppercase tracking-wider text-primary-foreground bg-primary hover:bg-primary/90 transition-colors">Save</button>
+                          <button onClick={() => saveEdit(task.id)} className="btn-forge px-3 py-1.5 rounded-lg text-xs uppercase tracking-wider">Save</button>
                           <button onClick={() => setEditingId(null)} className="px-3 py-1.5 text-xs text-foreground/50">Cancel</button>
                         </div>
                       </div>
@@ -358,7 +358,7 @@ export default function BrandChecklist() {
         <div className="fixed bottom-24 lg:bottom-8 left-1/2 -translate-x-1/2 z-40">
           <button
             onClick={handleRequestProposal}
-            className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm uppercase tracking-widest text-primary-foreground shadow-lg bg-primary hover:bg-primary/90 transition-colors"
+            className="btn-forge flex items-center gap-2 px-6 py-3 rounded-xl text-sm uppercase tracking-widest shadow-lg"
           >
             <Send className="w-4 h-4" /> Request Proposal ({selectedForProposal.size})
           </button>

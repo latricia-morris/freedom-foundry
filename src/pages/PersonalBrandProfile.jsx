@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import apiClient from '@/api/client';
-import { Upload, Plus, X, Check, Share2 } from 'lucide-react';
+import { Upload, X, Check, Share2 } from 'lucide-react';
+import AddLinkButton from '@/components/brand/AddLinkButton';
 import { toast } from '@/components/ui/use-toast';
 import { createShareLink } from '@/lib/shareUtils';
 import PrivacyNote from '@/components/brand/PrivacyNote';
@@ -267,7 +268,7 @@ export default function PersonalBrandProfile() {
                 <button onClick={() => removeItem('social_links', i)} className="px-2 text-muted-foreground hover:text-foreground"><X className="w-4 h-4" /></button>
               </div>
             ))}
-            <button onClick={() => addItem('social_links', { platform: '', url: '' })} className="flex items-center gap-1.5 text-sm link-molten hover:opacity-80 transition-opacity"><Plus className="w-4 h-4" style={{ stroke: '#d9622c' }} /> Add Social</button>
+            <AddLinkButton label="Add Social" onAdd={() => addItem('social_links', { platform: '', url: '' })} />
           </div>
         </section>
 
@@ -285,7 +286,7 @@ export default function PersonalBrandProfile() {
               </div>
             ))}
             {form.feature_links.length < 5 && (
-              <button onClick={() => addItem('feature_links', { label: '', url: '' })} className="flex items-center gap-1.5 text-sm link-molten hover:opacity-80 transition-opacity"><Plus className="w-4 h-4" style={{ stroke: '#d9622c' }} /> Add Link</button>
+              <AddLinkButton label="Add Link" onAdd={() => addItem('feature_links', { label: '', url: '' })} />
             )}
           </div>
         </section>

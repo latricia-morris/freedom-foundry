@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import apiClient from '@/api/client';
-import { Upload, Plus, X, Check, Share2 } from 'lucide-react';
+import { Upload, X, Check, Share2 } from 'lucide-react';
+import AddLinkButton from '@/components/brand/AddLinkButton';
 import { toast } from '@/components/ui/use-toast';
 import { createShareLink } from '@/lib/shareUtils';
 import PrivacyNote from '@/components/brand/PrivacyNote';
@@ -191,7 +192,7 @@ export default function CorporateBrandProfile() {
                 <button onClick={() => removeItem('colors', i)} className="px-2 text-muted-foreground hover:text-foreground"><X className="w-4 h-4" /></button>
               </div>
             ))}
-            <button onClick={() => addItem('colors', { name: '', hex: '#000000' })} className="flex items-center gap-1.5 text-sm link-molten hover:opacity-80 transition-opacity"><Plus className="w-4 h-4" style={{ stroke: '#d9622c' }} /> Add Color</button>
+            <AddLinkButton label="Add Color" onAdd={() => addItem('colors', { name: '', hex: '#000000' })} />
           </div>
         </section>
 

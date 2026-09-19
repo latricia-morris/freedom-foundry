@@ -107,7 +107,7 @@ const entityNames = [
   'BrandGuidelines', 'BrandAsset', 'MediaKit', 'BigPicture', 'IgniteOS',
   'VaultItem', 'CourseModule', 'CourseLesson', 'LessonProgress',
   'WorkbookDefinition', 'WorkbookResponse', 'ChecklistTask', 'BrandUpPrompt',
-  'BrandUpEntry', 'ServiceRequestSubmission', 'ShareLink', 'PortalContent',
+  'BrandUpEntry', 'ServiceRequestSubmission', 'ShareLink', 'PortalContent', 'BugReport',
 ];
 
 const entities = {};

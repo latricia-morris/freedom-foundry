@@ -1,5 +1,6 @@
 import React from 'react';
-import { Plus, X, BookOpen } from 'lucide-react';
+import { X, BookOpen } from 'lucide-react';
+import AddLinkButton from '@/components/brand/AddLinkButton';
 
 export default function BookLinks({ hasBooks, bookLinks, onToggle, onUpdate, onAdd, onRemove, dark = false }) {
   const labelClass = dark
@@ -54,12 +55,7 @@ export default function BookLinks({ hasBooks, bookLinks, onToggle, onUpdate, onA
               </button>
             </div>
           ))}
-          <button
-            onClick={() => onAdd({ title: '', url: '' })}
-            className={`flex items-center gap-1.5 text-sm ${dark ? 'text-[#d9c9a3] hover:opacity-80' : 'text-[#b3232c] hover:opacity-80'} transition-opacity`}
-          >
-            <Plus className="w-4 h-4" /> Add Book
-          </button>
+          <AddLinkButton label="Add Book" onAdd={() => onAdd({ title: '', url: '' })} />
         </div>
       )}
     </div>

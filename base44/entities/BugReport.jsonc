@@ -5,11 +5,25 @@
     "description": {
       "type": "string"
     },
+    "type": {
+      "type": "string",
+      "enum": [
+        "bug_report",
+        "feature_request"
+      ],
+      "default": "bug_report"
+    },
     "provider": {
       "type": "string"
     },
     "page_url": {
       "type": "string"
+    },
+    "screenshot_urls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     },
     "extra": {
       "type": "object"

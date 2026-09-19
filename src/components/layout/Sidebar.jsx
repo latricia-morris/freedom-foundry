@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Vault as VaultIcon, Palette, Target, ClipboardList, Mic, Shield } from 'lucide-react';
+import { LayoutDashboard, Vault as VaultIcon, Palette, Target, ClipboardList, Mic, Shield, LifeBuoy } from 'lucide-react';
 import { useAuth } from '@/lib/AuthContext';
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -12,6 +12,7 @@ const navItems = [
   { label: 'Big Picture', path: '/brand-portal/big-picture', icon: Target },
   { label: 'Collaborations', path: '/services', icon: ClipboardList },
   { label: 'Podcast', path: '/podcast', icon: Mic },
+  { label: 'Support', path: '/support', icon: LifeBuoy },
 ];
 
 export default function Sidebar() {

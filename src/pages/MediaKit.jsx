@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import apiClient from '@/api/client';
-import { Upload, Plus, X, Check, Copy, Share2, ExternalLink, Sparkles } from 'lucide-react';
+import { Upload, X, Check, Copy, Share2, ExternalLink, Sparkles } from 'lucide-react';
+import AddLinkButton from '@/components/brand/AddLinkButton';
 import { toast } from '@/components/ui/use-toast';
 import PrivacyNote from '@/components/brand/PrivacyNote';
 import AssetPreview from '@/components/brand/AssetPreview';
@@ -177,7 +178,7 @@ export default function MediaKit() {
           </div>
           <button
             onClick={handlePopulateFromPersonal}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg text-primary-foreground bg-primary hover:opacity-90 transition-opacity text-sm whitespace-nowrap"
+            className="btn-forge flex items-center gap-2 px-4 py-2 rounded-lg text-sm whitespace-nowrap"
           >
             <Sparkles className="w-4 h-4" /> Populate from Personal Brand
           </button>
@@ -296,7 +297,7 @@ export default function MediaKit() {
                 <button onClick={() => removeItem('social_links', i)} className="px-2 text-muted-foreground hover:text-muted-foreground"><X className="w-4 h-4" /></button>
               </div>
             ))}
-            <button onClick={() => addItem('social_links', { platform: '', url: '' })} className="flex items-center gap-1.5 text-sm link-molten hover:opacity-80 transition-opacity"><Plus className="w-4 h-4" style={{ stroke: '#d9622c' }} /> Add Social</button>
+            <AddLinkButton label="Add Social" onAdd={() => addItem('social_links', { platform: '', url: '' })} />
           </div>
         </section>
 
@@ -315,7 +316,7 @@ export default function MediaKit() {
               </div>
             ))}
             {form.feature_links.length < 5 && (
-              <button onClick={() => addItem('feature_links', { label: '', url: '' })} className="flex items-center gap-1.5 text-sm link-molten hover:opacity-80 transition-opacity"><Plus className="w-4 h-4" style={{ stroke: '#d9622c' }} /> Add Link</button>
+              <AddLinkButton label="Add Link" onAdd={() => addItem('feature_links', { label: '', url: '' })} />
             )}
           </div>
         </section>
@@ -351,7 +352,7 @@ export default function MediaKit() {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="flex items-center gap-2 px-6 py-2.5 rounded-lg text-xs uppercase tracking-widest text-primary-foreground bg-primary hover:bg-primary/90 transition-colors disabled:opacity-50"
+          className="btn-forge flex items-center gap-2 px-6 py-2.5 rounded-lg text-xs uppercase tracking-widest disabled:opacity-50"
         >
           {saved ? <Check className="w-4 h-4" /> : null}
           {saving ? 'Saving...' : saved ? 'Saved!' : 'Save Media Kit'}

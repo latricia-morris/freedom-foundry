@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import apiClient from '@/api/client';
 import { useMembership } from '@/lib/useMembership';
-import { Lock, Check, Plus, X, Flame } from 'lucide-react';
+import { Lock, Check, X, Flame } from 'lucide-react';
+import AddLinkButton from '@/components/brand/AddLinkButton';
 
 function ClientGate() {
   return (
@@ -132,9 +133,7 @@ export default function IgniteOS() {
                 <button onClick={() => removeAction(i)} className="p-1 text-muted-foreground hover:text-foreground transition-colors"><X className="w-3.5 h-3.5" /></button>
               </div>
             ))}
-            <button onClick={addAction} className="flex items-center gap-1.5 text-sm text-primary hover:opacity-80 transition-opacity">
-              <Plus className="w-4 h-4" /> Add Action Item
-            </button>
+            <AddLinkButton label="Add Action Item" onAdd={addAction} />
           </div>
         </div>
 
@@ -146,7 +145,7 @@ export default function IgniteOS() {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="flex items-center gap-2 px-6 py-2.5 rounded-lg text-xs uppercase tracking-widest text-primary-foreground disabled:opacity-50 bg-primary hover:bg-primary/90 transition-colors"
+          className="btn-forge flex items-center gap-2 px-6 py-2.5 rounded-lg text-xs uppercase tracking-widest disabled:opacity-50"
         >
           {saved ? <Check className="w-4 h-4" /> : null}
           {saving ? 'Saving...' : saved ? 'Saved!' : 'Save Ignite OS'}

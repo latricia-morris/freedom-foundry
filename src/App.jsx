@@ -36,6 +36,7 @@ import WorkbookPage from './pages/WorkbookPage';
 import ServiceHub from './pages/ServiceHub';
 import ServiceRequest from './pages/ServiceRequest';
 import Contact from './pages/Contact';
+import Support from './pages/Support';
 import Podcast from './pages/Podcast';
 import Settings from './pages/Settings';
 import Billing from './pages/Billing';
@@ -60,6 +61,7 @@ import BrandPersonaQuizResults from './pages/BrandPersonaQuizResults';
 import AdminQuizLeads from './pages/AdminQuizLeads';
 import AdminClientImport from './pages/AdminClientImport';
 import AdminPortalContent from './pages/AdminPortalContent';
+import AdminSupportReports from './pages/AdminSupportReports';
 import AdminPortfolioManager from './pages/AdminPortfolioManager';
 import AdminPortfolioEditor from './pages/AdminPortfolioEditor';
 
@@ -117,6 +119,7 @@ const AuthenticatedApp = () => {
           <Route path="/services" element={<ServiceHub />} />
           <Route path="/services/:type" element={<ServiceRequest />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/support" element={<Support />} />
           <Route path="/podcast" element={<Podcast />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/billing" element={<Billing />} />
@@ -141,6 +144,7 @@ const AuthenticatedApp = () => {
             <Route path="/admin/quiz-leads" element={<AdminQuizLeads />} />
             <Route path="/admin/client-import" element={<AdminClientImport />} />
             <Route path="/admin/portal-content" element={<AdminPortalContent />} />
+            <Route path="/admin/support-reports" element={<AdminSupportReports />} />
             <Route path="/admin/portfolio" element={<AdminPortfolioManager />} />
             <Route path="/admin/portfolio/:id" element={<AdminPortfolioEditor />} />
           </Route>

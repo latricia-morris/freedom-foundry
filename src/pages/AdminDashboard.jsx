@@ -21,6 +21,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [denied, setDenied] = useState(false);
   const [users, setUsers] = useState([]);
+  const [reports, setReports] = useState([]);
 
   useEffect(() => {
     apiClient.auth.me()
@@ -30,6 +31,9 @@ export default function AdminDashboard() {
           setLoading(false);
           return;
         }
+        apiClient.entities.BugReport.list('-created_date', 200)
+          .then(r => setReports(r || []))
+          .catch(() => {});
         return apiClient.entities.User.list();
       })
       .then(userList => {
@@ -163,15 +167,21 @@ export default function AdminDashboard() {
               </div>
               <ArrowRight className="w-5 h-5 text-muted-foreground opacity-50 group-hover:opacity-100 group-hover:text-primary transition-all transform group-hover:translate-x-1" strokeWidth={1.5} />
             </div>
-            <h2 className="font-heading text-2xl text-foreground">Support <span className="italic text-muted-foreground">Reports</span></h2>
+            <h2 className="font-heading text-2xl text-foreground">Support <span className="italic text-muted-foreground">Queue</span></h2>
             <p className="text-sm text-muted-foreground leading-relaxed mt-2">
-              Review QuickBooks issues and copy safe troubleshooting summaries for support.
+              Member bug reports and feature requests — triage, resolve, or remove.
             </p>
           </div>
-          <div className="mt-6 flex items-center border-t border-border pt-4">
-            <span className="text-xs uppercase tracking-widest text-primary/80 flex items-center gap-2">
-              <Activity className="w-3.5 h-3.5" /> Authorized access only
-            </span>
+          <div className="mt-6 flex items-center gap-4 border-t border-border pt-4">
+            <div className="flex items-center gap-2">
+              <span className="text-2xl font-light text-foreground">{reports.filter(r => (r.status || 'open') === 'open').length}</span>
+              <span className="text-xs uppercase tracking-widest text-muted-foreground">Open</span>
+            </div>
+            <div className="w-px h-8 bg-border" />
+            <div className="flex items-center gap-2">
+              <span className="text-xl font-light text-foreground">{reports.length}</span>
+              <span className="text-xs uppercase tracking-widest text-muted-foreground">Total</span>
+            </div>
           </div>
         </Link>
 

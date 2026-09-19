@@ -117,7 +117,7 @@ export default function BrandGuidelines() {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="flex items-center gap-2 px-6 py-2.5 rounded-lg text-xs uppercase tracking-widest text-primary-foreground disabled:opacity-50 bg-primary hover:bg-primary/90 transition-colors"
+          className="btn-forge flex items-center gap-2 px-6 py-2.5 rounded-lg text-xs uppercase tracking-widest disabled:opacity-50"
         >
           {saved ? <Check className="w-4 h-4" /> : null}
           {saving ? 'Saving...' : saved ? 'Saved!' : 'Save Guidelines'}
