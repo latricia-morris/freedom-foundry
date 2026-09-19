@@ -1,10 +1,17 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Search, UserCheck } from 'lucide-react';
+import { Search, UserCheck, UserPlus } from 'lucide-react';
 import apiClient from '@/api/client';
+import NewClientForm from '@/components/admin/NewClientForm';
 
 export default function ClientPicker({ selected, onSelect }) {
   const [users, setUsers] = useState(null);
   const [term, setTerm] = useState('');
+  const [showNew, setShowNew] = useState(false);
+
+  const createdUser = (user) => {
+    setShowNew(false);
+    onSelect(user);
+  };
 
   useEffect(() => {
     let active = true;
@@ -39,7 +46,19 @@ export default function ClientPicker({ selected, onSelect }) {
         />
       </div>
 
-      {!users ? (
+      {showNew && <NewClientForm onCreated={createdUser} onCancel={() => setShowNew(false)} />}
+
+      {!showNew && (
+        <button
+          type="button"
+          onClick={() => setShowNew(true)}
+          className="w-full mb-4 inline-flex items-center justify-center gap-2 rounded-md border border-primary/40 text-primary px-4 py-2.5 text-xs uppercase tracking-widest hover:bg-primary/10 transition-colors"
+        >
+          <UserPlus className="w-4 h-4" /> Create New Client
+        </button>
+      )}
+
+      {!showNew && (!users ? (
         <div className="flex justify-center py-10">
           <div className="h-7 w-7 animate-spin rounded-full border-2 border-border border-t-primary" />
         </div>
@@ -78,7 +97,7 @@ export default function ClientPicker({ selected, onSelect }) {
             );
           })}
         </div>
-      )}
+      ))}
     </div>
   );
 }

@@ -284,6 +284,35 @@ export const admin = {
     await base44.users.inviteUser(email, 'user');
     return { email };
   },
+  async createClient({ email, first_name = '', last_name = '', business_name = '', phone = '' }) {
+    const cleanEmail = String(email || '').trim().toLowerCase();
+    if (!cleanEmail) throw new Error('An email address is required.');
+    const users = await baseEntities.User.list().catch(() => []);
+    const fields = {};
+    if (first_name) fields.first_name = first_name;
+    if (last_name) fields.last_name = last_name;
+    if (business_name) fields.business_name = business_name;
+    if (phone) fields.phone = phone;
+
+    const existing = (users || []).find((u) => (u.email || '').toLowerCase() === cleanEmail);
+    if (existing) {
+      if (Object.keys(fields).length) await upsertProfile(existing.id, fields);
+      return { ...existing, first_name, last_name, business_name, phone };
+    }
+
+    await base44.users.inviteUser(cleanEmail, 'user');
+    let created = null;
+    for (let attempt = 0; attempt < 5 && !created; attempt += 1) {
+      const rows = await baseEntities.User.list().catch(() => []);
+      created = (rows || []).find((u) => (u.email || '').toLowerCase() === cleanEmail);
+      if (!created) await new Promise((resolve) => setTimeout(resolve, 1000));
+    }
+    if (!created) {
+      throw new Error('The invite was sent, but the client has not appeared in the roster yet. Refresh in a moment and select them from the list.');
+    }
+    if (Object.keys(fields).length) await upsertProfile(created.id, fields);
+    return { ...created, first_name, last_name, business_name, phone };
+  },
   async getUserAccount(userId) {
     const user = await baseEntities.User.get(userId);
     const profile = await profileFor(userId);
