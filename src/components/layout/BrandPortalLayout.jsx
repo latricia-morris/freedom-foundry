@@ -108,7 +108,7 @@ export default function BrandPortalLayout() {
           <ChevronDown className={`h-5 w-5 text-primary transition-transform ${mobileOpen ? 'rotate-180' : ''}`} />
         </button>
         {mobileOpen && (
-          <nav aria-label="Mobile Brand Portal pages" className="mt-2 grid grid-cols-1 gap-1 rounded-xl border border-border bg-card p-2">
+          <nav onClickCapture={() => setMobileOpen(false)} aria-label="Mobile Brand Portal pages" className="mt-2 grid grid-cols-1 gap-1 rounded-xl border border-border bg-card p-2">
             {renderItems(strategyNav)}
             <div className="my-1 border-t border-border" />
             {renderItems(buildNav)}
