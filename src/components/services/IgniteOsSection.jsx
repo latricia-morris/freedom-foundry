@@ -5,28 +5,28 @@ const PILLARS = [
   {
     icon: ListChecks,
     title: 'Structure',
-    copy: 'Every launch step defined and sequenced in one place — nothing living in a scattered doc.',
+    copy: 'Every launch step defined and sequenced. No step living in someone\u2019s memory.',
   },
   {
     icon: UserCheck,
     title: 'Ownership',
-    copy: 'Each task has a name on it, not a group chat.',
+    copy: 'Each task has a name on it. Group chats do not ship launches.',
   },
   {
     icon: Zap,
     title: 'Momentum',
-    copy: 'The rollout moves on schedule, with fewer dropped threads and fewer internal scrambles.',
+    copy: 'The rollout holds its schedule — fewer dropped threads, fewer scrambles, fewer apologies.',
   },
   {
     icon: LifeBuoy,
     title: 'Support',
-    copy: 'Guidance through each phase of the rollout — not a handoff and a goodbye.',
+    copy: 'Guidance through every phase of the rollout. A launch run with you, not dumped on you.',
   },
 ];
 
 export default function IgniteOsSection() {
   return (
-    <section aria-labelledby="ignite-title" className="mb-16 md:mb-24">
+    <section id="ignite-os" aria-labelledby="ignite-title" className="mb-16 md:mb-24 scroll-mt-8">
       <div className="dashboard-card border border-primary/25 p-6 sm:p-10 relative overflow-hidden">
         <div className="absolute -right-16 -top-16 w-64 h-64 ember-glow-bg pointer-events-none" aria-hidden="true" />
         <div className="mb-8 max-w-2xl relative">
@@ -35,8 +35,10 @@ export default function IgniteOsSection() {
             Ignite <span className="molten-text italic font-medium">OS</span>
           </h2>
           <p className="text-base text-muted-foreground mt-3 leading-relaxed">
-            Ignite OS is our brand launch and activation framework. It coordinates the rollout and
-            execution side of a launch — the part that usually lives in scattered documents and unanswered messages.
+            Ignite OS is our proprietary brand launch and activation framework. It exists because
+            launch execution is usually where brands lose control — the plan lives in six documents,
+            ownership is unclear, and the date slips. Ignite OS puts the rollout in one place,
+            in order, with names on it.
           </p>
         </div>
         <div className="grid sm:grid-cols-2 gap-x-8 gap-y-6 relative">

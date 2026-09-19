@@ -5,6 +5,7 @@ import { ArrowRight, MessageSquare } from 'lucide-react';
 export default function ServicesCta() {
   return (
     <section
+      id="next-move"
       aria-labelledby="services-cta-title"
       className="dashboard-card border border-border p-8 sm:p-12 text-center relative overflow-hidden"
     >
@@ -13,7 +14,8 @@ export default function ServicesCta() {
         Determine the <span className="molten-text italic font-medium">next move.</span>
       </h2>
       <p className="text-base text-muted-foreground leading-relaxed max-w-xl mx-auto mt-4 relative">
-        If you already know what you need, say so directly. If you don't, a short conversation will sort it out.
+        If you know what is broken, say so and we will scope it. If you do not, a short conversation
+        will identify it — and you will leave it knowing whether you need us. Either way, you get a straight answer.
       </p>
       <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-8 relative">
         <Link

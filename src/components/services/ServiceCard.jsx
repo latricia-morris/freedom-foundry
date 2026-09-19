@@ -1,8 +1,8 @@
 import React from 'react';
 
-export default function ServiceCard({ number, icon: Icon, title, copy }) {
+export default function ServiceCard({ id, number, icon: Icon, title, copy }) {
   return (
-    <article className="dashboard-card border border-border p-6 flex flex-col gap-4 transition-shadow hover:ember-glow">
+    <article id={id} className="dashboard-card border border-border p-6 flex flex-col gap-4 transition-shadow hover:ember-glow scroll-mt-24">
       <div className="flex items-center justify-between">
         <div className="icon-tile">
           <Icon className="w-5 h-5 text-copper" strokeWidth={1.5} />
