@@ -9,8 +9,10 @@ import {
   UserPlus,
   Crown,
   ChevronRight,
-  Bug
-  , Wrench
+  Bug,
+  Wrench,
+  UploadCloud,
+  FolderOpen
 } from 'lucide-react';
 import apiClient from '@/api/client';
 
@@ -213,6 +215,50 @@ export default function AdminDashboard() {
           </div>
           <div className="mt-6 flex items-center border-t border-border pt-4">
             <span className="text-xs uppercase tracking-widest text-primary/80">Diagnostic Results</span>
+          </div>
+        </Link>
+
+        {/* Navigation Card: Client Import */}
+        <Link
+          to="/admin/client-import"
+          className="dashboard-card p-6 flex flex-col justify-between group transition-all duration-300 hover:-translate-y-1 hover:ember-glow-strong"
+        >
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <div className="icon-tile">
+                <UploadCloud className="w-6 h-6 text-copper" strokeWidth={1.5} />
+              </div>
+              <ArrowRight className="w-5 h-5 text-muted-foreground opacity-50 group-hover:opacity-100 group-hover:text-primary transition-all transform group-hover:translate-x-1" strokeWidth={1.5} />
+            </div>
+            <h2 className="font-heading text-2xl text-foreground mb-2">Client <span className="italic text-muted-foreground">Import</span></h2>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Upload a client's brand files and let the Foundry parse them into the right places in their portal — you review before it saves.
+            </p>
+          </div>
+          <div className="mt-6 flex items-center border-t border-border pt-4">
+            <span className="text-xs uppercase tracking-widest text-primary/80">Guided Parse + Review</span>
+          </div>
+        </Link>
+
+        {/* Navigation Card: Portal Content */}
+        <Link
+          to="/admin/portal-content"
+          className="dashboard-card p-6 flex flex-col justify-between group transition-all duration-300 hover:-translate-y-1 hover:ember-glow-strong"
+        >
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <div className="icon-tile">
+                <FolderOpen className="w-6 h-6 text-copper" strokeWidth={1.5} />
+              </div>
+              <ArrowRight className="w-5 h-5 text-muted-foreground opacity-50 group-hover:opacity-100 group-hover:text-primary transition-all transform group-hover:translate-x-1" strokeWidth={1.5} />
+            </div>
+            <h2 className="font-heading text-2xl text-foreground mb-2">Portal <span className="italic text-muted-foreground">Content</span></h2>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Drop files, notes, Drive folders, and custom sections onto any page of a client's Brand Portal as their project grows.
+            </p>
+          </div>
+          <div className="mt-6 flex items-center border-t border-border pt-4">
+            <span className="text-xs uppercase tracking-widest text-primary/80">Adaptive Client Portal</span>
           </div>
         </Link>
 

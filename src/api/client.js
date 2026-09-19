@@ -107,7 +107,7 @@ const entityNames = [
   'BrandGuidelines', 'BrandAsset', 'MediaKit', 'BigPicture', 'IgniteOS',
   'VaultItem', 'CourseModule', 'CourseLesson', 'LessonProgress',
   'WorkbookDefinition', 'WorkbookResponse', 'ChecklistTask', 'BrandUpPrompt',
-  'BrandUpEntry', 'ServiceRequestSubmission', 'ShareLink',
+  'BrandUpEntry', 'ServiceRequestSubmission', 'ShareLink', 'PortalContent',
 ];
 
 const entities = {};
@@ -351,6 +351,71 @@ export const admin = {
       profile,
     };
   },
+  async getClientBrandData(userId) {
+    const [personal, corporate, guidelines, mediaKit] = await Promise.all([
+      ownedBy('PersonalBrandProfile', userId, 5),
+      ownedBy('CorporateBrandProfile', userId, 5),
+      ownedBy('BrandGuidelines', userId, 5),
+      ownedBy('MediaKit', userId, 5),
+    ]);
+    return {
+      personal: personal[0] || null,
+      corporate: corporate[0] || null,
+      guidelines: guidelines[0] || null,
+      mediaKit: mediaKit[0] || null,
+    };
+  },
+  async applyClientImport(userId, draft = {}) {
+    const results = {};
+    const clean = (fields) => Object.fromEntries(
+      Object.entries(fields || {}).filter(([, value]) => value !== '' && value != null && !(Array.isArray(value) && !value.length))
+    );
+    const linkRows = (rows, requiredKey) => (rows || []).filter((row) => row && row[requiredKey] && String(row[requiredKey]).trim());
+    const upsertRecord = async (name, fields, label) => {
+      const cleaned = clean(fields);
+      if (!Object.keys(cleaned).length) { results[label] = 'skipped'; return; }
+      const existing = (await ownedBy(name, userId, 5))[0] || null;
+      if (existing) {
+        await baseEntities[name].update(existing.id, cleaned);
+        results[label] = 'updated';
+      } else {
+        await baseEntities[name].create({ ...cleaned, user_id: userId });
+        results[label] = 'created';
+      }
+    };
+
+    const personal = { ...(draft.personal || {}) };
+    personal.book_links = linkRows(personal.book_links, 'title');
+    personal.has_books = personal.book_links.length > 0;
+    await upsertRecord('PersonalBrandProfile', personal, 'personal');
+
+    const corporate = { ...(draft.corporate || {}) };
+    corporate.colors = linkRows(corporate.colors, 'name');
+    await upsertRecord('CorporateBrandProfile', corporate, 'corporate');
+
+    await upsertRecord('BrandGuidelines', draft.guidelines || {}, 'guidelines');
+
+    const mediaKit = { ...(draft.media_kit || {}) };
+    mediaKit.social_links = linkRows(mediaKit.social_links, 'url');
+    mediaKit.feature_links = linkRows(mediaKit.feature_links, 'url');
+    mediaKit.book_links = linkRows(mediaKit.book_links, 'url');
+    mediaKit.has_books = mediaKit.book_links.length > 0;
+    await upsertRecord('MediaKit', mediaKit, 'media_kit');
+
+    const assets = (draft.assets || []).filter((asset) => asset && asset.file_url);
+    if (assets.length) {
+      await baseEntities.BrandAsset.bulkCreate(assets.map((asset) => ({
+        title: asset.title || 'Brand file',
+        description: asset.description || '',
+        file_url: asset.file_url,
+        file_type: BRAND_ASSET_FILE_TYPES.includes(asset.file_type) ? asset.file_type : 'other',
+        user_id: userId,
+        uploaded_by: 'Admin import',
+      })));
+      results.assets = assets.length;
+    }
+    return results;
+  },
   async addUserContent(userId, { kind, data = {} }) {
     if (kind === 'checklist_task') {
       const item = await baseEntities.ChecklistTask.create({ ...data, user_id: userId });
@@ -435,5 +500,17 @@ export const quiz = {
 // ─── Integrations (Base44 Core package) ─────────────────────────────────────
 export const integrations = { Core: base44.integrations.Core };
 
-const apiClient = { auth, admin, support, services, entities, integrations, functions, quiz };
+// ─── Google Drive (connector-backed browsing) ────────────────────────────────
+export const drive = {
+  async browse(folderId = '') {
+    const response = await base44.functions.invoke('drive-browse', { action: 'browse', folderId });
+    return response?.data ?? response;
+  },
+  async getFile(fileId) {
+    const response = await base44.functions.invoke('drive-browse', { action: 'file', fileId });
+    return response?.data ?? response;
+  },
+};
+
+const apiClient = { auth, admin, support, services, entities, integrations, functions, quiz, drive };
 export default apiClient;

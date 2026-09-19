@@ -3,6 +3,8 @@ import { Outlet, NavLink } from 'react-router-dom';
 import { ChevronDown, Flame, Send, FolderOpen } from 'lucide-react';
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import PortalContentSection from '@/components/portal/PortalContentSection';
+import { pageKeyFromPath } from '@/lib/portalPages';
 
 const strategyNav = [
   { name: 'Overview', path: '/brand-portal', end: true },
@@ -75,6 +77,7 @@ export default function BrandPortalLayout() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const currentItem = [...strategyNav, ...buildNav, ...supportNav]
     .find((item) => location.pathname === item.path) || strategyNav[0];
+  const pageKey = pageKeyFromPath(location.pathname);
 
   const renderItems = (items) => items.map((item) => <NavItem key={item.path} item={item} />);
 
@@ -120,6 +123,7 @@ export default function BrandPortalLayout() {
 
       <main className="min-w-0 flex-1 lg:py-2">
         <Outlet />
+        {pageKey && <PortalContentSection key={pageKey} pageKey={pageKey} />}
       </main>
     </div>
   );

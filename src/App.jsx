@@ -57,6 +57,8 @@ import BrandUpAdmin from './pages/BrandUpAdmin';
 import BrandPersonaQuiz from './pages/BrandPersonaQuiz';
 import BrandPersonaQuizResults from './pages/BrandPersonaQuizResults';
 import AdminQuizLeads from './pages/AdminQuizLeads';
+import AdminClientImport from './pages/AdminClientImport';
+import AdminPortalContent from './pages/AdminPortalContent';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin, isAuthenticated } = useAuth();
@@ -133,6 +135,8 @@ const AuthenticatedApp = () => {
             <Route path="/admin/users/:id" element={<AdminUserDetail />} />
             <Route path="/admin/brand-up" element={<BrandUpAdmin />} />
             <Route path="/admin/quiz-leads" element={<AdminQuizLeads />} />
+            <Route path="/admin/client-import" element={<AdminClientImport />} />
+            <Route path="/admin/portal-content" element={<AdminPortalContent />} />
           </Route>
         </Route>
       </Route>
