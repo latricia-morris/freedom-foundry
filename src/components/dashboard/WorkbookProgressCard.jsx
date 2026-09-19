@@ -114,7 +114,7 @@ export default function WorkbookProgressCard() {
                 <span className="text-sm text-foreground">Overall Progress</span>
                 <span className="text-sm font-medium text-foreground">{progress}%</span>
               </div>
-              <div className="h-2 w-full rounded-full overflow-hidden bg-input border border-border/50">
+              <div className="h-2 w-full rounded-full overflow-hidden well-track">
                 <div
                   className="h-full rounded-full molten-bar transition-all duration-700"
                   style={{ width: `${progress}%` }}

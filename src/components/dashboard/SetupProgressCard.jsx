@@ -68,7 +68,7 @@ export default function SetupProgressCard() {
               <Link
                 to={nextTask.path}
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-xs uppercase tracking-widest text-white"
-                style={{ background: 'linear-gradient(131deg, #b3232c, #d9622c, #f0d9b5)' }}
+                style={{ background: 'linear-gradient(131deg, #e2662c, #9f1f28)' }}
               >
                 {nextTask.progress > 0 ? 'Continue' : 'Start'} <ArrowRight className="w-4 h-4" />
               </Link>

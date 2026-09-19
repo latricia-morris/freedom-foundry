@@ -50,32 +50,32 @@
   }
 
   html.light-mode {
-    --background: 37 45% 94%;
-    --foreground: 270 23% 10%;
-    --card: 37 100% 97%;
-    --card-foreground: 270 23% 10%;
-    --popover: 37 100% 97%;
-    --popover-foreground: 270 23% 10%;
+    --background: 220 14% 95%;
+    --foreground: 225 14% 12%;
+    --card: 220 18% 98%;
+    --card-foreground: 225 14% 12%;
+    --popover: 220 18% 98%;
+    --popover-foreground: 225 14% 12%;
     --primary: 19 69% 51%;
-    --primary-foreground: 270 23% 10%;
-    --secondary: 36 52% 83%;
-    --secondary-foreground: 270 23% 10%;
-    --muted: 37 66% 83%;
-    --muted-foreground: 356 56% 28%;
-    --accent: 37 66% 83%;
-    --accent-foreground: 270 23% 10%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 10% 88%;
+    --secondary-foreground: 225 14% 12%;
+    --muted: 220 10% 88%;
+    --muted-foreground: 225 8% 34%;
+    --accent: 220 12% 90%;
+    --accent-foreground: 225 14% 12%;
     --destructive: 356 67% 42%;
-    --destructive-foreground: 37 100% 97%;
-    --border: 35 30% 76%;
-    --input: 37 45% 88%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 10% 80%;
+    --input: 220 12% 91%;
     --ring: 19 69% 51%;
-    --sidebar-background: 37 45% 94%;
-    --sidebar-foreground: 270 23% 10%;
+    --sidebar-background: 220 14% 95%;
+    --sidebar-foreground: 225 14% 12%;
     --sidebar-primary: 19 69% 51%;
-    --sidebar-primary-foreground: 270 23% 10%;
-    --sidebar-accent: 37 66% 83%;
-    --sidebar-accent-foreground: 270 23% 10%;
-    --sidebar-border: 36 52% 83%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 12% 90%;
+    --sidebar-accent-foreground: 225 14% 12%;
+    --sidebar-border: 220 10% 84%;
     --sidebar-ring: 19 69% 51%;
   }
 }
@@ -94,7 +94,7 @@
   }
 
   html.light-mode body {
-    background: linear-gradient(135deg, #f6f0e7 0%, #fffdf8 55%, #f1e4d5 100%);
+    background: linear-gradient(135deg, #eff2f5 0%, #fafbfc 55%, #e8ecef 100%);
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -166,17 +166,21 @@
     padding: 28px 24px;
     border: 1px solid hsl(var(--border));
     box-shadow:
-      inset 0 1px 0 hsl(0 0% 100% / 0.05),
-      0 1px 2px hsl(20 60% 2% / 0.5),
-      0 10px 28px hsl(20 60% 2% / 0.4);
+      inset 0 1px 0 hsl(45 42% 88% / 0.16),
+      inset 0 -1px 0 hsl(20 60% 2% / 0.65),
+      0 2px 4px hsl(20 60% 2% / 0.6),
+      0 8px 18px hsl(20 60% 2% / 0.5),
+      0 22px 46px hsl(20 60% 2% / 0.65);
   }
 
   html.light-mode .editorial-container,
   html.light-mode .editorial-card {
     box-shadow:
-      inset 0 1px 0 hsl(0 0% 100% / 0.8),
-      0 2px 4px hsl(28 40% 20% / 0.1),
-      0 8px 22px hsl(28 40% 20% / 0.08);
+      inset 0 1px 0 hsl(0 0% 100% / 0.95),
+      inset 0 -1px 0 hsl(220 14% 65% / 0.35),
+      0 2px 4px hsl(220 16% 25% / 0.12),
+      0 8px 20px hsl(220 16% 25% / 0.12),
+      0 22px 46px hsl(220 16% 25% / 0.14);
   }
 
 /* Dashboard editorial blocks — forged panels, theme-inverted */
@@ -187,31 +191,39 @@
   padding: 28px 24px;
   border: 1px solid hsl(var(--border));
   box-shadow:
-    inset 0 1px 0 hsl(0 0% 100% / 0.09),
-    0 2px 4px hsl(20 60% 2% / 0.55),
-    0 10px 28px hsl(20 60% 2% / 0.45);
+    inset 0 1px 0 hsl(45 42% 88% / 0.16),
+    inset 0 -1px 0 hsl(20 60% 2% / 0.65),
+    0 2px 4px hsl(20 60% 2% / 0.6),
+    0 8px 18px hsl(20 60% 2% / 0.5),
+    0 22px 46px hsl(20 60% 2% / 0.65);
 }
 
 html.light-mode .dash-editorial-block {
   box-shadow:
-    inset 0 1px 0 hsl(0 0% 100% / 0.65),
-    0 1px 2px hsl(28 40% 20% / 0.08),
-    0 8px 22px hsl(28 40% 20% / 0.07);
+    inset 0 1px 0 hsl(0 0% 100% / 0.95),
+    inset 0 -1px 0 hsl(220 14% 65% / 0.35),
+    0 2px 4px hsl(220 16% 25% / 0.12),
+    0 8px 20px hsl(220 16% 25% / 0.12),
+    0 22px 46px hsl(220 16% 25% / 0.14);
 }
 
   /* Forged depth system — raised panel shadow + sunken interior well */
   .forged-panel {
     box-shadow:
-      inset 0 1px 0 hsl(0 0% 100% / 0.09),
-      0 2px 4px hsl(20 60% 2% / 0.55),
-      0 10px 28px hsl(20 60% 2% / 0.45);
+      inset 0 1px 0 hsl(45 42% 88% / 0.16),
+      inset 0 -1px 0 hsl(20 60% 2% / 0.65),
+      0 2px 4px hsl(20 60% 2% / 0.6),
+      0 8px 18px hsl(20 60% 2% / 0.5),
+      0 22px 46px hsl(20 60% 2% / 0.65);
   }
 
   html.light-mode .forged-panel {
     box-shadow:
-      inset 0 1px 0 hsl(0 0% 100% / 0.8),
-      0 2px 4px hsl(28 40% 20% / 0.1),
-      0 8px 22px hsl(28 40% 20% / 0.08);
+      inset 0 1px 0 hsl(0 0% 100% / 0.95),
+      inset 0 -1px 0 hsl(220 14% 65% / 0.35),
+      0 2px 4px hsl(220 16% 25% / 0.12),
+      0 8px 20px hsl(220 16% 25% / 0.12),
+      0 22px 46px hsl(220 16% 25% / 0.14);
   }
 
   .forged-well {
@@ -219,15 +231,34 @@ html.light-mode .dash-editorial-block {
     border: 1px solid hsl(var(--border) / 0.7);
     border-radius: 2px;
     box-shadow:
-      inset 0 2px 5px hsl(20 60% 2% / 0.45),
-      inset 0 1px 2px hsl(20 60% 2% / 0.3);
+      inset 0 3px 8px hsl(20 60% 2% / 0.7),
+      inset 0 1px 3px hsl(20 60% 2% / 0.55),
+      inset 0 -1px 0 hsl(45 42% 88% / 0.08);
   }
 
   html.light-mode .forged-well {
-    border-color: hsl(35 30% 76% / 0.9);
+    border-color: hsl(220 10% 78% / 0.9);
     box-shadow:
-      inset 0 2px 4px hsl(28 40% 20% / 0.12),
-      inset 0 1px 1px hsl(28 40% 20% / 0.06);
+      inset 0 3px 8px hsl(220 16% 40% / 0.16),
+      inset 0 1px 3px hsl(220 16% 40% / 0.09),
+      inset 0 -1px 0 hsl(0 0% 100% / 0.9);
+  }
+
+  /* Recessed pill track for progress bars */
+  .well-track {
+    background: hsl(var(--input));
+    border: 1px solid hsl(var(--border) / 0.6);
+    border-radius: 9999px;
+    box-shadow:
+      inset 0 2px 4px hsl(20 60% 2% / 0.5),
+      inset 0 -1px 0 hsl(45 42% 88% / 0.06);
+  }
+
+  html.light-mode .well-track {
+    border-color: hsl(220 10% 78% / 0.8);
+    box-shadow:
+      inset 0 2px 4px hsl(220 16% 40% / 0.16),
+      inset 0 -1px 0 hsl(0 0% 100% / 0.9);
   }
 
 .dash-editorial-block h3 {
@@ -296,7 +327,7 @@ html.light-mode .dash-editorial-block {
     padding: 10px 14px;
     font-family: 'Urbanist', sans-serif;
     width: 100%;
-    box-shadow: inset 0 2px 5px hsl(20 60% 2% / 0.4);
+    box-shadow: inset 0 3px 6px hsl(20 60% 2% / 0.55);
     transition: border-color 0.2s, box-shadow 0.2s;
   }
 
@@ -306,7 +337,7 @@ html.light-mode .dash-editorial-block {
   html.light-mode .editorial-card input,
   html.light-mode .editorial-card textarea,
   html.light-mode .editorial-card select {
-    box-shadow: inset 0 2px 4px hsl(28 40% 20% / 0.1);
+    box-shadow: inset 0 2px 5px hsl(220 16% 30% / 0.13);
   }
 
   .editorial-container input:focus,
@@ -411,6 +442,14 @@ html.light-mode .dash-editorial-block {
     color: transparent;
   }
 
+  /* Light mode — keep gradient accents legible on cloud-bone surfaces */
+  html.light-mode .molten-text,
+  html.light-mode .text-warm,
+  html.light-mode .link-warm,
+  html.light-mode .dash-editorial-block .link-warm {
+    background: linear-gradient(131deg, #9f1f28, #d9622c);
+  }
+
   /* Dashboard cards — dark glass with gradient border */
   .dashboard-card {
     background: hsl(var(--card) / 0.72);
@@ -433,12 +472,12 @@ html.light-mode .dash-editorial-block {
     font-size: 0.875rem;
     line-height: 1.4;
     outline: none;
-    box-shadow: inset 0 2px 4px hsl(20 60% 2% / 0.35);
+    box-shadow: inset 0 3px 6px hsl(20 60% 2% / 0.5);
     transition: border-color 150ms ease, box-shadow 150ms ease;
   }
 
   html.light-mode .admin-input {
-    box-shadow: inset 0 2px 4px hsl(28 40% 20% / 0.1);
+    box-shadow: inset 0 2px 5px hsl(220 16% 30% / 0.13);
   }
 
   .admin-input::placeholder {
@@ -522,16 +561,20 @@ html.light-mode .dash-editorial-block {
     gap: 16px;
     border: 1px solid hsl(var(--border));
     box-shadow:
-      inset 0 1px 0 hsl(0 0% 100% / 0.05),
-      0 1px 2px hsl(20 60% 2% / 0.5),
-      0 10px 28px hsl(20 60% 2% / 0.4);
+      inset 0 1px 0 hsl(45 42% 88% / 0.16),
+      inset 0 -1px 0 hsl(20 60% 2% / 0.65),
+      0 2px 4px hsl(20 60% 2% / 0.6),
+      0 8px 18px hsl(20 60% 2% / 0.5),
+      0 22px 46px hsl(20 60% 2% / 0.65);
   }
 
   html.light-mode .contact-card {
     box-shadow:
-      inset 0 1px 0 hsl(0 0% 100% / 0.8),
-      0 2px 4px hsl(28 40% 20% / 0.1),
-      0 8px 22px hsl(28 40% 20% / 0.08);
+      inset 0 1px 0 hsl(0 0% 100% / 0.95),
+      inset 0 -1px 0 hsl(220 14% 65% / 0.35),
+      0 2px 4px hsl(220 16% 25% / 0.12),
+      0 8px 20px hsl(220 16% 25% / 0.12),
+      0 22px 46px hsl(220 16% 25% / 0.14);
   }
 
   .contact-card__logo {
@@ -570,44 +613,45 @@ html.light-mode .dash-editorial-block {
   }
 
   html.light-mode .brand-portal-page {
-    background: linear-gradient(135deg, #f6f0e7 0%, #fffcf5 50%, #f1e4d5 100%);
+    background: linear-gradient(135deg, #eff2f5 0%, #fafbfc 50%, #e8ecef 100%);
     color: hsl(var(--foreground));
   }
 
   /* Light-mode panel elevation lives with each forged panel rule above. */
 
   html.light-mode .smoked-glass {
-    background: rgba(240, 217, 181, 0.42);
+    background: rgba(226, 232, 240, 0.45);
   }
 
   html.light-mode .dashboard-card {
     background: hsl(var(--card) / 0.92);
-    border: 1px solid hsl(35 30% 76% / 0.8);
+    border: 1px solid hsl(220 10% 82% / 0.8);
     box-shadow:
-      inset 0 1px 0 hsl(0 0% 100% / 0.7),
-      0 4px 16px hsl(28 40% 20% / 0.07);
+      inset 0 1px 0 hsl(0 0% 100% / 0.9),
+      0 4px 12px hsl(220 16% 25% / 0.12),
+      0 14px 32px hsl(220 16% 25% / 0.12);
   }
 
   html.light-mode .vault-card {
     background:
-      linear-gradient(#fffaf2, #fffaf2) padding-box,
+      linear-gradient(#fcfdfe, #fcfdfe) padding-box,
       linear-gradient(131deg, #b3232c, #d9622c, #f0d9b5) border-box;
-    color: #1a1420;
+    color: #1c222b;
   }
 
   html.light-mode .icon-tile {
-    background: #f0d9b5;
-    border-color: rgba(110, 31, 36, 0.28);
-    color: #6e1f24;
+    background: #edf1f5;
+    border-color: rgba(159, 31, 40, 0.3);
+    color: #9f1f28;
   }
 
   html.light-mode .bp-nav-item {
-    color: #6e1f24;
+    color: #454c56;
   }
 
   html.light-mode .bp-nav-item:hover,
   html.light-mode .bp-nav-item--active {
-    color: #1a1420;
+    color: #1c222b;
   }
 }
 
@@ -627,13 +671,13 @@ html.light-mode .dash-editorial-block {
 }
 
 html.light-mode ::-webkit-scrollbar-track {
-  background: #efe8dc;
+  background: #e9edf1;
 }
 html.light-mode ::-webkit-scrollbar-thumb {
-  background: #cbb9a2;
+  background: #b6c0ca;
 }
 html.light-mode ::-webkit-scrollbar-thumb:hover {
-  background: #b39a7d;
+  background: #9aa5b1;
 }
 
 html {

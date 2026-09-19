@@ -18,7 +18,7 @@ export default function BrandPortal() {
   const { isClient, loading } = useMembership();
 
   return (
-    <div className="max-w-2xl animate-fade-in">
+    <div className="max-w-5xl animate-fade-in">
       <div className="mb-8">
         <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">Brand Portal</span>
         <h1 className="font-heading text-3xl lg:text-4xl font-light text-foreground mt-1 mb-2">
@@ -29,13 +29,13 @@ export default function BrandPortal() {
         </p>
       </div>
 
-      <div className="space-y-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {sections.map((section) => {
           const gated = !section.open && !isClient;
           return (
             <div key={section.path}>
               {gated ?
-              <div className="flex items-center justify-between p-5 rounded-2xl border border-border bg-card opacity-60">
+              <div className="flex items-center justify-between p-5 h-full rounded-2xl border border-border bg-card opacity-60 forged-panel">
                   <div>
                     <div className="flex items-center gap-2 mb-1">
                       <h3 className="font-heading text-base text-foreground">{section.name}</h3>
@@ -47,7 +47,7 @@ export default function BrandPortal() {
 
               <Link
                 to={section.path}
-                className="flex items-center justify-between p-5 rounded-2xl border border-border bg-card hover:bg-accent transition-colors group">
+                className="flex items-center justify-between p-5 h-full rounded-2xl border border-border bg-card hover:bg-accent transition-colors group forged-panel">
                 
                   <div>
                     <h3 className="font-heading text-lg text-foreground mb-1 group-hover:molten-text transition-colors">{section.name}</h3>
