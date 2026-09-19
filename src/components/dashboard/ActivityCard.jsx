@@ -13,17 +13,17 @@ export default function ActivityCard({ activities = [] }) {
         </div>
       </div>
       <div className="space-y-4">
-        {items.length === 0 && <p className="text-sm" style={{ color: '#8a8a92' }}>No recent activity.</p>}
+        {items.length === 0 && <p className="text-sm italic text-muted-foreground">No recent activity.</p>}
         {items.map((item, i) => {
           const Icon = item.icon || ActivityIcon;
           return (
             <div key={i} className="flex items-start gap-3">
-              <div className="flex items-center justify-center rounded-full flex-shrink-0" style={{ width: '32px', height: '32px', background: 'rgba(15,15,26,0.05)' }}>
+              <div className="flex items-center justify-center rounded-full flex-shrink-0 bg-background border border-border" style={{ width: '32px', height: '32px' }}>
                 <Icon className="w-4 h-4" style={{ stroke: 'url(#warmGradient)' }} strokeWidth={1.5} />
               </div>
               <div>
                 <p className="text-sm">{item.description}</p>
-                <p className="text-xs mt-0.5" style={{ color: '#8a8a92' }}>{item.time}</p>
+                <p className="text-xs mt-0.5 text-muted-foreground/70">{item.time}</p>
               </div>
             </div>);
 

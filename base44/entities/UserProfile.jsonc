@@ -50,6 +50,9 @@
       ],
       "default": "code"
     },
+    "bpm_milestones": {
+      "type": "object"
+    },
     "active_program_id": {
       "type": "string"
     },
