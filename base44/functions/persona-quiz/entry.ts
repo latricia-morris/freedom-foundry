@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 import { questions, scoreQuizAnswers } from './definition.ts';
+import { sendQuizResultEmail } from '../../shared/email/service.ts';
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const expirationMs = 1000 * 60 * 60 * 24 * 7;
@@ -92,7 +93,19 @@ export default async function(req) {
           expires_at: expiresAt,
           claimed_at: now.toISOString(),
         });
-        return Response.json({ result: result(record) });
+        // App-native transactional confirmation through Resend. The
+        // archetype-based nurture drip lives in GoHighLevel (CRM), kept
+        // deliberately separate from this transactional layer.
+        const quizEmail = await sendQuizResultEmail(base44.asServiceRole, {
+          to: email,
+          firstName,
+          primaryArchetype: scored.primary,
+          secondaryArchetype: scored.secondary,
+          relatedId: record.id,
+          userId: user.id,
+        });
+        if (!quizEmail.ok) console.error('quiz result email failed:', quizEmail.error);
+        return Response.json({ result: result(record), emailed: quizEmail.ok });
       }
 
       // Anonymous lead capture (strictly validated, marketing consent required):
@@ -114,7 +127,16 @@ export default async function(req) {
         token_hash: tokenHash,
         expires_at: expiresAt,
       });
-      return Response.json({ token, expiresAt: record.expires_at });
+      // Same Resend confirmation for anonymous quiz leads; GHL owns the drip.
+      const quizEmail = await sendQuizResultEmail(base44.asServiceRole, {
+        to: email,
+        firstName,
+        primaryArchetype: scored.primary,
+        secondaryArchetype: scored.secondary,
+        relatedId: record.id,
+      });
+      if (!quizEmail.ok) console.error('quiz result email failed:', quizEmail.error);
+      return Response.json({ token, expiresAt: record.expires_at, emailed: quizEmail.ok });
     }
 
     if (action === 'claim') {

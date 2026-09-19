@@ -1,0 +1,41 @@
+{
+  "name": "Bug Report Admin Alert",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "bug_report_admin_alert",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "notify_admin": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "send-admin-notification",
+            "args": {
+              "kind": "bug_report",
+              "id": "${ .trigger.entity_id }"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Email the admin inbox",
+            "description": "Resend transactional alert"
+          }
+        }
+      }
+    ]
+  },
+  "description": "Notifies the admin inbox through Resend when a member submits a bug report or feature request",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "entity",
+      "events": [
+        "create"
+      ],
+      "entity_name": "BugReport"
+    }
+  }
+}

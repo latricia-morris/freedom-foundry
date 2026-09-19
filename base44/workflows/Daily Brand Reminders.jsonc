@@ -1,0 +1,45 @@
+{
+  "name": "Daily Brand Reminders",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "daily_brand_reminders",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "send_reminders": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "send-email-reminders",
+            "args": {}
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Send reminder emails",
+            "description": "Ignite OS tasks and checklist due dates"
+          }
+        }
+      }
+    ]
+  },
+  "description": "Emails members their pending Ignite OS action items and checklist tasks that are due soon, once each morning",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 8 * * *",
+      "one_time_date": null,
+      "timezone": "America/New_York",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  }
+}

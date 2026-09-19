@@ -1,0 +1,67 @@
+{
+  "name": "InboundEmail",
+  "type": "object",
+  "properties": {
+    "from_address": {
+      "type": "string"
+    },
+    "to_address": {
+      "type": "string"
+    },
+    "subject": {
+      "type": "string"
+    },
+    "message_id": {
+      "type": "string"
+    },
+    "metadata": {
+      "type": "object"
+    },
+    "received_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "body_text": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "new",
+        "processed",
+        "archived"
+      ],
+      "default": "new"
+    },
+    "auto_replied": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "from_address",
+    "subject"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

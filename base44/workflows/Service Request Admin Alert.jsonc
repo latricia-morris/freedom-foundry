@@ -1,0 +1,41 @@
+{
+  "name": "Service Request Admin Alert",
+  "description": "Notifies the admin inbox through Resend when a member submits a real service request (drafts saved for later are ignored)",
+  "trigger": {
+    "config": {
+      "trigger_type": "entity",
+      "entity_name": "ServiceRequestSubmission",
+      "events": [
+        "create"
+      ]
+    },
+    "condition": "${ (.trigger.data.save_for_later // false) == false }"
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "service_request_admin_alert",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "notify_admin": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "send-admin-notification",
+            "args": {
+              "kind": "service_request",
+              "id": "${ .trigger.entity_id }"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Email the admin inbox",
+            "description": "Resend transactional alert"
+          }
+        }
+      }
+    ]
+  }
+}

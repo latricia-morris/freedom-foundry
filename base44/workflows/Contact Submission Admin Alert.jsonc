@@ -1,0 +1,41 @@
+{
+  "name": "Contact Submission Admin Alert",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "contact_admin_alert",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "notify_admin": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "send-admin-notification",
+            "args": {
+              "kind": "contact_submission",
+              "id": "${ .trigger.entity_id }"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Email the admin inbox",
+            "description": "Resend transactional alert"
+          }
+        }
+      }
+    ]
+  },
+  "description": "Notifies the admin inbox through Resend when a new contact form submission arrives",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "entity",
+      "events": [
+        "create"
+      ],
+      "entity_name": "ContactSubmission"
+    }
+  }
+}
