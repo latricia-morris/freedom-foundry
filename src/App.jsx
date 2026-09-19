@@ -22,6 +22,7 @@ import OAuthConsent from './pages/OAuthConsent';
 // Public pages
 import LandingPage from './pages/LandingPage';
 import PortfolioPage from './pages/PortfolioPage';
+import CaseStudy from './pages/CaseStudy';
 import SharePage from './pages/SharePage';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
@@ -59,6 +60,8 @@ import BrandPersonaQuizResults from './pages/BrandPersonaQuizResults';
 import AdminQuizLeads from './pages/AdminQuizLeads';
 import AdminClientImport from './pages/AdminClientImport';
 import AdminPortalContent from './pages/AdminPortalContent';
+import AdminPortfolioManager from './pages/AdminPortfolioManager';
+import AdminPortfolioEditor from './pages/AdminPortfolioEditor';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin, isAuthenticated } = useAuth();
@@ -95,6 +98,7 @@ const AuthenticatedApp = () => {
       {/* Public pages */}
       <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LandingPage />} />
       <Route path="/portfolio" element={<PortfolioPage />} />
+      <Route path="/portfolio/:slug" element={<CaseStudy />} />
       <Route path="/share/:token" element={<SharePage />} />
       <Route path="/member/:brandSlug/:profileType" element={<SharePage />} />
       <Route path="/terms" element={<Terms />} />
@@ -137,6 +141,8 @@ const AuthenticatedApp = () => {
             <Route path="/admin/quiz-leads" element={<AdminQuizLeads />} />
             <Route path="/admin/client-import" element={<AdminClientImport />} />
             <Route path="/admin/portal-content" element={<AdminPortalContent />} />
+            <Route path="/admin/portfolio" element={<AdminPortfolioManager />} />
+            <Route path="/admin/portfolio/:id" element={<AdminPortfolioEditor />} />
           </Route>
         </Route>
       </Route>

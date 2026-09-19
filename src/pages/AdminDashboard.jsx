@@ -12,7 +12,8 @@ import {
   Bug,
   Wrench,
   UploadCloud,
-  FolderOpen
+  FolderOpen,
+  Briefcase
 } from 'lucide-react';
 import apiClient from '@/api/client';
 
@@ -171,6 +172,28 @@ export default function AdminDashboard() {
             <span className="text-xs uppercase tracking-widest text-primary/80 flex items-center gap-2">
               <Activity className="w-3.5 h-3.5" /> Authorized access only
             </span>
+          </div>
+        </Link>
+
+        {/* Navigation Card: Portfolio Manager */}
+        <Link
+          to="/admin/portfolio"
+          className="dashboard-card p-6 flex flex-col justify-between group transition-all duration-300 hover:-translate-y-1 hover:ember-glow-strong"
+        >
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <div className="icon-tile">
+                <Briefcase className="w-6 h-6 text-copper" strokeWidth={1.5} />
+              </div>
+              <ArrowRight className="w-5 h-5 text-muted-foreground opacity-50 group-hover:opacity-100 group-hover:text-primary transition-all transform group-hover:translate-x-1" strokeWidth={1.5} />
+            </div>
+            <h2 className="font-heading text-2xl text-foreground">Portfolio <span className="italic text-muted-foreground">Manager</span></h2>
+            <p className="text-sm text-muted-foreground leading-relaxed mt-2">
+              Build the public case-study library — projects, assets, SEO, and publish controls.
+            </p>
+          </div>
+          <div className="mt-6 flex items-center border-t border-border pt-4">
+            <span className="text-xs uppercase tracking-widest text-primary/80">Case-study library</span>
           </div>
         </Link>
 

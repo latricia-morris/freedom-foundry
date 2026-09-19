@@ -1,0 +1,180 @@
+{
+  "name": "PortfolioProject",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "slug": {
+      "type": "string"
+    },
+    "client_name": {
+      "type": "string"
+    },
+    "client_website_url": {
+      "type": "string"
+    },
+    "website_public": {
+      "type": "boolean",
+      "default": false
+    },
+    "website_link_status": {
+      "type": "string",
+      "enum": [
+        "unchecked",
+        "reachable",
+        "redirecting",
+        "error",
+        "timeout",
+        "manual_hold"
+      ],
+      "default": "unchecked"
+    },
+    "website_last_checked": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "website_override_note": {
+      "type": "string"
+    },
+    "industry": {
+      "type": "string"
+    },
+    "location_served": {
+      "type": "string"
+    },
+    "project_year": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "published",
+        "archived"
+      ],
+      "default": "draft"
+    },
+    "is_featured": {
+      "type": "boolean",
+      "default": false
+    },
+    "order": {
+      "type": "number",
+      "default": 0
+    },
+    "confidential": {
+      "type": "boolean",
+      "default": false
+    },
+    "nda_sensitive": {
+      "type": "boolean",
+      "default": false
+    },
+    "visibility_reviewed": {
+      "type": "boolean",
+      "default": false
+    },
+    "service_categories": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "deliverable_categories": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "primary_service_category": {
+      "type": "string"
+    },
+    "related_project_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "short_summary": {
+      "type": "string"
+    },
+    "challenge": {
+      "type": "string"
+    },
+    "objectives": {
+      "type": "string"
+    },
+    "scope_of_work": {
+      "type": "string"
+    },
+    "strategy": {
+      "type": "string"
+    },
+    "deliverables": {
+      "type": "string"
+    },
+    "results": {
+      "type": "string"
+    },
+    "testimonial": {
+      "type": "string"
+    },
+    "testimonial_source": {
+      "type": "string"
+    },
+    "credit_notes": {
+      "type": "string"
+    },
+    "internal_notes": {
+      "type": "string"
+    },
+    "seo_title": {
+      "type": "string"
+    },
+    "meta_description": {
+      "type": "string"
+    },
+    "canonical_url": {
+      "type": "string"
+    },
+    "og_title": {
+      "type": "string"
+    },
+    "og_description": {
+      "type": "string"
+    },
+    "og_image_url": {
+      "type": "string"
+    },
+    "seo_keywords": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "title",
+    "client_name"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

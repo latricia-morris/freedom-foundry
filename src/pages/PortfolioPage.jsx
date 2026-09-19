@@ -1,61 +1,197 @@
-import React from 'react';
-import { ArrowRight, CircleDashed, LockKeyhole } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { ArrowRight, CircleDashed, LoaderCircle } from 'lucide-react';
+import { base44 } from '@/api/base44Client';
+import PortfolioCard from '@/components/portfolio/PortfolioCard';
+import { DELIVERABLE_CATEGORIES, SERVICE_CATEGORIES } from '@/lib/portfolioData';
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 export default function PortfolioPage() {
+  const [items, setItems] = useState(null);
+  const [failed, setFailed] = useState(false);
+  const [service, setService] = useState('All Work');
+  const [industry, setIndustry] = useState('');
+  const [deliverable, setDeliverable] = useState('');
+  const [featuredOnly, setFeaturedOnly] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    base44.functions.invoke('portfolio-public', { action: 'list' })
+      .then((response) => { if (active) setItems(response?.data?.items || []); })
+      .catch(() => { if (active) setFailed(true); });
+    return () => { active = false; };
+  }, []);
+
+  const industries = useMemo(
+    () => [...new Set((items || []).map((i) => i.industry).filter(Boolean))].sort(),
+    [items],
+  );
+
+  const filtered = useMemo(() => {
+    if (!items) return [];
+    return items.filter((item) => {
+      if (service !== 'All Work' && !(item.service_categories || []).includes(service)) return false;
+      if (industry && item.industry !== industry) return false;
+      if (deliverable && !(item.deliverable_categories || []).includes(deliverable)) return false;
+      if (featuredOnly && !item.is_featured) return false;
+      return true;
+    });
+  }, [items, service, industry, deliverable, featuredOnly]);
+
   return (
-    <div className="min-h-[100dvh] bg-[#f4ecdf] text-[#241a20]">
-      <header className="border-b border-[#6f282e]/15 bg-[#f8f1e7]/90">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-5 px-5 py-5 lg:px-8">
-          <Link to="/" data-testid="link-portfolio-home" className="flex items-center gap-3">
+    <div className="min-h-[100dvh]">
+      <header className="border-b border-border bg-[#100e0c]/90 backdrop-blur">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-5 px-5 py-5 sm:px-8">
+          <Link to="/" className="flex items-center gap-3">
             <img src={`${basePath}/forge-logo.png`} alt="Freedom Foundry" className="h-10 w-10 rounded-xl object-cover" />
-            <div className="leading-tight"><p className="font-heading text-lg tracking-[0.04em]">FREEDOM FOUNDRY</p><p className="text-[10px] uppercase tracking-[0.22em] text-[#7c3130]">By The Brand Revivalist®</p></div>
+            <div className="leading-tight">
+              <p className="font-heading text-lg tracking-[0.04em] text-foreground">FREEDOM FOUNDRY</p>
+              <p className="text-[10px] uppercase tracking-[0.22em] text-primary/80">By The Brand Revivalist®</p>
+            </div>
           </Link>
           <nav aria-label="Portfolio navigation" className="flex items-center gap-5 text-sm">
-            <Link to="/services" data-testid="link-portfolio-services" className="text-[#603338] transition-colors hover:text-[#a23835]">Services</Link>
-            <Link to="/sign-in" data-testid="link-portfolio-sign-in" className="text-[#603338] transition-colors hover:text-[#a23835]">Sign in</Link>
-            <Link to="/sign-up" data-testid="link-portfolio-create-account" className="border border-[#7c3130]/35 px-4 py-2 text-[#6f282e] transition-colors hover:border-[#7c3130] hover:bg-[#ead5c0]">Create account</Link>
+            <Link to="/services" className="text-muted-foreground transition-colors hover:text-primary">Services</Link>
+            <Link to="/login" className="text-muted-foreground transition-colors hover:text-primary">Sign in</Link>
+            <Link to="/register" className="rounded-sm border border-primary/40 px-4 py-2 text-primary transition-colors hover:border-primary hover:bg-primary/10">Create account</Link>
           </nav>
         </div>
       </header>
 
-      <main>
-        <section className="mx-auto max-w-7xl px-5 pb-16 pt-20 sm:pb-24 sm:pt-28 lg:px-8">
-          <div className="max-w-4xl">
-            <p className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.28em] text-[#a23835]"><span className="h-px w-10 bg-[#a23835]" />Portfolio</p>
-            <h1 className="mt-7 font-heading text-6xl font-light leading-[0.93] sm:text-7xl lg:text-[7rem]">The work is being <span className="italic text-[#9d3a34]">curated.</span></h1>
-            <p className="mt-8 max-w-2xl text-lg leading-8 text-[#57434a]">There are not yet any published case studies in Freedom Foundry. We are shaping this space carefully rather than filling it with placeholders.</p>
+      <section className="mx-auto max-w-6xl px-5 pb-10 pt-14 sm:px-8 sm:pt-20">
+        <p className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.28em] text-primary/90">
+          <span className="h-px w-10 bg-primary" /> Portfolio
+        </p>
+        <h1 className="mt-6 font-heading text-5xl font-light leading-[0.98] text-foreground sm:text-7xl">
+          Selected <span className="molten-text italic">work.</span>
+        </h1>
+        <p className="mt-6 max-w-2xl text-base leading-8 text-muted-foreground">
+          A curated case-study library from The Brand Revivalist® and Ox &amp; Iron Co. — brand strategy, identity,
+          and digital work, shown with the thinking that shaped it.
+        </p>
+      </section>
+
+      {items === null && !failed && (
+        <div className="flex justify-center py-20">
+          <LoaderCircle className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      )}
+
+      {items !== null && items.length > 0 && (
+        <>
+          <div className="sticky top-0 z-20 border-y border-border bg-[#100e0c]/90 backdrop-blur">
+            <div className="mx-auto max-w-6xl px-5 py-3 sm:px-8">
+              <div className="flex flex-wrap gap-2" role="group" aria-label="Service filters">
+                {['All Work', ...SERVICE_CATEGORIES].map((label) => {
+                  const active = service === label;
+                  return (
+                    <button
+                      key={label}
+                      type="button"
+                      onClick={() => setService(label)}
+                      aria-pressed={active}
+                      className={`rounded-sm px-3 py-1.5 text-xs tracking-wide transition-colors ${
+                        active
+                          ? 'btn-forge font-semibold'
+                          : 'border border-border text-muted-foreground hover:border-primary/40 hover:text-foreground'
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="mt-3 flex flex-wrap items-center gap-3 text-sm">
+                <select
+                  value={industry}
+                  onChange={(e) => setIndustry(e.target.value)}
+                  aria-label="Filter by industry"
+                  className="admin-input w-auto py-1.5 text-xs"
+                >
+                  <option value="">All industries</option>
+                  {industries.map((name) => <option key={name} value={name}>{name}</option>)}
+                </select>
+                <select
+                  value={deliverable}
+                  onChange={(e) => setDeliverable(e.target.value)}
+                  aria-label="Filter by deliverable"
+                  className="admin-input w-auto py-1.5 text-xs"
+                >
+                  <option value="">All deliverables</option>
+                  {DELIVERABLE_CATEGORIES.map((name) => <option key={name} value={name}>{name}</option>)}
+                </select>
+                <button
+                  type="button"
+                  onClick={() => setFeaturedOnly((v) => !v)}
+                  aria-pressed={featuredOnly}
+                  className={`rounded-sm px-3 py-1.5 text-xs tracking-wide transition-colors ${
+                    featuredOnly
+                      ? 'btn-forge font-semibold'
+                      : 'border border-border text-muted-foreground hover:border-primary/40 hover:text-foreground'
+                  }`}
+                >
+                  Featured work
+                </button>
+                <span className="ml-auto text-xs text-muted-foreground/70">
+                  {filtered.length} {filtered.length === 1 ? 'project' : 'projects'}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <section className="mx-auto max-w-6xl px-5 py-12 sm:px-8">
+            {filtered.length === 0 ? (
+              <p className="py-16 text-center text-sm text-muted-foreground">
+                No projects match that selection yet.
+              </p>
+            ) : (
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {filtered.map((project) => <PortfolioCard key={project.id} project={project} />)}
+              </div>
+            )}
+          </section>
+        </>
+      )}
+
+      {items !== null && items.length === 0 && (
+        <section className="mx-auto max-w-6xl px-5 pb-20 sm:px-8">
+          <div className="dashboard-card ember-glow relative overflow-hidden p-10 sm:p-14">
+            <div className="absolute -right-16 -bottom-16 h-64 w-64 ember-glow-bg" />
+            <div className="relative z-10 max-w-2xl">
+              <CircleDashed className="h-8 w-8 text-primary" strokeWidth={1.4} />
+              <h2 className="mt-6 font-heading text-4xl font-light text-foreground sm:text-5xl">
+                The work is being <span className="molten-text italic">curated.</span>
+              </h2>
+              <p className="mt-5 text-base leading-7 text-muted-foreground">
+                Case studies are being shaped carefully rather than filled with placeholders. Until then, you can
+                get a feel for the kind of work the Foundry is built to hold.
+              </p>
+              <Link
+                to="/services"
+                className="btn-forge mt-8 inline-flex items-center gap-3 rounded-md px-5 py-3.5 text-sm font-semibold"
+              >
+                Learn about services <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
           </div>
         </section>
+      )}
 
-        <section className="border-y border-[#f4ecdf]/20 bg-[#70272d]">
-          <div className="mx-auto grid max-w-7xl gap-12 px-5 py-14 sm:py-20 lg:grid-cols-[.8fr_1.2fr] lg:px-8">
-            <div className="flex items-start gap-4 text-[#f5d9bd]"><CircleDashed className="mt-1 h-7 w-7 shrink-0" strokeWidth={1.4} /><p className="text-sm uppercase tracking-[0.2em]">Published work<br />coming together</p></div>
-            <div><h2 className="max-w-2xl font-heading text-4xl leading-tight text-[#fff2e3] sm:text-5xl">A portfolio should show the thinking, not just the finish line.</h2><p className="mt-6 max-w-xl text-base leading-7 text-[#efd6c2]">When case studies are ready to publish, this is where they will live. Until then, you can get a feel for the kind of support the Foundry is built to hold.</p></div>
+      {failed && (
+        <p className="py-20 text-center text-sm text-muted-foreground">
+          The portfolio could not be loaded. Please refresh in a moment.
+        </p>
+      )}
+
+      <footer className="mt-10 border-t border-border">
+        <div className="mx-auto flex max-w-6xl flex-wrap justify-between gap-4 px-5 py-9 text-sm text-muted-foreground sm:px-8">
+          <span>© {new Date().getFullYear()} The Brand Revivalist®</span>
+          <div className="flex gap-5">
+            <Link to="/" className="hover:text-primary">Home</Link>
+            <Link to="/privacy" className="hover:text-primary">Privacy</Link>
+            <Link to="/terms" className="hover:text-primary">Terms</Link>
           </div>
-        </section>
-
-        <section className="mx-auto max-w-7xl px-5 py-16 sm:py-24 lg:px-8">
-          <div className="grid gap-6 lg:grid-cols-[1.15fr_.85fr]">
-            <article className="border border-[#7c3130]/20 bg-[#fbf6ee] p-7 sm:p-10">
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#a23835]">For the work in front of you</p>
-              <h2 className="mt-5 max-w-xl font-heading text-4xl leading-tight text-[#2c1d23] sm:text-5xl">Find a considered next move.</h2>
-              <p className="mt-5 max-w-xl text-base leading-7 text-[#57434a]">The Services Hub helps members choose a direction, explore the shape of the work, and start a conversation without committing to a package.</p>
-              <Link to="/services" data-testid="link-learn-services" className="mt-8 inline-flex items-center gap-3 bg-[#7c3130] px-5 py-3.5 text-sm font-semibold text-[#fff4e8] transition-colors hover:bg-[#922f31]">Learn about services <ArrowRight className="h-4 w-4" /></Link>
-            </article>
-            <article className="flex flex-col justify-between border border-[#7c3130]/20 bg-[#ead5c0] p-7 sm:p-10">
-              <div><LockKeyhole className="h-6 w-6 text-[#7c3130]" strokeWidth={1.5} /><h2 className="mt-8 font-heading text-3xl leading-tight text-[#321d25]">Make the Foundry yours.</h2><p className="mt-4 text-base leading-7 text-[#5f4147]">Create an account to keep your brand work, resources, and next steps in one private place.</p></div>
-              <Link to="/sign-up" data-testid="link-portfolio-sign-up" className="mt-10 inline-flex items-center gap-3 text-sm font-semibold text-[#7c3130] transition-colors hover:text-[#a23835]">Create an account <ArrowRight className="h-4 w-4" /></Link>
-            </article>
-          </div>
-        </section>
-      </main>
-
-      <footer className="mx-auto flex max-w-7xl flex-wrap justify-between gap-4 border-t border-[#7c3130]/15 px-5 py-9 text-sm text-[#75565d] lg:px-8">
-        <span>© {new Date().getFullYear()} The Brand Revivalist®</span>
-        <div className="flex gap-5"><Link to="/" data-testid="link-portfolio-footer-home" className="hover:text-[#7c3130]">Home</Link><Link to="/privacy" data-testid="link-portfolio-footer-privacy" className="hover:text-[#7c3130]">Privacy</Link><Link to="/terms" data-testid="link-portfolio-footer-terms" className="hover:text-[#7c3130]">Terms</Link></div>
+        </div>
       </footer>
     </div>
   );

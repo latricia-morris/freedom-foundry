@@ -1,0 +1,61 @@
+{
+  "name": "SeoKeyword",
+  "type": "object",
+  "properties": {
+    "website": {
+      "type": "string"
+    },
+    "topic": {
+      "type": "string"
+    },
+    "keyword": {
+      "type": "string"
+    },
+    "search_intent": {
+      "type": "string"
+    },
+    "difficulty": {
+      "type": "string"
+    },
+    "volume": {
+      "type": "number"
+    },
+    "cpc": {
+      "type": "number"
+    },
+    "serp_features": {
+      "type": "string"
+    },
+    "current_rank_position": {
+      "type": "string"
+    },
+    "recommended_action": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "keyword"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
