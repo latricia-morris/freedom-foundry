@@ -5,7 +5,7 @@ export default function ActivityCard({ activities = [] }) {
   const items = activities;
 
   return (
-    <div className="dash-editorial-block h-full rounded-sm opacity-95">
+    <div className="dash-editorial-block h-full opacity-100">
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-2">
           <ActivityIcon className="w-4 h-4" style={{ stroke: 'url(#warmGradient)' }} strokeWidth={1.5} />
