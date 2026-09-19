@@ -72,7 +72,16 @@ export default function AdminPortfolioEditor() {
     if (!form) return;
     setSaving(true);
     try {
-      const payload = Object.fromEntries(EDITABLE_FIELDS.map((key) => [key, form[key] ?? (Array.isArray(form[key]) ? [] : '')]));
+      const ARRAY_FIELDS = ['service_categories', 'deliverable_categories', 'related_project_ids'];
+      const payload = {};
+      EDITABLE_FIELDS.forEach((key) => {
+        const value = form[key];
+        if (ARRAY_FIELDS.includes(key)) {
+          if (Array.isArray(value)) payload[key] = value;
+        } else if (value !== undefined && value !== null) {
+          payload[key] = value;
+        }
+      });
       if (isNew) {
         const created = await base44.entities.PortfolioProject.create(payload);
         toast({ title: 'Project created as a draft.' });
@@ -96,6 +105,8 @@ export default function AdminPortfolioEditor() {
     setForm((prev) => ({ ...prev, status }));
     toast({ title: status === 'published' ? 'Case study published.' : `Status set to ${status}.` });
   };
+
+  const mergeForm = (next) => setForm((prev) => ({ ...prev, ...next }));
 
   const checkWebsite = async () => {
     try {
@@ -174,7 +185,7 @@ export default function AdminPortfolioEditor() {
       {tab === 'content' && (
         <ProjectContentForm
           form={form}
-          onChange={setForm}
+          onChange={mergeForm}
           projects={projects}
           onCheckWebsite={checkWebsite}
           checking={false}
@@ -187,7 +198,7 @@ export default function AdminPortfolioEditor() {
       {tab === 'seo' && (
         <PortfolioSeoPanel
           form={form}
-          onChange={setForm}
+          onChange={mergeForm}
           assets={assets}
           onSetStatus={setStatus}
           slugTaken={slugTaken}

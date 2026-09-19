@@ -57,7 +57,7 @@ export default function ProjectContentForm({ form, onChange, projects, onCheckWe
             <input className="admin-input" value={form.title || ''} onChange={set('title')} placeholder="Full rebrand & identity system" />
           </Field>
           <Field label="Client / company name">
-            <input className="admin-input" value={form.client_name || ''} onChange={set('client_name')} />
+            <input className="admin-input" value={form.client_name || ''} onChange={set('client_name')} placeholder="Client or company name" />
           </Field>
           <Field label="URL slug" hint={slugTaken ? '⚠ This slug is already used by another project.' : 'Used in the public case-study URL: /portfolio/your-slug'}>
             <div className="flex gap-2">
