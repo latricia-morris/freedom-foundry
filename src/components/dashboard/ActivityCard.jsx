@@ -5,7 +5,7 @@ export default function ActivityCard({ activities = [] }) {
   const items = activities;
 
   return (
-    <div className="dash-editorial-block h-full">
+    <div className="dash-editorial-block h-full rounded-sm opacity-95">
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-2">
           <ActivityIcon className="w-4 h-4" style={{ stroke: 'url(#warmGradient)' }} strokeWidth={1.5} />
@@ -25,10 +25,10 @@ export default function ActivityCard({ activities = [] }) {
                 <p className="text-sm">{item.description}</p>
                 <p className="text-xs mt-0.5" style={{ color: '#8a8a92' }}>{item.time}</p>
               </div>
-            </div>
-          );
+            </div>);
+
         })}
       </div>
-    </div>
-  );
+    </div>);
+
 }
