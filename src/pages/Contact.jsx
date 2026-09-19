@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Facebook, Instagram, Linkedin, Youtube, Send, CheckCircle2 } from 'lucide-react';
 import apiClient from '@/api/client';
+import OfficeHours from '@/components/contact/OfficeHours';
 
 const TOPIC_OPTIONS = [
   { value: 'general', label: 'General question' },
@@ -12,18 +13,11 @@ const TOPIC_OPTIONS = [
 
 const BUSINESSES = [
   {
-    name: 'The Brand Revivalist',
+    name: 'The Brand Revivalist®',
     descriptor: 'Brand Consulting',
     description: 'Brand strategy, positioning, and messaging for founders ready to own their market.',
     url: 'https://thebrandrevivalist.com',
     linkLabel: 'thebrandrevivalist.com',
-  },
-  {
-    name: 'Ox & Iron, LLC',
-    descriptor: 'Design Agency',
-    description: 'Identity systems, print collateral, and digital design built to last.',
-    url: 'https://oxandiron.co',
-    linkLabel: 'oxandiron.co',
   },
 ];
 
@@ -86,7 +80,7 @@ export default function Contact() {
       <div className="mb-8">
         <h1 className="font-heading text-3xl lg:text-4xl font-light text-foreground">Get in Touch</h1>
         <p className="text-base text-muted-foreground mt-2">
-          Send a message and we'll reply by email — usually within two business days.
+          Send a message and we'll get back to you by email.
         </p>
       </div>
 
@@ -192,25 +186,25 @@ export default function Contact() {
         )}
       </section>
 
+      <OfficeHours />
+
       <section className="mt-10">
         <h2 className="font-heading text-xl text-foreground mb-4">Where to find us</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {BUSINESSES.map((business) => (
-            <div key={business.name} className="bg-card border border-border rounded-lg p-5">
-              <h3 className="font-heading text-lg text-foreground">{business.name}</h3>
-              <p className="text-xs uppercase tracking-[0.15em] text-primary mt-1 mb-2">{business.descriptor}</p>
-              <p className="text-sm text-muted-foreground leading-relaxed mb-3">{business.description}</p>
-              <a
-                href={business.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm text-primary hover:opacity-80 transition-opacity"
-              >
-                {business.linkLabel} →
-              </a>
-            </div>
-          ))}
-        </div>
+        {BUSINESSES.map((business) => (
+          <div key={business.name} className="bg-card border border-border rounded-lg p-5">
+            <h3 className="font-heading text-lg text-foreground">{business.name}</h3>
+            <p className="text-xs uppercase tracking-[0.15em] text-primary mt-1 mb-2">{business.descriptor}</p>
+            <p className="text-sm text-muted-foreground leading-relaxed mb-3">{business.description}</p>
+            <a
+              href={business.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-primary hover:opacity-80 transition-opacity"
+            >
+              {business.linkLabel} →
+            </a>
+          </div>
+        ))}
       </section>
 
       <section className="mt-10 pt-8 border-t border-border">

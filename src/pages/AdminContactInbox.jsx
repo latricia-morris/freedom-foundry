@@ -70,7 +70,7 @@ export default function AdminContactInbox() {
       try {
         await apiClient.integrations.Core.SendEmail({
           to: sub.email,
-          subject: 'A reply from The Brand Revivalist',
+          subject: 'A reply from The Brand Revivalist®',
           text: `Hi ${sub.first_name},\n\n${text}\n\n— The Brand Revivalist®`,
         });
       } catch { emailed = false; }
