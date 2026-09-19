@@ -388,10 +388,12 @@ function quizResult(row) {
   if (!row) return null;
   return {
     id: row.id,
+    brandView: row.brand_view,
     primaryArchetype: row.primary_archetype,
     primaryScore: row.primary_score,
     secondaryArchetype: row.secondary_archetype,
     secondaryScore: row.secondary_score,
+    scores: row.scores,
     createdAt: row.created_date,
   };
 }
@@ -414,6 +416,13 @@ export const quiz = {
     if (!me) return null;
     const rows = await baseEntities.PersonaQuizAttempt.filter({ user_id: me.id }, '-created_date', 1).catch(() => []);
     return quizResult((rows || [])[0]);
+  },
+  async getLatestForView(view) {
+    const me = await base44.auth.me().catch(() => null);
+    if (!me) return null;
+    const rows = await baseEntities.PersonaQuizAttempt.filter({ user_id: me.id }, '-created_date', 25).catch(() => []);
+    const match = (rows || []).find((row) => row.brand_view === view || row.brand_view === 'one_and_the_same') || null;
+    return quizResult(match);
   },
   async getHistory() {
     const me = await base44.auth.me().catch(() => null);

@@ -3,6 +3,7 @@ import { questions, scoreQuizAnswers } from './definition.ts';
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const expirationMs = 1000 * 60 * 60 * 24 * 7;
+const BRAND_VIEWS = ['personal', 'corporate', 'one_and_the_same'];
 
 function parseAnswers(value) {
   if (!Array.isArray(value) || value.length !== questions.length ||
@@ -14,10 +15,12 @@ function result(record) {
   if (!record) return null;
   return {
     id: record.id,
+    brandView: record.brand_view,
     primaryArchetype: record.primary_archetype,
     primaryScore: record.primary_score,
     secondaryArchetype: record.secondary_archetype,
     secondaryScore: record.secondary_score,
+    scores: record.scores,
     createdAt: record.created_date,
   };
 }
@@ -58,6 +61,7 @@ export default async function(req) {
       const answers = parseAnswers(payload.answers);
       const firstName = typeof payload.firstName === 'string' ? payload.firstName.trim() : '';
       let email = typeof payload.email === 'string' ? payload.email.trim().toLowerCase() : '';
+      const brandView = BRAND_VIEWS.includes(payload.brandView) ? payload.brandView : 'personal';
       if (!answers || firstName.length < 1 || firstName.length > 100 || !emailPattern.test(email) || email.length > 320) {
         return Response.json({ error: 'Exactly 18 valid answers, a first name, and a valid email are required' }, { status: 400 });
       }
@@ -76,6 +80,7 @@ export default async function(req) {
           first_name: firstName,
           email,
           marketing_consent: true,
+          brand_view: brandView,
           answers,
           scores: scored.scores,
           primary_archetype: scored.primary,
@@ -98,6 +103,7 @@ export default async function(req) {
         first_name: firstName,
         email,
         marketing_consent: true,
+        brand_view: brandView,
         answers,
         scores: scored.scores,
         primary_archetype: scored.primary,

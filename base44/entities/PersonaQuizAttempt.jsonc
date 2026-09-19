@@ -12,6 +12,15 @@
       "type": "boolean",
       "default": false
     },
+    "brand_view": {
+      "type": "string",
+      "enum": [
+        "personal",
+        "corporate",
+        "one_and_the_same"
+      ],
+      "default": "personal"
+    },
     "answers": {
       "type": "array",
       "items": {

@@ -28,6 +28,7 @@ export default function BrandPersonaQuiz() {
   const [submitting, setSubmitting] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [marketingConsent, setMarketingConsent] = useState(false);
+  const [brandView, setBrandView] = useState(null);
   const navigate = useNavigate();
   const { toast } = useToast();
   const { isAuthenticated, user } = useAuth();
@@ -112,6 +113,7 @@ export default function BrandPersonaQuiz() {
         email: email.trim(),
         answers: answerArray,
         marketingConsent,
+        brandView: brandView || 'personal',
       });
       
       if (isAuthenticated) {
@@ -141,6 +143,44 @@ export default function BrandPersonaQuiz() {
   }
 
   const currentQuestion = !isGate ? definition.questions[currentStep] : null;
+
+  if (!brandView) {
+    const options = [
+      { value: 'personal', label: 'Personal Brand', desc: "I'm answering for my personal brand — my name, my voice, my identity." },
+      { value: 'corporate', label: 'Corporate Brand', desc: "I'm answering for my company or business brand." },
+      { value: 'one_and_the_same', label: 'One in the Same', desc: 'My personal brand and my business brand are the same thing.' },
+    ];
+    return (
+      <div className="relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden bg-[#100e0c] px-4 py-10 font-sans">
+        <div className="absolute inset-0 pointer-events-none opacity-40">
+          <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-[#d9622c]/10 blur-[120px]" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-[#9f1f28]/10 blur-[100px]" />
+        </div>
+        <div className="relative z-10 w-full max-w-xl text-center">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#d9622c]">Before we begin</p>
+          <h1 className="mt-3 font-heading text-3xl font-light leading-tight text-[#f7f2ea] sm:text-4xl">
+            Will you be answering this quiz from the view of your <span className="italic">personal</span> or <span className="italic">corporate</span> brand?
+          </h1>
+          <div className="mt-8 space-y-3">
+            {options.map((opt) => (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => setBrandView(opt.value)}
+                className="group flex w-full items-center justify-between gap-3 rounded-xl border border-white/[0.1] bg-white/[0.035] px-5 py-4 text-left transition-all hover:border-[#d9622c]/60 hover:bg-white/[0.075]"
+              >
+                <span>
+                  <span className="block text-base font-semibold text-white/90">{opt.label}</span>
+                  <span className="mt-0.5 block text-sm text-white/50">{opt.desc}</span>
+                </span>
+                <ArrowRight className="h-4 w-4 shrink-0 text-[#d9622c] opacity-0 transition-opacity group-hover:opacity-100" />
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative flex h-[100dvh] min-h-0 flex-col overflow-hidden bg-[#100e0c] font-sans">
@@ -318,7 +358,7 @@ export default function BrandPersonaQuiz() {
                     <button
                       type="submit"
                       disabled={submitting}
-                      className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#9f1f28] via-[#d9622c] to-[#e6c695] font-semibold tracking-wide text-white shadow-[0_10px_26px_rgba(217,98,44,0.2)] transition hover:-translate-y-0.5 hover:brightness-110 disabled:cursor-wait disabled:opacity-70 sm:h-14"
+                      className="btn-forge flex h-12 w-full items-center justify-center gap-2 rounded-xl font-semibold tracking-wide shadow-[0_10px_26px_rgba(217,98,44,0.2)] transition hover:-translate-y-0.5 disabled:cursor-wait disabled:opacity-70 sm:h-14"
                     >
                       {submitting ? <LoaderCircle className="h-5 w-5 animate-spin" /> : <>Reveal My Persona <ArrowRight className="h-5 w-5" /></>}
                     </button>

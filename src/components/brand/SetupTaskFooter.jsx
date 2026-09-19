@@ -67,8 +67,7 @@ export default function SetupTaskFooter({ taskKey, form, onSave }) {
       <button
         onClick={handleComplete}
         disabled={saving}
-        className="flex items-center gap-2 px-6 py-2.5 rounded-lg text-xs uppercase tracking-widest text-white disabled:opacity-50 ml-auto"
-        style={{ background: 'linear-gradient(131deg, #b3232c, #d9622c, #f0d9b5)' }}
+        className="btn-forge flex items-center gap-2 px-6 py-2.5 rounded-lg text-xs uppercase tracking-widest disabled:opacity-50 ml-auto"
       >
         <Check className="w-4 h-4" /> {saving ? 'Saving...' : 'Complete'}
       </button>

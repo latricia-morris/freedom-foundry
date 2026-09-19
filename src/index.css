@@ -135,7 +135,18 @@
   }
 
   .forged-gradient {
-    background: linear-gradient(131deg, #b3232c, #d9622c, #f0d9b5);
+    background: linear-gradient(135deg, #e2662c, #9f1f28);
+  }
+
+  /* Solid orange-to-red gradient for all primary CTA buttons — no cream/white */
+  .btn-forge {
+    background: linear-gradient(135deg, #e2662c 0%, #9f1f28 100%);
+    color: #fff;
+    transition: filter 0.2s ease, transform 0.2s ease;
+  }
+
+  .btn-forge:hover:not(:disabled) {
+    filter: brightness(1.1);
   }
 
   .ember-glow {

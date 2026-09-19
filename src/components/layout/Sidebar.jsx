@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Vault as VaultIcon, Palette, Target, ClipboardList, Mic } from 'lucide-react';
+import { LayoutDashboard, Vault as VaultIcon, Palette, Target, ClipboardList, Mic, Shield } from 'lucide-react';
+import { useAuth } from '@/lib/AuthContext';
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
 
@@ -15,6 +16,8 @@ const navItems = [
 
 export default function Sidebar() {
   const location = useLocation();
+  const { user } = useAuth();
+  const items = user?.role === 'admin' ? [...navItems, { label: 'Admin', path: '/admin', icon: Shield }] : navItems;
   return (
     <aside className="hidden lg:flex fixed left-0 top-0 h-full w-64 flex-col bg-sidebar border-r border-sidebar-border z-40">
       <Link to="/" className="block p-6 border-b border-sidebar-border hover:bg-sidebar-accent/30 transition-colors">
@@ -32,7 +35,7 @@ export default function Sidebar() {
       </Link>
 
       <nav className="flex-1 overflow-y-auto py-4">
-        {navItems.map((item) => {
+        {items.map((item) => {
           const isActive = location.pathname === item.path || location.pathname.startsWith(`${item.path}/`);
           const Icon = item.icon;
           return (

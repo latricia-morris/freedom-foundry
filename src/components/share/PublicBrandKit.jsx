@@ -61,8 +61,8 @@ export function ShareSection({ eyebrow, children }) {
   );
 }
 
-function PublicLink({ label, href, description }) {
-  const safeUrl = safeHref(href);
+function PublicLink({ label, url, description }) {
+  const safeUrl = safeHref(url);
   if (!safeUrl) return null;
   return (
     <a
@@ -75,7 +75,7 @@ function PublicLink({ label, href, description }) {
         <span className="block truncate text-sm font-semibold text-[#29221e]">{label || 'Open link'}</span>
         {description && <span className="mt-0.5 block truncate text-xs text-[#655b54]">{description}</span>}
       </span>
-      <ArrowUpRight className="h-4 w-4 shrink-0 text-[#9a6242] transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+      <ArrowUpRight className="h-4 w-4 shrink-0 text-black transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
     </a>
   );
 }
@@ -95,7 +95,7 @@ function ColorSwatch({ color }) {
       <div className="p-3">
         <p className="truncate text-sm font-semibold text-[#29221e]">{color?.name || 'Brand color'}</p>
         <p className="mt-0.5 font-mono text-xs text-[#655b54]">{value || 'No hex value supplied'}</p>
-        {!valid && <p className="mt-2 flex items-center gap-1 text-xs text-[#9a6242]"><AlertTriangle className="h-3.5 w-3.5" /> Preview unavailable</p>}
+        {!valid && <p className="mt-2 flex items-center gap-1 text-xs text-black"><AlertTriangle className="h-3.5 w-3.5" /> Preview unavailable</p>}
       </div>
     </div>
   );
@@ -134,10 +134,10 @@ function AssetGallery({ assets, logos, headshots, moodboards }) {
   if (!assetsToDisplay.length) return null;
   return (
     <ShareSection eyebrow="Visual library">
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         {assetsToDisplay.map((asset, index) => !asset.safeUrl ? (
           <div key={`${asset.url}-${index}`} className="flex min-h-32 flex-col justify-between rounded-xl border border-dashed border-[#3b3028]/20 bg-white/50 p-4">
-            <AlertTriangle className="h-5 w-5 text-[#9a6242]" />
+            <AlertTriangle className="h-5 w-5 text-black" />
             <span>
               <span className="block text-sm font-semibold text-[#29221e]">{asset.label}</span>
               <span className="mt-1 block text-xs text-[#655b54]">Preview unavailable for this asset.</span>
@@ -150,7 +150,7 @@ function AssetGallery({ assets, logos, headshots, moodboards }) {
           </a>
         ) : (
           <a key={`${asset.url}-${index}`} href={asset.safeUrl} target="_blank" rel="noopener noreferrer" className="flex min-h-32 flex-col justify-between rounded-xl border border-[#3b3028]/12 bg-white p-4 transition-colors hover:border-[#9a6242]/40">
-            <FileText className="h-5 w-5 text-[#9a6242]" />
+            <FileText className="h-5 w-5 text-black" />
             <span>
               <span className="block text-sm font-semibold text-[#29221e]">{asset.label}</span>
               {asset.description && <span className="mt-1 block text-xs text-[#655b54]">{asset.description}</span>}
@@ -203,7 +203,7 @@ export default function PublicBrandKit({ data }) {
 
             {readableArray(brand.colors).length > 0 && (
               <ShareSection eyebrow="Color palette">
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-4">
                   {brand.colors.map((color, index) => <ColorSwatch key={`${color?.name || 'color'}-${index}`} color={color} />)}
                 </div>
               </ShareSection>
@@ -266,7 +266,7 @@ export default function PublicBrandKit({ data }) {
                 <div className="flex flex-wrap gap-3">
                   {contact.map(({ type, label, icon: Icon }) => {
                     const href = type === 'email' ? safeHref(label, 'email') : type === 'phone' ? safeHref(label, 'phone') : null;
-                    const content = <><Icon className="h-4 w-4 text-[#9a6242]" /><span>{label}</span></>;
+                    const content = <><Icon className="h-4 w-4 text-black" /><span>{label}</span></>;
                     return href ? <a key={type} href={href} className="inline-flex items-center gap-2 rounded-full border border-[#3b3028]/12 bg-white px-4 py-2 text-sm text-[#50453e] transition-colors hover:border-[#9a6242]/40">{content}</a> : <span key={type} className="inline-flex items-center gap-2 rounded-full border border-[#3b3028]/12 bg-white px-4 py-2 text-sm text-[#50453e]">{content}</span>;
                   })}
                 </div>
@@ -274,7 +274,7 @@ export default function PublicBrandKit({ data }) {
             )}
           </div>
         </div>
-        <p className="mt-6 flex items-center justify-center gap-2 text-center text-xs text-[#655b54]"><Check className="h-3.5 w-3.5 text-[#9a6242]" /> Shared via Freedom Foundry</p>
+        <p className="mt-6 flex items-center justify-center gap-2 text-center text-xs text-[#655b54]"><Check className="h-3.5 w-3.5 text-black" /> Shared via Freedom Foundry</p>
       </main>
     </div>
   );

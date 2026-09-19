@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { useMembership } from '@/lib/useMembership';
-import { Lock, Sparkles } from 'lucide-react';
-import apiClient from '@/api/client';
+import { Lock } from 'lucide-react';
 
 const sections = [
 { name: 'Big Picture', path: '/brand-portal/big-picture', desc: 'Your vision, mission, and brand direction.', open: true },
@@ -17,13 +16,6 @@ const sections = [
 
 export default function BrandPortal() {
   const { isClient, loading } = useMembership();
-  const [latestPersona, setLatestPersona] = useState(null);
-
-  useEffect(() => {
-    apiClient.quiz.getLatest()
-      .then(res => setLatestPersona(res))
-      .catch(() => setLatestPersona(null));
-  }, []);
 
   return (
     <div className="max-w-2xl animate-fade-in">
@@ -35,26 +27,6 @@ export default function BrandPortal() {
         <p className="text-base text-muted-foreground leading-relaxed max-w-md mb-6">
           Everything needed to build, communicate, and protect your brand, all in one place.
         </p>
-
-        {latestPersona && (
-          <div className="p-5 rounded-2xl border border-primary/20 bg-gradient-to-r from-primary/10 to-transparent flex items-start gap-4">
-            <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-1">
-               <Sparkles className="w-5 h-5 text-primary" />
-            </div>
-            <div>
-              <p className="text-[10px] uppercase tracking-widest text-primary mb-1">Active Archetype</p>
-              <h3 className="font-heading text-xl text-foreground mb-1">
-                 The {latestPersona.primaryArchetype}
-              </h3>
-              <p className="text-sm text-muted-foreground mb-3">
-                Secondary: {latestPersona.secondaryArchetype} · Completed {new Date(latestPersona.createdAt).toLocaleDateString()}
-              </p>
-              <Link to="/brand-persona-quiz/results" className="text-xs text-primary hover:text-foreground transition underline underline-offset-4">
-                View Full Diagnostic
-              </Link>
-            </div>
-          </div>
-        )}
       </div>
 
       <div className="space-y-3">

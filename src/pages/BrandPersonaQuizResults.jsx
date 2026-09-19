@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
 import { LoaderCircle, Lock, ArrowRight, ShieldCheck } from 'lucide-react';
 import apiClient from '@/api/client';
+import { ARCHETYPES, ARCHETYPE_ORDER, MAX_QUIZ_POINTS } from '@/lib/archetypeData';
 
 export default function BrandPersonaQuizResults() {
   const [searchParams] = useSearchParams();
@@ -120,36 +121,44 @@ export default function BrandPersonaQuizResults() {
       </div>
 
       <div className="max-w-4xl mx-auto relative z-10">
-        <div className="mb-12 text-center">
+        <div className="mb-12 text-center select-none" onCopy={(e) => e.preventDefault()}>
           <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#d9622c]/30 bg-[#d9622c]/10 text-xs uppercase tracking-widest text-[#f0d9b5] mb-6">
             <ShieldCheck className="w-4 h-4" /> Authenticated Result
           </span>
-          <h1 className="font-heading text-5xl md:text-6xl font-light text-white mb-4">
-            You are the <span className="italic bg-clip-text text-transparent bg-gradient-to-r from-[#e6c695] to-[#d9622c]">{result.primaryArchetype || 'Visionary'}</span>
+          <p className="font-heading text-[30px] leading-none font-light text-white/70 whitespace-nowrap">Your brand's archetype is:</p>
+          <h1 className="mt-3 font-heading text-6xl md:text-7xl font-light italic bg-clip-text text-transparent bg-gradient-to-r from-[#e6c695] to-[#d9622c]">
+            {result.primaryArchetype || 'Visionary'}
           </h1>
-          <p className="text-lg text-white/60 max-w-2xl mx-auto">
+          <p className="mt-4 text-lg text-white/60 max-w-2xl mx-auto">
             Your dominant brand archetype has been calculated based on your responses.
           </p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-6 mb-10">
           <div className="md:col-span-2 bg-black/40 border border-white/10 rounded-3xl p-8 backdrop-blur-md">
-            <h3 className="font-heading text-2xl text-[#f7f2ea] mb-4">Your Brand DNA</h3>
-            <div className="mb-6 flex items-center justify-between border-b border-white/10 pb-4">
-              <span className="text-white/70">Primary Archetype Score</span>
-              <span className="text-[#f0d9b5] font-medium">{result.primaryScore} points</span>
+            <h3 className="font-heading text-2xl text-[#f7f2ea] mb-5">Archetype Breakdown</h3>
+            <div className="space-y-3">
+              {ARCHETYPE_ORDER
+                .map((name) => ({ name, score: result.scores?.[name] ?? 0 }))
+                .sort((a, b) => b.score - a.score)
+                .map(({ name, score }) => {
+                  const pct = Math.round((score / MAX_QUIZ_POINTS) * 100);
+                  const isTop = name === result.primaryArchetype || name === result.secondaryArchetype;
+                  return (
+                    <div key={name}>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className={`text-sm ${isTop ? 'text-[#f0d9b5] font-medium' : 'text-white/60'}`}>{name}</span>
+                        <span className={`text-sm tabular-nums ${isTop ? 'text-[#f0d9b5] font-medium' : 'text-white/40'}`}>{pct}%</span>
+                      </div>
+                      <div className="h-1.5 w-full rounded-full bg-white/10 overflow-hidden">
+                        <div className="h-full rounded-full bg-gradient-to-r from-[#e2662c] to-[#9f1f28]" style={{ width: `${pct}%` }} />
+                      </div>
+                    </div>
+                  );
+                })}
             </div>
-            {result.secondaryArchetype && (
-              <div className="pt-2">
-                <p className="text-sm uppercase tracking-widest text-white/40 mb-2">Secondary Archetype</p>
-                <div className="flex items-center justify-between">
-                  <p className="text-xl text-[#f0d9b5] font-light">{result.secondaryArchetype}</p>
-                  <span className="text-white/70">{result.secondaryScore} points</span>
-                </div>
-              </div>
-            )}
           </div>
-          
+
           <div className="bg-gradient-to-b from-[#3a2119] to-black/60 border border-[#d9622c]/20 rounded-3xl p-8 flex flex-col justify-between">
             <div>
                <h3 className="font-heading text-xl text-[#f7f2ea] mb-2">Next Steps</h3>
@@ -161,6 +170,26 @@ export default function BrandPersonaQuizResults() {
             </Link>
           </div>
         </div>
+
+        {[result.primaryArchetype, result.secondaryArchetype].filter(Boolean).map((name) => {
+          const data = ARCHETYPES[name];
+          if (!data) return null;
+          return (
+            <div key={name} className="bg-black/40 border border-white/10 rounded-3xl p-8 mb-6 select-none" onCopy={(e) => e.preventDefault()}>
+              <p className="text-[10px] uppercase tracking-widest text-[#d9622c] mb-2">{name === result.primaryArchetype ? 'Primary' : 'Secondary'} Archetype</p>
+              <h3 className="font-heading text-2xl text-[#f7f2ea] mb-2">The {name}</h3>
+              <p className="text-sm italic text-white/50 mb-3">{data.slogan}</p>
+              <p className="text-sm text-white/70 leading-relaxed mb-3">{data.description}</p>
+              <p className="text-xs text-white/40">Sample brands: {data.brands.join(', ')}</p>
+              <Link to={`/brand-portal/archetype-guide?archetype=${encodeURIComponent(name)}`} className="mt-3 inline-block text-xs text-[#f0d9b5] hover:text-white transition underline underline-offset-4">
+                What does this mean?
+              </Link>
+            </div>
+          );
+        })}
+
+        <p className="text-center text-xs text-white/30 mb-10">Completed {new Date(result.createdAt).toLocaleDateString()}</p>
+
         {history.length > 1 && (
           <div className="mt-12">
             <h3 className="font-heading text-2xl text-[#f7f2ea] mb-6 text-center">Your Past Assessments</h3>
