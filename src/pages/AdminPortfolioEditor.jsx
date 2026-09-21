@@ -14,13 +14,14 @@ const EDITABLE_FIELDS = [
   'is_featured', 'confidential', 'nda_sensitive', 'visibility_reviewed',
   'work_types', 'detail_tags', 'primary_service_category',
   'related_project_ids', 'featured_image_url', 'featured_image_alt', 'before_after_pairs',
+  'section_order',
   'short_summary', 'challenge', 'objectives', 'scope_of_work', 'strategy', 'deliverables',
   'results', 'testimonial', 'testimonial_source', 'credit_notes', 'internal_notes',
   'seo_title', 'meta_description', 'canonical_url', 'og_title', 'og_description',
   'og_image_url', 'seo_keywords', 'target_keywords',
 ];
 
-const ARRAY_FIELDS = ['work_types', 'detail_tags', 'target_keywords', 'related_project_ids', 'before_after_pairs'];
+const ARRAY_FIELDS = ['work_types', 'detail_tags', 'target_keywords', 'related_project_ids', 'before_after_pairs', 'section_order'];
 
 const STATUS_STYLE = {
   draft: 'border-border text-muted-foreground',

@@ -20,7 +20,7 @@ export default function AdminPortfolioImport() {
   const [missing, setMissing] = useState([]);
 
   const pickFiles = (list) => {
-    setFiles((prev) => [...prev, ...[...list]].slice(0, 5));
+    setFiles((prev) => [...prev, ...[...list]]);
     if (fileRef.current) fileRef.current.value = '';
   };
   const removeFile = (index) => setFiles((prev) => prev.filter((_, i) => i !== index));
@@ -113,7 +113,7 @@ export default function AdminPortfolioImport() {
             />
           </label>
           <div>
-            <span className="mb-1.5 block text-xs uppercase tracking-widest text-muted-foreground">Reference files (brand guidelines, briefs, decks — up to 5)</span>
+            <span className="mb-1.5 block text-xs uppercase tracking-widest text-muted-foreground">Reference files (brand guidelines, briefs, decks)</span>
             <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-border px-4 py-2 text-xs uppercase tracking-widest text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground">
               <UploadCloud className="h-4 w-4" /> Attach files
               <input ref={fileRef} type="file" multiple className="hidden" onChange={(e) => pickFiles(e.target.files || [])} />

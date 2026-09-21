@@ -111,6 +111,12 @@
         "type": "string"
       }
     },
+    "section_order": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
     "featured_image_url": {
       "type": "string"
     },

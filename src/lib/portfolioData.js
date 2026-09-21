@@ -203,6 +203,67 @@ export function groupAssetsByFamily(assets) {
     .filter((family) => family.items.length > 0);
 }
 
+/* ── Story flow — the ordered case-study presentation hierarchy ───────────────
+ * A viewer wants to understand the work in this order: system first, identity
+ * next, digital expression after that, supporting extensions, then smaller
+ * collateral. Sections with nothing to show are simply omitted. */
+
+export const STORY_SECTIONS = [
+  {
+    key: 'system', label: 'Brand Guidelines & Brand System', colClass: 'sm:grid-cols-2 lg:grid-cols-3',
+    types: ['brand_guidelines', 'color_palette', 'typography', 'pattern_icons'],
+  },
+  {
+    key: 'logos', label: 'Logos & Brand Marks', colClass: 'sm:grid-cols-2 lg:grid-cols-3',
+    types: ['logo_primary', 'logo_alternate', 'logo_variations'],
+  },
+  {
+    key: 'web', label: 'Website & Digital Presence', colClass: 'sm:grid-cols-2',
+    types: ['web_screenshot', 'web_mobile', 'web_video', 'ux_ui', 'wireframes', 'email_templates'],
+  },
+  {
+    key: 'marketing', label: 'Marketing & Campaign Assets', colClass: 'sm:grid-cols-2 lg:grid-cols-3',
+    types: ['social_templates', 'social_graphics', 'ad_creative', 'digital_ads', 'campaign_visuals',
+      'flyers', 'brochures', 'pamphlets', 'sell_sheets', 'decks', 'reports', 'custom_documents'],
+  },
+  {
+    key: 'signage', label: 'Signage & Environmental', colClass: 'sm:grid-cols-2',
+    types: ['signage', 'environmental', 'event_materials'],
+  },
+  {
+    key: 'stationery', label: 'Business Cards & Stationery', colClass: 'sm:grid-cols-2 lg:grid-cols-3',
+    types: ['business_cards', 'letterhead'],
+  },
+  {
+    key: 'packaging', label: 'Packaging & Specialty Applications', colClass: 'sm:grid-cols-2',
+    types: ['packaging', 'labels'],
+  },
+  {
+    key: 'other', label: 'More From The Project', colClass: 'sm:grid-cols-2 lg:grid-cols-3',
+    types: [],
+  },
+];
+
+const STORY_SECTION_BY_TYPE = Object.fromEntries(
+  STORY_SECTIONS.flatMap((section) => section.types.map((type) => [type, section.key])),
+);
+
+export const DEFAULT_STORY_ORDER = STORY_SECTIONS.map((section) => section.key);
+
+/** Group assets into the story sections, honoring a stored custom section order. */
+export function groupAssetsByStory(assets, sectionOrder = []) {
+  const order = (Array.isArray(sectionOrder) ? sectionOrder : []).filter(Boolean);
+  const keys = [...new Set([...order, ...DEFAULT_STORY_ORDER])];
+  const grouped = new Map(STORY_SECTIONS.map((section) => [section.key, { ...section, items: [] }]));
+  for (const asset of assets || []) {
+    const key = STORY_SECTION_BY_TYPE[asset.asset_type] || 'other';
+    grouped.get(key).items.push(asset);
+  }
+  return keys
+    .map((key) => grouped.get(key))
+    .filter((section) => section && section.items.length > 0);
+}
+
 export function slugify(value) {
   return String(value || '')
     .toLowerCase()

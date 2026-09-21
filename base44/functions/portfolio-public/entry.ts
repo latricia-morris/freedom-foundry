@@ -118,6 +118,7 @@ function detailFields(project, publicAssets) {
     og_description: project.og_description || '',
     og_image_url: project.og_image_url || project.featured_image_url || '',
     website_url: websiteVisible(project) ? project.client_website_url : '',
+    section_order: Array.isArray(project.section_order) ? project.section_order : [],
   };
 }
 

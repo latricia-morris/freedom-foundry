@@ -5,6 +5,7 @@ import { Image } from '@/components/ui/image';
 import BulkAssetUpload from '@/components/admin/portfolio/BulkAssetUpload';
 import FeaturedImageCard from '@/components/admin/portfolio/FeaturedImageCard';
 import BeforeAfterPairing from '@/components/admin/portfolio/BeforeAfterPairing';
+import StorySectionOrderCard from '@/components/admin/portfolio/StorySectionOrderCard';
 import ClientSyncCard from '@/components/admin/portfolio/ClientSyncCard';
 import { ASSET_TYPES, ASSET_TYPE_LABELS, parseAssetFilename } from '@/lib/portfolioData';
 
@@ -243,6 +244,7 @@ export default function PortfolioAssetManager({ project, assets, onReload, onCha
         {error && <p className="text-sm text-destructive">{error}</p>}
       </div>
 
+      <StorySectionOrderCard form={project} onChange={onChange} />
       <BeforeAfterPairing form={project} assets={assets} onChange={onChange} />
     </div>
   );

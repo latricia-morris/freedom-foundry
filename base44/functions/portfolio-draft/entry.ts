@@ -55,17 +55,24 @@ const STRENGTH_INSTRUCTIONS = {
   strong: 'Rewrite from the facts. A full restructure is allowed, but no new facts may enter.',
 };
 
-async function fetchWebsiteText(url) {
+async function fetchPageText(url, timeoutMs = 10000) {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 10000);
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
     const res = await fetch(url, {
       signal: controller.signal,
       redirect: 'follow',
       headers: { 'User-Agent': 'Mozilla/5.0 (compatible; FreedomFoundryIntake/1.0)' },
     });
-    if (!res.ok) return { text: '', error: `The site returned ${res.status}.` };
+    if (!res.ok) return { text: '', title: '', metaDescription: '', links: [], error: `The site returned ${res.status}.` };
     const html = await res.text();
+    const title = ((html.match(/<title[^>]*>([\s\S]*?)<\/title>/i) || [])[1] || '').trim().slice(0, 200);
+    const metaDescription = (
+      (html.match(/<meta[^>]+name=["']description["'][^>]*content=["']([^"']*)["']/i) || [])[1]
+      || (html.match(/<meta[^>]+content=["']([^"']*)["'][^>]+name=["']description["']/i) || [])[1]
+      || ''
+    ).trim().slice(0, 400);
+    const links = [...html.matchAll(/<a[^>]+href=["']([^"'#]+)/gi)].map((m) => m[1]).slice(0, 200);
     const text = html
       .replace(/<script[\s\S]*?<\/script>/gi, ' ')
       .replace(/<style[\s\S]*?<\/style>/gi, ' ')
@@ -74,12 +81,43 @@ async function fetchWebsiteText(url) {
       .replace(/&amp;/g, '&')
       .replace(/\s+/g, ' ')
       .trim();
-    return { text: text.slice(0, 6000), error: '' };
+    return { text: text.slice(0, 6000), title, metaDescription, links, error: '' };
   } catch (error) {
-    return { text: '', error: error.name === 'AbortError' ? 'The site timed out.' : 'The site could not be fetched.' };
+    return {
+      text: '', title: '', metaDescription: '', links: [],
+      error: error.name === 'AbortError' ? 'A page timed out.' : 'The site could not be fetched.',
+    };
   } finally {
     clearTimeout(timer);
   }
+}
+
+/** Scrape the homepage plus up to three informative internal pages, so the
+ *  draft is grounded in what the company actually says about itself. */
+async function scrapeWebsite(url) {
+  const home = await fetchPageText(url);
+  if (!home.text) return { text: '', error: home.error || 'The site could not be fetched.' };
+  let origin = '';
+  try { origin = new URL(url).origin; } catch { origin = ''; }
+
+  const wanted = /(about|services|service|contact|what-we-do|our-work|team|mission|story|approach|process)/i;
+  const seen = new Set([url]);
+  const targets = [...new Set(
+    home.links
+      .map((href) => { try { return new URL(href, url).href; } catch { return ''; } })
+      .filter((href) => href && origin && href.startsWith(origin) && !seen.has(href) && wanted.test(href)),
+  )].slice(0, 3);
+
+  const pages = await Promise.all(targets.map((href) => fetchPageText(href, 8000)));
+  const parts = [
+    `Site title: ${home.title}`,
+    home.metaDescription ? `Site meta description: ${home.metaDescription}` : '',
+    `Homepage content (${url}):\n${home.text}`,
+  ];
+  pages.forEach((page, i) => {
+    if (page.text) parts.push(`Internal page (${targets[i]}):\n${page.text.slice(0, 3000)}`);
+  });
+  return { text: parts.filter(Boolean).join('\n\n').slice(0, 15000), error: '' };
 }
 
 function stringArray(value, max) {
@@ -101,7 +139,7 @@ export default async function(req) {
     if (action === 'intake') {
       const websiteUrl = typeof payload.website_url === 'string' ? payload.website_url.trim() : '';
       const description = typeof payload.description === 'string' ? payload.description.trim().slice(0, 2000) : '';
-      const fileUrls = stringArray(payload.file_urls, 5);
+      const fileUrls = stringArray(payload.file_urls, 40);
       if (!websiteUrl && !description && !fileUrls.length) {
         return Response.json({ error: 'Add a website URL, a description, or reference files first.' }, { status: 400 });
       }
@@ -109,9 +147,9 @@ export default async function(req) {
         return Response.json({ error: 'Enter a valid http(s) website URL.' }, { status: 400 });
       }
 
-      const site = websiteUrl ? await fetchWebsiteText(websiteUrl) : { text: '', error: '' };
+      const site = websiteUrl ? await scrapeWebsite(websiteUrl) : { text: '', error: '' };
       const context = [
-        site.text ? `Client website content (${websiteUrl}):\n${site.text}` : '',
+        site.text ? `Client website content, scraped from the site (${websiteUrl}):\n${site.text}` : '',
         description ? `Admin description of the engagement:\n${description}` : '',
         fileUrls.length ? 'Reference files are attached to this request.' : '',
       ].filter(Boolean).join('\n\n') || 'No source material was provided.';
