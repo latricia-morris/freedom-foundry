@@ -78,6 +78,10 @@ import AdminAgencyProposalBuilder from './pages/admin/agency/AdminAgencyProposal
 import AdminAgencyProjects from './pages/admin/agency/AdminAgencyProjects';
 import AdminAgencyProjectDetail from './pages/admin/agency/AdminAgencyProjectDetail';
 import AdminAgencyBuild from './pages/admin/agency/AdminAgencyBuild';
+import AdminClientDirectory from './pages/admin/agency/AdminClientDirectory';
+import AdminFinancialOverview from './pages/admin/agency/AdminFinancialOverview';
+import AdminResourceLibrary from './pages/admin/agency/AdminResourceLibrary';
+import AdminAuditLogs from './pages/admin/agency/AdminAuditLogs';
 import AdminNavLayout from '@/components/layout/AdminNavLayout';
 
 const AuthenticatedApp = () => {
@@ -176,6 +180,10 @@ const AuthenticatedApp = () => {
             <Route path="/admin/agency/projects" element={<AdminAgencyProjects />} />
             <Route path="/admin/agency/projects/:id" element={<AdminAgencyProjectDetail />} />
             <Route path="/admin/agency/agency-build" element={<AdminAgencyBuild />} />
+            <Route path="/client-directory" element={<AdminClientDirectory />} />
+            <Route path="/financial-overview" element={<AdminFinancialOverview />} />
+            <Route path="/resource-library" element={<AdminResourceLibrary />} />
+            <Route path="/audit-logs" element={<AdminAuditLogs />} />
             </Route>
           </Route>
         </Route>
