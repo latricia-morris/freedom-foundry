@@ -79,14 +79,32 @@ export function scoreLabel(score) {
   return 'Developing';
 }
 
-/** Latest report per distinct source model, newest first. */
+/**
+ * Stable "Model N" display labels that replace provider names. Sources are
+ * numbered by their earliest report date, so the numbering never shuffles.
+ */
+export function sourceModelLabels(reports) {
+  const earliest = new Map();
+  for (const r of reports || []) {
+    const key = r.source_model || 'Unlabeled source';
+    const t = r.report_date ? new Date(r.report_date).getTime() : Number.MAX_SAFE_INTEGER;
+    if (!earliest.has(key) || t < earliest.get(key)) earliest.set(key, t);
+  }
+  const ordered = [...earliest.entries()].sort((a, b) => a[1] - b[1]).map(([key]) => key);
+  const labels = {};
+  ordered.forEach((key, i) => { labels[key] = `Model ${i + 1}`; });
+  return labels;
+}
+
+/** Latest report per distinct source model, newest first, labeled "Model N". */
 export function latestPerSource(reports) {
+  const labels = sourceModelLabels(reports);
   const bySource = new Map();
   for (const r of reports || []) {
     const key = r.source_model || 'Unlabeled source';
     if (!bySource.has(key)) bySource.set(key, r);
   }
-  return [...bySource.entries()].map(([source, report]) => ({ source, report }));
+  return [...bySource.entries()].map(([source, report]) => ({ source: labels[source] || source, report }));
 }
 
 /** Categories where sources disagree by 4+ points. */
@@ -134,6 +152,7 @@ export function competitorsToText(competitors) {
  * every loaded report charts as its own series.
  */
 export function reportSeries(reports) {
+  const labels = sourceModelLabels(reports);
   const counts = {};
   for (const r of reports || []) {
     const base = r.source_model || 'Unlabeled source';
@@ -143,7 +162,8 @@ export function reportSeries(reports) {
   return (reports || []).map((r, i) => {
     const base = r.source_model || 'Unlabeled source';
     seen[base] = (seen[base] || 0) + 1;
-    const label = counts[base] > 1 ? `${base} · ${formatDate(r.report_date)}` : base;
+    const modelLabel = labels[base] || base;
+    const label = counts[base] > 1 ? `${modelLabel} · ${formatDate(r.report_date)}` : modelLabel;
     return { key: r.id || `report-${i}`, label, report: r, isBaseline: !!r.is_baseline };
   });
 }

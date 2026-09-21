@@ -7,6 +7,7 @@ const brandNav = [
   { label: 'Vault', path: '/vault' },
   { label: 'Brand Portal', path: '/brand-portal' },
   { label: 'Services', path: '/services' },
+  { label: 'Brand Health', path: '/digital-brand-health' },
 ];
 
 const agencyNav = [

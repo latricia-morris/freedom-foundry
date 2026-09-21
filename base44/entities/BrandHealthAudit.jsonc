@@ -1,0 +1,206 @@
+{
+  "name": "BrandHealthAudit",
+  "type": "object",
+  "properties": {
+    "agency_client_id": {
+      "type": "string"
+    },
+    "component": {
+      "type": "string",
+      "enum": [
+        "website_discoverability",
+        "conversion_readiness",
+        "marketing_matrix"
+      ]
+    },
+    "package_tier": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "requested",
+        "intake_received",
+        "scheduled",
+        "in_review",
+        "draft_complete",
+        "awaiting_consultant_review",
+        "published_to_client",
+        "archived"
+      ],
+      "default": "requested"
+    },
+    "intake_received_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "review_scheduled_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "info_requested_note": {
+      "type": "string"
+    },
+    "score": {
+      "type": "number"
+    },
+    "subscores": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "score": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "label"
+        ]
+      }
+    },
+    "consultant_summary": {
+      "type": "string"
+    },
+    "action_plan": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "string",
+            "enum": [
+              "critical",
+              "high",
+              "medium",
+              "opportunity"
+            ],
+            "default": "medium"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "open",
+              "in_progress",
+              "done"
+            ],
+            "default": "open"
+          }
+        },
+        "required": [
+          "title"
+        ]
+      }
+    },
+    "matrix_channels": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "channel": {
+            "type": "string"
+          },
+          "fit_note": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "channel"
+        ]
+      }
+    },
+    "matrix_stages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "stage": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "stage"
+        ]
+      }
+    },
+    "matrix_strategy_note": {
+      "type": "string"
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "screenshot",
+              "file",
+              "url",
+              "evidence_link"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "internal_only": {
+            "type": "boolean",
+            "default": false
+          }
+        },
+        "required": [
+          "title",
+          "url"
+        ]
+      }
+    },
+    "reviewed_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "published_at": {
+      "type": "string",
+      "format": "date"
+    }
+  },
+  "required": [
+    "agency_client_id",
+    "component"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

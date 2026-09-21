@@ -51,6 +51,7 @@ import IgniteOS from './pages/IgniteOS';
 import BrandUp from './pages/BrandUp';
 import BrandChecklist from './pages/BrandChecklist';
 import VisibilityScorecard from './pages/VisibilityScorecard';
+import DigitalBrandHealth from './pages/DigitalBrandHealth';
 
 // Admin pages
 import AdminDashboard from './pages/AdminDashboard';
@@ -83,6 +84,8 @@ import AdminClientDetail from './pages/admin/agency/AdminClientDetail';
 import AdminVisibilityReports from './pages/admin/agency/AdminVisibilityReports';
 import AdminVisibilityClientDetail from './pages/admin/agency/AdminVisibilityClientDetail';
 import AdminVisibilityPresent from './pages/admin/agency/AdminVisibilityPresent';
+import AdminBrandHealth from './pages/admin/brandHealth/AdminBrandHealth';
+import AdminBrandHealthAuditDetail from './pages/admin/brandHealth/AdminBrandHealthAuditDetail';
 import AdminFinancialOverview from './pages/admin/agency/AdminFinancialOverview';
 import AdminResourceLibrary from './pages/admin/agency/AdminResourceLibrary';
 import AdminAuditLogs from './pages/admin/agency/AdminAuditLogs';
@@ -147,6 +150,7 @@ const AuthenticatedApp = () => {
           <Route path="/podcast" element={<Podcast />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/billing" element={<Billing />} />
+          <Route path="/digital-brand-health" element={<DigitalBrandHealth />} />
           <Route element={<BrandPortalLayout />}>
             <Route path="/brand-portal" element={<BrandPortal />} />
             <Route path="/brand-portal/big-picture" element={<BigPicture />} />
@@ -181,6 +185,8 @@ const AuthenticatedApp = () => {
             <Route path="/admin/agency/clients/:id" element={<AdminClientDetail />} />
             <Route path="/admin/agency/visibility" element={<AdminVisibilityReports />} />
             <Route path="/admin/agency/visibility/:clientId" element={<AdminVisibilityClientDetail />} />
+            <Route path="/admin/brand-health" element={<AdminBrandHealth />} />
+            <Route path="/admin/brand-health/:auditId" element={<AdminBrandHealthAuditDetail />} />
             <Route path="/admin/agency/proposals" element={<AdminAgencyPipeline />} />
             <Route path="/admin/agency/templates" element={<AdminAgencyTemplates />} />
             <Route path="/admin/agency/proposals/new" element={<AdminAgencyProposalBuilder />} />

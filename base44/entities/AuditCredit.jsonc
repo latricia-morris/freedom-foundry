@@ -1,0 +1,78 @@
+{
+  "name": "AuditCredit",
+  "type": "object",
+  "properties": {
+    "audit_id": {
+      "type": "string"
+    },
+    "agency_client_id": {
+      "type": "string"
+    },
+    "amount_cents": {
+      "type": "number",
+      "default": 0
+    },
+    "credit_eligible": {
+      "type": "boolean",
+      "default": false
+    },
+    "expiration_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "qualifying_package": {
+      "type": "string"
+    },
+    "package_duration_months": {
+      "type": "number"
+    },
+    "total_credit_cents": {
+      "type": "number",
+      "default": 0
+    },
+    "monthly_credit_cents": {
+      "type": "number",
+      "default": 0
+    },
+    "applied_cents": {
+      "type": "number",
+      "default": 0
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "available",
+        "applied",
+        "expired",
+        "void",
+        "completed"
+      ],
+      "default": "available"
+    }
+  },
+  "required": [
+    "audit_id"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

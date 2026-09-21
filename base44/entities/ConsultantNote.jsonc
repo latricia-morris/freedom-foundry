@@ -1,0 +1,116 @@
+{
+  "name": "ConsultantNote",
+  "type": "object",
+  "properties": {
+    "audit_id": {
+      "type": "string"
+    },
+    "agency_client_id": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "body": {
+      "type": "string"
+    },
+    "component": {
+      "type": "string",
+      "enum": [
+        "digital_brand_health",
+        "website_discoverability",
+        "conversion_readiness",
+        "marketing_matrix"
+      ],
+      "default": "digital_brand_health"
+    },
+    "visibility": {
+      "type": "string",
+      "enum": [
+        "internal_only",
+        "client_facing"
+      ],
+      "default": "internal_only"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "opportunity",
+        "observation"
+      ],
+      "default": "observation"
+    },
+    "note_status": {
+      "type": "string",
+      "enum": [
+        "open",
+        "resolved"
+      ],
+      "default": "open"
+    },
+    "attachments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "screenshot",
+              "file",
+              "url",
+              "evidence_link"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "url"
+        ]
+      }
+    },
+    "pinned": {
+      "type": "boolean",
+      "default": false
+    },
+    "published_at": {
+      "type": "string",
+      "format": "date"
+    }
+  },
+  "required": [
+    "audit_id",
+    "body"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
