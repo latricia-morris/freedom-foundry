@@ -5,7 +5,10 @@ import { base44 } from '@/api/base44Client';
 import { useToast } from '@/components/ui/use-toast';
 import SubscoresEditor from '@/components/admin/brandHealth/SubscoresEditor';
 import ActionPlanEditor from '@/components/admin/brandHealth/ActionPlanEditor';
-import MatrixEditor from '@/components/admin/brandHealth/MatrixEditor';
+import MatrixScoresEditor from '@/components/admin/brandHealth/MatrixScoresEditor';
+import ChannelMatrixEditor from '@/components/admin/brandHealth/ChannelMatrixEditor';
+import JourneyCoverageEditor from '@/components/admin/brandHealth/JourneyCoverageEditor';
+import LeveragePanel from '@/components/admin/brandHealth/LeveragePanel';
 import EvidenceList from '@/components/admin/brandHealth/EvidenceList';
 import NotesPanel from '@/components/admin/brandHealth/NotesPanel';
 import CreditPanel from '@/components/admin/brandHealth/CreditPanel';
@@ -162,12 +165,10 @@ export default function AdminBrandHealthAuditDetail() {
         </label>
       </div>
 
-      {!isMatrix && (
-        <div className="dashboard-card mb-6 p-6">
-          <h3 className={SECTION_TITLE}>Client Intake</h3>
-          <IntakeViewer audit={audit} />
-        </div>
-      )}
+      <div className="dashboard-card mb-6 p-6">
+        <h3 className={SECTION_TITLE}>Client Intake</h3>
+        <IntakeViewer audit={audit} />
+      </div>
 
       {!isMatrix ? (
         <div className="dashboard-card mb-6 p-6">
@@ -198,10 +199,24 @@ export default function AdminBrandHealthAuditDetail() {
           <SubscoresEditor component={audit.component} subscores={audit.subscores} onSave={(rows) => updateAudit({ subscores: rows })} />
         </div>
       ) : (
-        <div className="dashboard-card mb-6 p-6">
-          <h3 className={SECTION_TITLE}>Marketing Matrix</h3>
-          <MatrixEditor audit={audit} onSave={(patch) => updateAudit(patch)} />
-        </div>
+        <>
+          <div className="dashboard-card mb-6 p-6">
+            <h3 className={SECTION_TITLE}>Matrix Measures &amp; Market Alignment Index</h3>
+            <MatrixScoresEditor audit={audit} onSave={updateAudit} busy={busy} />
+          </div>
+          <div className="dashboard-card mb-6 p-6">
+            <h3 className={SECTION_TITLE}>Channel Matrix</h3>
+            <ChannelMatrixEditor audit={audit} busy={busy} />
+          </div>
+          <div className="dashboard-card mb-6 p-6">
+            <h3 className={SECTION_TITLE}>Customer Journey Coverage</h3>
+            <JourneyCoverageEditor audit={audit} onSave={updateAudit} busy={busy} />
+          </div>
+          <div className="dashboard-card mb-6 p-6">
+            <h3 className={SECTION_TITLE}>Leverage Opportunities</h3>
+            <LeveragePanel audit={audit} busy={busy} />
+          </div>
+        </>
       )}
 
       <div className="dashboard-card mb-6 p-6">

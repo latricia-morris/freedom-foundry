@@ -1,0 +1,106 @@
+{
+  "name": "ChannelProfile",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "best_fit_industries": {
+      "type": "string"
+    },
+    "best_fit_niches": {
+      "type": "string"
+    },
+    "best_fit_business_models": {
+      "type": "string"
+    },
+    "best_fit_offer_types": {
+      "type": "string"
+    },
+    "best_fit_buyer_situations": {
+      "type": "string"
+    },
+    "best_fit_customer_value_range": {
+      "type": "string"
+    },
+    "best_fit_geography": {
+      "type": "string"
+    },
+    "best_fit_positioning": {
+      "type": "string"
+    },
+    "typical_journey_roles": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "prerequisites": {
+      "type": "string"
+    },
+    "required_assets": {
+      "type": "string"
+    },
+    "required_capabilities": {
+      "type": "string"
+    },
+    "recommended_metrics": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "typical_time_to_impact": {
+      "type": "string"
+    },
+    "typical_investment": {
+      "type": "string"
+    },
+    "common_risks": {
+      "type": "string"
+    },
+    "common_failure_points": {
+      "type": "string"
+    },
+    "poor_fit_scenarios": {
+      "type": "string"
+    },
+    "leverage_ideas": {
+      "type": "string"
+    },
+    "related_vault_resources": {
+      "type": "string"
+    },
+    "related_services": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

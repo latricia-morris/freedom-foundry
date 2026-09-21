@@ -4,6 +4,7 @@ import { ArrowUpRight, FilePlus2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useToast } from '@/components/ui/use-toast';
 import { COMPONENTS, COMPONENT_LABELS, STATUS_LABELS, fmtDate } from '@/lib/brandHealth';
+import { maiValue } from '@/lib/matrix';
 
 const EMPTY_FORM = {
   agency_client_id: '',
@@ -162,7 +163,9 @@ export default function AdminBrandHealth() {
                     </span>
                   </td>
                   <td className="px-5 py-3 text-sm text-muted-foreground">
-                    {a.component === 'marketing_matrix' ? '—' : typeof a.score === 'number' ? `${a.score}/100` : '—'}
+                    {a.component === 'marketing_matrix'
+                      ? (maiValue(a) !== null ? `MAI ${maiValue(a)}` : '—')
+                      : typeof a.score === 'number' ? `${a.score}/100` : '—'}
                   </td>
                   <td className="px-5 py-3 text-sm text-muted-foreground">{a.review_scheduled_date ? fmtDate(a.review_scheduled_date) : '—'}</td>
                   <td className="px-5 py-3 text-right">

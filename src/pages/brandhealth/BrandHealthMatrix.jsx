@@ -8,7 +8,7 @@ import { latestByComponent } from '@/lib/brandHealth';
 
 /** Marketing Matrix subpage: the consultant-built channel and journey map. */
 export default function BrandHealthMatrix() {
-  const { data, error } = useBrandHealth();
+  const { data, error, reload } = useBrandHealth();
   const [statusAudit, setStatusAudit] = useState(null);
 
   if (!data && !error) {
@@ -43,6 +43,8 @@ export default function BrandHealthMatrix() {
   const audit = latest.marketing_matrix;
   const findings = audit ? (data.findings || []).filter((f) => f.audit_id === audit.id) : [];
   const credit = audit ? ((data.credits || []).find((c) => c.audit_id === audit.id) || null) : null;
+  const matrixChannels = audit ? (data.matrix || []).filter((c) => c.audit_id === audit.id) : [];
+  const leverage = audit ? (data.leverage || []).filter((o) => o.audit_id === audit.id) : [];
 
   return (
     <div className="animate-fade-in">
@@ -70,6 +72,9 @@ export default function BrandHealthMatrix() {
           findings={findings}
           credit={credit}
           onOpenStatus={setStatusAudit}
+          reload={reload}
+          matrixChannels={matrixChannels}
+          leverage={leverage}
         />
       )}
     </div>

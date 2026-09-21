@@ -11,10 +11,10 @@ import IntakeForm from './IntakeForm';
  * empty state, in-review state, or the published report — whichever matches
  * the audit's status. Intake only applies to the consultant-scored reviews.
  */
-export default function AuditSection({ component, audit, findings, credit, onOpenStatus, reload }) {
+export default function AuditSection({ component, audit, findings, credit, onOpenStatus, reload, matrixChannels = [], leverage = [] }) {
   const [showIntake, setShowIntake] = useState(false);
   const needsIntake =
-    audit && !component.matrix && !audit.intake_received_date && audit.status !== PUBLISHED_STATUS;
+    audit && !audit.intake_received_date && audit.status !== PUBLISHED_STATUS;
 
   if (!audit) {
     return (
@@ -76,7 +76,7 @@ export default function AuditSection({ component, audit, findings, credit, onOpe
         {COMPONENT_LABELS[component.key]} <span className="text-muted-foreground/70 text-sm uppercase tracking-widest">Published report</span>
       </h3>
       {component.matrix ? (
-        <MatrixView audit={audit} findings={findings} credit={credit} />
+        <MatrixView audit={audit} findings={findings} credit={credit} matrixChannels={matrixChannels} leverage={leverage} />
       ) : (
         <PublishedReport audit={audit} findings={findings} credit={credit} />
       )}

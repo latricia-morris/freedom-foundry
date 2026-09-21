@@ -108,42 +108,167 @@
         ]
       }
     },
-    "matrix_channels": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "channel": {
-            "type": "string"
-          },
-          "fit_note": {
-            "type": "string"
+    "matrix_scores": {
+      "type": "object",
+      "properties": {
+        "channel_fit": {
+          "type": "object",
+          "properties": {
+            "score": {
+              "type": "number"
+            },
+            "client_label": {
+              "type": "string"
+            },
+            "client_visible": {
+              "type": "boolean",
+              "default": false
+            }
           }
         },
-        "required": [
-          "channel"
-        ]
+        "journey_coverage": {
+          "type": "object",
+          "properties": {
+            "score": {
+              "type": "number"
+            },
+            "client_label": {
+              "type": "string"
+            },
+            "client_visible": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        },
+        "channel_integration": {
+          "type": "object",
+          "properties": {
+            "score": {
+              "type": "number"
+            },
+            "client_label": {
+              "type": "string"
+            },
+            "client_visible": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        },
+        "execution_readiness": {
+          "type": "object",
+          "properties": {
+            "score": {
+              "type": "number"
+            },
+            "client_label": {
+              "type": "string"
+            },
+            "client_visible": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        }
       }
     },
-    "matrix_stages": {
+    "matrix_weights": {
+      "type": "object",
+      "properties": {
+        "channel_fit": {
+          "type": "number",
+          "default": 35
+        },
+        "journey_coverage": {
+          "type": "number",
+          "default": 25
+        },
+        "channel_integration": {
+          "type": "number",
+          "default": 25
+        },
+        "execution_readiness": {
+          "type": "number",
+          "default": 15
+        }
+      }
+    },
+    "mai_label": {
+      "type": "string",
+      "default": "Market Alignment Index"
+    },
+    "mai_visible": {
+      "type": "boolean",
+      "default": false
+    },
+    "journey_weights": {
+      "type": "object",
+      "properties": {
+        "trigger": {
+          "type": "number",
+          "default": 10
+        },
+        "discovery": {
+          "type": "number",
+          "default": 25
+        },
+        "evaluation": {
+          "type": "number",
+          "default": 25
+        },
+        "decision": {
+          "type": "number",
+          "default": 25
+        },
+        "retention_referral": {
+          "type": "number",
+          "default": 15
+        }
+      }
+    },
+    "journey_coverage": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
           "stage": {
+            "type": "string",
+            "enum": [
+              "trigger",
+              "discovery",
+              "evaluation",
+              "decision",
+              "retention_referral"
+            ]
+          },
+          "coverage": {
+            "type": "number"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "strong",
+              "partial",
+              "missing",
+              "not_applicable"
+            ]
+          },
+          "internal_notes": {
             "type": "string"
           },
-          "note": {
+          "client_notes": {
             "type": "string"
+          },
+          "client_visible": {
+            "type": "boolean",
+            "default": false
           }
         },
         "required": [
           "stage"
         ]
       }
-    },
-    "matrix_strategy_note": {
-      "type": "string"
     },
     "evidence": {
       "type": "array",

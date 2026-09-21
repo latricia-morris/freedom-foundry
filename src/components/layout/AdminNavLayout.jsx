@@ -11,6 +11,7 @@ const NAV_SECTIONS = [
       { name: 'Clients', path: '/admin/agency/clients' },
       { name: 'Visibility Reports', path: '/admin/agency/visibility' },
       { name: 'Digital Brand Health', path: '/admin/brand-health' },
+      { name: 'Channel Profiles', path: '/admin/channel-profiles' },
       { name: 'Pipeline', path: '/admin/agency/proposals' },
       { name: 'Client Projects', path: '/admin/agency/projects' },
       { name: 'Templates', path: '/admin/agency/templates' },
