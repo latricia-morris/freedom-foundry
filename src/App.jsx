@@ -76,6 +76,8 @@ import AdminAgencyProposals from './pages/admin/agency/AdminAgencyProposals';
 import AdminAgencyProposalBuilder from './pages/admin/agency/AdminAgencyProposalBuilder';
 import AdminAgencyProjects from './pages/admin/agency/AdminAgencyProjects';
 import AdminAgencyProjectDetail from './pages/admin/agency/AdminAgencyProjectDetail';
+import AdminAgencyBuild from './pages/admin/agency/AdminAgencyBuild';
+import AdminNavLayout from '@/components/layout/AdminNavLayout';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin, isAuthenticated } = useAuth();
@@ -150,6 +152,7 @@ const AuthenticatedApp = () => {
             <Route path="/brand-portal/request-services" element={<ServiceRequest />} />
           </Route>
           <Route element={<AdminRoute />}>
+            <Route element={<AdminNavLayout />}>
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/users" element={<AdminUsers />} />
             <Route path="/admin/users/:id" element={<AdminUserDetail />} />
@@ -170,6 +173,8 @@ const AuthenticatedApp = () => {
             <Route path="/admin/agency/proposals/:id" element={<AdminAgencyProposalBuilder />} />
             <Route path="/admin/agency/projects" element={<AdminAgencyProjects />} />
             <Route path="/admin/agency/projects/:id" element={<AdminAgencyProjectDetail />} />
+            <Route path="/admin/agency/agency-build" element={<AdminAgencyBuild />} />
+            </Route>
           </Route>
         </Route>
       </Route>

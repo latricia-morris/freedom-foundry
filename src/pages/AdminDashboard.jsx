@@ -1,23 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  Shield, 
-  Users, 
-  Settings2, 
-  ArrowRight, 
-  Activity, 
+import {
+  Shield,
+  ArrowRight,
+  Activity,
   UserPlus,
   Crown,
   ChevronRight,
   Bug,
   Wrench,
-  UploadCloud, 
+  UploadCloud,
   FolderOpen,
   Briefcase,
   Mail,
-  DollarSign
-  } from 'lucide-react';
+  DollarSign,
+  Users,
+  Settings2
+} from 'lucide-react';
 import apiClient from '@/api/client';
+import AdminDashboardCard from '@/components/admin/AdminDashboardCard';
 
 export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
@@ -82,9 +83,8 @@ export default function AdminDashboard() {
   }
 
   const admins = users.filter(u => u.role === 'admin');
-  const regularUsers = users.filter(u => u.role !== 'admin');
-  
-  // Sort users by created_at descending (assuming ISO strings), fallback to id if no created_at
+  const newSubs = contactSubs.filter(s => (s.status || 'new') === 'new');
+
   const recentUsers = [...users]
     .sort((a, b) => {
       const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
@@ -98,7 +98,7 @@ export default function AdminDashboard() {
       <div className="mb-10 relative">
         <div className="absolute -left-8 -top-8 w-64 h-64 ember-glow-bg z-[-1]" />
         <h1 className="font-heading text-4xl font-light text-foreground mb-3 tracking-wide">
-          Foundry <span className="molten-text italic font-medium">Command</span>
+          Foundry Command
         </h1>
         <p className="text-base text-muted-foreground max-w-2xl leading-relaxed">
           Oversee member profiles, guide brand architecture, and monitor activity across the platform.
@@ -106,277 +106,174 @@ export default function AdminDashboard() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-        {/* Navigation Card: Users */}
-        <Link 
-          to="/admin/users" 
-          className="dashboard-card p-6 flex flex-col justify-between group transition-all duration-300 hover:-translate-y-1 hover:ember-glow-strong"
-        >
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <div className="icon-tile">
-                <Users className="w-6 h-6 text-copper" strokeWidth={1.5} />
-              </div>
-              <ArrowRight className="w-5 h-5 text-muted-foreground opacity-50 group-hover:opacity-100 group-hover:text-primary transition-all transform group-hover:translate-x-1" strokeWidth={1.5} />
-            </div>
-            <h2 className="font-heading text-2xl text-foreground mb-2">Member <span className="italic text-muted-foreground">Roster</span></h2>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Manage all member access, view individual profiles, and update administrative privileges.
-            </p>
-          </div>
-          <div className="mt-6 flex items-center gap-4 border-t border-border pt-4">
-            <div className="flex items-center gap-2">
-              <span className="text-2xl font-light text-foreground">{users.length}</span>
-              <span className="text-xs uppercase tracking-widest text-muted-foreground">Total</span>
-            </div>
-            <div className="w-px h-8 bg-border" />
-            <div className="flex items-center gap-2">
-              <span className="text-xl font-light text-foreground">{admins.length}</span>
-              <span className="text-xs uppercase tracking-widest text-primary/70">Admins</span>
-            </div>
-          </div>
-        </Link>
+        {/* Agency OS — first */}
+        <AdminDashboardCard
+          to="/admin/agency"
+          icon={DollarSign}
+          title="Agency Operations"
+          description="Proposals, deposits, verified Stripe activation, projects, tasks, and controlled deliverable release."
+          footer={
+            <span className="text-xs uppercase tracking-widest text-primary/80">Proposal → Payment → Delivery</span>
+          }
+        />
 
-        {/* Navigation Card: Brand Up */}
-        <Link 
-          to="/admin/brand-up" 
-          className="dashboard-card p-6 flex flex-col justify-between group transition-all duration-300 hover:-translate-y-1 hover:ember-glow-strong relative overflow-hidden"
-        >
-          <div className="absolute -right-12 -bottom-12 w-48 h-48 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-colors" />
-          <div className="relative z-10">
-            <div className="flex items-center justify-between mb-4">
-              <div className="icon-tile">
-                <Settings2 className="w-6 h-6 text-copper" strokeWidth={1.5} />
-              </div>
-              <ArrowRight className="w-5 h-5 text-muted-foreground opacity-50 group-hover:opacity-100 group-hover:text-primary transition-all transform group-hover:translate-x-1" strokeWidth={1.5} />
+        {/* Contact Inbox Snapshot */}
+        <div className="dashboard-card p-6 md:col-span-2">
+          <div className="mb-4 flex flex-wrap items-center gap-3">
+            <div className="icon-tile">
+              <Mail className="h-6 w-6 icon-warm" strokeWidth={1.5} />
             </div>
-            <h2 className="font-heading text-2xl text-foreground mb-2">Brand Up <span className="italic text-muted-foreground">Engine</span></h2>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Configure prompts, inspirational notes, and structural guidelines for the Brand Up module.
-            </p>
+            <h2 className="font-heading text-2xl text-foreground">Contact Inbox</h2>
+            {newSubs.length > 0 && (
+              <span className="rounded-sm border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-primary">
+                {newSubs.length} new
+              </span>
+            )}
+            <Link to="/admin/contact-inbox" className="ml-auto text-xs uppercase tracking-widest link-warm">
+              Open Inbox
+            </Link>
           </div>
-          <div className="mt-6 flex items-center border-t border-border pt-4 relative z-10">
+          {newSubs.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              No new messages waiting. Every conversation has been seen.
+            </p>
+          ) : (
+            <ul className="divide-y divide-border/40">
+              {newSubs.slice(0, 5).map(s => (
+                <li key={s.id} className="flex flex-wrap items-baseline gap-x-3 gap-y-1 py-3">
+                  <span className="text-sm font-medium text-foreground">
+                    {[s.first_name, s.last_name].filter(Boolean).join(' ') || 'Unknown sender'}
+                  </span>
+                  <span className="text-[10px] uppercase tracking-widest text-primary/80">
+                    {(s.category || 'general').replace(/_/g, ' ')}
+                  </span>
+                  <span className="min-w-0 flex-1 truncate text-sm text-muted-foreground">{s.message || ''}</span>
+                  {s.created_date && (
+                    <span className="text-xs text-muted-foreground/60">
+                      {new Date(s.created_date).toLocaleDateString()}
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+          <p className="mt-3 text-xs text-muted-foreground/70">
+            {newSubs.length} new · {contactSubs.length} total
+          </p>
+        </div>
+
+        {/* Members */}
+        <AdminDashboardCard
+          to="/admin/users"
+          icon={Users}
+          title="Member Roster"
+          description="Manage all member access, view individual profiles, and update administrative privileges."
+          footer={
+            <>
+              <div className="flex items-center gap-2">
+                <span className="text-2xl font-light text-foreground">{users.length}</span>
+                <span className="text-xs uppercase tracking-widest text-muted-foreground">Total</span>
+              </div>
+              <div className="w-px h-8 bg-border" />
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-light text-foreground">{admins.length}</span>
+                <span className="text-xs uppercase tracking-widest text-primary/70">Admins</span>
+              </div>
+            </>
+          }
+        />
+
+        {/* Portfolio Manager */}
+        <AdminDashboardCard
+          to="/admin/portfolio"
+          icon={Briefcase}
+          title="Portfolio Manager"
+          description="Build the public case-study library — projects, assets, SEO, and publish controls."
+          footer={<span className="text-xs uppercase tracking-widest text-primary/80">Case-study library</span>}
+        />
+
+        {/* Support Queue */}
+        <AdminDashboardCard
+          to="/admin/support-reports"
+          icon={Bug}
+          title="Support Queue"
+          description="Member bug reports and feature requests — triage, resolve, or remove."
+          footer={
+            <>
+              <div className="flex items-center gap-2">
+                <span className="text-2xl font-light text-foreground">{reports.filter(r => (r.status || 'open') === 'open').length}</span>
+                <span className="text-xs uppercase tracking-widest text-muted-foreground">Open</span>
+              </div>
+              <div className="w-px h-8 bg-border" />
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-light text-foreground">{reports.length}</span>
+                <span className="text-xs uppercase tracking-widest text-muted-foreground">Total</span>
+              </div>
+            </>
+          }
+        />
+
+        {/* Services Hub */}
+        <AdminDashboardCard
+          to="/admin/services"
+          icon={Wrench}
+          title="Services Hub"
+          description="Edit member-facing categories, routing copy, thresholds, and request notes."
+          footer={<span className="text-xs uppercase tracking-widest text-primary/80">Configuration + requests</span>}
+        />
+
+        {/* Brand Up Engine */}
+        <AdminDashboardCard
+          to="/admin/brand-up"
+          icon={Settings2}
+          title="Brand Up Engine"
+          description="Configure prompts, inspirational notes, and structural guidelines for the Brand Up module."
+          footer={
             <span className="text-xs uppercase tracking-widest text-primary/80 flex items-center gap-2">
               <Activity className="w-3.5 h-3.5" /> Module Configuration
             </span>
-          </div>
-        </Link>
+          }
+        />
 
-        {/* Navigation Card: Support Reports */}
-        <Link
-          to="/admin/support-reports"
-          className="dashboard-card p-6 flex flex-col justify-between group transition-all duration-300 hover:-translate-y-1 hover:ember-glow-strong"
-        >
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <div className="icon-tile">
-                <Bug className="w-6 h-6 text-copper" strokeWidth={1.5} />
-              </div>
-              <ArrowRight className="w-5 h-5 text-muted-foreground opacity-50 group-hover:opacity-100 group-hover:text-primary transition-all transform group-hover:translate-x-1" strokeWidth={1.5} />
-            </div>
-            <h2 className="font-heading text-2xl text-foreground">Support <span className="italic text-muted-foreground">Queue</span></h2>
-            <p className="text-sm text-muted-foreground leading-relaxed mt-2">
-              Member bug reports and feature requests — triage, resolve, or remove.
-            </p>
-          </div>
-          <div className="mt-6 flex items-center gap-4 border-t border-border pt-4">
-            <div className="flex items-center gap-2">
-              <span className="text-2xl font-light text-foreground">{reports.filter(r => (r.status || 'open') === 'open').length}</span>
-              <span className="text-xs uppercase tracking-widest text-muted-foreground">Open</span>
-            </div>
-            <div className="w-px h-8 bg-border" />
-            <div className="flex items-center gap-2">
-              <span className="text-xl font-light text-foreground">{reports.length}</span>
-              <span className="text-xs uppercase tracking-widest text-muted-foreground">Total</span>
-            </div>
-          </div>
-        </Link>
-
-        {/* Navigation Card: Contact Inbox */}
-        <Link
-          to="/admin/contact-inbox"
-          className="dashboard-card p-6 flex flex-col justify-between group transition-all duration-300 hover:-translate-y-1 hover:ember-glow-strong"
-        >
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <div className="icon-tile">
-                <Mail className="w-6 h-6 text-copper" strokeWidth={1.5} />
-              </div>
-              <ArrowRight className="w-5 h-5 text-muted-foreground opacity-50 group-hover:opacity-100 group-hover:text-primary transition-all transform group-hover:translate-x-1" strokeWidth={1.5} />
-            </div>
-            <h2 className="font-heading text-2xl text-foreground">Contact <span className="italic text-muted-foreground">Inbox</span></h2>
-            <p className="text-sm text-muted-foreground leading-relaxed mt-2">
-              Member messages from the Get in Touch page — read, reply, and keep every conversation in one place.
-            </p>
-          </div>
-          <div className="mt-6 flex items-center gap-4 border-t border-border pt-4">
-            <div className="flex items-center gap-2">
-              <span className="text-2xl font-light text-foreground">{contactSubs.filter(s => (s.status || 'new') === 'new').length}</span>
-              <span className="text-xs uppercase tracking-widest text-muted-foreground">New</span>
-            </div>
-            <div className="w-px h-8 bg-border" />
-            <div className="flex items-center gap-2">
-              <span className="text-xl font-light text-foreground">{contactSubs.length}</span>
-              <span className="text-xs uppercase tracking-widest text-muted-foreground">Total</span>
-            </div>
-          </div>
-        </Link>
-
-        {/* Navigation Card: Portfolio Manager */}
-        <Link
-          to="/admin/portfolio"
-          className="dashboard-card p-6 flex flex-col justify-between group transition-all duration-300 hover:-translate-y-1 hover:ember-glow-strong"
-        >
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <div className="icon-tile">
-                <Briefcase className="w-6 h-6 text-copper" strokeWidth={1.5} />
-              </div>
-              <ArrowRight className="w-5 h-5 text-muted-foreground opacity-50 group-hover:opacity-100 group-hover:text-primary transition-all transform group-hover:translate-x-1" strokeWidth={1.5} />
-            </div>
-            <h2 className="font-heading text-2xl text-foreground">Portfolio <span className="italic text-muted-foreground">Manager</span></h2>
-            <p className="text-sm text-muted-foreground leading-relaxed mt-2">
-              Build the public case-study library — projects, assets, SEO, and publish controls.
-            </p>
-          </div>
-          <div className="mt-6 flex items-center border-t border-border pt-4">
-            <span className="text-xs uppercase tracking-widest text-primary/80">Case-study library</span>
-          </div>
-        </Link>
-
-        {/* Navigation Card: Agency OS */}
-        <Link
-          to="/admin/agency"
-          className="dashboard-card p-6 flex flex-col justify-between group transition-all duration-300 hover:-translate-y-1 hover:ember-glow-strong"
-        >
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <div className="icon-tile">
-                <DollarSign className="w-6 h-6 text-copper" strokeWidth={1.5} />
-              </div>
-              <ArrowRight className="w-5 h-5 text-muted-foreground opacity-50 group-hover:opacity-100 group-hover:text-primary transition-all transform group-hover:translate-x-1" strokeWidth={1.5} />
-            </div>
-            <h2 className="font-heading text-2xl text-foreground mb-2">Agency <span className="italic text-muted-foreground">Operations</span></h2>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Proposals, deposits, verified Stripe activation, projects, tasks, and controlled deliverable release.
-            </p>
-          </div>
-          <div className="mt-6 flex items-center border-t border-border pt-4">
-            <span className="text-xs uppercase tracking-widest text-primary/80">Proposal → Payment → Delivery</span>
-          </div>
-        </Link>
-
-        {/* Navigation Card: Services */}
-        <Link
-          to="/admin/services"
-          className="dashboard-card p-6 flex flex-col justify-between group transition-all duration-300 hover:-translate-y-1 hover:ember-glow-strong"
-        >
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <div className="icon-tile">
-                <Wrench className="w-6 h-6 text-copper" strokeWidth={1.5} />
-              </div>
-              <ArrowRight className="w-5 h-5 text-muted-foreground opacity-50 group-hover:opacity-100 group-hover:text-primary transition-all transform group-hover:translate-x-1" strokeWidth={1.5} />
-            </div>
-            <h2 className="font-heading text-2xl text-foreground">Services <span className="italic text-muted-foreground">Hub</span></h2>
-            <p className="text-sm text-muted-foreground leading-relaxed mt-2">
-              Edit member-facing categories, routing copy, thresholds, and request notes.
-            </p>
-          </div>
-          <div className="mt-6 flex items-center border-t border-border pt-4">
-            <span className="text-xs uppercase tracking-widest text-primary/80">Configuration + requests</span>
-          </div>
-        </Link>
-
-        {/* Navigation Card: Quiz Leads */}
-        <Link
+        {/* Quiz Leads */}
+        <AdminDashboardCard
           to="/admin/quiz-leads"
-          className="dashboard-card p-6 flex flex-col justify-between group transition-all duration-300 hover:-translate-y-1 hover:ember-glow-strong"
-        >
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <div className="icon-tile">
-                <Activity className="w-6 h-6 text-copper" strokeWidth={1.5} />
-              </div>
-              <ArrowRight className="w-5 h-5 text-muted-foreground opacity-50 group-hover:opacity-100 group-hover:text-primary transition-all transform group-hover:translate-x-1" strokeWidth={1.5} />
-            </div>
-            <h2 className="font-heading text-2xl text-foreground">Quiz <span className="italic text-muted-foreground">Leads</span></h2>
-            <p className="text-sm text-muted-foreground leading-relaxed mt-2">
-              Review brand persona quiz completions, lead captures, and claimed accounts.
-            </p>
-          </div>
-          <div className="mt-6 flex items-center border-t border-border pt-4">
-            <span className="text-xs uppercase tracking-widest text-primary/80">Diagnostic Results</span>
-          </div>
-        </Link>
+          icon={Activity}
+          title="Quiz Leads"
+          description="Review brand persona quiz completions, lead captures, and claimed accounts."
+          footer={<span className="text-xs uppercase tracking-widest text-primary/80">Diagnostic Results</span>}
+        />
 
-        {/* Navigation Card: Client Import */}
-        <Link
+        {/* Client Import */}
+        <AdminDashboardCard
           to="/admin/client-import"
-          className="dashboard-card p-6 flex flex-col justify-between group transition-all duration-300 hover:-translate-y-1 hover:ember-glow-strong"
-        >
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <div className="icon-tile">
-                <UploadCloud className="w-6 h-6 text-copper" strokeWidth={1.5} />
-              </div>
-              <ArrowRight className="w-5 h-5 text-muted-foreground opacity-50 group-hover:opacity-100 group-hover:text-primary transition-all transform group-hover:translate-x-1" strokeWidth={1.5} />
-            </div>
-            <h2 className="font-heading text-2xl text-foreground mb-2">Client <span className="italic text-muted-foreground">Import</span></h2>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Upload a client's brand files and let the Foundry parse them into the right places in their portal — you review before it saves.
-            </p>
-          </div>
-          <div className="mt-6 flex items-center border-t border-border pt-4">
-            <span className="text-xs uppercase tracking-widest text-primary/80">Guided Parse + Review</span>
-          </div>
-        </Link>
+          icon={UploadCloud}
+          title="Client Import"
+          description="Upload a client's brand files and let the Foundry parse them into the right places in their portal — you review before it saves."
+          footer={<span className="text-xs uppercase tracking-widest text-primary/80">Guided Parse + Review</span>}
+        />
 
-        {/* Navigation Card: Portal Content */}
-        <Link
+        {/* Portal Content */}
+        <AdminDashboardCard
           to="/admin/portal-content"
-          className="dashboard-card p-6 flex flex-col justify-between group transition-all duration-300 hover:-translate-y-1 hover:ember-glow-strong"
-        >
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <div className="icon-tile">
-                <FolderOpen className="w-6 h-6 text-copper" strokeWidth={1.5} />
-              </div>
-              <ArrowRight className="w-5 h-5 text-muted-foreground opacity-50 group-hover:opacity-100 group-hover:text-primary transition-all transform group-hover:translate-x-1" strokeWidth={1.5} />
-            </div>
-            <h2 className="font-heading text-2xl text-foreground mb-2">Portal <span className="italic text-muted-foreground">Content</span></h2>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Drop files, notes, Drive folders, and custom sections onto any page of a client's Brand Portal as their project grows.
-            </p>
-          </div>
-          <div className="mt-6 flex items-center border-t border-border pt-4">
-            <span className="text-xs uppercase tracking-widest text-primary/80">Adaptive Client Portal</span>
-          </div>
-        </Link>
+          icon={FolderOpen}
+          title="Portal Content"
+          description="Drop files, notes, Drive folders, and custom sections onto any page of a client's Brand Portal as their project grows."
+          footer={<span className="text-xs uppercase tracking-widest text-primary/80">Adaptive Client Portal</span>}
+        />
 
-        {/* Navigation Card: Referral Partners */}
-        <Link
+        {/* Referral Partners */}
+        <AdminDashboardCard
           to="/admin/referral-partners"
-          className="dashboard-card p-6 flex flex-col justify-between group transition-all duration-300 hover:-translate-y-1 hover:ember-glow-strong relative overflow-hidden"
-        >
-          <div className="absolute -left-12 -bottom-12 w-48 h-48 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-colors" />
-          <div className="relative z-10">
-            <div className="flex items-center justify-between mb-4">
-              <div className="icon-tile">
-                <Users className="w-6 h-6 text-copper" strokeWidth={1.5} />
-              </div>
-              <ArrowRight className="w-5 h-5 text-muted-foreground opacity-50 group-hover:opacity-100 group-hover:text-primary transition-all transform group-hover:translate-x-1" strokeWidth={1.5} />
-            </div>
-            <h2 className="font-heading text-2xl text-foreground mb-2">Referral <span className="italic text-muted-foreground">Partners</span></h2>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Manage invitation-only referral partners, review submitted opportunities, and track payouts.
-            </p>
-          </div>
-          <div className="mt-6 flex items-center border-t border-border pt-4 relative z-10">
+          icon={Users}
+          title="Referral Partners"
+          description="Manage invitation-only referral partners, review submitted opportunities, and track payouts."
+          footer={
             <span className="text-xs uppercase tracking-widest text-primary/80 flex items-center gap-2">
               <Activity className="w-3.5 h-3.5" /> Partner Submissions
             </span>
-          </div>
-        </Link>
+          }
+        />
       </div>
 
       {/* Recent Members Section */}
@@ -384,13 +281,13 @@ export default function AdminDashboard() {
         <div className="p-6 border-b border-border/50 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <UserPlus className="w-5 h-5 text-primary opacity-80" strokeWidth={1.5} />
-            <h3 className="font-heading text-xl text-foreground">Recent <span className="italic text-muted-foreground">Initiates</span></h3>
+            <h3 className="font-heading text-xl text-foreground">Recent Initiates</h3>
           </div>
           <Link to="/admin/users" className="text-xs uppercase tracking-widest link-warm">
             View All
           </Link>
         </div>
-        
+
         {users.length === 0 ? (
           <div className="p-12 text-center">
             <p className="text-muted-foreground">No members found in the database.</p>
@@ -436,7 +333,7 @@ export default function AdminDashboard() {
                       )}
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <Link 
+                      <Link
                         to={`/admin/users/${u.id}`}
                         className="inline-flex p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
                       >
