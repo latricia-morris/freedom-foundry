@@ -13,7 +13,6 @@ const NAV_SECTIONS = [
       { name: 'Client Projects', path: '/admin/agency/projects' },
       { name: 'Templates', path: '/admin/agency/templates' },
       { name: 'Agency Build', path: '/admin/agency/agency-build' },
-      { name: 'Client Directory', path: '/client-directory' },
       { name: 'Financial Overview', path: '/financial-overview' },
       { name: 'Resource Library', path: '/resource-library' },
       { name: 'Audit Logs', path: '/audit-logs' },

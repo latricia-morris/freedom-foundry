@@ -71,7 +71,6 @@ import PortfolioPreview from './pages/PortfolioPreview';
 // Agency OS
 import ClientProposal from './pages/ClientProposal';
 import AdminAgencyDashboard from './pages/admin/agency/AdminAgencyDashboard';
-import AdminAgencyClients from './pages/admin/agency/AdminAgencyClients';
 import AdminAgencyPipeline from './pages/admin/agency/AdminAgencyPipeline';
 import AdminAgencyTemplates from './pages/admin/agency/AdminAgencyTemplates';
 import AdminAgencyProposalBuilder from './pages/admin/agency/AdminAgencyProposalBuilder';
@@ -79,6 +78,7 @@ import AdminAgencyProjects from './pages/admin/agency/AdminAgencyProjects';
 import AdminAgencyProjectDetail from './pages/admin/agency/AdminAgencyProjectDetail';
 import AdminAgencyBuild from './pages/admin/agency/AdminAgencyBuild';
 import AdminClientDirectory from './pages/admin/agency/AdminClientDirectory';
+import AdminClientDetail from './pages/admin/agency/AdminClientDetail';
 import AdminFinancialOverview from './pages/admin/agency/AdminFinancialOverview';
 import AdminResourceLibrary from './pages/admin/agency/AdminResourceLibrary';
 import AdminAuditLogs from './pages/admin/agency/AdminAuditLogs';
@@ -172,7 +172,8 @@ const AuthenticatedApp = () => {
             <Route path="/admin/portfolio/:id" element={<AdminPortfolioEditor />} />
             <Route path="/admin/portfolio/:id/preview" element={<PortfolioPreview />} />
             <Route path="/admin/agency" element={<AdminAgencyDashboard />} />
-            <Route path="/admin/agency/clients" element={<AdminAgencyClients />} />
+            <Route path="/admin/agency/clients" element={<AdminClientDirectory />} />
+            <Route path="/admin/agency/clients/:id" element={<AdminClientDetail />} />
             <Route path="/admin/agency/proposals" element={<AdminAgencyPipeline />} />
             <Route path="/admin/agency/templates" element={<AdminAgencyTemplates />} />
             <Route path="/admin/agency/proposals/new" element={<AdminAgencyProposalBuilder />} />
@@ -180,7 +181,6 @@ const AuthenticatedApp = () => {
             <Route path="/admin/agency/projects" element={<AdminAgencyProjects />} />
             <Route path="/admin/agency/projects/:id" element={<AdminAgencyProjectDetail />} />
             <Route path="/admin/agency/agency-build" element={<AdminAgencyBuild />} />
-            <Route path="/client-directory" element={<AdminClientDirectory />} />
             <Route path="/financial-overview" element={<AdminFinancialOverview />} />
             <Route path="/resource-library" element={<AdminResourceLibrary />} />
             <Route path="/audit-logs" element={<AdminAuditLogs />} />

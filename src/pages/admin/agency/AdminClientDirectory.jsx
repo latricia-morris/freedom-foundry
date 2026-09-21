@@ -1,18 +1,17 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Plus, Save, Trash2, X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Plus, Trash2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import QbSyncButton from '@/components/admin/agency/QbSyncButton';
-import QbBillingHistoryPanel from '@/components/admin/agency/QbBillingHistoryPanel';
+import { formatUsd } from '@/lib/agency';
 
 const STATUSES = ['prospect', 'active', 'inactive', 'archived'];
-const PORTAL_STATUSES = ['none', 'invited', 'active', 'disabled'];
 const EMPTY = {
   company_name: '', primary_contact_name: '', primary_contact_email: '', primary_contact_phone: '',
   billing_contact_name: '', billing_contact_email: '', status: 'prospect',
   ghl_contact_id: '', ghl_opportunity_id: '', stripe_customer_id: '', quickbooks_customer_id: '',
   assigned_account_manager: '', assigned_project_manager: '', client_portal_status: 'none', notes: '',
 };
-
 const TEXT_FIELDS = [
   ['Company name', 'company_name'],
   ['Primary contact', 'primary_contact_name'],
@@ -26,6 +25,12 @@ const TEXT_FIELDS = [
   ['QuickBooks customer ID', 'quickbooks_customer_id'],
   ['Account manager', 'assigned_account_manager'],
   ['Project manager', 'assigned_project_manager'],
+];
+const SORTS = [
+  { value: 'newest', label: 'Newest first' },
+  { value: 'name', label: 'Company name' },
+  { value: 'status', label: 'Status' },
+  { value: 'collected', label: 'Collected (high to low)' },
 ];
 
 const STATUS_STYLES = {
@@ -45,12 +50,14 @@ function Field({ label, value, onChange }) {
 }
 
 export default function AdminClientDirectory() {
+  const navigate = useNavigate();
   const [clients, setClients] = useState([]);
+  const [billing, setBilling] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [sortBy, setSortBy] = useState('newest');
   const [draft, setDraft] = useState(EMPTY);
-  const [editing, setEditing] = useState(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [toast, setToast] = useState('');
@@ -62,9 +69,12 @@ export default function AdminClientDirectory() {
   }, [toast]);
 
   const load = () => {
-    base44.entities.AgencyClient.filter({}, '-created_date', 300)
+    base44.entities.AgencyClient.filter({}, '-created_date', 500)
       .then((rows) => { setClients(rows || []); setLoading(false); })
       .catch(() => setLoading(false));
+    base44.entities.ClientBillingRecord.filter({}, '-txn_date', 1000)
+      .then((rows) => setBilling(rows || []))
+      .catch(() => setBilling([]));
   };
   useEffect(load, []);
 
@@ -72,15 +82,40 @@ export default function AdminClientDirectory() {
     actor_role: 'admin', entity_type: 'AgencyClient', entity_id: id, action, source: 'ui',
   }).catch(() => {});
 
-  const filtered = useMemo(() => clients.filter((c) => {
+  // Payments received only. Invoices are never part of a collected total.
+  const money = useMemo(() => {
+    const collected = new Map();
+    const outstanding = new Map();
+    for (const r of billing) {
+      if (r.record_type === 'payment') collected.set(r.agency_client_id, (collected.get(r.agency_client_id) || 0) + (r.amount_cents || 0));
+      if (r.record_type === 'invoice') outstanding.set(r.agency_client_id, (outstanding.get(r.agency_client_id) || 0) + (r.balance_cents || 0));
+    }
+    return { collected, outstanding };
+  }, [billing]);
+
+  const totals = useMemo(() => {
+    let collected = 0;
+    let outstanding = 0;
+    money.collected.forEach((v) => { collected += v; });
+    money.outstanding.forEach((v) => { outstanding += v; });
+    return { collected, outstanding };
+  }, [money]);
+
+  const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    const matchesSearch = !q
-      || c.company_name?.toLowerCase().includes(q)
-      || c.primary_contact_name?.toLowerCase().includes(q)
-      || c.primary_contact_email?.toLowerCase().includes(q);
-    const matchesStatus = statusFilter === 'all' || c.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  }), [clients, search, statusFilter]);
+    let list = clients.filter((c) => {
+      const matchesSearch = !q
+        || c.company_name?.toLowerCase().includes(q)
+        || c.primary_contact_name?.toLowerCase().includes(q)
+        || c.primary_contact_email?.toLowerCase().includes(q);
+      const matchesStatus = statusFilter === 'all' || c.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
+    if (sortBy === 'name') list = [...list].sort((a, b) => (a.company_name || '').localeCompare(b.company_name || ''));
+    if (sortBy === 'status') list = [...list].sort((a, b) => (a.status || '').localeCompare(b.status || ''));
+    if (sortBy === 'collected') list = [...list].sort((a, b) => (money.collected.get(b.id) || 0) - (money.collected.get(a.id) || 0));
+    return list;
+  }, [clients, search, statusFilter, sortBy, money]);
 
   const stats = useMemo(() => ({
     total: clients.length,
@@ -108,28 +143,10 @@ export default function AdminClientDirectory() {
     }
   };
 
-  const saveEdit = async () => {
-    setBusy(true);
-    setError('');
-    try {
-      const { id, ...changes } = editing;
-      await base44.entities.AgencyClient.update(id, changes);
-      await log('client_updated', id);
-      setEditing(null);
-      setToast('Client profile saved');
-      load();
-    } catch (e) {
-      setError(e.message || 'Could not save the client.');
-    } finally {
-      setBusy(false);
-    }
-  };
-
   const remove = async (client) => {
     if (!window.confirm(`Delete ${client.company_name}? This cannot be undone.`)) return;
     await base44.entities.AgencyClient.delete(client.id).catch(() => {});
     await log('client_deleted', client.id);
-    if (editing?.id === client.id) setEditing(null);
     setToast('Client deleted');
     load();
   };
@@ -155,17 +172,25 @@ export default function AdminClientDirectory() {
         />
       </div>
 
-      <div className="mb-8 grid grid-cols-3 gap-4">
-        {[
-          { label: 'Total clients', value: stats.total },
-          { label: 'Active', value: stats.active },
-          { label: 'Prospects', value: stats.prospects },
-        ].map((card) => (
-          <div key={card.label} className="dashboard-card p-5">
-            <p className="mb-2 text-[10px] uppercase tracking-widest text-muted-foreground">{card.label}</p>
-            <p className="font-heading text-3xl font-light text-foreground">{card.value}</p>
-          </div>
-        ))}
+      <div className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <div className="dashboard-card p-5">
+          <p className="mb-2 text-[10px] uppercase tracking-widest text-muted-foreground">Total clients</p>
+          <p className="font-heading text-3xl font-light text-foreground">{stats.total}</p>
+        </div>
+        <div className="dashboard-card p-5">
+          <p className="mb-2 text-[10px] uppercase tracking-widest text-muted-foreground">Active</p>
+          <p className="font-heading text-3xl font-light text-foreground">{stats.active}</p>
+        </div>
+        <div className="dashboard-card p-5">
+          <p className="mb-2 text-[10px] uppercase tracking-widest text-muted-foreground">Collected to date</p>
+          <p className="font-heading text-3xl font-light text-primary">{formatUsd(totals.collected)}</p>
+          <p className="mt-1 text-[9px] uppercase tracking-wider text-muted-foreground/60">Payments received</p>
+        </div>
+        <div className="dashboard-card p-5">
+          <p className="mb-2 text-[10px] uppercase tracking-widest text-muted-foreground">Outstanding</p>
+          <p className="font-heading text-3xl font-light text-foreground">{formatUsd(totals.outstanding)}</p>
+          <p className="mt-1 text-[9px] uppercase tracking-wider text-muted-foreground/60">Open invoice balances</p>
+        </div>
       </div>
 
       <div className="dashboard-card mb-8 p-6">
@@ -183,7 +208,7 @@ export default function AdminClientDirectory() {
           <label className="block">
             <span className="mb-1.5 block text-[10px] uppercase tracking-widest text-muted-foreground">Portal access</span>
             <select className="admin-input py-2 text-sm" value={draft.client_portal_status} onChange={(e) => setDraft({ ...draft, client_portal_status: e.target.value })}>
-              {PORTAL_STATUSES.map((s) => <option key={s} value={s}>{s.replace(/_/g, ' ')}</option>)}
+              {['none', 'invited', 'active', 'disabled'].map((s) => <option key={s} value={s}>{s.replace(/_/g, ' ')}</option>)}
             </select>
           </label>
         </div>
@@ -197,49 +222,6 @@ export default function AdminClientDirectory() {
         </button>
       </div>
 
-      {editing && (
-        <div className="dashboard-card mb-8 p-6">
-          <div className="mb-4 flex items-center justify-between">
-            <h3 className="font-heading text-2xl text-foreground">{editing.company_name}</h3>
-            <button type="button" onClick={() => setEditing(null)} aria-label="Close editor" className="rounded-sm p-1 text-muted-foreground transition-colors hover:text-foreground">
-              <X className="h-5 w-5" />
-            </button>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {TEXT_FIELDS.map(([label, key]) => (
-              <Field key={key} label={label} value={editing[key]} onChange={(v) => setEditing({ ...editing, [key]: v })} />
-            ))}
-            <label className="block">
-              <span className="mb-1.5 block text-[10px] uppercase tracking-widest text-muted-foreground">Status</span>
-              <select className="admin-input py-2 text-sm" value={editing.status} onChange={(e) => setEditing({ ...editing, status: e.target.value })}>
-                {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
-              </select>
-            </label>
-            <label className="block">
-              <span className="mb-1.5 block text-[10px] uppercase tracking-widest text-muted-foreground">Portal access</span>
-              <select className="admin-input py-2 text-sm" value={editing.client_portal_status} onChange={(e) => setEditing({ ...editing, client_portal_status: e.target.value })}>
-                {PORTAL_STATUSES.map((s) => <option key={s} value={s}>{s.replace(/_/g, ' ')}</option>)}
-              </select>
-            </label>
-          </div>
-          <label className="mt-4 block">
-            <span className="mb-1.5 block text-[10px] uppercase tracking-widest text-muted-foreground">Notes</span>
-            <textarea className="admin-input min-h-20 text-sm" value={editing.notes || ''} onChange={(e) => setEditing({ ...editing, notes: e.target.value })} />
-          </label>
-          <div className="mt-6">
-            <QbBillingHistoryPanel clientId={editing.id} />
-          </div>
-          <div className="mt-4 flex items-center gap-3">
-            <button type="button" onClick={saveEdit} disabled={busy} className="btn-forge inline-flex items-center gap-2 rounded-md px-4 py-2 text-xs font-semibold uppercase tracking-widest disabled:opacity-50">
-              <Save className="h-4 w-4" /> {busy ? 'Saving…' : 'Save changes'}
-            </button>
-            <button type="button" onClick={() => remove(editing)} className="inline-flex items-center gap-2 rounded-md border border-destructive/40 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-destructive transition-colors hover:bg-destructive/10">
-              <Trash2 className="h-4 w-4" /> Delete
-            </button>
-          </div>
-        </div>
-      )}
-
       <div className="mb-4 flex flex-wrap items-center gap-3">
         <input
           className="admin-input max-w-xs py-2 text-sm"
@@ -251,6 +233,9 @@ export default function AdminClientDirectory() {
         <select className="admin-input max-w-40 py-2 text-sm" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
           <option value="all">All statuses</option>
           {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
+        </select>
+        <select className="admin-input max-w-52 py-2 text-sm" value={sortBy} onChange={(e) => setSortBy(e.target.value)} aria-label="Sort clients">
+          {SORTS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
         </select>
         <span className="text-xs text-muted-foreground/70">{filtered.length} of {clients.length}</span>
       </div>
@@ -264,7 +249,7 @@ export default function AdminClientDirectory() {
           <table className="w-full">
             <thead>
               <tr className="bg-muted/60">
-                {['Company', 'Primary contact', 'Status', 'Portal', 'Accounts', 'Managers', 'Created', ''].map((h) => (
+                {['Company', 'Primary contact', 'Status', 'Collected', 'Outstanding', 'Portal', 'Accounts', 'Created', ''].map((h) => (
                   <th key={h} className="px-5 py-3 text-left text-[10px] uppercase tracking-[0.2em] text-muted-foreground/70">{h}</th>
                 ))}
               </tr>
@@ -273,8 +258,8 @@ export default function AdminClientDirectory() {
               {filtered.map((c) => (
                 <tr
                   key={c.id}
-                  onClick={() => setEditing({ ...c })}
-                  className={`cursor-pointer border-t border-border/30 hover:bg-accent/40 ${editing?.id === c.id ? 'bg-accent/40' : ''}`}
+                  onClick={() => navigate(`/admin/agency/clients/${c.id}`)}
+                  className="cursor-pointer border-t border-border/30 hover:bg-accent/40"
                 >
                   <td className="px-5 py-3 text-sm text-foreground">{c.company_name}</td>
                   <td className="px-5 py-3">
@@ -284,13 +269,10 @@ export default function AdminClientDirectory() {
                   <td className="px-5 py-3">
                     <span className={`rounded-sm border px-2 py-0.5 text-[10px] uppercase tracking-wider ${STATUS_STYLES[c.status] || 'border-border text-muted-foreground'}`}>{c.status}</span>
                   </td>
+                  <td className="px-5 py-3 text-sm text-foreground">{formatUsd(money.collected.get(c.id) || 0)}</td>
+                  <td className="px-5 py-3 text-sm text-muted-foreground">{formatUsd(money.outstanding.get(c.id) || 0)}</td>
                   <td className="px-5 py-3 text-xs text-muted-foreground/70">{(c.client_portal_status || 'none').replace(/_/g, ' ')}</td>
                   <td className="px-5 py-3">{accountBadges(c)}</td>
-                  <td className="px-5 py-3 text-xs text-muted-foreground/70">
-                    {c.assigned_account_manager || c.assigned_project_manager
-                      ? [c.assigned_account_manager, c.assigned_project_manager].filter(Boolean).join(', ')
-                      : '—'}
-                  </td>
                   <td className="px-5 py-3 text-xs text-muted-foreground/70">{new Date(c.created_date).toLocaleDateString()}</td>
                   <td className="px-5 py-3 text-right">
                     <button
