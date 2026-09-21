@@ -25,7 +25,7 @@ export default function PublishedReport({ audit, findings, credit }) {
           <p className="whitespace-pre-wrap text-sm leading-relaxed text-muted-foreground">
             {audit.consultant_summary || 'Your consultant will walk you through this report in detail.'}
           </p>
-          {(audit.subscores || []).length > 0 && (
+          {audit.show_subscores !== false && (audit.subscores || []).length > 0 && (
             <div className="mt-5 space-y-3 border-t border-border/40 pt-4">
               {audit.subscores.map((s, i) => (
                 <div key={i}>

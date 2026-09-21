@@ -11,7 +11,7 @@ const navItems = [
   { label: 'Brand Portal', path: '/brand-portal', icon: Palette },
   { label: 'Big Picture', path: '/brand-portal/big-picture', icon: Target },
   { label: 'Collaborations', path: '/services', icon: ClipboardList },
-  { label: 'Digital Brand Health', path: '/digital-brand-health', icon: Activity },
+  { label: 'Digital Brand Health', path: '/brand-portal/brand-health', icon: Activity },
   { label: 'Podcast', path: '/podcast', icon: Mic },
   { label: 'Support', path: '/support', icon: LifeBuoy },
 ];

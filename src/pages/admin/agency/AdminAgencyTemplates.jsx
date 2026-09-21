@@ -10,6 +10,7 @@ export default function AdminAgencyTemplates() {
   const { toast } = useToast();
   const [templates, setTemplates] = useState([]);
   const [projects, setProjects] = useState([]);
+  const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState(null);
   const [applyingId, setApplyingId] = useState(null);
@@ -18,7 +19,8 @@ export default function AdminAgencyTemplates() {
     Promise.all([
       base44.entities.ProjectTemplate.filter({}, 'name', 100).catch(() => []),
       base44.entities.Project.filter({}, '-created_date', 200).catch(() => []),
-    ]).then(([t, p]) => { setTemplates(t || []); setProjects(p || []); setLoading(false); });
+      base44.entities.AgencyClient.filter({}, 'company_name', 500).catch(() => []),
+    ]).then(([t, p, c]) => { setTemplates(t || []); setProjects(p || []); setClients(c || []); setLoading(false); });
   }, []);
 
   useEffect(() => { load(); }, [load]);
@@ -73,6 +75,7 @@ export default function AdminAgencyTemplates() {
       {applying && (
         <TemplateApplyCard
           template={applying}
+          clients={clients}
           projects={projects}
           onClose={() => setApplyingId(null)}
           onApplied={() => { setApplyingId(null); load(); }}
@@ -118,7 +121,7 @@ export default function AdminAgencyTemplates() {
                   onClick={() => { setEditingId(null); setApplyingId(t.id); }}
                   className="text-[10px] uppercase tracking-widest text-primary transition-opacity hover:opacity-80"
                 >
-                  Apply to project
+                  Apply to client
                 </button>
               </div>
             </div>

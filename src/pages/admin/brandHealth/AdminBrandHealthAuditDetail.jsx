@@ -9,6 +9,7 @@ import MatrixEditor from '@/components/admin/brandHealth/MatrixEditor';
 import EvidenceList from '@/components/admin/brandHealth/EvidenceList';
 import NotesPanel from '@/components/admin/brandHealth/NotesPanel';
 import CreditPanel from '@/components/admin/brandHealth/CreditPanel';
+import IntakeViewer from '@/components/admin/brandHealth/IntakeViewer';
 import { AUDIT_STATUSES, COMPONENT_LABELS, PUBLISHED_STATUS, STATUS_LABELS } from '@/lib/brandHealth';
 
 const SECTION_TITLE = 'mb-3 font-heading text-xl text-foreground';
@@ -161,6 +162,13 @@ export default function AdminBrandHealthAuditDetail() {
         </label>
       </div>
 
+      {!isMatrix && (
+        <div className="dashboard-card mb-6 p-6">
+          <h3 className={SECTION_TITLE}>Client Intake</h3>
+          <IntakeViewer audit={audit} />
+        </div>
+      )}
+
       {!isMatrix ? (
         <div className="dashboard-card mb-6 p-6">
           <h3 className={SECTION_TITLE}>Scoring</h3>
@@ -178,7 +186,16 @@ export default function AdminBrandHealthAuditDetail() {
               }}
             />
           </label>
-          <SubscoresEditor subscores={audit.subscores} onSave={(rows) => updateAudit({ subscores: rows })} />
+          <label className="mb-4 flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground">
+            <input
+              type="checkbox"
+              checked={audit.show_subscores !== false}
+              onChange={(e) => updateAudit({ show_subscores: e.target.checked })}
+              disabled={busy}
+            />
+            Show category scores in the client report
+          </label>
+          <SubscoresEditor component={audit.component} subscores={audit.subscores} onSave={(rows) => updateAudit({ subscores: rows })} />
         </div>
       ) : (
         <div className="dashboard-card mb-6 p-6">

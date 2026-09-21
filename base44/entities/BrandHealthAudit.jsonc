@@ -34,6 +34,10 @@
       "type": "string",
       "format": "date"
     },
+    "intake_data": {
+      "type": "object",
+      "additionalProperties": true
+    },
     "review_scheduled_date": {
       "type": "string",
       "format": "date"
@@ -43,6 +47,10 @@
     },
     "score": {
       "type": "number"
+    },
+    "show_subscores": {
+      "type": "boolean",
+      "default": true
     },
     "subscores": {
       "type": "array",

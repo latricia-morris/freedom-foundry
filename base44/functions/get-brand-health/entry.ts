@@ -81,6 +81,7 @@ export default async function (req: Request): Promise<Response> {
         ...base,
         score: a.score,
         subscores: a.subscores,
+        show_subscores: a.show_subscores !== false,
         consultant_summary: a.consultant_summary,
         action_plan: a.action_plan,
         matrix_channels: a.matrix_channels,

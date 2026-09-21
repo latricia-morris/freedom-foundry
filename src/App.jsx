@@ -51,7 +51,9 @@ import IgniteOS from './pages/IgniteOS';
 import BrandUp from './pages/BrandUp';
 import BrandChecklist from './pages/BrandChecklist';
 import VisibilityScorecard from './pages/VisibilityScorecard';
-import DigitalBrandHealth from './pages/DigitalBrandHealth';
+import BrandHealthHome from './pages/brandhealth/BrandHealthHome';
+import BrandHealthWebsite from './pages/brandhealth/BrandHealthWebsite';
+import BrandHealthMatrix from './pages/brandhealth/BrandHealthMatrix';
 
 // Admin pages
 import AdminDashboard from './pages/AdminDashboard';
@@ -150,7 +152,7 @@ const AuthenticatedApp = () => {
           <Route path="/podcast" element={<Podcast />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/billing" element={<Billing />} />
-          <Route path="/digital-brand-health" element={<DigitalBrandHealth />} />
+          <Route path="/digital-brand-health" element={<Navigate to="/brand-portal/brand-health" replace />} />
           <Route element={<BrandPortalLayout />}>
             <Route path="/brand-portal" element={<BrandPortal />} />
             <Route path="/brand-portal/big-picture" element={<BigPicture />} />
@@ -159,7 +161,11 @@ const AuthenticatedApp = () => {
             <Route path="/brand-portal/guidelines" element={<BrandGuidelines />} />
             <Route path="/brand-portal/assets" element={<BrandAssets />} />
             <Route path="/brand-portal/media-kit" element={<MediaKit />} />
-            <Route path="/brand-portal/visibility" element={<VisibilityScorecard />} />
+            <Route path="/brand-portal/brand-health" element={<BrandHealthHome />} />
+            <Route path="/brand-portal/brand-health/visibility" element={<VisibilityScorecard />} />
+            <Route path="/brand-portal/brand-health/website" element={<BrandHealthWebsite />} />
+            <Route path="/brand-portal/brand-health/marketing-matrix" element={<BrandHealthMatrix />} />
+            <Route path="/brand-portal/visibility" element={<Navigate to="/brand-portal/brand-health/visibility" replace />} />
             <Route path="/brand-portal/ignite" element={<IgniteOS />} />
             <Route path="/brand-portal/brand-up" element={<BrandUp />} />
             <Route path="/brand-portal/checklist" element={<BrandChecklist />} />
