@@ -50,6 +50,7 @@ import MediaKit from './pages/MediaKit';
 import IgniteOS from './pages/IgniteOS';
 import BrandUp from './pages/BrandUp';
 import BrandChecklist from './pages/BrandChecklist';
+import VisibilityScorecard from './pages/VisibilityScorecard';
 
 // Admin pages
 import AdminDashboard from './pages/AdminDashboard';
@@ -79,6 +80,9 @@ import AdminAgencyProjectDetail from './pages/admin/agency/AdminAgencyProjectDet
 import AdminAgencyBuild from './pages/admin/agency/AdminAgencyBuild';
 import AdminClientDirectory from './pages/admin/agency/AdminClientDirectory';
 import AdminClientDetail from './pages/admin/agency/AdminClientDetail';
+import AdminVisibilityReports from './pages/admin/agency/AdminVisibilityReports';
+import AdminVisibilityClientDetail from './pages/admin/agency/AdminVisibilityClientDetail';
+import AdminVisibilityPresent from './pages/admin/agency/AdminVisibilityPresent';
 import AdminFinancialOverview from './pages/admin/agency/AdminFinancialOverview';
 import AdminResourceLibrary from './pages/admin/agency/AdminResourceLibrary';
 import AdminAuditLogs from './pages/admin/agency/AdminAuditLogs';
@@ -151,6 +155,7 @@ const AuthenticatedApp = () => {
             <Route path="/brand-portal/guidelines" element={<BrandGuidelines />} />
             <Route path="/brand-portal/assets" element={<BrandAssets />} />
             <Route path="/brand-portal/media-kit" element={<MediaKit />} />
+            <Route path="/brand-portal/visibility" element={<VisibilityScorecard />} />
             <Route path="/brand-portal/ignite" element={<IgniteOS />} />
             <Route path="/brand-portal/brand-up" element={<BrandUp />} />
             <Route path="/brand-portal/checklist" element={<BrandChecklist />} />
@@ -174,6 +179,8 @@ const AuthenticatedApp = () => {
             <Route path="/admin/agency" element={<AdminAgencyDashboard />} />
             <Route path="/admin/agency/clients" element={<AdminClientDirectory />} />
             <Route path="/admin/agency/clients/:id" element={<AdminClientDetail />} />
+            <Route path="/admin/agency/visibility" element={<AdminVisibilityReports />} />
+            <Route path="/admin/agency/visibility/:clientId" element={<AdminVisibilityClientDetail />} />
             <Route path="/admin/agency/proposals" element={<AdminAgencyPipeline />} />
             <Route path="/admin/agency/templates" element={<AdminAgencyTemplates />} />
             <Route path="/admin/agency/proposals/new" element={<AdminAgencyProposalBuilder />} />
@@ -185,6 +192,7 @@ const AuthenticatedApp = () => {
             <Route path="/resource-library" element={<AdminResourceLibrary />} />
             <Route path="/audit-logs" element={<AdminAuditLogs />} />
             </Route>
+            <Route path="/admin/agency/visibility/:clientId/present" element={<AdminVisibilityPresent />} />
           </Route>
         </Route>
       </Route>

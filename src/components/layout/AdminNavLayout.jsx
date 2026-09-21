@@ -9,6 +9,7 @@ const NAV_SECTIONS = [
     items: [
       { name: 'Operations', path: '/admin/agency', end: true },
       { name: 'Clients', path: '/admin/agency/clients' },
+      { name: 'Visibility Reports', path: '/admin/agency/visibility' },
       { name: 'Pipeline', path: '/admin/agency/proposals' },
       { name: 'Client Projects', path: '/admin/agency/projects' },
       { name: 'Templates', path: '/admin/agency/templates' },

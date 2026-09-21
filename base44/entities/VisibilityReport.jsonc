@@ -1,0 +1,134 @@
+{
+  "name": "VisibilityReport",
+  "type": "object",
+  "properties": {
+    "agency_client_id": {
+      "type": "string"
+    },
+    "report_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "is_baseline": {
+      "type": "boolean",
+      "default": false
+    },
+    "access_tier": {
+      "type": "string",
+      "enum": [
+        "prospect",
+        "client"
+      ],
+      "default": "prospect"
+    },
+    "composite_score": {
+      "type": "number"
+    },
+    "category_scores": {
+      "type": "object",
+      "properties": {
+        "entity_recognition": {
+          "type": "number"
+        },
+        "structured_data": {
+          "type": "number"
+        },
+        "trusted_source_citations": {
+          "type": "number"
+        },
+        "topical_authority": {
+          "type": "number"
+        },
+        "documented_outcomes": {
+          "type": "number"
+        },
+        "social_channel_presence": {
+          "type": "number"
+        }
+      }
+    },
+    "key_findings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "recommended_fixes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "competitor_map": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "positioning": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      }
+    },
+    "analyst_notes": {
+      "type": "string"
+    },
+    "next_checkin_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "raw_input_text": {
+      "type": "string"
+    },
+    "input_method": {
+      "type": "string",
+      "enum": [
+        "paste",
+        "upload"
+      ],
+      "default": "paste"
+    },
+    "source_model": {
+      "type": "string"
+    },
+    "verification_status": {
+      "type": "string",
+      "enum": [
+        "pending_review",
+        "human_reviewed"
+      ],
+      "default": "pending_review"
+    }
+  },
+  "required": [
+    "agency_client_id"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
