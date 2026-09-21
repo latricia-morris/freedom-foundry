@@ -1,11 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { ShieldCheck } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
-import VisibilityRadarChart from '@/components/visibility/VisibilityRadarChart';
-import VisibilityTrendChart from '@/components/visibility/VisibilityTrendChart';
+import VisibilityComparisonChart from '@/components/visibility/VisibilityComparisonChart';
+import VisibilityScoreBreakdown from '@/components/visibility/VisibilityScoreBreakdown';
+import VisibilityBusinessSnapshot from '@/components/visibility/VisibilityBusinessSnapshot';
+import VisibilityAllocation from '@/components/visibility/VisibilityAllocation';
 import LockedActionPlan from '@/components/visibility/LockedActionPlan';
-import { categoryRows, formatDate, scoreLabel } from '@/lib/visibility';
+import { formatDate, scoreLabel } from '@/lib/visibility';
 
+/**
+ * Client-facing digital diagnostic: composite score on the left quarter,
+ * model comparison chart on the right, structured score breakdown with
+ * plain-language definitions, business snapshot, and strategic allocation.
+ * Priority recommendations appear only when the agency explicitly enables
+ * them on the report; otherwise a locked teaser shows.
+ */
 export default function VisibilityScorecard() {
   const [data, setData] = useState(null);
   const [error, setError] = useState(false);
@@ -58,8 +67,10 @@ export default function VisibilityScorecard() {
   }
 
   const latest = reports[0];
-  const rows = categoryRows(latest);
   const composite = typeof latest.composite_score === 'number' ? latest.composite_score : null;
+  const suggestions = latest.recommended_fixes || [];
+  const hasSnapshot = (latest.social_channels || []).length > 0 || Object.values(latest.business_snapshot || {}).some(Boolean);
+  const allocation = latest.marketing_allocation || [];
 
   return (
     <div className="animate-fade-in space-y-6">
@@ -79,8 +90,8 @@ export default function VisibilityScorecard() {
         )}
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[2fr_3fr]">
-        <div className="dash-editorial-block flex flex-col items-center justify-center text-center">
+      <div className="grid gap-6 lg:grid-cols-[1fr_3fr]">
+        <div className="dash-editorial-block flex flex-col items-center justify-center px-5 py-10 text-center">
           {composite !== null ? (
             <>
               <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">Composite Score</p>
@@ -88,8 +99,8 @@ export default function VisibilityScorecard() {
                 {composite}
                 <span className="text-2xl text-muted-foreground" style={{ WebkitTextFillColor: 'hsl(var(--muted-foreground))' }}>/100</span>
               </p>
-              <p className="mt-3 text-sm text-muted-foreground">
-                How discoverable and credible your brand appears to AI search engines right now.
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                How discoverable and credible your brand appears to AI search engines &amp; the public right now.
               </p>
             </>
           ) : (
@@ -100,65 +111,71 @@ export default function VisibilityScorecard() {
           )}
         </div>
         <div className="dash-editorial-block">
-          <h3 className="mb-2 font-heading text-xl">Category Scores</h3>
-          <VisibilityRadarChart series={[{ name: 'Your brand', report: latest }]} />
+          <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2">
+            <h3 className="font-heading text-xl">Score Pattern by Dimension</h3>
+            <span className="text-xs text-muted-foreground/70">One line per audit source · dashed line is the baseline</span>
+          </div>
+          <VisibilityComparisonChart reports={reports} />
         </div>
+      </div>
+
+      <div className="dash-editorial-block">
+        <h3 className="mb-4 font-heading text-xl">What the Scores Measure</h3>
+        <VisibilityScoreBreakdown reports={reports} />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="dash-editorial-block">
-          <h3 className="mb-4 font-heading text-xl">What We Found</h3>
-          {rows.some((r) => r.score !== null) ? (
-            <ul className="space-y-4">
-              {rows.map((r) => (
-                <li key={r.key}>
-                  <div className="mb-1 flex items-baseline justify-between">
-                    <span className="text-sm text-foreground">{r.label}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {r.score === null ? 'Not yet scored' : `${r.score} / ${r.max}`}
-                    </span>
-                  </div>
-                  <div className="well-track h-2.5 w-full">
-                    <div className="molten-bar h-full rounded-full transition-all" style={{ width: `${r.pct ?? 0}%` }} />
-                  </div>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-sm text-muted-foreground">Category breakdown coming with your next snapshot.</p>
-          )}
+          <h3 className="mb-4 font-heading text-xl">Key Findings</h3>
+          <ul className="space-y-3">
+            {(latest.key_findings || []).map((f, i) => (
+              <li key={i} className="flex gap-3 text-sm text-muted-foreground">
+                <span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-primary" />
+                {f}
+              </li>
+            ))}
+            {!(latest.key_findings || []).length && <li className="text-sm text-muted-foreground">Findings will appear with your next snapshot.</li>}
+          </ul>
         </div>
-        <div className="space-y-6">
-          <div className="dash-editorial-block">
-            <h3 className="mb-4 font-heading text-xl">Key Findings</h3>
-            <ul className="space-y-3">
-              {(latest.key_findings || []).map((f, i) => (
-                <li key={i} className="flex gap-3 text-sm text-muted-foreground">
-                  <span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-primary" />
-                  {f}
-                </li>
-              ))}
-              {!(latest.key_findings || []).length && <li className="text-sm text-muted-foreground">Findings will appear with your next snapshot.</li>}
-            </ul>
-          </div>
-          <LockedActionPlan />
+        <div className="dash-editorial-block">
+          {suggestions.length > 0 ? (
+            <>
+              <h3 className="mb-4 font-heading text-xl">Priority Recommendations</h3>
+              <ol className="space-y-3">
+                {suggestions.map((f, i) => (
+                  <li key={i} className="flex gap-3 text-sm text-muted-foreground">
+                    <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-sm border border-primary/40 text-[10px] font-semibold text-primary">
+                      {i + 1}
+                    </span>
+                    {f}
+                  </li>
+                ))}
+              </ol>
+            </>
+          ) : (
+            <>
+              <h3 className="mb-4 font-heading text-xl">Recommendations</h3>
+              <LockedActionPlan label="Full action plan available with your engagement" />
+            </>
+          )}
         </div>
       </div>
 
-      {reports.length >= 2 && (
+      {hasSnapshot && (
         <div className="dash-editorial-block">
-          <h3 className="mb-4 font-heading text-xl">Score History</h3>
-          <VisibilityTrendChart reports={reports} />
-          <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-            {reports.map((r) => (
-              <div key={r.id} className="flex items-center justify-between rounded-sm border border-border/60 bg-background/40 px-4 py-2.5">
-                <span className="text-sm text-foreground">{formatDate(r.report_date)}</span>
-                <span className="text-sm font-semibold text-foreground">
-                  {typeof r.composite_score === 'number' ? `${r.composite_score}/100` : '—'}
-                </span>
-              </div>
-            ))}
-          </div>
+          <h3 className="mb-1 font-heading text-xl">Business Snapshot</h3>
+          <p className="mb-5 text-xs text-muted-foreground/70">The operational context behind these scores.</p>
+          <VisibilityBusinessSnapshot report={latest} />
+        </div>
+      )}
+
+      {allocation.length > 0 && (
+        <div className="dash-editorial-block">
+          <h3 className="mb-1 font-heading text-xl">Suggested Marketing Emphasis</h3>
+          <p className="mb-5 text-xs text-muted-foreground/70">
+            Where emphasis earns the most visibility next, based on your score pattern.
+          </p>
+          <VisibilityAllocation allocation={allocation} />
         </div>
       )}
     </div>

@@ -1,12 +1,48 @@
 // Shared scoring model and helpers for the Visibility & Credibility report.
 // Six categories, 100 points: five at 16 + Social Channel Presence at 20.
 export const VISIBILITY_CATEGORIES = [
-  { key: 'entity_recognition', label: 'Entity Recognition', short: 'Entity', max: 16 },
-  { key: 'structured_data', label: 'Structured Data', short: 'Schema', max: 16 },
-  { key: 'trusted_source_citations', label: 'Trusted Source Citations', short: 'Citations', max: 16 },
-  { key: 'topical_authority', label: 'Topical Authority', short: 'Topical', max: 16 },
-  { key: 'documented_outcomes', label: 'Documented Outcomes', short: 'Outcomes', max: 16 },
-  { key: 'social_channel_presence', label: 'Social Channel Presence', short: 'Social', max: 20 },
+  {
+    key: 'entity_recognition',
+    label: 'Entity Recognition',
+    short: 'Entity',
+    max: 16,
+    definition: 'Whether AI engines correctly identify who you are, what you offer, and where you operate.',
+  },
+  {
+    key: 'structured_data',
+    label: 'Structured Data',
+    short: 'Schema',
+    max: 16,
+    definition: 'Machine-readable signals on your website that let search engines trust and display your details.',
+  },
+  {
+    key: 'trusted_source_citations',
+    label: 'Trusted Source Citations',
+    short: 'Citations',
+    max: 16,
+    definition: 'How often credible third-party sources reference and validate your brand.',
+  },
+  {
+    key: 'topical_authority',
+    label: 'Topical Authority',
+    short: 'Topical',
+    max: 16,
+    definition: 'Depth of published coverage on your core subjects that positions you as a go-to voice.',
+  },
+  {
+    key: 'documented_outcomes',
+    label: 'Documented Outcomes',
+    short: 'Outcomes',
+    max: 16,
+    definition: 'Public proof of results: case studies, testimonials, and measurable wins anyone can verify.',
+  },
+  {
+    key: 'social_channel_presence',
+    label: 'Social Channel Presence',
+    short: 'Social',
+    max: 20,
+    definition: 'Active, consistent, findable social profiles that corroborate everything else the engines find.',
+  },
 ];
 
 // On-brand chart series: oxblood, ember orange, champagne gold, cloudbone gray.
@@ -80,6 +116,46 @@ export function parseCompetitors(text) {
 export function competitorsToText(competitors) {
   return (competitors || [])
     .map((c) => [c.name, c.positioning].filter(Boolean).join(' — '))
+    .join('\n');
+}
+
+/**
+ * One chartable line per report, labeled by source model. When the same
+ * model produces multiple snapshots, the date disambiguates the line so
+ * every loaded report charts as its own series.
+ */
+export function reportSeries(reports) {
+  const counts = {};
+  for (const r of reports || []) {
+    const base = r.source_model || 'Unlabeled source';
+    counts[base] = (counts[base] || 0) + 1;
+  }
+  const seen = {};
+  return (reports || []).map((r, i) => {
+    const base = r.source_model || 'Unlabeled source';
+    seen[base] = (seen[base] || 0) + 1;
+    const label = counts[base] > 1 ? `${base} · ${formatDate(r.report_date)}` : base;
+    return { key: r.id || `report-${i}`, label, report: r, isBaseline: !!r.is_baseline };
+  });
+}
+
+/** Parses "Platform — handle — url — followers — notes" lines into channel rows. */
+export function parseSocialChannels(text) {
+  return parseLines(text).map((line) => {
+    const parts = line.split(' — ').map((p) => p.trim());
+    return {
+      platform: parts[0] || '',
+      handle: parts[1] || '',
+      url: parts[2] || '',
+      followers: parts[3] || '',
+      notes: parts[4] || '',
+    };
+  });
+}
+
+export function socialChannelsToText(channels) {
+  return (channels || [])
+    .map((c) => [c.platform, c.handle, c.url, c.followers, c.notes].filter(Boolean).join(' — '))
     .join('\n');
 }
 

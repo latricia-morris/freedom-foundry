@@ -1,7 +1,9 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 
 // Admin-only: turns a pasted or uploaded AI visibility audit into a strict
-// six-category structured draft. Unstated values come back null, never guessed.
+// six-category structured draft, plus AI-drafted business snapshot and
+// marketing allocation for admin review. Unstated values come back null,
+// never guessed.
 const EXTRACTION_SCHEMA = {
   type: 'object',
   properties: {
@@ -33,6 +35,31 @@ const EXTRACTION_SCHEMA = {
       },
     },
     report_date_mentioned: { anyOf: [{ type: 'string' }, { type: 'null' }] },
+    business_snapshot: {
+      type: 'object',
+      properties: {
+        email_platform: { anyOf: [{ type: 'string' }, { type: 'null' }] },
+        email_frequency: { anyOf: [{ type: 'string' }, { type: 'null' }] },
+        marketing_blasts: { anyOf: [{ type: 'string' }, { type: 'null' }] },
+        drip_campaigns: { anyOf: [{ type: 'string' }, { type: 'null' }] },
+        funnel_assets: { anyOf: [{ type: 'string' }, { type: 'null' }] },
+        events_launches: { anyOf: [{ type: 'string' }, { type: 'null' }] },
+      },
+      additionalProperties: false,
+    },
+    marketing_allocation: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          area: { type: 'string' },
+          percent: { anyOf: [{ type: 'number' }, { type: 'null' }] },
+          rationale: { type: 'string' },
+        },
+        required: ['area', 'percent', 'rationale'],
+        additionalProperties: false,
+      },
+    },
   },
   required: [
     'composite_score',
@@ -41,6 +68,8 @@ const EXTRACTION_SCHEMA = {
     'recommended_fixes',
     'competitors_mentioned',
     'report_date_mentioned',
+    'business_snapshot',
+    'marketing_allocation',
   ],
 };
 
@@ -60,13 +89,24 @@ Required JSON shape:
   "key_findings": [array of short strings],
   "recommended_fixes": [array of short strings],
   "competitors_mentioned": [array of {name, positioning}],
-  "report_date_mentioned": string or null
+  "report_date_mentioned": string or null,
+  "business_snapshot": {
+    "email_platform": string or null,
+    "email_frequency": string or null,
+    "marketing_blasts": string or null,
+    "drip_campaigns": string or null,
+    "funnel_assets": string or null,
+    "events_launches": string or null
+  },
+  "marketing_allocation": [array of {area, percent, rationale}]
 }
 
 Notes:
 - Some audits score five categories out of 20 points each and omit structured data or social channel presence entirely. For any of the six categories the text does not clearly score, return null for that category.
 - key_findings and recommended_fixes must be short plain-language strings taken directly from the text.
 - competitors_mentioned: each object needs a name and a short positioning description. Return an empty array if none are mentioned.
+- business_snapshot: operational facts stated in the audit about the business (email platform used, how often they send email, whether marketing blasts or drip campaigns exist, key funnel assets such as lead magnets or landing pages, and use of events, launches, or campaign-based activity). Return null for anything the text does not state.
+- marketing_allocation: this is a strategic draft, not an extraction. Propose 3 to 5 channels or functions (e.g. SEO and content, email nurture, social proof, partnerships, paid amplification) with a percent allocation that sums to 100, weighting toward the weakest scored categories and the gaps in the findings. Each rationale must be one short sentence tied directly to the scores or findings. Keep the recommendations specific to what this audit reveals, never generic.
 Return only the JSON object, no other text.`;
 
 export default async function (req: Request): Promise<Response> {

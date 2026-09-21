@@ -25,7 +25,7 @@ export default function CorporateBrandProfile() {
   const init = {
     company_name: '', tagline: '', mission_statement: '', phone: '', email: '', website: '',
     location_city: '', location_state: '', location_country: '',
-    has_books: false, book_links: [],
+    has_books: false, book_links: [], social_channels: [],
     heading_font: '', subheading_font: '', body_font: '', accent_font: '',
     colors: [], logo_urls: [], moodboard_urls: [],
     brand_voice: '', brand_tonality: '', brand_personality: '', brand_prompts: '',
@@ -220,6 +220,24 @@ export default function CorporateBrandProfile() {
               <div><label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5">State / Region</label><input className={inputClass} value={form.location_state} onChange={e => update('location_state', e.target.value)} /></div>
               <div><label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5">Country</label><input className={inputClass} value={form.location_country} onChange={e => update('location_country', e.target.value)} /></div>
             </div>
+          </div>
+        </section>
+
+        <div className="h-px bg-border" />
+
+        {/* Social Channels */}
+        <section>
+          <h2 className="font-heading text-lg mb-4">Brand Social Channels</h2>
+          <div className="space-y-2">
+            {form.social_channels.map((ch, i) => (
+              <div key={i} className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_2fr_auto] gap-2 items-center">
+                <input className={inputClass} value={ch.platform || ''} onChange={e => updateItem('social_channels', i, 'platform', e.target.value)} placeholder="Platform" />
+                <input className={inputClass} value={ch.handle || ''} onChange={e => updateItem('social_channels', i, 'handle', e.target.value)} placeholder="@handle" />
+                <input className={inputClass} value={ch.url || ''} onChange={e => updateItem('social_channels', i, 'url', e.target.value)} placeholder="https://" />
+                <button onClick={() => removeItem('social_channels', i)} className="px-2 text-muted-foreground hover:text-foreground"><X className="w-4 h-4" /></button>
+              </div>
+            ))}
+            <AddLinkButton label="Add Channel" onAdd={() => addItem('social_channels', { platform: '', handle: '', url: '' })} />
           </div>
         </section>
 

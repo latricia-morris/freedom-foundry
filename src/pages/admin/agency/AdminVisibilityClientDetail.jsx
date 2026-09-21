@@ -4,12 +4,17 @@ import { ArrowLeft, Presentation } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import VisibilityRadarChart from '@/components/visibility/VisibilityRadarChart';
 import VisibilityTrendChart from '@/components/visibility/VisibilityTrendChart';
+import VisibilityBusinessSnapshot from '@/components/visibility/VisibilityBusinessSnapshot';
+import VisibilityAllocation from '@/components/visibility/VisibilityAllocation';
+import { useToast } from '@/components/ui/use-toast';
 import { categoryRows, divergenceFlags, formatDate, latestPerSource, scoreLabel } from '@/lib/visibility';
 
 export default function AdminVisibilityClientDetail() {
   const { clientId } = useParams();
   const [client, setClient] = useState(null);
   const [reports, setReports] = useState(null);
+  const [toggling, setToggling] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     base44.entities.AgencyClient.get(clientId).then(setClient).catch(() => setClient(null));
@@ -42,6 +47,25 @@ export default function AdminVisibilityClientDetail() {
   const rows = categoryRows(latest);
   const sourceSeries = latestPerSource(reports).map(({ source, report }) => ({ name: source, report }));
   const divergences = sourceSeries.length > 1 ? divergenceFlags(sourceSeries) : [];
+
+  const toggleSuggestions = async () => {
+    setToggling(true);
+    try {
+      const updated = await base44.entities.VisibilityReport.update(latest.id, {
+        suggestions_client_visible: !latest.suggestions_client_visible,
+      });
+      setReports((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));
+      toast({
+        title: updated.suggestions_client_visible
+          ? 'Recommendations now visible to the client'
+          : 'Recommendations hidden from the client',
+      });
+    } catch (err) {
+      toast({ title: 'Could not update the toggle', description: err.message, variant: 'destructive' });
+    } finally {
+      setToggling(false);
+    }
+  };
 
   return (
     <div className="mx-auto max-w-5xl animate-fade-in pb-12">
@@ -144,6 +168,44 @@ export default function AdminVisibilityClientDetail() {
       <div className="dashboard-card mt-6 p-6">
         <h3 className="mb-3 font-heading text-xl text-foreground">Analyst Notes</h3>
         <p className="whitespace-pre-wrap text-sm text-muted-foreground">{latest.analyst_notes || 'No notes on this snapshot.'}</p>
+      </div>
+
+      <div className="dashboard-card mt-6 flex flex-wrap items-center justify-between gap-4 p-6">
+        <div>
+          <h3 className="font-heading text-xl text-foreground">Client visibility of recommendations</h3>
+          <p className="mt-1 max-w-xl text-xs leading-relaxed text-muted-foreground">
+            {latest.suggestions_client_visible
+              ? 'The client portal shows the priority recommendations for this report.'
+              : 'Recommendations stay internal. The client portal shows the locked teaser for this report.'}
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={toggleSuggestions}
+          disabled={toggling}
+          className={`inline-flex items-center gap-2 rounded-md border px-4 py-2 text-xs font-semibold uppercase tracking-widest transition-colors disabled:opacity-50 ${
+            latest.suggestions_client_visible ? 'border-border text-muted-foreground hover:text-foreground' : 'btn-forge border-transparent'
+          }`}
+        >
+          {latest.suggestions_client_visible ? 'Hide from client' : 'Show to client'}
+        </button>
+      </div>
+
+      <div className="mt-6 grid gap-6 lg:grid-cols-2">
+        <div className="dashboard-card p-6">
+          <h3 className="mb-4 font-heading text-xl text-foreground">Business Snapshot</h3>
+          <VisibilityBusinessSnapshot report={latest} />
+          {!(latest.social_channels || []).length && !Object.values(latest.business_snapshot || {}).some(Boolean) && (
+            <p className="text-sm text-muted-foreground/70">Not captured yet — drafted on the next report intake.</p>
+          )}
+        </div>
+        <div className="dashboard-card p-6">
+          <h3 className="mb-4 font-heading text-xl text-foreground">Suggested Marketing Emphasis</h3>
+          <VisibilityAllocation allocation={latest.marketing_allocation} />
+          {!(latest.marketing_allocation || []).length && (
+            <p className="text-sm text-muted-foreground/70">Not drafted yet — proposed on the next report intake.</p>
+          )}
+        </div>
       </div>
 
       {sourceSeries.length > 1 && (

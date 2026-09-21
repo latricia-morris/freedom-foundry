@@ -4,8 +4,9 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 // client record by email and returns their own report snapshots. Non-admin
 // callers receive records with gated fields stripped server-side, so fixes,
 // competitor mapping, and analyst notes never leave the server for a client.
+// recommended_fixes is released to clients only when the report's
+// suggestions_client_visible toggle is explicitly enabled.
 const GATED_FIELDS = [
-  'recommended_fixes',
   'competitor_map',
   'analyst_notes',
   'raw_input_text',
@@ -16,6 +17,7 @@ const GATED_FIELDS = [
 function stripReport(record) {
   const copy = { ...record };
   for (const field of GATED_FIELDS) delete copy[field];
+  if (!record.suggestions_client_visible) delete copy.recommended_fixes;
   return copy;
 }
 

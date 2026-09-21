@@ -59,6 +59,80 @@
         "type": "string"
       }
     },
+    "suggestions_client_visible": {
+      "type": "boolean",
+      "default": false
+    },
+    "social_channels": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "platform": {
+            "type": "string"
+          },
+          "handle": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "followers": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "platform"
+        ]
+      }
+    },
+    "business_snapshot": {
+      "type": "object",
+      "properties": {
+        "email_platform": {
+          "type": "string"
+        },
+        "email_frequency": {
+          "type": "string"
+        },
+        "marketing_blasts": {
+          "type": "string"
+        },
+        "drip_campaigns": {
+          "type": "string"
+        },
+        "funnel_assets": {
+          "type": "string"
+        },
+        "events_launches": {
+          "type": "string"
+        }
+      }
+    },
+    "marketing_allocation": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "area": {
+            "type": "string"
+          },
+          "percent": {
+            "type": "number"
+          },
+          "rationale": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "area",
+          "percent"
+        ]
+      }
+    },
     "competitor_map": {
       "type": "array",
       "items": {

@@ -7,9 +7,19 @@ import {
   competitorsToText,
   parseCompetitors,
   parseLines,
+  parseSocialChannels,
   sumScores,
   toLineText,
 } from '@/lib/visibility';
+
+const SNAPSHOT_FIELDS = [
+  ['email_platform', 'Email platform'],
+  ['email_frequency', 'Email frequency'],
+  ['marketing_blasts', 'Marketing blasts'],
+  ['drip_campaigns', 'Drip campaigns'],
+  ['funnel_assets', 'Key funnel assets'],
+  ['events_launches', 'Events & launches'],
+];
 
 /**
  * Admin intake: paste or upload a raw AI audit, extract a structured six-category
@@ -35,6 +45,9 @@ export default function VisibilityIntake({ client, onSaved, onCancel }) {
   const [fixesText, setFixesText] = useState('');
   const [competitorsText, setCompetitorsText] = useState('');
   const [analystNotes, setAnalystNotes] = useState('');
+  const [socialText, setSocialText] = useState('');
+  const [snap, setSnap] = useState(Object.fromEntries(SNAPSHOT_FIELDS.map(([key]) => [key, ''])));
+  const [allocation, setAllocation] = useState([]);
 
   const handleFile = async (e) => {
     const file = e.target.files?.[0];
@@ -74,6 +87,11 @@ export default function VisibilityIntake({ client, onSaved, onCancel }) {
       setFindingsText(toLineText(draft.key_findings));
       setFixesText(toLineText(draft.recommended_fixes));
       setCompetitorsText(competitorsToText(draft.competitors_mentioned));
+      const draftSnap = draft.business_snapshot || {};
+      setSnap(Object.fromEntries(SNAPSHOT_FIELDS.map(([key]) => [key, draftSnap[key] || ''])));
+      setAllocation(
+        (draft.marketing_allocation || []).map((a) => ({ area: a.area || '', percent: a.percent ?? '', rationale: a.rationale || '' }))
+      );
       if (draft.report_date_mentioned) {
         const parsed = new Date(draft.report_date_mentioned);
         if (!Number.isNaN(parsed.getTime())) setReportDate(parsed.toISOString().slice(0, 10));
@@ -106,6 +124,15 @@ export default function VisibilityIntake({ client, onSaved, onCancel }) {
         recommended_fixes: parseLines(fixesText),
         competitor_map: parseCompetitors(competitorsText),
         analyst_notes: analystNotes || null,
+        social_channels: parseSocialChannels(socialText),
+        business_snapshot: Object.fromEntries(Object.entries(snap).map(([key, value]) => [key, value || null])),
+        marketing_allocation: allocation
+          .filter((a) => a.area.trim())
+          .map((a) => ({
+            area: a.area.trim(),
+            percent: a.percent === '' || a.percent == null ? null : Number(a.percent),
+            rationale: a.rationale.trim() || null,
+          })),
         raw_input_text: rawText || (fileUrl ? `[Uploaded report file: ${fileName}] ${fileUrl}` : ''),
         input_method: fileUrl ? 'upload' : 'paste',
         source_model: sourceModel,
@@ -246,6 +273,67 @@ export default function VisibilityIntake({ client, onSaved, onCancel }) {
               <label className="mb-1 block text-[10px] uppercase tracking-widest text-muted-foreground">Analyst notes (gated)</label>
               <textarea className="admin-input min-h-24" value={analystNotes} onChange={(e) => setAnalystNotes(e.target.value)} />
             </div>
+          </div>
+
+          <div>
+            <p className="mb-2 text-[10px] uppercase tracking-widest text-muted-foreground">Business snapshot — AI-drafted, review and edit</p>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {SNAPSHOT_FIELDS.map(([key, label]) => (
+                <div key={key}>
+                  <label className="mb-1 block text-xs text-muted-foreground">{label}</label>
+                  <input
+                    className="admin-input"
+                    value={snap[key]}
+                    onChange={(e) => setSnap((prev) => ({ ...prev, [key]: e.target.value }))}
+                    placeholder="Leave blank if unknown"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <div className="mb-2 flex items-center justify-between">
+              <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Suggested marketing emphasis — AI-drafted, review and edit</p>
+              <button
+                type="button"
+                onClick={() => setAllocation((prev) => [...prev, { area: '', percent: '', rationale: '' }])}
+                className="text-[10px] uppercase tracking-widest text-primary transition-opacity hover:opacity-80"
+              >
+                + Add item
+              </button>
+            </div>
+            <div className="space-y-2">
+              {allocation.map((a, i) => (
+                <div key={i} className="grid gap-2 sm:grid-cols-[1.2fr_80px_2fr_auto]">
+                  <input className="admin-input" value={a.area} onChange={(e) => setAllocation((prev) => prev.map((it, idx) => (idx === i ? { ...it, area: e.target.value } : it)))} placeholder="Channel / function" />
+                  <input type="number" min="0" max="100" className="admin-input" value={a.percent} onChange={(e) => setAllocation((prev) => prev.map((it, idx) => (idx === i ? { ...it, percent: e.target.value } : it)))} placeholder="%" />
+                  <input className="admin-input" value={a.rationale} onChange={(e) => setAllocation((prev) => prev.map((it, idx) => (idx === i ? { ...it, rationale: e.target.value } : it)))} placeholder="Rationale tied to the scores" />
+                  <button
+                    type="button"
+                    onClick={() => setAllocation((prev) => prev.filter((_, idx) => idx !== i))}
+                    className="px-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+              {!allocation.length && (
+                <p className="text-xs text-muted-foreground/70">No allocation drafted. Add items manually or re-extract.</p>
+              )}
+            </div>
+          </div>
+
+          <div>
+            <label className="mb-1 block text-[10px] uppercase tracking-widest text-muted-foreground">
+              Social channels — one per line: Platform — handle — URL — followers — notes
+            </label>
+            <textarea
+              className="admin-input min-h-28"
+              value={socialText}
+              onChange={(e) => setSocialText(e.target.value)}
+              placeholder="e.g. Instagram — @the.brand.revivalist — https://www.instagram.com/the.brand.revivalist/ — 724 followers, 766 posts — Bio: Brand Architect & Artisan"
+            />
           </div>
 
           <button

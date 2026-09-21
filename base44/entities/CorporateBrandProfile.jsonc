@@ -45,6 +45,26 @@
         "type": "object"
       }
     },
+    "social_channels": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "platform": {
+            "type": "string"
+          },
+          "handle": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "platform"
+        ]
+      }
+    },
     "heading_font": {
       "type": "string"
     },

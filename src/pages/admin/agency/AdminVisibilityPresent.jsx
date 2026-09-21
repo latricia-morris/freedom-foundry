@@ -3,13 +3,12 @@ import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import VisibilityRadarChart from '@/components/visibility/VisibilityRadarChart';
-import LockedActionPlan from '@/components/visibility/LockedActionPlan';
 import { formatDate, scoreLabel } from '@/lib/visibility';
 
 /**
  * Consultation presentation mode: one screen, no scrolling, built for a live
- * screen-share call. Scores and headline findings only; the action plan stays
- * visibly locked. No export controls in this view.
+ * screen-share call. Scores, headline findings, and the priority
+ * recommendations render for the admin presenting. No export controls.
  */
 export default function AdminVisibilityPresent() {
   const { clientId } = useParams();
@@ -90,7 +89,21 @@ export default function AdminVisibilityPresent() {
         </div>
       )}
 
-      <LockedActionPlan label="Full action plan available with engagement" />
+      {(report.recommended_fixes || []).length > 0 && (
+        <div className="dashboard-card p-6">
+          <h3 className="mb-4 font-heading text-xl text-foreground">Priority Recommendations</h3>
+          <ol className="grid gap-4 sm:grid-cols-2">
+            {(report.recommended_fixes || []).map((f, i) => (
+              <li key={i} className="flex gap-3 text-sm text-muted-foreground">
+                <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-sm border border-primary/40 text-[10px] font-semibold text-primary">
+                  {i + 1}
+                </span>
+                {f}
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
     </div>
   );
 }
