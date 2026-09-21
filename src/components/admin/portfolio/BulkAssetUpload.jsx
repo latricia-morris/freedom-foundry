@@ -3,15 +3,31 @@ import { UploadCloud, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { ASSET_TYPES, parseAssetFilename } from '@/lib/portfolioData';
 
+/** Portfolio asset type → client asset library file type. */
+const BRAND_ASSET_TYPE = {
+  logo_primary: 'logo', logo_alternate: 'logo', logo_variations: 'logo',
+  business_cards: 'print_collateral', letterhead: 'print_collateral', brochures: 'print_collateral',
+  pamphlets: 'print_collateral', sell_sheets: 'print_collateral', flyers: 'print_collateral',
+  signage: 'print_collateral', environmental: 'print_collateral', packaging: 'print_collateral',
+  labels: 'print_collateral', event_materials: 'print_collateral',
+  web_screenshot: 'digital_asset', web_mobile: 'digital_asset', ux_ui: 'design_asset',
+  wireframes: 'design_asset', social_templates: 'digital_asset', social_graphics: 'digital_asset',
+  ad_creative: 'digital_asset', email_templates: 'digital_asset', digital_ads: 'digital_asset',
+  campaign_visuals: 'digital_asset', photography: 'design_asset', video: 'digital_asset',
+  brand_guidelines: 'deliverable', decks: 'deliverable', reports: 'deliverable',
+  custom_documents: 'deliverable',
+};
+
 /**
  * Bulk asset upload with filename-convention parsing.
  * Filename convention: client-project-asset-type-description-01.ext
  * Every suggestion is reviewed and confirmed here before anything is saved.
  */
-export default function BulkAssetUpload({ projectId, onDone }) {
+export default function BulkAssetUpload({ projectId, clientUserId, onDone }) {
   const fileRef = useRef(null);
   const [rows, setRows] = useState([]);
   const [busy, setBusy] = useState(false);
+  const [bulkType, setBulkType] = useState('other');
   const [error, setError] = useState('');
 
   const addFiles = (files) => {
@@ -23,7 +39,7 @@ export default function BulkAssetUpload({ projectId, onDone }) {
         title: suggestion.title,
         assetType: suggestion.assetType,
         sortHint: suggestion.sortHint ?? index + 1,
-        isPublic: false,
+        isPublic: true,
         allowDownload: false,
         altText: '',
         description: '',
@@ -67,6 +83,19 @@ export default function BulkAssetUpload({ projectId, onDone }) {
         });
       }
       await base44.entities.PortfolioAsset.bulkCreate(records);
+      if (clientUserId) {
+        const syncable = records.filter((r) => r.file_url);
+        if (syncable.length) {
+          await base44.entities.BrandAsset.bulkCreate(syncable.map((r) => ({
+            user_id: clientUserId,
+            title: r.title,
+            description: r.description,
+            file_url: r.file_url,
+            file_type: BRAND_ASSET_TYPE[r.asset_type] || 'other',
+            uploaded_by: 'Portfolio intake',
+          })));
+        }
+      }
       setRows([]);
       onDone?.();
     } catch (e) {
@@ -101,6 +130,25 @@ export default function BulkAssetUpload({ projectId, onDone }) {
 
       {rows.length > 0 && (
         <div className="mt-5 space-y-3">
+          <div className="flex flex-wrap items-center gap-2 rounded-md border border-border/70 bg-background/40 p-3">
+            <span className="text-[11px] uppercase tracking-widest text-muted-foreground">Set one category for all rows</span>
+            <select
+              value={bulkType}
+              onChange={(e) => setBulkType(e.target.value)}
+              aria-label="Category for all rows"
+              className="admin-input w-auto py-1.5 text-sm"
+            >
+              {ASSET_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
+            </select>
+            <button
+              type="button"
+              onClick={() => setRows((prev) => prev.map((row) => ({ ...row, assetType: bulkType })))}
+              className="rounded-md border border-border px-3 py-1.5 text-[11px] uppercase tracking-widest text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+            >
+              Apply to all
+            </button>
+            <span className="text-[11px] text-muted-foreground/60">Then override any row individually below.</span>
+          </div>
           {rows.map((row, index) => (
             <div key={`${row.originalFilename}-${index}`} className="rounded-md border border-border/70 bg-card/40 p-3">
               <div className="flex items-center justify-between gap-3">

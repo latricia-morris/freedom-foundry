@@ -1,23 +1,119 @@
 /**
- * Portfolio & case-study shared logic: category lists, filename parsing,
- * SEO drafting, publish checklist, display helpers.
+ * Portfolio & case-study shared logic: the six public work types,
+ * internal detail tags, legacy category remapping, asset families,
+ * readiness scoring, keyword application, filename parsing, display helpers.
  */
 
-export const SERVICE_CATEGORIES = [
+export const WORK_TYPES = [
+  'Branding & Rebranding',
+  'Brand Refresh',
+  'Brand Identity & Design',
   'Brand Strategy',
-  'Rebranding',
-  'Brand Identity',
-  'Logo Design',
-  'Messaging & Copywriting',
-  'Website Design',
-  'Website Copywriting',
-  'UX / UI and Digital Experience',
-  'Print Collateral',
-  'Packaging',
-  'Event / Trade Show Design',
-  'Social and Campaign Creative',
-  'Email and Digital Marketing Assets',
+  'Web Design & Digital Presence',
+  'Marketing & Brand Presence Management',
 ];
+
+export const DETAIL_TAGS = [
+  'Logos',
+  'Brand Guidelines',
+  'Color & Typography',
+  'Print Collateral',
+  'Social Graphics',
+  'UX/UI',
+  'Copy',
+  'Emails',
+  'Packaging',
+  'Events & Trade Shows',
+  'Photography',
+  'Video',
+  'Decks & Documents',
+];
+
+/* ── Legacy category remapping ────────────────────────────────────────────────
+ * Old service / deliverable labels map onto the six public work types and the
+ * internal detail tags. Used once for migration and as a read-time fallback. */
+
+export const LEGACY_SERVICE_TO_WORK_TYPE = {
+  'Brand Strategy': 'Brand Strategy',
+  'Rebranding': 'Branding & Rebranding',
+  'Brand Identity': 'Brand Identity & Design',
+  'Logo Design': 'Brand Identity & Design',
+  'Messaging & Copywriting': 'Marketing & Brand Presence Management',
+  'Website Design': 'Web Design & Digital Presence',
+  'Website Copywriting': 'Marketing & Brand Presence Management',
+  'UX / UI and Digital Experience': 'Web Design & Digital Presence',
+  'Print Collateral': 'Brand Identity & Design',
+  'Packaging': 'Brand Identity & Design',
+  'Event / Trade Show Design': 'Brand Identity & Design',
+  'Social and Campaign Creative': 'Marketing & Brand Presence Management',
+  'Email and Digital Marketing Assets': 'Marketing & Brand Presence Management',
+};
+
+export const LEGACY_DELIVERABLE_TO_WORK_TYPE = {
+  'Brand Guidelines': 'Brand Identity & Design',
+  'Logos & Identity Marks': 'Brand Identity & Design',
+  'Color Palette': 'Brand Identity & Design',
+  'Typography': 'Brand Identity & Design',
+  'Patterns & Icons': 'Brand Identity & Design',
+  'Website': 'Web Design & Digital Presence',
+  'UX / UI': 'Web Design & Digital Presence',
+  'Website Copy': 'Marketing & Brand Presence Management',
+  'Print Collateral': 'Brand Identity & Design',
+  'Packaging': 'Brand Identity & Design',
+  'Events & Trade Shows': 'Brand Identity & Design',
+  'Social': 'Marketing & Brand Presence Management',
+  'Email': 'Marketing & Brand Presence Management',
+  'Ads & Campaigns': 'Marketing & Brand Presence Management',
+};
+
+const LEGACY_DELIVERABLE_TO_DETAIL = {
+  'Logos & Identity Marks': 'Logos',
+  'Brand Guidelines': 'Brand Guidelines',
+  'Color Palette': 'Color & Typography',
+  'Typography': 'Color & Typography',
+  'Print Collateral': 'Print Collateral',
+  'Social': 'Social Graphics',
+  'Ads & Campaigns': 'Social Graphics',
+  'UX / UI': 'UX/UI',
+  'Website Copy': 'Copy',
+  'Email': 'Emails',
+  'Packaging': 'Packaging',
+  'Events & Trade Shows': 'Events & Trade Shows',
+  'Photography': 'Photography',
+  'Video': 'Video',
+  'Decks & Documents': 'Decks & Documents',
+};
+
+function addUnique(list, value) {
+  if (value && !list.includes(value)) list.push(value);
+}
+
+/** Legacy service/deliverable categories → the six public work types + primary. */
+export function remapWorkTypes(serviceCategories = [], deliverableCategories = [], primaryServiceCategory = '') {
+  const workTypes = [];
+  for (const category of serviceCategories || []) {
+    addUnique(workTypes, WORK_TYPES.includes(category) ? category : LEGACY_SERVICE_TO_WORK_TYPE[category]);
+  }
+  for (const category of deliverableCategories || []) {
+    addUnique(workTypes, WORK_TYPES.includes(category) ? category : LEGACY_DELIVERABLE_TO_WORK_TYPE[category]);
+  }
+  let primary = '';
+  if (primaryServiceCategory) {
+    primary = WORK_TYPES.includes(primaryServiceCategory)
+      ? primaryServiceCategory
+      : (LEGACY_SERVICE_TO_WORK_TYPE[primaryServiceCategory] || '');
+  }
+  return { work_types: workTypes, primary_work_type: primary || workTypes[0] || '' };
+}
+
+/** Legacy deliverable categories → internal detail tags. */
+export function remapDetailTags(deliverableCategories = []) {
+  const tags = [];
+  for (const category of deliverableCategories || []) {
+    addUnique(tags, DETAIL_TAGS.includes(category) ? category : LEGACY_DELIVERABLE_TO_DETAIL[category]);
+  }
+  return tags;
+}
 
 export const ASSET_TYPES = [
   { value: 'featured_image', label: 'Featured image' },
@@ -61,28 +157,6 @@ export const ASSET_TYPES = [
 
 export const ASSET_TYPE_LABELS = Object.fromEntries(ASSET_TYPES.map((t) => [t.value, t.label]));
 
-export const DELIVERABLE_CATEGORIES = [
-  'Brand Guidelines',
-  'Logos & Identity Marks',
-  'Color Palette',
-  'Typography',
-  'Patterns & Icons',
-  'Website',
-  'UX / UI',
-  'Website Copy',
-  'Print Collateral',
-  'Packaging',
-  'Events & Trade Shows',
-  'Social',
-  'Email',
-  'Ads & Campaigns',
-  'Photography',
-  'Video',
-  'Decks & Documents',
-  'Before & After',
-  'Other',
-];
-
 export const IMAGE_ASSET_TYPES = new Set([
   'featured_image', 'logo_primary', 'logo_alternate', 'logo_variations',
   'color_palette', 'typography', 'pattern_icons', 'web_screenshot', 'web_mobile',
@@ -93,6 +167,42 @@ export const IMAGE_ASSET_TYPES = new Set([
   'campaign_visuals', 'photography', 'before_after',
 ]);
 
+/* ── Asset families — grouped gallery presentation ─────────────────────────── */
+
+export const ASSET_FAMILIES = [
+  { key: 'identity', label: 'Brand Identity' },
+  { key: 'web', label: 'Web & UX' },
+  { key: 'print', label: 'Print & Packaging' },
+  { key: 'marketing', label: 'Social & Marketing' },
+  { key: 'media', label: 'Photo & Video' },
+  { key: 'documents', label: 'Documents' },
+  { key: 'other', label: 'Other' },
+];
+
+const FAMILY_BY_TYPE = {
+  brand_guidelines: 'documents',
+  logo_primary: 'identity', logo_alternate: 'identity', logo_variations: 'identity',
+  color_palette: 'identity', typography: 'identity', pattern_icons: 'identity',
+  web_screenshot: 'web', web_mobile: 'web', web_video: 'web', ux_ui: 'web', wireframes: 'web',
+  business_cards: 'print', letterhead: 'print', brochures: 'print', pamphlets: 'print',
+  sell_sheets: 'print', flyers: 'print', signage: 'print', environmental: 'print',
+  packaging: 'print', labels: 'print', event_materials: 'print',
+  social_templates: 'marketing', social_graphics: 'marketing', ad_creative: 'marketing',
+  email_templates: 'marketing', digital_ads: 'marketing', campaign_visuals: 'marketing',
+  photography: 'media', video: 'media',
+  decks: 'documents', reports: 'documents', custom_documents: 'documents',
+};
+
+/** Group assets by family, in fixed family order. */
+export function groupAssetsByFamily(assets) {
+  return ASSET_FAMILIES
+    .map((family) => ({
+      ...family,
+      items: (assets || []).filter((a) => (FAMILY_BY_TYPE[a.asset_type] || 'other') === family.key),
+    }))
+    .filter((family) => family.items.length > 0);
+}
+
 export function slugify(value) {
   return String(value || '')
     .toLowerCase()
@@ -101,6 +211,19 @@ export function slugify(value) {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
     .slice(0, 80);
+}
+
+/** Slugify a base, avoiding collisions with other projects. */
+export function uniqueSlug(base, projects = [], selfId = null) {
+  const slug = slugify(base);
+  if (!slug) return '';
+  const taken = new Set(
+    (projects || []).filter((p) => p.id !== selfId).map((p) => p.slug).filter(Boolean),
+  );
+  if (!taken.has(slug)) return slug;
+  let n = 2;
+  while (taken.has(`${slug}-${n}`)) n += 1;
+  return `${slug}-${n}`;
 }
 
 export function displayYear(project) {
@@ -113,8 +236,8 @@ export function displayYear(project) {
 export function websiteVisible(project) {
   return Boolean(
     project?.client_website_url
-    && project?.website_public
-    && ['reachable', 'redirecting'].includes(project?.website_link_status),
+      && project?.website_public
+      && ['reachable', 'redirecting'].includes(project?.website_link_status),
   );
 }
 
@@ -147,6 +270,16 @@ function capitalize(token) {
   return token ? token.charAt(0).toUpperCase() + token.slice(1) : token;
 }
 
+function prettifyBase(base) {
+  return base
+    .replace(/[-_]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .split(' ')
+    .map(capitalize)
+    .join(' ');
+}
+
 export function parseAssetFilename(filename) {
   const original = String(filename || '');
   const base = original.replace(/\.[^.]+$/, '');
@@ -170,7 +303,7 @@ export function parseAssetFilename(filename) {
 
   const title = titleTokens.length
     ? titleTokens.map(capitalize).join(' ')
-    : capitalize(base);
+    : prettifyBase(base) || 'Brand asset';
   return { assetType, title, sortHint, originalFilename: original };
 }
 
@@ -178,7 +311,7 @@ export function parseAssetFilename(filename) {
 
 export function seoDraft(project) {
   const category = project.primary_service_category
-    || (project.service_categories || [])[0]
+    || (project.work_types || [])[0]
     || 'Brand';
   const client = project.client_name || project.title || 'Client';
   const seoTitle = `${client} — ${category} Case Study | Freedom Foundry`.slice(0, 60);
@@ -192,20 +325,44 @@ export function seoDraft(project) {
   };
 }
 
-/* ── Pre-publish checklist ─────────────────────────────────────────────────── */
+/* ── Readiness scoring (only missing titles block publishing) ──────────────── */
 
-export function publishChecklist(project, publicAssets = []) {
+export function readiness(project, publicAssets = []) {
+  const blockers = [];
+  if (!(project.title || '').trim()) blockers.push('Project title is required before publishing.');
+
   const publicImages = (publicAssets || []).filter((a) => a.file_url);
-  const featured = publicImages.find((a) => a.asset_type === 'featured_image') || publicImages[0];
-  return [
-    { key: 'title', label: 'Title completed', pass: Boolean((project.title || '').trim()) },
-    { key: 'client', label: 'Client name completed', pass: Boolean((project.client_name || '').trim()) },
-    { key: 'slug', label: 'URL slug completed', pass: Boolean((project.slug || '').trim()) },
-    { key: 'summary', label: 'Case-study summary completed', pass: Boolean((project.short_summary || '').trim()) },
-    { key: 'category', label: 'At least one service category selected', pass: (project.service_categories || []).length > 0 },
-    { key: 'featured', label: 'At least one public featured image', pass: Boolean(featured) },
-    { key: 'alt', label: 'Alt text completed for public images', pass: publicImages.length > 0 && publicImages.every((a) => (a.alt_text || '').trim()) },
-    { key: 'meta', label: 'Meta title and description reviewed', pass: Boolean((project.seo_title || '').trim() && (project.meta_description || '').trim()) },
-    { key: 'visibility', label: 'Visibility settings reviewed', pass: Boolean(project.visibility_reviewed) },
+  const featuredImage = project.featured_image_url
+    || (publicImages.find((a) => a.asset_type === 'featured_image') || publicImages[0] || {}).file_url
+    || '';
+
+  const recommendations = [
+    { key: 'client', label: 'Add the client name', pass: Boolean((project.client_name || '').trim()) },
+    { key: 'summary', label: 'Write the case-study summary', pass: Boolean((project.short_summary || '').trim()) },
+    { key: 'work_types', label: 'Select the work types', pass: (project.work_types || []).length > 0 },
+    { key: 'featured', label: 'Choose a featured image', pass: Boolean(featuredImage) },
+    { key: 'alt', label: 'Add alt text to public images', pass: publicImages.length > 0 && publicImages.every((a) => (a.alt_text || '').trim()) },
+    { key: 'meta', label: 'Review the SEO title and meta description', pass: Boolean((project.seo_title || '').trim() && (project.meta_description || '').trim()) },
+    { key: 'keywords', label: 'Mark target keywords for search', pass: (project.target_keywords || []).length > 0 },
+    { key: 'visibility', label: 'Review the visibility settings', pass: Boolean(project.visibility_reviewed) },
   ];
+  const passed = recommendations.filter((r) => r.pass).length;
+  return { blockers, recommendations, score: Math.round((passed / recommendations.length) * 100) };
+}
+
+/* ── Keyword application — where target keywords land in public output ────── */
+
+export function keywordApplications(project) {
+  const surfaces = {
+    'Title tag': project.seo_title || '',
+    'Meta description': project.meta_description || '',
+    'URL slug': project.slug || '',
+    'Headings': [project.title, project.short_summary].filter(Boolean).join(' '),
+  };
+  return (project.target_keywords || []).map((keyword) => ({
+    keyword,
+    applied: Object.entries(surfaces)
+      .filter(([, text]) => keyword && text.toLowerCase().includes(keyword.toLowerCase()))
+      .map(([label]) => label),
+  }));
 }

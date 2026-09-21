@@ -65,6 +65,8 @@ import AdminSupportReports from './pages/AdminSupportReports';
 import AdminContactInbox from './pages/AdminContactInbox';
 import AdminPortfolioManager from './pages/AdminPortfolioManager';
 import AdminPortfolioEditor from './pages/AdminPortfolioEditor';
+import AdminPortfolioImport from './pages/AdminPortfolioImport';
+import PortfolioPreview from './pages/PortfolioPreview';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin, isAuthenticated } = useAuth();
@@ -148,7 +150,9 @@ const AuthenticatedApp = () => {
             <Route path="/admin/support-reports" element={<AdminSupportReports />} />
             <Route path="/admin/contact-inbox" element={<AdminContactInbox />} />
             <Route path="/admin/portfolio" element={<AdminPortfolioManager />} />
+            <Route path="/admin/portfolio/import" element={<AdminPortfolioImport />} />
             <Route path="/admin/portfolio/:id" element={<AdminPortfolioEditor />} />
+            <Route path="/admin/portfolio/:id/preview" element={<PortfolioPreview />} />
           </Route>
         </Route>
       </Route>

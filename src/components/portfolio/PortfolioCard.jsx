@@ -25,9 +25,9 @@ export default function PortfolioCard({ project }) {
             <p className="mt-1 text-[11px] uppercase tracking-[0.16em] text-cloudbone/60">
               {[project.client_name, project.year, project.industry].filter(Boolean).join('  ·  ')}
             </p>
-            {project.service_categories?.length > 0 && (
+            {project.work_types?.length > 0 && (
               <p className="mt-2 text-[11px] text-cloudbone/70">
-                {project.service_categories.slice(0, 3).join('  /  ')}
+                {project.work_types.slice(0, 3).join('  /  ')}
               </p>
             )}
           </div>

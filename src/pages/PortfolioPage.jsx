@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, CircleDashed, LoaderCircle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import PortfolioCard from '@/components/portfolio/PortfolioCard';
-import { DELIVERABLE_CATEGORIES, SERVICE_CATEGORIES } from '@/lib/portfolioData';
+import { WORK_TYPES } from '@/lib/portfolioData';
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
 
@@ -11,9 +11,6 @@ export default function PortfolioPage() {
   const [items, setItems] = useState(null);
   const [failed, setFailed] = useState(false);
   const [service, setService] = useState('All Work');
-  const [industry, setIndustry] = useState('');
-  const [deliverable, setDeliverable] = useState('');
-  const [featuredOnly, setFeaturedOnly] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -23,21 +20,12 @@ export default function PortfolioPage() {
     return () => { active = false; };
   }, []);
 
-  const industries = useMemo(
-    () => [...new Set((items || []).map((i) => i.industry).filter(Boolean))].sort(),
-    [items],
-  );
-
   const filtered = useMemo(() => {
     if (!items) return [];
-    return items.filter((item) => {
-      if (service !== 'All Work' && !(item.service_categories || []).includes(service)) return false;
-      if (industry && item.industry !== industry) return false;
-      if (deliverable && !(item.deliverable_categories || []).includes(deliverable)) return false;
-      if (featuredOnly && !item.is_featured) return false;
-      return true;
-    });
-  }, [items, service, industry, deliverable, featuredOnly]);
+    return items
+      .filter((item) => service === 'All Work' || (item.work_types || []).includes(service))
+      .sort((a, b) => (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0) || (a.order || 0) - (b.order || 0));
+  }, [items, service]);
 
   return (
     <div className="min-h-[100dvh]">
@@ -66,8 +54,8 @@ export default function PortfolioPage() {
           Selected <span className="molten-text italic">work.</span>
         </h1>
         <p className="mt-6 max-w-2xl text-base leading-8 text-muted-foreground">
-          A curated case-study library from The Brand Revivalist® and Ox &amp; Iron Co. — brand strategy, identity,
-          and digital work, shown with the thinking that shaped it.
+          A curated case-study library from The Brand Revivalist® — brand strategy, identity, and digital work,
+          shown with the thinking that shaped it.
         </p>
       </section>
 
@@ -82,7 +70,7 @@ export default function PortfolioPage() {
           <div className="sticky top-0 z-20 border-y border-border bg-[#100e0c]/90 backdrop-blur">
             <div className="mx-auto max-w-6xl px-5 py-3 sm:px-8">
               <div className="flex flex-wrap gap-2" role="group" aria-label="Service filters">
-                {['All Work', ...SERVICE_CATEGORIES].map((label) => {
+                {['All Work', ...WORK_TYPES].map((label) => {
                   const active = service === label;
                   return (
                     <button
@@ -101,39 +89,10 @@ export default function PortfolioPage() {
                   );
                 })}
               </div>
-              <div className="mt-3 flex flex-wrap items-center gap-3 text-sm">
-                <select
-                  value={industry}
-                  onChange={(e) => setIndustry(e.target.value)}
-                  aria-label="Filter by industry"
-                  className="admin-input w-auto py-1.5 text-xs"
-                >
-                  <option value="">All industries</option>
-                  {industries.map((name) => <option key={name} value={name}>{name}</option>)}
-                </select>
-                <select
-                  value={deliverable}
-                  onChange={(e) => setDeliverable(e.target.value)}
-                  aria-label="Filter by deliverable"
-                  className="admin-input w-auto py-1.5 text-xs"
-                >
-                  <option value="">All deliverables</option>
-                  {DELIVERABLE_CATEGORIES.map((name) => <option key={name} value={name}>{name}</option>)}
-                </select>
-                <button
-                  type="button"
-                  onClick={() => setFeaturedOnly((v) => !v)}
-                  aria-pressed={featuredOnly}
-                  className={`rounded-sm px-3 py-1.5 text-xs tracking-wide transition-colors ${
-                    featuredOnly
-                      ? 'btn-forge font-semibold'
-                      : 'border border-border text-muted-foreground hover:border-primary/40 hover:text-foreground'
-                  }`}
-                >
-                  Featured work
-                </button>
-                <span className="ml-auto text-xs text-muted-foreground/70">
+              <div className="mt-3 flex flex-wrap items-center gap-3">
+                <span className="text-xs text-muted-foreground/70">
                   {filtered.length} {filtered.length === 1 ? 'project' : 'projects'}
+                  {service !== 'All Work' ? ` · ${service}` : ''}
                 </span>
               </div>
             </div>

@@ -3,9 +3,12 @@ import { ChevronDown, ChevronUp, Lock, Plus, Trash2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { Image } from '@/components/ui/image';
 import BulkAssetUpload from '@/components/admin/portfolio/BulkAssetUpload';
+import FeaturedImageCard from '@/components/admin/portfolio/FeaturedImageCard';
+import BeforeAfterPairing from '@/components/admin/portfolio/BeforeAfterPairing';
+import ClientSyncCard from '@/components/admin/portfolio/ClientSyncCard';
 import { ASSET_TYPES, ASSET_TYPE_LABELS, parseAssetFilename } from '@/lib/portfolioData';
 
-export default function PortfolioAssetManager({ project, assets, onReload }) {
+export default function PortfolioAssetManager({ project, assets, onReload, onChange }) {
   const projectId = project?.id;
   const fileRef = useRef(null);
   const [busy, setBusy] = useState(false);
@@ -18,7 +21,7 @@ export default function PortfolioAssetManager({ project, assets, onReload }) {
   const startUpload = () => {
     setDraft({
       title: '', asset_type: 'featured_image', description: '', alt_text: '',
-      is_public: false, allow_download: false, sort_order: (sorted.length || 0) + 1,
+      is_public: true, allow_download: false, sort_order: (sorted.length || 0) + 1,
     });
   };
 
@@ -78,7 +81,7 @@ export default function PortfolioAssetManager({ project, assets, onReload }) {
   };
 
   const removeAsset = async (asset) => {
-    if (!window.confirm(`Delete “${asset.title}”? This cannot be undone.`)) return;
+    if (!window.confirm(`Delete "${asset.title}"? This cannot be undone.`)) return;
     await base44.entities.PortfolioAsset.delete(asset.id);
     onReload?.();
   };
@@ -104,13 +107,15 @@ export default function PortfolioAssetManager({ project, assets, onReload }) {
 
   return (
     <div className="space-y-6">
-      <BulkAssetUpload projectId={projectId} onDone={onReload} />
+      <FeaturedImageCard form={project} assets={assets} onChange={onChange} />
+      <BulkAssetUpload projectId={projectId} clientUserId={project.client_user_id} onDone={onReload} />
+      <ClientSyncCard project={project} onChange={onChange} />
 
       <div className="dashboard-card space-y-4 p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h3 className="font-heading text-2xl text-foreground">Assets</h3>
-            <p className="text-xs text-muted-foreground/70">{sorted.length} total · private files use protected storage</p>
+            <p className="text-xs text-muted-foreground/70">{sorted.length} total · new assets save as public, non-downloadable by default</p>
           </div>
           <button type="button" onClick={startUpload} className="btn-forge inline-flex items-center gap-2 rounded-md px-4 py-2 text-xs font-semibold uppercase tracking-widest">
             <Plus className="h-4 w-4" /> Upload asset
@@ -180,6 +185,7 @@ export default function PortfolioAssetManager({ project, assets, onReload }) {
                     <p className="truncate text-sm font-medium text-foreground">{asset.title}</p>
                     <p className="truncate text-xs text-muted-foreground/70">
                       {ASSET_TYPE_LABELS[asset.asset_type] || asset.asset_type} · {asset.is_public ? 'Public' : 'Private'}
+                      {asset.allow_download ? ' · downloadable' : ''}
                       {asset.file_uri && !asset.file_url ? ' · protected storage' : ''}
                     </p>
                   </div>
@@ -236,6 +242,8 @@ export default function PortfolioAssetManager({ project, assets, onReload }) {
 
         {error && <p className="text-sm text-destructive">{error}</p>}
       </div>
+
+      <BeforeAfterPairing form={project} assets={assets} onChange={onChange} />
     </div>
   );
 }

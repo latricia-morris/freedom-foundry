@@ -1,51 +1,38 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Check, ExternalLink, Sparkles, X } from 'lucide-react';
-import { base44 } from '@/api/base44Client';
-import { publishChecklist, seoDraft, slugify } from '@/lib/portfolioData';
-
-const SITE_LABELS = {
-  'thebrandrevivalist.com': 'TBR',
-  'oxandiron.co': 'Ox & Iron',
-};
+import { readiness, seoDraft, slugify } from '@/lib/portfolioData';
+import KeywordLibrary from '@/components/admin/portfolio/KeywordLibrary';
+import SearchOutput from '@/components/admin/portfolio/SearchOutput';
 
 export default function PortfolioSeoPanel({ form, onChange, assets, onSetStatus, slugTaken }) {
-  const [keywords, setKeywords] = useState([]);
   const patch = (next) => onChange(next);
   const set = (key) => (e) => patch({ [key]: e.target.value });
   const publicAssets = (assets || []).filter((a) => a.is_public && a.file_url);
-  const checklist = publishChecklist(form, publicAssets);
-  const allPass = checklist.every((item) => item.pass);
+  const ready = readiness(form, publicAssets);
+  const blocked = ready.blockers.length > 0;
   const isPublished = form.status === 'published';
 
-  useEffect(() => {
-    let active = true;
-    base44.entities.SeoKeyword.filter({ search_intent: 'Commercial' }, '-volume', 20)
-      .then((rows) => { if (active) setKeywords(rows || []); })
-      .catch(() => { if (active) setKeywords([]); });
-    return () => { active = false; };
-  }, []);
+  const internalThemes = (form.seo_keywords || '').split(',').map((k) => k.trim()).filter(Boolean);
+  const targetKeywords = form.target_keywords || [];
 
-  const appendKeyword = (keyword) => {
-    const current = (form.seo_keywords || '').split(',').map((k) => k.trim()).filter(Boolean);
-    if (current.includes(keyword)) return;
-    patch({ seo_keywords: [...current, keyword].join(', ') });
+  const addTarget = (keyword) => {
+    if (!targetKeywords.includes(keyword)) patch({ target_keywords: [...targetKeywords, keyword] });
   };
-
+  const removeTarget = (keyword) => patch({ target_keywords: targetKeywords.filter((k) => k !== keyword) });
+  const addTheme = (keyword) => {
+    if (!internalThemes.includes(keyword)) patch({ seo_keywords: [...internalThemes, keyword].join(', ') });
+  };
   const generateDraft = () => patch({ ...seoDraft(form), slug: form.slug || slugify(form.title || form.client_name) });
 
   return (
     <div className="space-y-8">
       <div className="dashboard-card space-y-5 p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h3 className="font-heading text-2xl text-foreground">SEO & Discoverability</h3>
+          <h3 className="font-heading text-2xl text-foreground">SEO &amp; Discoverability</h3>
           <button type="button" onClick={generateDraft} className="inline-flex items-center gap-2 rounded-md border border-border px-3 py-1.5 text-xs uppercase tracking-widest text-muted-foreground hover:border-primary/40 hover:text-foreground">
             <Sparkles className="h-3.5 w-3.5 text-primary" /> Generate editable draft
           </button>
         </div>
-        <p className="text-xs leading-5 text-muted-foreground/70">
-          The draft is a starting point from the project title, client, industry, and summary — review and edit before
-          publishing. Nothing generic or keyword-stuffed ships automatically.
-        </p>
         <label className="block">
           <span className="mb-1.5 block text-xs uppercase tracking-widest text-muted-foreground">SEO / title tag <span className="text-muted-foreground/50">({(form.seo_title || '').length}/60)</span></span>
           <input className="admin-input" value={form.seo_title || ''} onChange={set('seo_title')} />
@@ -76,56 +63,62 @@ export default function PortfolioSeoPanel({ form, onChange, assets, onSetStatus,
           </label>
         </div>
         <label className="block">
-          <span className="mb-1.5 block text-xs uppercase tracking-widest text-muted-foreground">Open Graph image URL (defaults to featured image)</span>
+          <span className="mb-1.5 block text-xs uppercase tracking-widest text-muted-foreground">Open Graph image URL (defaults to the featured image)</span>
           <input className="admin-input" value={form.og_image_url || ''} onChange={set('og_image_url')} />
         </label>
         <label className="block">
-          <span className="mb-1.5 block text-xs uppercase tracking-widest text-muted-foreground">Keyword themes (internal guidance only)</span>
+          <span className="mb-1.5 block text-xs uppercase tracking-widest text-muted-foreground">Internal themes (never shown publicly)</span>
           <textarea className="admin-input min-h-16" value={form.seo_keywords || ''} onChange={set('seo_keywords')} />
         </label>
       </div>
 
       <div className="dashboard-card space-y-4 p-6">
-        <h3 className="font-heading text-2xl text-foreground">Keyword Reference</h3>
+        <h3 className="font-heading text-2xl text-foreground">Target keywords (public)</h3>
         <p className="text-xs leading-5 text-muted-foreground/70">
-          Top commercial-intent keywords from the Brand Revivalist / Ox &amp; Iron research reports. Click one to add it
-          to the keyword themes above.
+          Keywords marked as targets. The public page only ever sees the copy they are woven into — the list itself
+          stays yours.
         </p>
-        {keywords.length === 0 ? (
-          <p className="text-xs text-muted-foreground/60">No keyword research imported yet.</p>
+        {targetKeywords.length === 0 ? (
+          <p className="text-xs text-muted-foreground/60">No target keywords yet. Mark them in the library below.</p>
         ) : (
-          <div className="divide-y divide-border/50">
-            {keywords.map((row) => (
-              <button
-                key={row.id}
-                type="button"
-                onClick={() => appendKeyword(row.keyword)}
-                className="flex w-full items-center justify-between gap-3 py-2 text-left transition-colors hover:bg-accent/40"
-              >
-                <span className="min-w-0">
-                  <span className="block truncate text-sm text-foreground">{row.keyword}</span>
-                  <span className="block text-[11px] text-muted-foreground/70">
-                    {[SITE_LABELS[row.website] || row.website, row.topic].filter(Boolean).join(' · ')}
-                  </span>
-                </span>
-                <span className="flex shrink-0 items-center gap-3 text-[11px] text-muted-foreground">
-                  <span>{row.volume || 0}/mo</span>
-                  <span className="rounded-sm border border-border px-1.5 py-0.5 uppercase tracking-wider">{row.difficulty || '—'}</span>
-                </span>
-              </button>
+          <div className="flex flex-wrap gap-2">
+            {targetKeywords.map((keyword) => (
+              <span key={keyword} className="inline-flex items-center gap-1.5 rounded-sm border border-primary/40 px-2.5 py-1 text-xs text-primary">
+                {keyword}
+                <button type="button" onClick={() => removeTarget(keyword)} className="hover:text-foreground" aria-label={`Remove ${keyword}`}>
+                  <X className="h-3 w-3" />
+                </button>
+              </span>
             ))}
           </div>
         )}
       </div>
 
+      <KeywordLibrary targetKeywords={targetKeywords} internalThemes={internalThemes} onAddTarget={addTarget} onAddTheme={addTheme} />
+      <SearchOutput form={form} />
+
       <div className="dashboard-card space-y-5 p-6">
-        <h3 className="font-heading text-2xl text-foreground">Publish Checklist</h3>
+        <h3 className="font-heading text-2xl text-foreground">Readiness &amp; Publishing</h3>
+        <div>
+          <div className="flex items-center justify-between text-xs text-muted-foreground">
+            <span className="uppercase tracking-widest">Readiness</span>
+            <span>{ready.score}% ready</span>
+          </div>
+          <div className="well-track mt-2 h-2 w-full">
+            <div className="molten-bar h-full rounded-full transition-all" style={{ width: `${ready.score}%` }} />
+          </div>
+        </div>
         <ul className="space-y-2">
-          {checklist.map((item) => (
+          {ready.blockers.map((blocker) => (
+            <li key={blocker} className="flex items-center gap-3 text-sm text-destructive/90">
+              <X className="h-4 w-4 shrink-0" /> {blocker}
+            </li>
+          ))}
+          {ready.recommendations.map((item) => (
             <li key={item.key} className="flex items-center gap-3 text-sm">
               {item.pass
                 ? <Check className="h-4 w-4 shrink-0 text-primary" />
-                : <X className="h-4 w-4 shrink-0 text-destructive/80" />}
+                : <X className="h-4 w-4 shrink-0 text-muted-foreground/50" />}
               <span className={item.pass ? 'text-foreground' : 'text-muted-foreground'}>{item.label}</span>
             </li>
           ))}
@@ -144,33 +137,35 @@ export default function PortfolioSeoPanel({ form, onChange, assets, onSetStatus,
             <button
               type="button"
               onClick={() => onSetStatus('published')}
-              disabled={!allPass}
+              disabled={blocked}
               className="btn-forge inline-flex items-center gap-2 rounded-md px-5 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-40"
             >
               Publish case study
             </button>
           )}
           {isPublished && (
-            <button
-              type="button"
-              onClick={() => onSetStatus('draft')}
-              className="inline-flex items-center gap-2 rounded-md border border-border px-5 py-2.5 text-sm text-foreground hover:border-primary/40"
-            >
-              Unpublish
-            </button>
+            <>
+              <button
+                type="button"
+                onClick={() => onSetStatus('draft')}
+                className="inline-flex items-center gap-2 rounded-md border border-border px-5 py-2.5 text-sm text-foreground hover:border-primary/40"
+              >
+                Unpublish
+              </button>
+              {form.slug && (
+                <a
+                  href={`/portfolio/${form.slug}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground hover:text-primary"
+                >
+                  View public page <ExternalLink className="h-3.5 w-3.5" />
+                </a>
+              )}
+            </>
           )}
-          {isPublished && form.slug && (
-            <a
-              href={`/portfolio/${form.slug}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground hover:text-primary"
-            >
-              View public page <ExternalLink className="h-3.5 w-3.5" />
-            </a>
-          )}
-          {!allPass && !isPublished && (
-            <span className="text-xs text-muted-foreground/70">Every item must pass before this project can publish.</span>
+          {!blocked && !isPublished && (
+            <span className="text-xs text-muted-foreground/70">Recommendations never block publishing — they guide it.</span>
           )}
         </div>
       </div>

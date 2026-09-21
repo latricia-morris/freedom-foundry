@@ -11,6 +11,9 @@
     "client_name": {
       "type": "string"
     },
+    "client_user_id": {
+      "type": "string"
+    },
     "client_website_url": {
       "type": "string"
     },
@@ -75,6 +78,21 @@
       "type": "boolean",
       "default": false
     },
+    "work_types": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "detail_tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "primary_service_category": {
+      "type": "string"
+    },
     "service_categories": {
       "type": "array",
       "items": {
@@ -87,13 +105,37 @@
         "type": "string"
       }
     },
-    "primary_service_category": {
-      "type": "string"
-    },
     "related_project_ids": {
       "type": "array",
       "items": {
         "type": "string"
+      }
+    },
+    "featured_image_url": {
+      "type": "string"
+    },
+    "featured_image_alt": {
+      "type": "string"
+    },
+    "before_after_pairs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "before_asset_id": {
+            "type": "string"
+          },
+          "after_asset_id": {
+            "type": "string"
+          },
+          "caption": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "before_asset_id",
+          "after_asset_id"
+        ]
       }
     },
     "short_summary": {
@@ -146,6 +188,12 @@
     },
     "og_image_url": {
       "type": "string"
+    },
+    "target_keywords": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     },
     "seo_keywords": {
       "type": "string"

@@ -1,7 +1,9 @@
 import React from 'react';
 import { ExternalLink, RefreshCw } from 'lucide-react';
 import MultiSelectChips from '@/components/admin/portfolio/MultiSelectChips';
-import { SERVICE_CATEGORIES, DELIVERABLE_CATEGORIES, slugify } from '@/lib/portfolioData';
+import DraftStoryButton from '@/components/admin/portfolio/DraftStoryButton';
+import RewriteButton from '@/components/admin/portfolio/RewriteButton';
+import { WORK_TYPES, DETAIL_TAGS, slugify } from '@/lib/portfolioData';
 
 function Field({ label, children, hint }) {
   return (
@@ -27,6 +29,19 @@ function Toggle({ checked, onChange, label }) {
   );
 }
 
+function NarrativeField({ label, field, form, set, patch, hint }) {
+  return (
+    <div>
+      <div className="mb-1.5 flex flex-wrap items-center justify-between gap-2">
+        <span className="text-xs uppercase tracking-widest text-muted-foreground">{label}</span>
+        <RewriteButton field={field} form={form} onChange={patch} />
+      </div>
+      <textarea className="admin-input min-h-24" value={form[field] || ''} onChange={set(field)} />
+      {hint && <span className="mt-1 block text-xs text-muted-foreground/70">{hint}</span>}
+    </div>
+  );
+}
+
 const STATUS_LABELS = {
   unchecked: 'Unchecked',
   reachable: 'Reachable',
@@ -36,7 +51,7 @@ const STATUS_LABELS = {
   manual_hold: 'Held for review',
 };
 
-export default function ProjectContentForm({ form, onChange, projects, onCheckWebsite, checking, slugTaken }) {
+export default function ProjectContentForm({ form, onChange, projects, assets, onCheckWebsite, checking, slugTaken }) {
   const patch = (next) => onChange(next);
   const set = (key) => (e) => patch({ [key]: e.target.value });
   const toggleIn = (key) => (value) => {
@@ -82,7 +97,7 @@ export default function ProjectContentForm({ form, onChange, projects, onCheckWe
           </Field>
         </div>
         <div className="flex flex-wrap gap-6 pt-1">
-          <Toggle checked={!!form.is_featured} onChange={(v) => patch({ is_featured: v })} label="Featured project" />
+          <Toggle checked={!!form.is_featured} onChange={(v) => patch({ is_featured: v })} label="Featured project (floats to the top of the portfolio)" />
           <Toggle checked={!!form.confidential} onChange={(v) => patch({ confidential: v })} label="Confidential — never show publicly" />
           <Toggle checked={!!form.nda_sensitive} onChange={(v) => patch({ nda_sensitive: v })} label="NDA-sensitive (internal reminder)" />
         </div>
@@ -115,7 +130,7 @@ export default function ProjectContentForm({ form, onChange, projects, onCheckWe
           )}
         </div>
         <p className="text-xs leading-5 text-muted-foreground/70">
-          The public “Visit Site” button only appears when a URL is entered, approved for public display, and the check
+          The public "Visit Site" button only appears when a URL is entered, approved for public display, and the check
           passes. Broken, timed-out, or unchecked links stay hidden.
         </p>
         <Field label="Link quality / ownership notes (admin only)">
@@ -125,17 +140,17 @@ export default function ProjectContentForm({ form, onChange, projects, onCheckWe
 
       <div className="dashboard-card space-y-5 p-6">
         <h3 className="font-heading text-2xl text-foreground">Categorization</h3>
-        <Field label="Service categories">
-          <MultiSelectChips options={SERVICE_CATEGORIES} selected={form.service_categories || []} onToggle={toggleIn('service_categories')} />
+        <Field label="Work types" hint="The public portfolio filter and the case-study tags.">
+          <MultiSelectChips options={WORK_TYPES} selected={form.work_types || []} onToggle={toggleIn('work_types')} />
         </Field>
-        <Field label="Primary service category" hint="Used for SEO and filtering emphasis.">
+        <Field label="Primary work type" hint="The one that leads. Used for SEO emphasis.">
           <select className="admin-input" value={form.primary_service_category || ''} onChange={set('primary_service_category')}>
             <option value="">— Select —</option>
-            {(form.service_categories || []).map((cat) => <option key={cat} value={cat}>{cat}</option>)}
+            {(form.work_types || []).map((type) => <option key={type} value={type}>{type}</option>)}
           </select>
         </Field>
-        <Field label="Deliverable categories">
-          <MultiSelectChips options={DELIVERABLE_CATEGORIES} selected={form.deliverable_categories || []} onToggle={toggleIn('deliverable_categories')} />
+        <Field label="Detail tags (internal)" hint="Organize the work behind the scenes. Never shown on the public site.">
+          <MultiSelectChips options={DETAIL_TAGS} selected={form.detail_tags || []} onToggle={toggleIn('detail_tags')} />
         </Field>
         <Field label="Related work (shown on the case study)">
           <MultiSelectChips options={relatedOptions} selected={form.related_project_ids || []} onToggle={toggleIn('related_project_ids')} emptyText="Create more projects to relate them." />
@@ -143,28 +158,17 @@ export default function ProjectContentForm({ form, onChange, projects, onCheckWe
       </div>
 
       <div className="dashboard-card space-y-5 p-6">
-        <h3 className="font-heading text-2xl text-foreground">Case Study Narrative</h3>
-        <Field label="Short summary (used on portfolio cards and search)">
-          <textarea className="admin-input min-h-20" value={form.short_summary || ''} onChange={set('short_summary')} />
-        </Field>
-        <Field label="The situation / challenge">
-          <textarea className="admin-input min-h-24" value={form.challenge || ''} onChange={set('challenge')} />
-        </Field>
-        <Field label="What the work needed to accomplish">
-          <textarea className="admin-input min-h-24" value={form.objectives || ''} onChange={set('objectives')} />
-        </Field>
-        <Field label="Scope of work">
-          <textarea className="admin-input min-h-24" value={form.scope_of_work || ''} onChange={set('scope_of_work')} />
-        </Field>
-        <Field label="Strategy / creative direction">
-          <textarea className="admin-input min-h-24" value={form.strategy || ''} onChange={set('strategy')} />
-        </Field>
-        <Field label="Deliverables (one per line)">
-          <textarea className="admin-input min-h-24" value={form.deliverables || ''} onChange={set('deliverables')} />
-        </Field>
-        <Field label="Results / outcomes (optional — do not invent metrics)">
-          <textarea className="admin-input min-h-20" value={form.results || ''} onChange={set('results')} />
-        </Field>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h3 className="font-heading text-2xl text-foreground">Case Study Narrative</h3>
+          <DraftStoryButton form={form} assets={assets} onChange={patch} />
+        </div>
+        <NarrativeField label="Short summary (used on portfolio cards and search)" field="short_summary" form={form} set={set} patch={patch} />
+        <NarrativeField label="The situation / challenge" field="challenge" form={form} set={set} patch={patch} />
+        <NarrativeField label="What the work needed to accomplish" field="objectives" form={form} set={set} patch={patch} />
+        <NarrativeField label="Scope of work" field="scope_of_work" form={form} set={set} patch={patch} />
+        <NarrativeField label="Strategy / creative direction" field="strategy" form={form} set={set} patch={patch} />
+        <NarrativeField label="Deliverables (one per line)" field="deliverables" form={form} set={set} patch={patch} />
+        <NarrativeField label="Results / outcomes" field="results" form={form} set={set} patch={patch} hint="Optional. Never invent metrics — leave blank and say what you know." />
         <Field label="Testimonial (optional)">
           <textarea className="admin-input min-h-20" value={form.testimonial || ''} onChange={set('testimonial')} />
         </Field>

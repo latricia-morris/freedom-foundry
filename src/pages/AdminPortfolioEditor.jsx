@@ -1,23 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, Eye, Save } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import ProjectContentForm from '@/components/admin/portfolio/ProjectContentForm';
 import PortfolioAssetManager from '@/components/admin/portfolio/PortfolioAssetManager';
 import PortfolioSeoPanel from '@/components/admin/portfolio/PortfolioSeoPanel';
 import { useToast } from '@/components/ui/use-toast';
+import { uniqueSlug } from '@/lib/portfolioData';
 
 const EDITABLE_FIELDS = [
-  'title', 'slug', 'client_name', 'client_website_url', 'website_public',
+  'title', 'slug', 'client_name', 'client_user_id', 'client_website_url', 'website_public',
   'website_override_note', 'industry', 'location_served', 'project_year',
   'is_featured', 'confidential', 'nda_sensitive', 'visibility_reviewed',
-  'service_categories', 'deliverable_categories', 'primary_service_category',
-  'related_project_ids', 'short_summary', 'challenge', 'objectives',
-  'scope_of_work', 'strategy', 'deliverables', 'results', 'testimonial',
-  'testimonial_source', 'credit_notes', 'internal_notes', 'seo_title',
-  'meta_description', 'canonical_url', 'og_title', 'og_description',
-  'og_image_url', 'seo_keywords',
+  'work_types', 'detail_tags', 'primary_service_category',
+  'related_project_ids', 'featured_image_url', 'featured_image_alt', 'before_after_pairs',
+  'short_summary', 'challenge', 'objectives', 'scope_of_work', 'strategy', 'deliverables',
+  'results', 'testimonial', 'testimonial_source', 'credit_notes', 'internal_notes',
+  'seo_title', 'meta_description', 'canonical_url', 'og_title', 'og_description',
+  'og_image_url', 'seo_keywords', 'target_keywords',
 ];
+
+const ARRAY_FIELDS = ['work_types', 'detail_tags', 'target_keywords', 'related_project_ids', 'before_after_pairs'];
 
 const STATUS_STYLE = {
   draft: 'border-border text-muted-foreground',
@@ -68,29 +71,63 @@ export default function AdminPortfolioEditor() {
 
   const slugTaken = (projects || []).some((p) => p.id !== form?.id && p.slug && p.slug === form?.slug);
 
-  const save = async () => {
+  const buildPayload = (extra = {}) => {
+    const payload = {};
+    EDITABLE_FIELDS.forEach((key) => {
+      const value = form[key];
+      if (ARRAY_FIELDS.includes(key)) {
+        if (Array.isArray(value)) payload[key] = value;
+      } else if (value !== undefined && value !== null) {
+        payload[key] = value;
+      }
+    });
+    return { ...payload, ...extra };
+  };
+
+  // One save path. silent=true is used by preview/publish so the notice fires once.
+  const save = async ({ silent } = {}) => {
+    if (!form) return null;
+    setSaving(true);
+    try {
+      let recordId = form.id || id;
+      if (isNew) {
+        const created = await base44.entities.PortfolioProject.create(buildPayload());
+        recordId = created.id;
+        if (!silent) toast({ title: 'Project created as a draft.' });
+        navigate(`/admin/portfolio/${recordId}`, { replace: true });
+      } else {
+        await base44.entities.PortfolioProject.update(id, buildPayload());
+        if (!silent) toast({ title: 'Project saved.' });
+        setForm((prev) => ({ ...prev, ...buildPayload() }));
+        loadProjects();
+      }
+      return recordId;
+    } catch (error) {
+      toast({ title: 'Save failed', description: error.message, variant: 'destructive' });
+      return null;
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const setStatus = async (status) => {
     if (!form) return;
     setSaving(true);
     try {
-      const ARRAY_FIELDS = ['service_categories', 'deliverable_categories', 'related_project_ids'];
-      const payload = {};
-      EDITABLE_FIELDS.forEach((key) => {
-        const value = form[key];
-        if (ARRAY_FIELDS.includes(key)) {
-          if (Array.isArray(value)) payload[key] = value;
-        } else if (value !== undefined && value !== null) {
-          payload[key] = value;
-        }
-      });
+      const extra = { status };
+      if (status === 'published' && !(form.slug || '').trim()) {
+        extra.slug = uniqueSlug(form.title, projects, form.id);
+      }
+      const payload = buildPayload(extra);
       if (isNew) {
         const created = await base44.entities.PortfolioProject.create(payload);
-        toast({ title: 'Project created as a draft.' });
+        toast({ title: 'Case study published.' });
         navigate(`/admin/portfolio/${created.id}`, { replace: true });
       } else {
         await base44.entities.PortfolioProject.update(id, payload);
-        toast({ title: 'Project saved.' });
         setForm((prev) => ({ ...prev, ...payload }));
         loadProjects();
+        toast({ title: status === 'published' ? 'Case study published.' : status === 'draft' ? 'Unpublished.' : `Status set to ${status}.` });
       }
     } catch (error) {
       toast({ title: 'Save failed', description: error.message, variant: 'destructive' });
@@ -99,11 +136,9 @@ export default function AdminPortfolioEditor() {
     }
   };
 
-  const setStatus = async (status) => {
-    await save();
-    await base44.entities.PortfolioProject.update(form.id || id, { status });
-    setForm((prev) => ({ ...prev, status }));
-    toast({ title: status === 'published' ? 'Case study published.' : `Status set to ${status}.` });
+  const preview = async () => {
+    const recordId = await save({ silent: true });
+    if (recordId) window.open(`/admin/portfolio/${recordId}/preview`, '_blank');
   };
 
   const mergeForm = (next) => setForm((prev) => ({ ...prev, ...next }));
@@ -157,14 +192,24 @@ export default function AdminPortfolioEditor() {
             {form.is_featured && <span className="text-[10px] uppercase tracking-widest text-primary">Featured</span>}
           </div>
         </div>
-        <button
-          type="button"
-          onClick={save}
-          disabled={saving}
-          className="btn-forge inline-flex items-center gap-2 rounded-md px-5 py-2.5 text-sm font-semibold disabled:opacity-50"
-        >
-          <Save className="h-4 w-4" /> {saving ? 'Saving…' : 'Save'}
-        </button>
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            onClick={preview}
+            disabled={saving}
+            className="inline-flex items-center gap-2 rounded-md border border-border px-4 py-2.5 text-sm text-foreground transition-colors hover:border-primary/40 disabled:opacity-50"
+          >
+            <Eye className="h-4 w-4" /> Preview case study
+          </button>
+          <button
+            type="button"
+            onClick={() => save()}
+            disabled={saving}
+            className="btn-forge inline-flex items-center gap-2 rounded-md px-5 py-2.5 text-sm font-semibold disabled:opacity-50"
+          >
+            <Save className="h-4 w-4" /> {saving ? 'Saving…' : 'Save'}
+          </button>
+        </div>
       </div>
 
       <div className="mb-6 flex gap-2 border-b border-border">
@@ -187,13 +232,14 @@ export default function AdminPortfolioEditor() {
           form={form}
           onChange={mergeForm}
           projects={projects}
+          assets={assets}
           onCheckWebsite={checkWebsite}
           checking={false}
           slugTaken={slugTaken}
         />
       )}
       {tab === 'assets' && (
-        <PortfolioAssetManager project={form} assets={assets} onReload={reloadAssets} />
+        <PortfolioAssetManager project={form} assets={assets} onReload={reloadAssets} onChange={mergeForm} />
       )}
       {tab === 'seo' && (
         <PortfolioSeoPanel

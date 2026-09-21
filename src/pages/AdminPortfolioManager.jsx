@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  ArrowDown, ArrowUp, Copy, Eye, EyeOff, Pencil, Plus, Star, Trash2,
+  ArrowDown, ArrowUp, Copy, Eye, EyeOff, Pencil, Plus, Sparkles, Star, Trash2,
 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
-import { displayYear, publishChecklist } from '@/lib/portfolioData';
+import { displayYear, uniqueSlug } from '@/lib/portfolioData';
 import { useToast } from '@/components/ui/use-toast';
 
 const STATUS_STYLE = {
@@ -48,14 +48,15 @@ export default function AdminPortfolioManager() {
     );
   };
 
+  // Only a missing title blocks publishing. The slug auto-generates from it.
   const publish = async (project) => {
-    const assets = await base44.entities.PortfolioAsset.filter({ project_id: project.id }, 'sort_order', 500).catch(() => []);
-    const checklist = publishChecklist(project, (assets || []).filter((a) => a.is_public && a.file_url));
-    if (!checklist.every((item) => item.pass)) {
-      toast({ title: 'Not ready to publish', description: 'Finish the publish checklist in the editor first.', variant: 'destructive' });
+    if (!(project.title || '').trim()) {
+      toast({ title: 'Add a project title first', description: 'Publishing needs a title. Everything else is a recommendation.', variant: 'destructive' });
       return;
     }
-    act(base44.entities.PortfolioProject.update(project.id, { status: 'published' }), 'Case study published.');
+    const patch = { status: 'published' };
+    if (!(project.slug || '').trim()) patch.slug = uniqueSlug(project.title, projects, project.id);
+    act(base44.entities.PortfolioProject.update(project.id, patch), 'Case study published.');
   };
 
   const duplicate = (project) => {
@@ -74,23 +75,49 @@ export default function AdminPortfolioManager() {
   };
 
   const remove = (project) => {
-    if (!window.confirm(`Delete “${project.title || 'Untitled'}” permanently?`)) return;
+    if (!window.confirm(`Delete "${project.title || 'Untitled'}" permanently?`)) return;
     act(base44.entities.PortfolioProject.delete(project.id), 'Project deleted.');
   };
 
   return (
     <div className="mx-auto max-w-5xl animate-fade-in pb-12">
-      <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h1 className="font-heading text-4xl font-light text-foreground">
-            Portfolio <span className="molten-text italic font-medium">Manager</span>
-          </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Curate the public case-study library — draft, review, publish, feature, and reorder the work.
-          </p>
-        </div>
-        <Link to="/admin/portfolio/new" className="btn-forge inline-flex items-center gap-2 rounded-md px-5 py-2.5 text-sm font-semibold">
-          <Plus className="h-4 w-4" /> New project
+      <div className="mb-8">
+        <h1 className="font-heading text-4xl font-light text-foreground">
+          Portfolio <span className="molten-text italic font-medium">Manager</span>
+        </h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Curate the public case-study library — draft, review, publish, feature, and reorder the work.
+        </p>
+      </div>
+
+      <div className="mb-8 grid gap-4 sm:grid-cols-2">
+        <Link
+          to="/admin/portfolio/new"
+          className="dashboard-card group flex items-center justify-between gap-4 p-6 transition-colors hover:border-primary/40"
+        >
+          <span>
+            <span className="block font-heading text-2xl text-foreground">Start new manually</span>
+            <span className="mt-1 block text-sm text-muted-foreground">
+              Build a case study from scratch, your way.
+            </span>
+          </span>
+          <span className="btn-forge inline-flex shrink-0 items-center gap-2 rounded-md px-4 py-2 text-xs font-semibold uppercase tracking-widest">
+            <Plus className="h-4 w-4" /> New project
+          </span>
+        </Link>
+        <Link
+          to="/admin/portfolio/import"
+          className="dashboard-card group flex items-center justify-between gap-4 p-6 transition-colors hover:border-primary/40"
+        >
+          <span>
+            <span className="block font-heading text-2xl text-foreground">Import past client project</span>
+            <span className="mt-1 block text-sm text-muted-foreground">
+              Give a website, files, and a few facts. We draft the record for your review.
+            </span>
+          </span>
+          <span className="inline-flex shrink-0 items-center gap-2 rounded-md border border-primary/40 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-primary transition-colors group-hover:bg-primary/10">
+            <Sparkles className="h-4 w-4" /> Import
+          </span>
         </Link>
       </div>
 
@@ -102,11 +129,8 @@ export default function AdminPortfolioManager() {
         <div className="dashboard-card p-10 text-center">
           <h2 className="font-heading text-3xl text-foreground">No projects yet</h2>
           <p className="mx-auto mt-3 max-w-md text-sm text-muted-foreground">
-            Create your first case study — add the story, upload the assets, and publish when it is ready.
+            Start one manually or import a past client project to draft a case study from real source material.
           </p>
-          <Link to="/admin/portfolio/new" className="btn-forge mt-6 inline-flex items-center gap-2 rounded-md px-5 py-2.5 text-sm font-semibold">
-            <Plus className="h-4 w-4" /> New project
-          </Link>
         </div>
       ) : (
         <div className="dashboard-card divide-y divide-border/50 overflow-hidden">
