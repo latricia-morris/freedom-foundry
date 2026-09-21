@@ -1,0 +1,158 @@
+{
+  "name": "Proposal",
+  "type": "object",
+  "properties": {
+    "proposal_number": {
+      "type": "string"
+    },
+    "client_id": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "internal_review",
+        "sent",
+        "viewed",
+        "selections_in_progress",
+        "accepted_awaiting_deposit",
+        "deposit_checkout_opened",
+        "deposit_paid",
+        "expired",
+        "declined",
+        "superseded",
+        "cancelled"
+      ],
+      "default": "draft"
+    },
+    "version": {
+      "type": "number",
+      "default": 1
+    },
+    "expiration_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "agreement_text": {
+      "type": "string"
+    },
+    "signature_status": {
+      "type": "string",
+      "enum": [
+        "not_required",
+        "pending",
+        "signed",
+        "declined"
+      ],
+      "default": "pending"
+    },
+    "signed_by_name": {
+      "type": "string"
+    },
+    "signed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "deposit_rule_type": {
+      "type": "string",
+      "enum": [
+        "fixed_amount",
+        "percentage",
+        "tier_specific",
+        "full_payment"
+      ],
+      "default": "percentage"
+    },
+    "deposit_rule_value": {
+      "type": "number",
+      "default": 50
+    },
+    "milestone_rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "percent": {
+            "type": "number"
+          },
+          "due_days": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "description",
+          "percent"
+        ]
+      }
+    },
+    "accepted_contract_total_cents": {
+      "type": "number"
+    },
+    "accepted_scope_snapshot": {
+      "type": "object"
+    },
+    "project_activation_status": {
+      "type": "string",
+      "enum": [
+        "not_eligible",
+        "awaiting_deposit",
+        "ready",
+        "activated",
+        "error",
+        "manual_review"
+      ],
+      "default": "not_eligible"
+    },
+    "share_token": {
+      "type": "string"
+    },
+    "source_template_id": {
+      "type": "string"
+    },
+    "sent_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "viewed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "accepted_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "title",
+    "client_id"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

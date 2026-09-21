@@ -68,6 +68,15 @@ import AdminPortfolioEditor from './pages/AdminPortfolioEditor';
 import AdminPortfolioImport from './pages/AdminPortfolioImport';
 import PortfolioPreview from './pages/PortfolioPreview';
 
+// Agency OS
+import ClientProposal from './pages/ClientProposal';
+import AdminAgencyDashboard from './pages/admin/agency/AdminAgencyDashboard';
+import AdminAgencyClients from './pages/admin/agency/AdminAgencyClients';
+import AdminAgencyProposals from './pages/admin/agency/AdminAgencyProposals';
+import AdminAgencyProposalBuilder from './pages/admin/agency/AdminAgencyProposalBuilder';
+import AdminAgencyProjects from './pages/admin/agency/AdminAgencyProjects';
+import AdminAgencyProjectDetail from './pages/admin/agency/AdminAgencyProjectDetail';
+
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin, isAuthenticated } = useAuth();
 
@@ -104,6 +113,7 @@ const AuthenticatedApp = () => {
       <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LandingPage />} />
       <Route path="/portfolio" element={<PortfolioPage />} />
       <Route path="/portfolio/:slug" element={<CaseStudy />} />
+      <Route path="/p/:token" element={<ClientProposal />} />
       <Route path="/share/:token" element={<SharePage />} />
       <Route path="/member/:brandSlug/:profileType" element={<SharePage />} />
       <Route path="/terms" element={<Terms />} />
@@ -153,6 +163,13 @@ const AuthenticatedApp = () => {
             <Route path="/admin/portfolio/import" element={<AdminPortfolioImport />} />
             <Route path="/admin/portfolio/:id" element={<AdminPortfolioEditor />} />
             <Route path="/admin/portfolio/:id/preview" element={<PortfolioPreview />} />
+            <Route path="/admin/agency" element={<AdminAgencyDashboard />} />
+            <Route path="/admin/agency/clients" element={<AdminAgencyClients />} />
+            <Route path="/admin/agency/proposals" element={<AdminAgencyProposals />} />
+            <Route path="/admin/agency/proposals/new" element={<AdminAgencyProposalBuilder />} />
+            <Route path="/admin/agency/proposals/:id" element={<AdminAgencyProposalBuilder />} />
+            <Route path="/admin/agency/projects" element={<AdminAgencyProjects />} />
+            <Route path="/admin/agency/projects/:id" element={<AdminAgencyProjectDetail />} />
           </Route>
         </Route>
       </Route>

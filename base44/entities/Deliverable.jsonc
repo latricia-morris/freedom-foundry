@@ -1,0 +1,127 @@
+{
+  "name": "Deliverable",
+  "type": "object",
+  "properties": {
+    "project_id": {
+      "type": "string"
+    },
+    "linked_line_item_id": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "phase": {
+      "type": "string"
+    },
+    "internal_owner": {
+      "type": "string"
+    },
+    "client_due_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "internal_ready_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "review_status": {
+      "type": "string",
+      "enum": [
+        "not_started",
+        "in_production",
+        "internal_review",
+        "ready_for_client_review",
+        "client_reviewing",
+        "revisions_requested",
+        "client_approved",
+        "awaiting_payment_release",
+        "released"
+      ],
+      "default": "not_started"
+    },
+    "version_number": {
+      "type": "number",
+      "default": 1
+    },
+    "revision_round_count": {
+      "type": "number",
+      "default": 0
+    },
+    "max_revision_rounds": {
+      "type": "number",
+      "default": 2
+    },
+    "client_visible": {
+      "type": "boolean",
+      "default": false
+    },
+    "release_rule": {
+      "type": "string",
+      "enum": [
+        "manual",
+        "deposit_paid",
+        "milestone_paid",
+        "final_invoice_paid",
+        "account_paid_in_full"
+      ],
+      "default": "manual"
+    },
+    "release_eligibility_status": {
+      "type": "string",
+      "enum": [
+        "not_eligible",
+        "eligible",
+        "released"
+      ],
+      "default": "not_eligible"
+    },
+    "final_release_status": {
+      "type": "string",
+      "enum": [
+        "unreleased",
+        "released"
+      ],
+      "default": "unreleased"
+    },
+    "preview_expiration_days": {
+      "type": "number",
+      "default": 30
+    },
+    "drive_internal_folder": {
+      "type": "string"
+    },
+    "drive_release_folder": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "project_id",
+    "title"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -1,5 +1,7 @@
 import Stripe from "npm:stripe@17.0.0";
 import { secrets } from "base44:runtime";
+import { createClientFromRequest } from "npm:@base44/sdk@0.8.44";
+import { handleDepositPaid } from "../../shared/agency/core.ts";
 
 export default async function(req: Request): Promise<Response> {
   try {
@@ -23,6 +25,20 @@ export default async function(req: Request): Promise<Response> {
       case "checkout.session.completed": {
         const session = event.data.object;
         console.log(`Checkout completed: ${session.id}, customer: ${session.customer}`);
+        // Agency OS deposit payment: verified server-side activation.
+        if (session.metadata?.payment_type === "deposit" && session.metadata?.base44_proposal_id) {
+          const base44 = createClientFromRequest(req).asServiceRole;
+          const result = await handleDepositPaid(base44, {
+            proposal_id: session.metadata.base44_proposal_id,
+            installment_id: session.metadata.base44_installment_id,
+            amount_paid_cents: session.amount_total || 0,
+            event_id: event.id,
+            session_id: session.id,
+            payment_intent_id: typeof session.payment_intent === "string" ? session.payment_intent : "",
+            source: "stripe_webhook",
+          });
+          console.log(`Agency deposit handling: ${JSON.stringify(result)}`);
+        }
         break;
       }
       case "customer.subscription.updated": {

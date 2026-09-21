@@ -1,0 +1,65 @@
+{
+  "name": "AuditLog",
+  "type": "object",
+  "properties": {
+    "actor": {
+      "type": "string"
+    },
+    "actor_role": {
+      "type": "string"
+    },
+    "entity_type": {
+      "type": "string"
+    },
+    "entity_id": {
+      "type": "string"
+    },
+    "action": {
+      "type": "string"
+    },
+    "before_value": {
+      "type": "object"
+    },
+    "after_value": {
+      "type": "object"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "ui",
+        "automation",
+        "stripe_webhook",
+        "api",
+        "admin_override"
+      ],
+      "default": "ui"
+    }
+  },
+  "required": [
+    "entity_type",
+    "entity_id",
+    "action"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

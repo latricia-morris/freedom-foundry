@@ -1,0 +1,110 @@
+{
+  "name": "ProjectTemplate",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "service_type": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "is_default": {
+      "type": "boolean",
+      "default": false
+    },
+    "active": {
+      "type": "boolean",
+      "default": true
+    },
+    "duration_days": {
+      "type": "number",
+      "default": 45
+    },
+    "internal_buffer_days": {
+      "type": "number",
+      "default": 4
+    },
+    "default_release_rule": {
+      "type": "string",
+      "enum": [
+        "manual",
+        "deposit_paid",
+        "milestone_paid",
+        "final_invoice_paid",
+        "account_paid_in_full"
+      ],
+      "default": "manual"
+    },
+    "phases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "tasks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "per_scope_item": {
+                  "type": "boolean"
+                },
+                "deliverable": {
+                  "type": "boolean"
+                },
+                "client_visible": {
+                  "type": "boolean"
+                },
+                "due_offset_days": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "title"
+              ]
+            }
+          }
+        },
+        "required": [
+          "name"
+        ]
+      }
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

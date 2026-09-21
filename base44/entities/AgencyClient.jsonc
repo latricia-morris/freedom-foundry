@@ -1,0 +1,91 @@
+{
+  "name": "AgencyClient",
+  "type": "object",
+  "properties": {
+    "company_name": {
+      "type": "string"
+    },
+    "primary_contact_name": {
+      "type": "string"
+    },
+    "primary_contact_email": {
+      "type": "string"
+    },
+    "primary_contact_phone": {
+      "type": "string"
+    },
+    "billing_contact_name": {
+      "type": "string"
+    },
+    "billing_contact_email": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "prospect",
+        "active",
+        "inactive",
+        "archived"
+      ],
+      "default": "prospect"
+    },
+    "ghl_contact_id": {
+      "type": "string"
+    },
+    "ghl_opportunity_id": {
+      "type": "string"
+    },
+    "stripe_customer_id": {
+      "type": "string"
+    },
+    "quickbooks_customer_id": {
+      "type": "string"
+    },
+    "assigned_account_manager": {
+      "type": "string"
+    },
+    "assigned_project_manager": {
+      "type": "string"
+    },
+    "client_portal_status": {
+      "type": "string",
+      "enum": [
+        "none",
+        "invited",
+        "active",
+        "disabled"
+      ],
+      "default": "none"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "company_name",
+    "primary_contact_email"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

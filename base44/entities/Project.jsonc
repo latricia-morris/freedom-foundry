@@ -1,0 +1,116 @@
+{
+  "name": "Project",
+  "type": "object",
+  "properties": {
+    "client_id": {
+      "type": "string"
+    },
+    "originating_proposal_id": {
+      "type": "string"
+    },
+    "project_template_id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending_activation",
+        "onboarding",
+        "active",
+        "waiting_on_client",
+        "internal_review",
+        "client_review",
+        "delivery_hold",
+        "completed",
+        "archived",
+        "on_hold"
+      ],
+      "default": "pending_activation"
+    },
+    "client_start_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "client_target_completion_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "internal_target_completion_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "client_project_health": {
+      "type": "string",
+      "enum": [
+        "on_track",
+        "at_risk",
+        "delayed",
+        "waiting_on_client",
+        "on_hold"
+      ],
+      "default": "on_track"
+    },
+    "payment_operational_status": {
+      "type": "string",
+      "enum": [
+        "deposit_pending",
+        "deposit_confirmed",
+        "payment_verification_pending",
+        "final_payment_pending",
+        "delivery_hold",
+        "eligible_for_release",
+        "released"
+      ],
+      "default": "deposit_pending"
+    },
+    "assigned_project_manager": {
+      "type": "string"
+    },
+    "assigned_team_members": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "drive_folder_id": {
+      "type": "string"
+    },
+    "client_portal_enabled": {
+      "type": "boolean",
+      "default": false
+    },
+    "activated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "client_id",
+    "name"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

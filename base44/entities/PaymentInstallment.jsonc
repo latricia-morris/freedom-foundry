@@ -1,0 +1,115 @@
+{
+  "name": "PaymentInstallment",
+  "type": "object",
+  "properties": {
+    "proposal_id": {
+      "type": "string"
+    },
+    "client_id": {
+      "type": "string"
+    },
+    "project_id": {
+      "type": "string"
+    },
+    "installment_type": {
+      "type": "string",
+      "enum": [
+        "deposit",
+        "milestone",
+        "final",
+        "change_order",
+        "recurring"
+      ],
+      "default": "deposit"
+    },
+    "description": {
+      "type": "string"
+    },
+    "amount_cents": {
+      "type": "number"
+    },
+    "currency": {
+      "type": "string",
+      "default": "USD"
+    },
+    "due_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "pending",
+        "checkout_opened",
+        "paid",
+        "failed",
+        "cancelled",
+        "refunded",
+        "disputed",
+        "waived",
+        "manual_review"
+      ],
+      "default": "pending"
+    },
+    "stripe_checkout_session_id": {
+      "type": "string"
+    },
+    "stripe_payment_intent_id": {
+      "type": "string"
+    },
+    "payment_link_url": {
+      "type": "string"
+    },
+    "amount_paid_cents": {
+      "type": "number"
+    },
+    "paid_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "external_payment_event_id": {
+      "type": "string"
+    },
+    "verification_status": {
+      "type": "string",
+      "enum": [
+        "unverified",
+        "verified",
+        "mismatch",
+        "exception"
+      ],
+      "default": "unverified"
+    },
+    "sort_order": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "proposal_id",
+    "amount_cents"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
