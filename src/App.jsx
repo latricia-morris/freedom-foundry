@@ -72,7 +72,8 @@ import PortfolioPreview from './pages/PortfolioPreview';
 import ClientProposal from './pages/ClientProposal';
 import AdminAgencyDashboard from './pages/admin/agency/AdminAgencyDashboard';
 import AdminAgencyClients from './pages/admin/agency/AdminAgencyClients';
-import AdminAgencyProposals from './pages/admin/agency/AdminAgencyProposals';
+import AdminAgencyPipeline from './pages/admin/agency/AdminAgencyPipeline';
+import AdminAgencyTemplates from './pages/admin/agency/AdminAgencyTemplates';
 import AdminAgencyProposalBuilder from './pages/admin/agency/AdminAgencyProposalBuilder';
 import AdminAgencyProjects from './pages/admin/agency/AdminAgencyProjects';
 import AdminAgencyProjectDetail from './pages/admin/agency/AdminAgencyProjectDetail';
@@ -168,7 +169,8 @@ const AuthenticatedApp = () => {
             <Route path="/admin/portfolio/:id/preview" element={<PortfolioPreview />} />
             <Route path="/admin/agency" element={<AdminAgencyDashboard />} />
             <Route path="/admin/agency/clients" element={<AdminAgencyClients />} />
-            <Route path="/admin/agency/proposals" element={<AdminAgencyProposals />} />
+            <Route path="/admin/agency/proposals" element={<AdminAgencyPipeline />} />
+            <Route path="/admin/agency/templates" element={<AdminAgencyTemplates />} />
             <Route path="/admin/agency/proposals/new" element={<AdminAgencyProposalBuilder />} />
             <Route path="/admin/agency/proposals/:id" element={<AdminAgencyProposalBuilder />} />
             <Route path="/admin/agency/projects" element={<AdminAgencyProjects />} />

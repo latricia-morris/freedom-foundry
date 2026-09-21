@@ -14,7 +14,7 @@ const agencyNav = [
   { label: 'Projects', path: '/admin/agency/projects' },
   { label: 'Clients', path: '/admin/agency/clients' },
   { label: 'Team', path: '/admin/users' },
-  { label: 'Sales', path: '/admin/agency/proposals' },
+  { label: 'Pipeline', path: '/admin/agency/proposals' },
 ];
 
 export default function MobileNav() {
