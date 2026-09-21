@@ -1,6 +1,5 @@
 import React from 'react';
-import { ExternalLink } from 'lucide-react';
-import SocialReachChart from './SocialReachChart';
+import ChannelSnapshot from './ChannelSnapshot';
 
 const SNAPSHOT_FIELDS = [
   ['email_platform', 'Email platform'],
@@ -26,32 +25,8 @@ export default function VisibilityBusinessSnapshot({ report }) {
     <div className="grid gap-8 lg:grid-cols-2">
       {channels.length > 0 && (
         <div>
-          <h4 className="mb-3 text-[10px] uppercase tracking-[0.24em] text-muted-foreground/70">Social channels</h4>
-          <SocialReachChart channels={channels} />
-          <ul className="space-y-2">
-            {channels.map((c, i) => (
-              <li key={i} className="rounded-sm border border-border/60 bg-background/40 px-4 py-2.5">
-                <div className="flex flex-wrap items-baseline justify-between gap-x-3">
-                  <span className="text-sm text-foreground">
-                    {c.platform}
-                    {c.handle ? <span className="text-muted-foreground"> · {c.handle}</span> : null}
-                  </span>
-                  {c.followers && <span className="text-xs text-muted-foreground">{c.followers}</span>}
-                </div>
-                {c.notes && <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground/80">{c.notes}</p>}
-                {c.url && (
-                  <a
-                    href={c.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="link-warm mt-1.5 inline-flex items-center gap-1"
-                  >
-                    Open channel <ExternalLink className="h-3 w-3" />
-                  </a>
-                )}
-              </li>
-            ))}
-          </ul>
+          <h4 className="mb-3 text-[10px] uppercase tracking-[0.24em] text-muted-foreground/70">Channel snapshot</h4>
+          <ChannelSnapshot channels={channels} />
         </div>
       )}
       {snapRows.length > 0 && (
