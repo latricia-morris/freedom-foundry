@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Plus, Save, Trash2, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import QbSyncButton from '@/components/admin/agency/QbSyncButton';
+import QbBillingHistoryPanel from '@/components/admin/agency/QbBillingHistoryPanel';
 
 const STATUSES = ['prospect', 'active', 'inactive', 'archived'];
 const PORTAL_STATUSES = ['none', 'invited', 'active', 'disabled'];
@@ -143,7 +145,15 @@ export default function AdminClientDirectory() {
 
   return (
     <div className="mx-auto max-w-6xl animate-fade-in pb-12">
-      <h1 className="mb-8 font-heading text-4xl font-light text-foreground">Client <span className="molten-text italic">Directory</span></h1>
+      <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
+        <h1 className="font-heading text-4xl font-light text-foreground">Client <span className="molten-text italic">Directory</span></h1>
+        <QbSyncButton
+          onSynced={(result) => {
+            setToast(`QuickBooks synced — ${result.created || 0} new, ${result.linked || 0} linked, ${result.billing_records || 0} billing records`);
+            load();
+          }}
+        />
+      </div>
 
       <div className="mb-8 grid grid-cols-3 gap-4">
         {[
@@ -216,6 +226,9 @@ export default function AdminClientDirectory() {
             <span className="mb-1.5 block text-[10px] uppercase tracking-widest text-muted-foreground">Notes</span>
             <textarea className="admin-input min-h-20 text-sm" value={editing.notes || ''} onChange={(e) => setEditing({ ...editing, notes: e.target.value })} />
           </label>
+          <div className="mt-6">
+            <QbBillingHistoryPanel clientId={editing.id} />
+          </div>
           <div className="mt-4 flex items-center gap-3">
             <button type="button" onClick={saveEdit} disabled={busy} className="btn-forge inline-flex items-center gap-2 rounded-md px-4 py-2 text-xs font-semibold uppercase tracking-widest disabled:opacity-50">
               <Save className="h-4 w-4" /> {busy ? 'Saving…' : 'Save changes'}

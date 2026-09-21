@@ -1,0 +1,45 @@
+{
+  "description": "Pulls clients and billing history from QuickBooks once a week so the Client Directory and client billing views stay current.",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "quickbooks_weekly_sync",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "run_sync": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "quickbooks-sync",
+            "args": {}
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Run QuickBooks sync",
+            "description": "Pull clients and billing history"
+          }
+        }
+      }
+    ]
+  },
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 6 * * 1",
+      "one_time_date": null,
+      "timezone": "America/New_York",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "name": "QuickBooks Weekly Sync"
+}

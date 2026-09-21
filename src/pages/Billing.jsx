@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Check, Lock, Loader2, Sparkles, Users } from 'lucide-react';
 import apiClient from '@/api/client';
 import { base44 } from '@/api/base44Client';
+import ClientQbHistory from '@/components/billing/ClientQbHistory';
 
 const PRO_PRICE_ID = 'price_1TyQ2EDMNCPQozJEfFmrfjX5';
 const TEAM_PRICE_ID = 'price_1TyQ2EDMNCPQozJEnfNqBdlL';
@@ -67,6 +68,9 @@ export default function Billing() {
             <div className="flex items-center justify-between"><span className="text-sm opacity-60">Renewal</span><span className="text-sm">No expiration</span></div>
           </div>
         </div>
+
+        {/* QuickBooks billing history (client's own agency invoices and payments) */}
+        <ClientQbHistory />
 
         {/* Upgrade Plans */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

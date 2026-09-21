@@ -1,0 +1,82 @@
+{
+  "name": "ClientBillingRecord",
+  "type": "object",
+  "properties": {
+    "agency_client_id": {
+      "type": "string"
+    },
+    "quickbooks_customer_id": {
+      "type": "string"
+    },
+    "record_type": {
+      "type": "string",
+      "enum": [
+        "invoice",
+        "payment"
+      ]
+    },
+    "quickbooks_txn_id": {
+      "type": "string"
+    },
+    "doc_number": {
+      "type": "string"
+    },
+    "txn_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "due_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "amount_cents": {
+      "type": "number",
+      "default": 0
+    },
+    "balance_cents": {
+      "type": "number",
+      "default": 0
+    },
+    "currency": {
+      "type": "string",
+      "default": "USD"
+    },
+    "status": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "synced_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "agency_client_id",
+    "record_type",
+    "quickbooks_txn_id"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
