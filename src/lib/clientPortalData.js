@@ -14,23 +14,39 @@ export const PORTAL_ENTITY_LABELS = Object.fromEntries(
   PORTAL_SECTIONS.map((section) => [section.entity, section.label])
 );
 
-/** Match the agency client to their portal member account by contact email. */
+/** Every email that should unlock this client's portal for a member. */
+export function portalEmails(client) {
+  const extra = Array.isArray(client?.portal_member_emails) ? client.portal_member_emails : [];
+  return [client?.primary_contact_email, client?.billing_contact_email, ...extra]
+    .map((e) => (e || '').trim().toLowerCase())
+    .filter(Boolean);
+}
+
+/** Match the agency client to their portal member account by any linked email. */
 export async function resolvePortalUser(client) {
-  const email = (client?.primary_contact_email || '').trim().toLowerCase();
-  if (!email) return null;
+  const emails = portalEmails(client);
+  if (!emails.length) return null;
   const users = await base44.entities.User.list('-created_date', 500).catch(() => []);
-  return (users || []).find((u) => (u.email || '').toLowerCase() === email) || null;
+  return (users || []).find((u) => emails.includes((u.email || '').toLowerCase())) || null;
+}
+
+/** Pick the member's record for a specific brand (client), falling back to legacy unscoped records. */
+export function pickBrandRecord(rows, brandClientId) {
+  const list = rows || [];
+  return list.find((row) => brandClientId && row.agency_client_id === brandClientId)
+    || list.find((row) => !row.agency_client_id)
+    || null;
 }
 
 /** Load every portal record owned by the member, grouped by entity name. */
-export async function loadPortalSnapshot(userId) {
+export async function loadPortalSnapshot(userId, brandClientId) {
   const load = (entity, sort, limit) =>
     base44.entities[entity].filter({ user_id: userId }, sort, limit).catch(() => []);
   const [content, bigPicture, personal, corporate, mediaKit, guidelines, assets] = await Promise.all([
     load('PortalContent', 'order', 100),
     load('BigPicture', '-created_date', 5),
     load('PersonalBrandProfile', '-created_date', 5),
-    load('CorporateBrandProfile', '-created_date', 5),
+    load('CorporateBrandProfile', '-created_date', 20),
     load('MediaKit', '-created_date', 5),
     load('BrandGuidelines', '-created_date', 5),
     load('BrandAsset', '-created_date', 100),
@@ -39,7 +55,7 @@ export async function loadPortalSnapshot(userId) {
     PortalContent: content || [],
     BigPicture: bigPicture || [],
     PersonalBrandProfile: personal || [],
-    CorporateBrandProfile: corporate || [],
+    CorporateBrandProfile: [pickBrandRecord(corporate, brandClientId)].filter(Boolean),
     MediaKit: mediaKit || [],
     BrandGuidelines: guidelines || [],
     BrandAsset: assets || [],
@@ -69,6 +85,9 @@ export async function applyPortalChanges(userId, client, changes) {
         if (!fields.type) fields.type = 'note';
         if (!fields.target_page) fields.target_page = 'overview';
         if (!fields.title) fields.title = change.summary || 'New section';
+      }
+      if (change.entity === 'CorporateBrandProfile') {
+        fields.agency_client_id = client.id;
       }
       record = await entityApi.create(fields);
     } else {

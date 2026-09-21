@@ -58,6 +58,18 @@
       ],
       "default": "none"
     },
+    "portal_member_emails": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "drive_folder_id": {
+      "type": "string"
+    },
+    "drive_folder_name": {
+      "type": "string"
+    },
     "notes": {
       "type": "string"
     }

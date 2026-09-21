@@ -5,6 +5,9 @@
     "user_id": {
       "type": "string"
     },
+    "agency_client_id": {
+      "type": "string"
+    },
     "company_name": {
       "type": "string"
     },

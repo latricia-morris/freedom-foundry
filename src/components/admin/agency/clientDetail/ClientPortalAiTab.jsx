@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Bot, Loader2, Send, Sparkles } from 'lucide-react';
+import { Bot, Loader2, Send, Sparkles, UserPlus } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useToast } from '@/components/ui/use-toast';
 import PortalAiDraftCard from '@/components/admin/agency/clientDetail/PortalAiDraftCard';
@@ -71,10 +71,11 @@ export default function ClientPortalAiTab({ client }) {
   const [busy, setBusy] = useState(false);
   const [draft, setDraft] = useState(null);
   const [applying, setApplying] = useState(false);
+  const [inviteBusy, setInviteBusy] = useState(false);
   const threadRef = useRef(null);
 
   const reload = (portalUser) => {
-    loadPortalSnapshot(portalUser.id).then(setSnapshot).catch(() => setSnapshot(null));
+    loadPortalSnapshot(portalUser.id, client.id).then(setSnapshot).catch(() => setSnapshot(null));
   };
 
   useEffect(() => {
@@ -148,13 +149,69 @@ export default function ClientPortalAiTab({ client }) {
   }
 
   if (user === null) {
+    const invite = async () => {
+      if (!client.primary_contact_email || inviteBusy) return;
+      setInviteBusy(true);
+      try {
+        await base44.users.inviteUser(client.primary_contact_email, 'user');
+        await base44.entities.AgencyClient.update(client.id, { client_portal_status: 'invited' }).catch(() => {});
+        toast({
+          title: 'Invitation sent',
+          description: `${client.primary_contact_email} can now join as a Freedom Foundry member.`,
+        });
+        const linked = await resolvePortalUser(client).catch(() => null);
+        setUser(linked);
+        if (linked) reload(linked);
+      } catch (e) {
+        toast({ title: 'Could not send the invite', description: e.message, variant: 'destructive' });
+        setInviteBusy(false);
+      }
+    };
+    const checkAgain = async () => {
+      setInviteBusy(true);
+      try {
+        const linked = await resolvePortalUser(client);
+        setUser(linked);
+        if (linked) reload(linked);
+      } finally {
+        setInviteBusy(false);
+      }
+    };
     return (
       <div className="dashboard-card p-8 text-center">
         <Sparkles className="mx-auto mb-3 h-6 w-6 icon-warm" strokeWidth={1.5} />
-        <p className="text-sm text-muted-foreground">
-          No portal member is linked to this client yet. The portal is matched by contact email
-          (<span className="text-foreground">{client.primary_contact_email || 'none on file'}</span>). Invite that email as an app member and everything in their portal appears here.
-        </p>
+        {client.primary_contact_email ? (
+          <>
+            <p className="mx-auto max-w-xl text-sm text-muted-foreground">
+              No portal member is linked to this client yet. Invite
+              <span className="text-foreground"> {client.primary_contact_email} </span>
+              as a Freedom Foundry member and everything in their portal appears here — you can
+              review, upload to, and update their portal from this tab right away.
+            </p>
+            <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+              <button
+                type="button"
+                onClick={invite}
+                disabled={inviteBusy}
+                className="btn-forge inline-flex items-center gap-2 rounded-md px-4 py-2 text-xs font-semibold uppercase tracking-widest disabled:opacity-50"
+              >
+                <UserPlus className="h-4 w-4" /> {inviteBusy ? 'Inviting…' : 'Invite as portal member'}
+              </button>
+              <button
+                type="button"
+                onClick={checkAgain}
+                disabled={inviteBusy}
+                className="inline-flex items-center gap-2 rounded-md border border-border px-4 py-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground transition-colors hover:text-foreground disabled:opacity-50"
+              >
+                Check again
+              </button>
+            </div>
+          </>
+        ) : (
+          <p className="mx-auto max-w-xl text-sm text-muted-foreground">
+            Add a contact email on the client profile first — the portal is matched by that email.
+          </p>
+        )}
       </div>
     );
   }

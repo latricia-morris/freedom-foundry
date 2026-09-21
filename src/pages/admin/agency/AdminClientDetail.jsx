@@ -81,6 +81,9 @@ export default function AdminClientDetail() {
     setBusy(true);
     try {
       const patch = { status: draft.status, client_portal_status: draft.client_portal_status, notes: draft.notes || '' };
+      patch.portal_member_emails = (draft.portal_member_emails || [])
+        .map((e) => String(e).trim().toLowerCase())
+        .filter(Boolean);
       for (const [, key] of TEXT_FIELDS) patch[key] = draft[key] || '';
       await base44.entities.AgencyClient.update(id, patch);
       await log('client_updated');
@@ -188,6 +191,17 @@ export default function AdminClientDetail() {
           <label className="mt-4 block">
             <span className="mb-1.5 block text-[10px] uppercase tracking-widest text-muted-foreground">Notes</span>
             <textarea className="admin-input min-h-20 text-sm" value={draft.notes || ''} onChange={(e) => setDraft({ ...draft, notes: e.target.value })} />
+          </label>
+          <label className="mt-4 block">
+            <span className="mb-1.5 block text-[10px] uppercase tracking-widest text-muted-foreground">Portal members (one email per line)</span>
+            <textarea
+              className="admin-input min-h-20 text-sm"
+              value={(draft.portal_member_emails || []).join('\n')}
+              onChange={(e) => setDraft({ ...draft, portal_member_emails: e.target.value.split('\n').map((v) => v.trim()).filter(Boolean) })}
+            />
+            <span className="mt-1.5 block text-xs text-muted-foreground/60">
+              Every email here can access this client's portal — for members who run more than one brand.
+            </span>
           </label>
           <div className="mt-4 flex items-center gap-3">
             <button type="button" onClick={saveEdit} disabled={busy} className="btn-forge inline-flex items-center gap-2 rounded-md px-4 py-2 text-xs font-semibold uppercase tracking-widest disabled:opacity-50">

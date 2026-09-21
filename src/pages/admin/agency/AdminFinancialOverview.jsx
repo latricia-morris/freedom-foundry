@@ -3,6 +3,10 @@ import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxi
 import { Banknote, CalendarClock, FileCheck, TrendingUp } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { formatUsd } from '@/lib/agency';
+import { useToast } from '@/components/ui/use-toast';
+import QbSyncButton from '@/components/admin/agency/QbSyncButton';
+import CompanyBooksCard from '@/components/admin/agency/financials/CompanyBooksCard';
+import InAppSalesCard from '@/components/admin/agency/financials/InAppSalesCard';
 
 const OUTSTANDING = ['draft', 'pending', 'checkout_opened'];
 const NON_CONTRACT_STATUSES = ['declined', 'cancelled', 'expired', 'superseded'];
@@ -20,6 +24,8 @@ export default function AdminFinancialOverview() {
   const [proposals, setProposals] = useState([]);
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const { toast } = useToast();
 
   useEffect(() => {
     Promise.all([
@@ -96,7 +102,18 @@ export default function AdminFinancialOverview() {
 
   return (
     <div className="mx-auto max-w-6xl animate-fade-in pb-12">
-      <h1 className="mb-8 font-heading text-4xl font-light text-foreground">Financial <span className="molten-text italic">Overview</span></h1>
+      <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
+        <h1 className="font-heading text-4xl font-light text-foreground">Financial <span className="molten-text italic">Overview</span></h1>
+        <QbSyncButton
+          onSynced={(data) => {
+            toast({
+              title: 'QuickBooks synced',
+              description: data ? `${data.billing_records || 0} billing records refreshed.` : 'Client billing refreshed.',
+            });
+            setRefreshKey(k => k + 1);
+          }}
+        />
+      </div>
 
       <div className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
         {cards.map((card) => (
@@ -130,6 +147,9 @@ export default function AdminFinancialOverview() {
           </ResponsiveContainer>
         </div>
       </div>
+
+      <CompanyBooksCard refreshKey={refreshKey} />
+      <InAppSalesCard refreshKey={refreshKey} />
 
       <div className="grid gap-6 lg:grid-cols-2">
         <div>

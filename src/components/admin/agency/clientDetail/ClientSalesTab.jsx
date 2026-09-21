@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { CircleDollarSign, Receipt, TrendingUp } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { CircleDollarSign, Plus, Receipt, TrendingUp } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import { useToast } from '@/components/ui/use-toast';
 import QbBillingHistoryPanel from '@/components/admin/agency/QbBillingHistoryPanel';
 import { formatUsd, INSTALLMENT_STATUS_LABELS, PROPOSAL_STATUS_LABELS } from '@/lib/agency';
 
@@ -22,10 +23,36 @@ const PROPOSAL_OUT_STYLES = {
 };
 
 export default function ClientSalesTab({ client }) {
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const [proposals, setProposals] = useState([]);
   const [installments, setInstallments] = useState([]);
   const [billing, setBilling] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [proposing, setProposing] = useState(false);
+
+  // Create a draft proposal already linked to this client, then open the builder.
+  const newProposal = async () => {
+    if (proposing) return;
+    setProposing(true);
+    try {
+      const all = await base44.entities.Proposal.filter({}, '-created_date', 500).catch(() => []);
+      const number = `P-${new Date().getFullYear()}-${String((all || []).length + 1).padStart(3, '0')}`;
+      const created = await base44.entities.Proposal.create({
+        proposal_number: number,
+        client_id: client.id,
+        title: `New proposal — ${client.company_name}`,
+        status: 'draft',
+        deposit_rule_type: 'percentage',
+        deposit_rule_value: 50,
+      });
+      toast({ title: 'Proposal created', description: `Linked to ${client.company_name}.` });
+      navigate(`/admin/agency/proposals/${created.id}`);
+    } catch (e) {
+      toast({ title: 'Could not create the proposal', description: e.message, variant: 'destructive' });
+      setProposing(false);
+    }
+  };
 
   useEffect(() => {
     let active = true;
@@ -106,7 +133,17 @@ export default function ClientSalesTab({ client }) {
       </div>
 
       <div className="dashboard-card p-6">
-        <h3 className="mb-4 font-heading text-2xl text-foreground">Proposals</h3>
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <h3 className="font-heading text-2xl text-foreground">Proposals</h3>
+          <button
+            type="button"
+            onClick={newProposal}
+            disabled={proposing}
+            className="btn-forge inline-flex items-center gap-2 rounded-md px-4 py-2 text-xs font-semibold uppercase tracking-widest disabled:opacity-50"
+          >
+            <Plus className="h-4 w-4" /> New proposal
+          </button>
+        </div>
         {proposals.length === 0 ? (
           <p className="py-6 text-center text-sm text-muted-foreground">No proposals for this client yet.</p>
         ) : (

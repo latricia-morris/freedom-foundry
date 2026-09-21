@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import apiClient from '@/api/client';
+import { base44 } from '@/api/base44Client';
 import { Upload, X, Check, Share2 } from 'lucide-react';
 import AddLinkButton from '@/components/brand/AddLinkButton';
 import { toast } from '@/components/ui/use-toast';
@@ -14,6 +15,8 @@ const FILE_ACCEPT = ".png,.jpg,.jpeg,.pdf,.ai,.eps,.webp";
 export default function CorporateBrandProfile() {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [brands, setBrands] = useState([]);
+  const [selectedBrandId, setSelectedBrandId] = useState('');
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [shareLink, setShareLink] = useState(null);
@@ -30,14 +33,47 @@ export default function CorporateBrandProfile() {
   };
   const [form, setForm] = useState(init);
 
-  useEffect(() => {
-    apiClient.entities.CorporateBrandProfile.filter({}, '-created_date', 1)
+  const loadBrandRecord = (brandId) => {
+    setLoading(true);
+    apiClient.entities.CorporateBrandProfile.filter({}, '-created_date', 20)
       .then(p => {
-        const r = p?.[0] || null;
+        const rows = p || [];
+        const r = rows.find(row => brandId && row.agency_client_id === brandId)
+          || rows.find(row => !row.agency_client_id)
+          || null;
         setProfile(r);
-        if (r) setForm({ ...init, ...r });
+        setForm(r ? { ...init, ...r } : { ...init, agency_client_id: brandId });
       })
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      let brandId = '';
+      try {
+        const res = await base44.functions.invoke('get-portal-brands', {});
+        const list = (res.data && res.data.brands) || [];
+        if (!active) return;
+        setBrands(list);
+        brandId = list.length ? list[0].id : '';
+      } catch { /* single-brand members keep the classic view */ }
+      if (!active) return;
+      setSelectedBrandId(brandId);
+      if (brandId) {
+        loadBrandRecord(brandId);
+      } else {
+        apiClient.entities.CorporateBrandProfile.filter({}, '-created_date', 1)
+          .then(p => {
+            if (!active) return;
+            const r = p?.[0] || null;
+            setProfile(r);
+            if (r) setForm({ ...init, ...r });
+          })
+          .finally(() => { if (active) setLoading(false); });
+      }
+    })();
+    return () => { active = false; };
   }, []);
 
   const update = (k, v) => setForm(prev => ({ ...prev, [k]: v }));
@@ -123,6 +159,28 @@ export default function CorporateBrandProfile() {
 
         </div>
       </div>
+
+      {brands.length > 1 && (
+        <div className="mb-6 flex flex-wrap items-center gap-2">
+          <span className="mr-1 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Brand</span>
+          {brands.map(b => (
+            <button
+              key={b.id}
+              type="button"
+              onClick={() => {
+                if (b.id === selectedBrandId) return;
+                setSelectedBrandId(b.id);
+                loadBrandRecord(b.id);
+              }}
+              className={`rounded-full border px-4 py-1.5 text-xs transition-colors ${
+                b.id === selectedBrandId ? 'btn-forge border-transparent' : 'border-border text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              {b.company_name}
+            </button>
+          ))}
+        </div>
+      )}
 
       {shareLink && (
         <div className="mb-6 p-4 rounded-xl border border-border bg-card flex items-center gap-3">
