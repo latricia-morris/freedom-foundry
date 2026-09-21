@@ -17,6 +17,7 @@ const EXTRACTION_SCHEMA = {
         topical_authority: { anyOf: [{ type: 'integer' }, { type: 'null' }] },
         documented_outcomes: { anyOf: [{ type: 'integer' }, { type: 'null' }] },
         social_channel_presence: { anyOf: [{ type: 'integer' }, { type: 'null' }] },
+        off_site_category_authority: { anyOf: [{ type: 'integer' }, { type: 'null' }] },
       },
       additionalProperties: false,
     },
@@ -84,7 +85,8 @@ Required JSON shape:
     "trusted_source_citations": integer or null,
     "topical_authority": integer or null,
     "documented_outcomes": integer or null,
-    "social_channel_presence": integer or null
+    "social_channel_presence": integer or null,
+    "off_site_category_authority": integer or null
   },
   "key_findings": [array of short strings],
   "recommended_fixes": [array of short strings],
@@ -102,7 +104,7 @@ Required JSON shape:
 }
 
 Notes:
-- Some audits score five categories out of 20 points each and omit structured data or social channel presence entirely. For any of the six categories the text does not clearly score, return null for that category.
+- Audits score each dimension out of 20 points. Sources vary in which dimensions they score (structured data, social channel presence, and off-site category authority are commonly omitted). For any dimension the text does not clearly score, return null for that dimension.
 - key_findings and recommended_fixes must be short plain-language strings taken directly from the text.
 - competitors_mentioned: each object needs a name and a short positioning description. Return an empty array if none are mentioned.
 - business_snapshot: operational facts stated in the audit about the business (email platform used, how often they send email, whether marketing blasts or drip campaigns exist, key funnel assets such as lead magnets or landing pages, and use of events, launches, or campaign-based activity). Return null for anything the text does not state.

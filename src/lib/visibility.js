@@ -1,39 +1,41 @@
 // Shared scoring model and helpers for the Visibility & Credibility report.
-// Six categories, 100 points: five at 16 + Social Channel Presence at 20.
+// Each source's audit is stored verbatim: every dimension is scored out of 20,
+// anything the source did not score stays null, and the composite is the
+// source's own stated number.
 export const VISIBILITY_CATEGORIES = [
   {
     key: 'entity_recognition',
     label: 'Entity Recognition',
     short: 'Entity',
-    max: 16,
+    max: 20,
     definition: 'Whether AI engines correctly identify who you are, what you offer, and where you operate.',
   },
   {
     key: 'structured_data',
     label: 'Structured Data',
     short: 'Schema',
-    max: 16,
+    max: 20,
     definition: 'Machine-readable signals on your website that let search engines trust and display your details.',
   },
   {
     key: 'trusted_source_citations',
     label: 'Trusted Source Citations',
     short: 'Citations',
-    max: 16,
+    max: 20,
     definition: 'How often credible third-party sources reference and validate your brand.',
   },
   {
     key: 'topical_authority',
     label: 'Topical Authority',
     short: 'Topical',
-    max: 16,
+    max: 20,
     definition: 'Depth of published coverage on your core subjects that positions you as a go-to voice.',
   },
   {
     key: 'documented_outcomes',
     label: 'Documented Outcomes',
     short: 'Outcomes',
-    max: 16,
+    max: 20,
     definition: 'Public proof of results: case studies, testimonials, and measurable wins anyone can verify.',
   },
   {
@@ -42,6 +44,13 @@ export const VISIBILITY_CATEGORIES = [
     short: 'Social',
     max: 20,
     definition: 'Active, consistent, findable social profiles that corroborate everything else the engines find.',
+  },
+  {
+    key: 'off_site_category_authority',
+    label: 'Off-Site Category Authority',
+    short: 'Off-Site',
+    max: 20,
+    definition: 'Presence on the category-authoritative directories and platforms buyers use to vet and choose specialists.',
   },
 ];
 

@@ -44,6 +44,9 @@
         },
         "social_channel_presence": {
           "type": "number"
+        },
+        "off_site_category_authority": {
+          "type": "number"
         }
       }
     },

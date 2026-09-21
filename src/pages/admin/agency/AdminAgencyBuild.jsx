@@ -3,7 +3,7 @@ import { Plus, Trash2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useToast } from '@/components/ui/use-toast';
 
-const CATEGORIES = ['Offers & Packaging', 'Sales', 'Marketing', 'Delivery', 'Systems', 'Team', 'Finance', 'Legal'];
+const CATEGORIES = ['Offers & Packaging', 'Sales', 'Marketing', 'Delivery', 'Systems', 'Team', 'Finance', 'Legal', 'Velocity Course', 'Resources & Lead Magnets'];
 const STATUS_OPTIONS = [
   { value: 'todo', label: 'To Do' },
   { value: 'in_progress', label: 'In Progress' },

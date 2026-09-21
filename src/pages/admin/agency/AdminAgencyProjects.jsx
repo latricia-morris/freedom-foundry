@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
-import { PAYMENT_OPS_LABELS } from '@/lib/agency';
 import { useToast } from '@/components/ui/use-toast';
 import ListToolbar from '@/components/agency/ListToolbar';
 import BulkActionBar from '@/components/agency/BulkActionBar';
+import ProjectsTable from '@/components/admin/agency/projects/ProjectsTable';
+import AiProjectAssistant from '@/components/admin/agency/projects/AiProjectAssistant';
 import { useListControls } from '@/hooks/useListControls';
 
 const PROJECT_STATUSES = ['pending_activation', 'onboarding', 'active', 'waiting_on_client', 'internal_review', 'client_review', 'delivery_hold', 'completed', 'archived', 'on_hold'];
@@ -18,12 +18,24 @@ const SORT_FIELDS = [
   { value: 'client_name', label: 'Client Name' },
 ];
 
+const EMPTY_DRAFT = {
+  name: '',
+  client_id: '',
+  status: 'pending_activation',
+  client_project_health: 'on_track',
+  client_target_completion_date: '',
+  assigned_project_manager: '',
+};
+
 export default function AdminAgencyProjects() {
   const { toast } = useToast();
   const [projects, setProjects] = useState([]);
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState(() => new Set());
+  const [draft, setDraft] = useState(EMPTY_DRAFT);
+  const [aiDraft, setAiDraft] = useState(false);
+  const [savingDraft, setSavingDraft] = useState(false);
   const [controls, patchControls] = useListControls(CONTROLS_KEY, {
     sortBy: 'due_date',
     sortDir: 'asc',
@@ -99,17 +111,60 @@ export default function AdminAgencyProjects() {
     { key: 'due_date', label: 'Due Date', type: 'date' },
   ];
 
+  const commitDraft = async () => {
+    if (!draft.name.trim()) {
+      toast({ title: 'Project name required', variant: 'destructive' });
+      return;
+    }
+    if (!draft.client_id) {
+      toast({ title: 'Choose a client', description: 'Pick the client this project belongs to, then press Enter.', variant: 'destructive' });
+      return;
+    }
+    setSavingDraft(true);
+    try {
+      await base44.entities.Project.create({
+        client_id: draft.client_id,
+        name: draft.name.trim(),
+        status: draft.status,
+        client_project_health: draft.client_project_health,
+        client_target_completion_date: draft.client_target_completion_date || null,
+        assigned_project_manager: draft.assigned_project_manager.trim() || null,
+      });
+      toast({ title: 'Project added', description: draft.name.trim() });
+      setDraft(EMPTY_DRAFT);
+      setAiDraft(false);
+      load();
+    } catch (e) {
+      toast({ title: 'Could not add project', description: e.message, variant: 'destructive' });
+    } finally {
+      setSavingDraft(false);
+    }
+  };
+
+  const cellCommit = async (project, field, value) => {
+    const clean = field === 'name' ? String(value ?? '').trim() : (value || null);
+    if (field === 'name' && !clean) return;
+    try {
+      await base44.entities.Project.update(project.id, { [field]: clean });
+      setProjects((prev) => prev.map((p) => (p.id === project.id ? { ...p, [field]: clean } : p)));
+    } catch (e) {
+      toast({ title: 'Update failed', description: e.message, variant: 'destructive' });
+      load();
+    }
+  };
+
   return (
     <div className="mx-auto max-w-6xl animate-fade-in pb-12">
-      <h1 className="mb-2 font-heading text-4xl font-light text-foreground">Client <span className="molten-text italic">Projects</span></h1>
-      <p className="mb-8 text-sm text-muted-foreground">
-        A project exists only after its deposit is verified. Activation is automatic and happens exactly once.
-      </p>
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+        <h1 className="font-heading text-4xl font-light text-foreground">Client <span className="molten-text italic">Projects</span></h1>
+        <AiProjectAssistant
+          clients={clients}
+          onDraft={(d) => { setDraft({ ...EMPTY_DRAFT, ...d }); setAiDraft(true); }}
+        />
+      </div>
 
       {loading ? (
         <div className="flex justify-center py-16"><div className="h-10 w-10 animate-spin rounded-full border-2 border-border border-t-primary" /></div>
-      ) : projects.length === 0 ? (
-        <p className="py-16 text-center text-sm text-muted-foreground">No projects yet. Accepted proposals with verified deposits appear here.</p>
       ) : (
         <div>
           <ListToolbar
@@ -126,55 +181,20 @@ export default function AdminAgencyProjects() {
               onClear={() => setSelected(new Set())}
             />
           )}
-          <div className="dashboard-card overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="bg-muted/60">
-                  <th className="w-10 px-5 py-3">
-                    <input
-                      type="checkbox"
-                      className="h-4 w-4 accent-[#d9622c]"
-                      checked={allSelected}
-                      onChange={toggleAll}
-                      aria-label="Select all projects"
-                    />
-                  </th>
-                  {['Project', 'Client', 'Status', 'Payment state', 'Health', 'Activated'].map((h) => (
-                    <th key={h} className="px-5 py-3 text-left text-[10px] uppercase tracking-[0.2em] text-muted-foreground/70">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {visible.map((p) => (
-                  <tr
-                    key={p.id}
-                    className={`border-t border-border/30 ${selected.has(p.id) ? 'bg-primary/5' : 'hover:bg-accent/40'}`}
-                  >
-                    <td className="px-5 py-3">
-                      <input
-                        type="checkbox"
-                        className="h-4 w-4 accent-[#d9622c]"
-                        checked={selected.has(p.id)}
-                        onChange={() => toggleRow(p.id)}
-                        aria-label={`Select ${p.name}`}
-                      />
-                    </td>
-                    <td className="px-5 py-3">
-                      <Link to={`/admin/agency/projects/${p.id}`} className="text-sm text-foreground hover:text-primary">{p.name}</Link>
-                    </td>
-                    <td className="px-5 py-3 text-sm text-muted-foreground">{clientName(p.client_id) || '—'}</td>
-                    <td className="px-5 py-3"><span className="rounded-sm border border-border px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted-foreground">{p.status.replace(/_/g, ' ')}</span></td>
-                    <td className="px-5 py-3 text-xs text-muted-foreground">{PAYMENT_OPS_LABELS[p.payment_operational_status] || p.payment_operational_status}</td>
-                    <td className="px-5 py-3 text-xs text-muted-foreground">{(p.client_project_health || 'on_track').replace(/_/g, ' ')}</td>
-                    <td className="px-5 py-3 text-xs text-muted-foreground/70">{p.activated_at ? new Date(p.activated_at).toLocaleDateString() : '—'}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            {visible.length === 0 && (
-              <p className="py-8 text-center text-sm text-muted-foreground">No projects match the current filters.</p>
-            )}
-          </div>
+          <ProjectsTable
+            projects={visible}
+            clients={clients}
+            draft={draft}
+            aiDraft={aiDraft}
+            busy={savingDraft}
+            onDraftChange={(patch) => setDraft((prev) => ({ ...prev, ...patch }))}
+            onCommitDraft={commitDraft}
+            onCellCommit={cellCommit}
+            selectedIds={selected}
+            onToggleRow={toggleRow}
+            allSelected={allSelected}
+            onToggleAll={toggleAll}
+          />
         </div>
       )}
     </div>

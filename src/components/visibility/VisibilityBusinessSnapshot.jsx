@@ -1,5 +1,6 @@
 import React from 'react';
 import { ExternalLink } from 'lucide-react';
+import SocialReachChart from './SocialReachChart';
 
 const SNAPSHOT_FIELDS = [
   ['email_platform', 'Email platform'],
@@ -26,6 +27,7 @@ export default function VisibilityBusinessSnapshot({ report }) {
       {channels.length > 0 && (
         <div>
           <h4 className="mb-3 text-[10px] uppercase tracking-[0.24em] text-muted-foreground/70">Social channels</h4>
+          <SocialReachChart channels={channels} />
           <ul className="space-y-2">
             {channels.map((c, i) => (
               <li key={i} className="rounded-sm border border-border/60 bg-background/40 px-4 py-2.5">

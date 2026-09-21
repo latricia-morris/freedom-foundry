@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Trash2 } from 'lucide-react';
+import { ChevronDown, Plus, Trash2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import QbSyncButton from '@/components/admin/agency/QbSyncButton';
 import { formatUsd } from '@/lib/agency';
@@ -58,6 +58,7 @@ export default function AdminClientDirectory() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [sortBy, setSortBy] = useState('newest');
   const [draft, setDraft] = useState(EMPTY);
+  const [showAdd, setShowAdd] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [toast, setToast] = useState('');
@@ -134,6 +135,7 @@ export default function AdminClientDirectory() {
       const created = await base44.entities.AgencyClient.create({ ...draft });
       await log('client_created', created.id);
       setDraft(EMPTY);
+      setShowAdd(false);
       setToast('Client added');
       load();
     } catch (e) {
@@ -193,7 +195,17 @@ export default function AdminClientDirectory() {
         </div>
       </div>
 
-      <div className="dashboard-card mb-8 p-6">
+      <div className="mb-8">
+        <button
+          type="button"
+          onClick={() => setShowAdd((v) => !v)}
+          className="inline-flex items-center gap-2 rounded-md border border-border px-4 py-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+        >
+          {showAdd ? <ChevronDown className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+          {showAdd ? 'Hide form' : 'Add a client'}
+        </button>
+        {showAdd && (
+        <div className="dashboard-card mt-4 p-6">
         <h3 className="mb-4 font-heading text-2xl text-foreground">Add a client</h3>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {TEXT_FIELDS.map(([label, key]) => (
@@ -220,6 +232,8 @@ export default function AdminClientDirectory() {
         <button type="button" onClick={create} disabled={busy} className="btn-forge mt-4 inline-flex items-center gap-2 rounded-md px-4 py-2 text-xs font-semibold uppercase tracking-widest disabled:opacity-50">
           <Plus className="h-4 w-4" /> {busy ? 'Saving…' : 'Save client'}
         </button>
+        </div>
+        )}
       </div>
 
       <div className="mb-4 flex flex-wrap items-center gap-3">
