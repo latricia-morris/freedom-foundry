@@ -192,3 +192,34 @@ export function formatDate(value) {
   if (!value) return '—';
   return new Date(value).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
 }
+
+// Audit section methodology labels — the source's own evidence grading.
+export const METHODOLOGY_LABELS = {
+  measured: 'Measured',
+  observed: 'Observed',
+  requires_self_test: 'Requires self-test',
+  mixed: 'Mixed evidence',
+  none: null,
+};
+
+export const METHODOLOGY_BADGE_STYLES = {
+  measured: 'border-primary/40 text-primary',
+  observed: 'border-border text-muted-foreground',
+  requires_self_test: 'border-amber-500/50 text-amber-500',
+  mixed: 'border-border text-muted-foreground',
+};
+
+export const METHODOLOGY_OPTIONS = [
+  { value: 'measured', label: 'Measured' },
+  { value: 'observed', label: 'Observed' },
+  { value: 'requires_self_test', label: 'Requires self-test' },
+  { value: 'mixed', label: 'Mixed evidence' },
+  { value: 'none', label: 'Unlabeled' },
+];
+
+/** Sections the client is allowed to see: internal-only stays hidden, self-test to-dos wait for the recommendations toggle. */
+export function clientSafeSections(report) {
+  return (report?.audit_sections || [])
+    .filter((s) => s.client_visible !== false || (s.release_with_recommendations && report.suggestions_client_visible))
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+}

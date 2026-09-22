@@ -66,6 +66,66 @@
       "type": "boolean",
       "default": false
     },
+    "audit_sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "order": {
+            "type": "number",
+            "default": 0
+          },
+          "methodology": {
+            "type": "string",
+            "enum": [
+              "measured",
+              "observed",
+              "requires_self_test",
+              "mixed",
+              "none"
+            ],
+            "default": "none"
+          },
+          "body": {
+            "type": "string"
+          },
+          "table": {
+            "type": "object",
+            "properties": {
+              "header": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "rows": {
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "client_visible": {
+            "type": "boolean",
+            "default": true
+          },
+          "release_with_recommendations": {
+            "type": "boolean",
+            "default": false
+          }
+        },
+        "required": [
+          "title"
+        ]
+      }
+    },
     "social_channels": {
       "type": "array",
       "items": {

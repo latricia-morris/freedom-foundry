@@ -6,7 +6,8 @@ import VisibilityScoreBreakdown from '@/components/visibility/VisibilityScoreBre
 import VisibilityBusinessSnapshot from '@/components/visibility/VisibilityBusinessSnapshot';
 import VisibilityAllocation from '@/components/visibility/VisibilityAllocation';
 import LockedActionPlan from '@/components/visibility/LockedActionPlan';
-import { formatDate, scoreLabel } from '@/lib/visibility';
+import AuditSections from '@/components/visibility/AuditSections';
+import { clientSafeSections, formatDate, scoreLabel } from '@/lib/visibility';
 
 /**
  * Client-facing digital diagnostic: composite score on the left quarter,
@@ -123,6 +124,14 @@ export default function VisibilityScorecard() {
         <h3 className="mb-4 font-heading text-xl">What the Scores Measure</h3>
         <VisibilityScoreBreakdown reports={reports} />
       </div>
+
+      {clientSafeSections(latest).length > 0 && (
+        <div className="dash-editorial-block">
+          <h3 className="mb-1 font-heading text-xl">Full Audit Findings</h3>
+          <p className="mb-5 text-xs text-muted-foreground/70">Every measurement from this snapshot, in the source's own words and order.</p>
+          <AuditSections report={latest} />
+        </div>
+      )}
 
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="dash-editorial-block">

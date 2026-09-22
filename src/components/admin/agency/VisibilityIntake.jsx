@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ArrowLeft, FileUp, Loader2, Sparkles } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useToast } from '@/components/ui/use-toast';
+import SectionsEditor from '@/components/admin/agency/SectionsEditor';
 import {
   VISIBILITY_CATEGORIES,
   competitorsToText,
@@ -48,6 +49,7 @@ export default function VisibilityIntake({ client, onSaved, onCancel }) {
   const [socialText, setSocialText] = useState('');
   const [snap, setSnap] = useState(Object.fromEntries(SNAPSHOT_FIELDS.map(([key]) => [key, ''])));
   const [allocation, setAllocation] = useState([]);
+  const [sections, setSections] = useState([]);
 
   const handleFile = async (e) => {
     const file = e.target.files?.[0];
@@ -92,6 +94,18 @@ export default function VisibilityIntake({ client, onSaved, onCancel }) {
       setAllocation(
         (draft.marketing_allocation || []).map((a) => ({ area: a.area || '', percent: a.percent ?? '', rationale: a.rationale || '' }))
       );
+      setSections(
+        (draft.audit_sections || []).map((s) => ({
+          title: s.title || '',
+          methodology: s.methodology || 'none',
+          body: s.body || '',
+          table: (s.table_header || []).length || (s.table_rows || []).length
+            ? { header: s.table_header || [], rows: s.table_rows || [] }
+            : undefined,
+          client_visible: s.client_visible !== false,
+          release_with_recommendations: !!s.release_with_recommendations,
+        }))
+      );
       if (draft.report_date_mentioned) {
         const parsed = new Date(draft.report_date_mentioned);
         if (!Number.isNaN(parsed.getTime())) setReportDate(parsed.toISOString().slice(0, 10));
@@ -132,6 +146,17 @@ export default function VisibilityIntake({ client, onSaved, onCancel }) {
             area: a.area.trim(),
             percent: a.percent === '' || a.percent == null ? null : Number(a.percent),
             rationale: a.rationale.trim() || null,
+          })),
+        audit_sections: sections
+          .filter((s) => (s.title || '').trim())
+          .map((s, i) => ({
+            title: s.title.trim(),
+            order: i,
+            methodology: s.methodology || 'none',
+            body: s.body || '',
+            table: s.table?.rows?.length ? s.table : undefined,
+            client_visible: s.client_visible !== false,
+            release_with_recommendations: !!s.release_with_recommendations,
           })),
         raw_input_text: rawText || (fileUrl ? `[Uploaded report file: ${fileName}] ${fileUrl}` : ''),
         input_method: fileUrl ? 'upload' : 'paste',
@@ -273,6 +298,14 @@ export default function VisibilityIntake({ client, onSaved, onCancel }) {
               <label className="mb-1 block text-[10px] uppercase tracking-widest text-muted-foreground">Analyst notes (gated)</label>
               <textarea className="admin-input min-h-24" value={analystNotes} onChange={(e) => setAnalystNotes(e.target.value)} />
             </div>
+          </div>
+
+          <div>
+            <p className="mb-2 text-[10px] uppercase tracking-widest text-muted-foreground">Full audit sections — captured verbatim from the source, edit before publishing</p>
+            <SectionsEditor sections={sections} onChange={setSections} />
+            {!sections.length && (
+              <p className="text-xs text-muted-foreground/70">No sections detected in the source. Add them manually or leave empty.</p>
+            )}
           </div>
 
           <div>

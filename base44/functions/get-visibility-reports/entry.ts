@@ -18,6 +18,17 @@ function stripReport(record) {
   const copy = { ...record };
   for (const field of GATED_FIELDS) delete copy[field];
   if (!record.suggestions_client_visible) delete copy.recommended_fixes;
+  // Full audit sections: internal-only sections never leave the server, and
+  // self-test to-do sections release only with the recommendations toggle.
+  copy.audit_sections = (record.audit_sections || [])
+    .filter((s) => s.client_visible !== false || (s.release_with_recommendations && record.suggestions_client_visible))
+    .map((s) => ({
+      title: s.title,
+      order: s.order,
+      methodology: s.methodology,
+      body: s.body,
+      table: s.table,
+    }));
   return copy;
 }
 

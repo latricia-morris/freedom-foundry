@@ -6,6 +6,7 @@ import VisibilityRadarChart from '@/components/visibility/VisibilityRadarChart';
 import VisibilityTrendChart from '@/components/visibility/VisibilityTrendChart';
 import VisibilityBusinessSnapshot from '@/components/visibility/VisibilityBusinessSnapshot';
 import VisibilityAllocation from '@/components/visibility/VisibilityAllocation';
+import VisibilitySectionsPanel from '@/components/admin/agency/VisibilitySectionsPanel';
 import { useToast } from '@/components/ui/use-toast';
 import { categoryRows, divergenceFlags, formatDate, latestPerSource, scoreLabel, sourceModelLabels } from '@/lib/visibility';
 
@@ -170,6 +171,11 @@ export default function AdminVisibilityClientDetail() {
         <h3 className="mb-3 font-heading text-xl text-foreground">Analyst Notes</h3>
         <p className="whitespace-pre-wrap text-sm text-muted-foreground">{latest.analyst_notes || 'No notes on this snapshot.'}</p>
       </div>
+
+      <VisibilitySectionsPanel
+        report={latest}
+        onUpdated={(updated) => setReports((prev) => prev.map((r) => (r.id === updated.id ? updated : r)))}
+      />
 
       <div className="dashboard-card mt-6 flex flex-wrap items-center justify-between gap-4 p-6">
         <div>
