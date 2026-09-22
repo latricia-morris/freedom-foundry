@@ -115,7 +115,9 @@
           "type": "object",
           "properties": {
             "score": {
-              "type": "number"
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
             },
             "client_label": {
               "type": "string"
@@ -123,6 +125,46 @@
             "client_visible": {
               "type": "boolean",
               "default": false
+            },
+            "summary": {
+              "type": "string"
+            },
+            "measures": {
+              "type": "string"
+            },
+            "evidence": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "interpretation": {
+              "type": "string"
+            },
+            "implication": {
+              "type": "string"
+            },
+            "constraint": {
+              "type": "string"
+            },
+            "priorities": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "success_evidence": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "internal_notes": {
+              "type": "string"
+            },
+            "last_reviewed": {
+              "type": "string",
+              "format": "date"
             }
           }
         },
@@ -130,7 +172,9 @@
           "type": "object",
           "properties": {
             "score": {
-              "type": "number"
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
             },
             "client_label": {
               "type": "string"
@@ -138,6 +182,46 @@
             "client_visible": {
               "type": "boolean",
               "default": false
+            },
+            "summary": {
+              "type": "string"
+            },
+            "measures": {
+              "type": "string"
+            },
+            "evidence": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "interpretation": {
+              "type": "string"
+            },
+            "implication": {
+              "type": "string"
+            },
+            "constraint": {
+              "type": "string"
+            },
+            "priorities": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "success_evidence": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "internal_notes": {
+              "type": "string"
+            },
+            "last_reviewed": {
+              "type": "string",
+              "format": "date"
             }
           }
         },
@@ -145,7 +229,9 @@
           "type": "object",
           "properties": {
             "score": {
-              "type": "number"
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
             },
             "client_label": {
               "type": "string"
@@ -153,6 +239,46 @@
             "client_visible": {
               "type": "boolean",
               "default": false
+            },
+            "summary": {
+              "type": "string"
+            },
+            "measures": {
+              "type": "string"
+            },
+            "evidence": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "interpretation": {
+              "type": "string"
+            },
+            "implication": {
+              "type": "string"
+            },
+            "constraint": {
+              "type": "string"
+            },
+            "priorities": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "success_evidence": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "internal_notes": {
+              "type": "string"
+            },
+            "last_reviewed": {
+              "type": "string",
+              "format": "date"
             }
           }
         },
@@ -160,7 +286,9 @@
           "type": "object",
           "properties": {
             "score": {
-              "type": "number"
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
             },
             "client_label": {
               "type": "string"
@@ -168,6 +296,103 @@
             "client_visible": {
               "type": "boolean",
               "default": false
+            },
+            "summary": {
+              "type": "string"
+            },
+            "measures": {
+              "type": "string"
+            },
+            "evidence": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "interpretation": {
+              "type": "string"
+            },
+            "implication": {
+              "type": "string"
+            },
+            "constraint": {
+              "type": "string"
+            },
+            "priorities": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "success_evidence": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "internal_notes": {
+              "type": "string"
+            },
+            "last_reviewed": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        },
+        "customer_growth_readiness": {
+          "type": "object",
+          "properties": {
+            "score": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "client_label": {
+              "type": "string"
+            },
+            "client_visible": {
+              "type": "boolean",
+              "default": false
+            },
+            "summary": {
+              "type": "string"
+            },
+            "measures": {
+              "type": "string"
+            },
+            "evidence": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "interpretation": {
+              "type": "string"
+            },
+            "implication": {
+              "type": "string"
+            },
+            "constraint": {
+              "type": "string"
+            },
+            "priorities": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "success_evidence": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "internal_notes": {
+              "type": "string"
+            },
+            "last_reviewed": {
+              "type": "string",
+              "format": "date"
             }
           }
         }
@@ -191,6 +416,10 @@
         "execution_readiness": {
           "type": "number",
           "default": 15
+        },
+        "customer_growth_readiness": {
+          "type": "number",
+          "default": 0
         }
       }
     },

@@ -38,6 +38,57 @@ export const MATRIX_MEASURES = [
   },
 ];
 
+// The five Marketing Matrix diagnostic scorecards. The first four feed the
+// internal Market Alignment Index; Customer Growth Readiness is a standalone
+// diagnostic and carries no MAI weight by default.
+export const MATRIX_SCORECARDS = [
+  {
+    key: 'channel_fit',
+    label: 'Channel Fit',
+    purpose:
+      'Whether selected marketing channels match the actual buyer, offer type, positioning, buying cycle, available capacity, and revenue goals.',
+  },
+  {
+    key: 'journey_coverage',
+    label: 'Journey Coverage',
+    purpose:
+      'Whether ideal buyers have a clear and credible experience from initial problem awareness through discovery, evaluation, decision, retention, and advocacy.',
+  },
+  {
+    key: 'channel_integration',
+    label: 'Channel Integration',
+    purpose:
+      'Whether marketing channels, authority assets, content, offers, website pages, email nurture, partnerships, and customer experiences operate as one connected growth system rather than separate activities.',
+  },
+  {
+    key: 'execution_readiness',
+    label: 'Execution Readiness',
+    purpose:
+      'Whether the business has the offers, assets, capacity, workflows, ownership, templates, tools, data, and measurement discipline required to run the selected marketing strategy reliably.',
+  },
+  {
+    key: 'customer_growth_readiness',
+    label: 'Customer Growth Readiness',
+    purpose:
+      'Whether current and former clients, referral partners, collaborators, and supporters are intentionally supported to create retention, re-engagement, expanded work, reviews, testimonials, case studies, referrals, and advocacy.',
+  },
+];
+
+const MATRIX_STATUS_BANDS = [
+  { min: 80, label: 'Strong' },
+  { min: 65, label: 'Active' },
+  { min: 50, label: 'Partial' },
+  { min: 35, label: 'Build' },
+  { min: 0, label: 'Critical' },
+];
+
+/** Status label derived from a manually entered 0–100 score. */
+export function matrixStatusLabel(score) {
+  if (typeof score !== 'number' || !Number.isFinite(score)) return null;
+  const band = MATRIX_STATUS_BANDS.find((b) => score >= b.min);
+  return band ? band.label : null;
+}
+
 export const JOURNEY_STAGES = [
   {
     key: 'trigger',
