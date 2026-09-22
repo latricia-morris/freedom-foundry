@@ -54,6 +54,7 @@ export default function PublishedReport({ audit, findings, credit }) {
 
       <DashCard>
         <h3 className="font-heading text-2xl font-light text-foreground sm:text-3xl">Consultant Findings</h3>
+        <p className="mt-1 text-sm text-muted-foreground">Each finding from your consultant's review, in full — nothing hidden.</p>
         <div className="mt-5">
           <FindingsList findings={findings} />
         </div>

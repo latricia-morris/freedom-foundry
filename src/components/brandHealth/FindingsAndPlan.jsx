@@ -24,20 +24,23 @@ export function FindingsList({ findings }) {
     return <p className="text-sm text-muted-foreground/70">Findings will appear here once your consultant publishes them.</p>;
   }
   return (
-    <div className="space-y-4">
+    <div className="grid gap-4">
       {findings.map((f, i) => (
-        <div key={i} className="rounded-xl border border-border/60 bg-background/40 px-4 py-3">
-          <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <p className="text-base font-medium text-foreground">{f.title || 'Finding'}</p>
-            {f.priority ? (
-              <span className={`rounded-sm border px-2 py-0.5 text-[10px] uppercase tracking-wider ${PRIORITY_STYLE[f.priority] || PRIORITY_STYLE.medium}`}>
+        <article key={i} className="bh-card p-5 sm:p-7">
+          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-2">
+            <span className="molten-text font-heading text-2xl font-light leading-none">
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <h4 className="font-heading text-xl font-light leading-tight text-foreground sm:text-2xl">{f.title || 'Finding'}</h4>
+            {f.priority && (
+              <span className={`ml-auto rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] ${PRIORITY_STYLE[f.priority] || PRIORITY_STYLE.medium}`}>
                 {PRIORITY_LABEL[f.priority] || f.priority}
               </span>
-            ) : null}
+            )}
           </div>
-          <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{f.body}</p>
+          {f.body && <p className="mt-3 max-w-3xl whitespace-pre-wrap break-words text-base leading-relaxed text-foreground/90">{f.body}</p>}
           {(f.attachments || []).length > 0 && (
-            <div className="mt-2 flex flex-wrap gap-3">
+            <div className="mt-3 flex flex-wrap gap-3">
               {f.attachments.map((a, j) => (
                 <a key={j} href={a.url} target="_blank" rel="noreferrer" className="link-warm inline-flex items-center gap-1">
                   <ExternalLink className="h-3 w-3" /> {a.title}
@@ -45,8 +48,10 @@ export function FindingsList({ findings }) {
               ))}
             </div>
           )}
-          {f.published_at ? <p className="mt-2 text-[10px] uppercase tracking-widest text-muted-foreground/60">Published {fmtDate(f.published_at)}</p> : null}
-        </div>
+          {f.published_at ? (
+            <p className="mt-3 text-[10px] uppercase tracking-widest text-muted-foreground/60">Published {fmtDate(f.published_at)}</p>
+          ) : null}
+        </article>
       ))}
     </div>
   );
