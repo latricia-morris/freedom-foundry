@@ -28,7 +28,18 @@ export default function AnchorNav({ items }) {
 
   const go = (id) => {
     setActive(id);
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const el = document.getElementById(id);
+    if (!el) return;
+    const offset = window.innerWidth < 1024 ? 140 : 180;
+    const scrollToEl = () => {
+      const top = el.getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+    };
+    scrollToEl();
+    // one correction pass in case layout settles during the first scroll
+    setTimeout(() => {
+      if (Math.abs(el.getBoundingClientRect().top - offset) > 24) scrollToEl();
+    }, 500);
   };
 
   return (
