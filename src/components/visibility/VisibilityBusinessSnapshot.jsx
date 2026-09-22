@@ -11,8 +11,8 @@ const SNAPSHOT_FIELDS = [
 ];
 
 /**
- * Compact business snapshot: the operational context behind the scores.
- * Renders social channels plus whatever snapshot fields are captured.
+ * Business snapshot: one full-width comparative reach chart as the visual
+ * focus, with the captured operational context as a quiet second layer.
  */
 export default function VisibilityBusinessSnapshot({ report }) {
   const channels = report?.social_channels || [];
@@ -22,17 +22,12 @@ export default function VisibilityBusinessSnapshot({ report }) {
   if (!channels.length && !snapRows.length) return null;
 
   return (
-    <div className="grid min-w-0 grid-cols-1 gap-8 lg:grid-cols-2">
-      {channels.length > 0 && (
-        <div className="min-w-0">
-          <h4 className="mb-3 text-[10px] uppercase tracking-[0.24em] text-muted-foreground/70">Channel snapshot</h4>
-          <ChannelSnapshot channels={channels} />
-        </div>
-      )}
+    <div className="space-y-8">
+      <ChannelSnapshot channels={channels} />
       {snapRows.length > 0 && (
         <div className="min-w-0">
           <h4 className="mb-3 text-[10px] uppercase tracking-[0.24em] text-muted-foreground/70">Operational context</h4>
-          <dl className="space-y-2">
+          <dl className="grid gap-2 sm:grid-cols-2">
             {snapRows.map(([key, label]) => (
               <div key={key} className="rounded-sm border border-border/60 bg-background/40 px-4 py-2.5">
                 <dt className="text-[10px] uppercase tracking-widest text-muted-foreground/70">{label}</dt>

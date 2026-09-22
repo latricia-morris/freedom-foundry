@@ -173,7 +173,7 @@ export default function VisibilityScorecard() {
       {hasSnapshot && (
         <div className="dash-editorial-block">
           <h3 className="mb-1 font-heading text-xl">Business Snapshot</h3>
-          <p className="mb-5 text-xs text-muted-foreground/70">The operational context behind these scores.</p>
+          <p className="mb-5 text-xs text-muted-foreground/70">A clear view of where your current visibility is concentrated.</p>
           <VisibilityBusinessSnapshot report={latest} />
         </div>
       )}
