@@ -24,7 +24,7 @@ export default function SocialReachChart({ channels }) {
   if (rows.length < 2) return null;
 
   return (
-    <div className="mb-4 h-44 w-full">
+    <div className="mb-4 h-44 w-full min-w-0">
       <ResponsiveContainer>
         <BarChart data={rows} layout="vertical" margin={{ top: 0, right: 44, bottom: 0, left: 0 }}>
           <XAxis type="number" hide />
@@ -32,6 +32,7 @@ export default function SocialReachChart({ channels }) {
             type="category"
             dataKey="name"
             width={175}
+            tickFormatter={(v) => (String(v).length > 16 ? `${String(v).slice(0, 15)}…` : v)}
             tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }}
             stroke="hsl(var(--border))"
           />

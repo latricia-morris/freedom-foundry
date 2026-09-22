@@ -22,21 +22,21 @@ export default function VisibilityBusinessSnapshot({ report }) {
   if (!channels.length && !snapRows.length) return null;
 
   return (
-    <div className="grid gap-8 lg:grid-cols-2">
+    <div className="grid min-w-0 grid-cols-1 gap-8 lg:grid-cols-2">
       {channels.length > 0 && (
-        <div>
+        <div className="min-w-0">
           <h4 className="mb-3 text-[10px] uppercase tracking-[0.24em] text-muted-foreground/70">Channel snapshot</h4>
           <ChannelSnapshot channels={channels} />
         </div>
       )}
       {snapRows.length > 0 && (
-        <div>
+        <div className="min-w-0">
           <h4 className="mb-3 text-[10px] uppercase tracking-[0.24em] text-muted-foreground/70">Operational context</h4>
           <dl className="space-y-2">
             {snapRows.map(([key, label]) => (
               <div key={key} className="rounded-sm border border-border/60 bg-background/40 px-4 py-2.5">
                 <dt className="text-[10px] uppercase tracking-widest text-muted-foreground/70">{label}</dt>
-                <dd className="mt-0.5 text-sm text-foreground">{snap[key]}</dd>
+                <dd className="mt-0.5 break-words text-sm text-foreground">{snap[key]}</dd>
               </div>
             ))}
           </dl>

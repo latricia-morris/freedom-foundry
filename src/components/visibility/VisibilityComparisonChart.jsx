@@ -19,7 +19,7 @@ export default function VisibilityComparisonChart({ reports, height = 340 }) {
   });
 
   return (
-    <div style={{ height }} className="w-full">
+    <div style={{ height }} className="w-full min-w-0">
       <ResponsiveContainer>
         <LineChart data={data} margin={{ top: 8, right: 12, bottom: 0, left: -18 }}>
           <CartesianGrid stroke="hsl(var(--border))" strokeDasharray="3 3" vertical={false} />

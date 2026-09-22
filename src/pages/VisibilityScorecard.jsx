@@ -92,11 +92,11 @@ export default function VisibilityScorecard() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_3fr]">
-        <div className="dash-editorial-block flex flex-col items-center justify-center px-5 py-10 text-center">
+        <div className="dash-editorial-block min-w-0 flex flex-col items-center justify-center px-5 py-10 text-center">
           {composite !== null ? (
             <>
               <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">Composite Score</p>
-              <p className="molten-text font-heading text-8xl font-light leading-none">
+              <p className="molten-text font-heading text-6xl font-light leading-none sm:text-8xl">
                 {composite}
                 <span className="text-2xl text-muted-foreground" style={{ WebkitTextFillColor: 'hsl(var(--muted-foreground))' }}>/100</span>
               </p>
@@ -111,7 +111,7 @@ export default function VisibilityScorecard() {
             </>
           )}
         </div>
-        <div className="dash-editorial-block">
+        <div className="dash-editorial-block min-w-0">
           <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2">
             <h3 className="font-heading text-xl">Score Pattern by Dimension</h3>
             <span className="text-xs text-muted-foreground/70">One line per audit source · dashed line is the baseline</span>
@@ -138,7 +138,7 @@ export default function VisibilityScorecard() {
           <h3 className="mb-4 font-heading text-xl">Key Findings</h3>
           <ul className="space-y-3">
             {(latest.key_findings || []).map((f, i) => (
-              <li key={i} className="flex gap-3 text-sm text-muted-foreground">
+              <li key={i} className="flex min-w-0 gap-3 break-words text-sm text-muted-foreground">
                 <span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-primary" />
                 {f}
               </li>
@@ -152,7 +152,7 @@ export default function VisibilityScorecard() {
               <h3 className="mb-4 font-heading text-xl">Priority Recommendations</h3>
               <ol className="space-y-3">
                 {suggestions.map((f, i) => (
-                  <li key={i} className="flex gap-3 text-sm text-muted-foreground">
+                  <li key={i} className="flex min-w-0 gap-3 break-words text-sm text-muted-foreground">
                     <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-sm border border-primary/40 text-[10px] font-semibold text-primary">
                       {i + 1}
                     </span>

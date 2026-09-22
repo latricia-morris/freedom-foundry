@@ -137,7 +137,7 @@ export default function ChannelSnapshot({ channels }) {
   const showHeaders = groupedList.length > 1;
 
   return (
-    <div>
+    <div className="min-w-0">
       <SocialReachChart channels={chartChannels} />
       <div className="space-y-5">
         {groupedList.map((group) => (
