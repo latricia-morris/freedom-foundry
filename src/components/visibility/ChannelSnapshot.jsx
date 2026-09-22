@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { AtSign, Facebook, Globe, Instagram, Linkedin, Mail, Music2, Pin, Radio, Rss, Twitter, Youtube } from 'lucide-react';
+import { AtSign, Facebook, Globe, Instagram, Linkedin, Mail, Music2, Pencil, Pin, Radio, Rss, Twitter, Youtube } from 'lucide-react';
 
 /** Canonical platform registry — first match wins, so specific keys come first. */
 const PLATFORM_DEFS = [
@@ -70,7 +70,7 @@ const BAR_GRADIENT = 'linear-gradient(90deg, #E26E3C, #D9754A, #DC5338)';
  * Bars grow from zero, staggered by row, the first time the section is
  * reached; reduced-motion users get the final chart immediately.
  */
-export default function ChannelSnapshot({ channels }) {
+export default function ChannelSnapshot({ channels, onEdit }) {
   const rows = useMemo(
     () =>
       (channels || []).map((c, i) => {
@@ -122,6 +122,18 @@ export default function ChannelSnapshot({ channels }) {
 
   return (
     <div ref={ref} className="overflow-hidden rounded-sm border border-border/60" style={{ background: SURFACE_GRADIENT }}>
+      {onEdit && (
+        <div className="flex items-center justify-between border-b border-border/30 px-4 py-2 sm:px-5">
+          <span className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground/50">Channel reach</span>
+          <button
+            type="button"
+            onClick={onEdit}
+            className="flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-muted-foreground/70 transition-colors hover:text-primary"
+          >
+            <Pencil className="h-3 w-3" /> Edit
+          </button>
+        </div>
+      )}
       <div className="divide-y divide-border/30">
         {ranked.map((r, i) => {
           const pct = max > 0 ? (r.count / max) * 100 : 0;

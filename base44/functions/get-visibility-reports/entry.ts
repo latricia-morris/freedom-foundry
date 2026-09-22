@@ -55,6 +55,7 @@ export default async function (req: Request): Promise<Response> {
     );
     const isAdmin = user.role === 'admin';
     return Response.json({
+      is_admin: isAdmin,
       client: {
         company_name: client.company_name,
         access_tier: client.status === 'active' ? 'client' : 'prospect',

@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ChannelSnapshot from './ChannelSnapshot';
+import SocialChannelsEditor from './SocialChannelsEditor';
 
 const SNAPSHOT_FIELDS = [
   ['email_platform', 'Email platform'],
@@ -13,17 +14,39 @@ const SNAPSHOT_FIELDS = [
 /**
  * Business snapshot: one full-width comparative reach chart as the visual
  * focus, with the captured operational context as a quiet second layer.
+ * Admins get an inline edit affordance for the channel list.
  */
-export default function VisibilityBusinessSnapshot({ report }) {
+export default function VisibilityBusinessSnapshot({ report, editable, onSaveChannels }) {
   const channels = report?.social_channels || [];
   const snap = report?.business_snapshot || {};
   const snapRows = SNAPSHOT_FIELDS.filter(([key]) => snap[key]);
+  const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   if (!channels.length && !snapRows.length) return null;
 
+  const handleSave = async (rows) => {
+    setSaving(true);
+    try {
+      await onSaveChannels(rows);
+      setEditing(false);
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div className="space-y-8">
-      <ChannelSnapshot channels={channels} />
+      <ChannelSnapshot channels={channels} onEdit={editable ? () => setEditing(true) : undefined} />
+      {editable && (
+        <SocialChannelsEditor
+          open={editing}
+          channels={channels}
+          saving={saving}
+          onClose={() => setEditing(false)}
+          onSave={handleSave}
+        />
+      )}
       {snapRows.length > 0 && (
         <div className="min-w-0">
           <h4 className="mb-3 text-[10px] uppercase tracking-[0.24em] text-muted-foreground/70">Operational context</h4>

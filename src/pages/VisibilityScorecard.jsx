@@ -68,6 +68,16 @@ export default function VisibilityScorecard() {
   }
 
   const latest = reports[0];
+  const isAdmin = !!data.is_admin;
+
+  const handleSaveChannels = async (channels) => {
+    if (!latest?.id) return;
+    await base44.entities.VisibilityReport.update(latest.id, { social_channels: channels });
+    setData((prev) => ({
+      ...prev,
+      reports: prev.reports.map((r, i) => (i === 0 ? { ...r, social_channels: channels } : r)),
+    }));
+  };
   const composite = typeof latest.composite_score === 'number' ? latest.composite_score : null;
   const suggestions = latest.recommended_fixes || [];
   const hasSnapshot = (latest.social_channels || []).length > 0 || Object.values(latest.business_snapshot || {}).some(Boolean);
@@ -174,7 +184,7 @@ export default function VisibilityScorecard() {
         <div className="dash-editorial-block">
           <h3 className="mb-1 font-heading text-xl">Business Snapshot</h3>
           <p className="mb-5 text-xs text-muted-foreground/70">A clear view of where your current visibility is concentrated.</p>
-          <VisibilityBusinessSnapshot report={latest} />
+          <VisibilityBusinessSnapshot report={latest} editable={isAdmin} onSaveChannels={handleSaveChannels} />
         </div>
       )}
 
