@@ -217,6 +217,34 @@ export const METHODOLOGY_OPTIONS = [
   { value: 'none', label: 'Unlabeled' },
 ];
 
+// Structured diagnostic presentation for audit findings. Status drives the
+// badge; sections without a status fall back to the methodology label.
+export const STATUS_STYLES = {
+  critical: 'border-destructive/50 text-destructive',
+  high: 'border-primary/50 text-primary',
+  medium: 'border-border text-muted-foreground',
+  low: 'border-border text-muted-foreground',
+  gap: 'border-amber-500/50 text-amber-500',
+  active: 'border-emerald-500/40 text-emerald-500',
+  opportunity: 'border-primary/40 text-primary',
+  info: 'border-border text-muted-foreground',
+};
+
+export function findingStatusStyle(status) {
+  const key = String(status || '').toLowerCase().replace(/[^a-z]/g, '');
+  return STATUS_STYLES[key] || 'border-border text-muted-foreground';
+}
+
+/** First one or two sentences of a stored body, used as the summary when no structured copy exists. */
+export function deriveFindingSummary(body) {
+  const text = String(body || '').replace(/\s+/g, ' ').trim();
+  if (!text) return '';
+  const stripped = text.replace(/^[A-Z][A-Z\s/-]{3,40}?(?:\s*\([^)]*\))?\s*:\s*/, '');
+  const sentences = stripped.match(/[^.!?]+[.!?]+["')\]]*\s*/g) || [stripped];
+  const summary = sentences.slice(0, 2).join(' ').trim();
+  return summary.length > 260 ? `${summary.slice(0, 257).trimEnd()}…` : summary;
+}
+
 /** Sections the client is allowed to see: internal-only stays hidden, self-test to-dos wait for the recommendations toggle. */
 export function clientSafeSections(report) {
   return (report?.audit_sections || [])

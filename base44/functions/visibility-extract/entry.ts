@@ -42,6 +42,10 @@ const EXTRACTION_SCHEMA = {
         properties: {
           title: { type: 'string' },
           methodology: { type: 'string', enum: ['measured', 'observed', 'requires_self_test', 'mixed', 'none'] },
+          status: { type: 'string' },
+          summary: { type: 'string' },
+          detail: { type: 'string' },
+          action: { type: 'string' },
           body: { type: 'string' },
           table_header: { type: 'array', items: { type: 'string' } },
           table_rows: { type: 'array', items: { type: 'array', items: { type: 'string' } } },
@@ -125,6 +129,7 @@ Notes:
 - key_findings and recommended_fixes must be short plain-language strings taken directly from the text.
 - competitors_mentioned: each object needs a name and a short positioning description. Return an empty array if none are mentioned.
 - audit_sections: capture EVERY section of the audit verbatim, in the source's order — methodology notes, every numbered measurement section, any overall credibility assessment, and any closing "what to do next" / self-test list. Translate the source's own evidence label to methodology: measured, observed, requires_self_test, mixed when a section combines labels, or none when unlabeled. body is the section's full verbatim text with line breaks preserved. Capture any table in the section as table_header and table_rows. client_visible is true for every section EXCEPT action-item / "what to do" lists, which get client_visible false and release_with_recommendations true. Return an empty array if the audit contains no such sections.
+- For each audit section, also draft the structured diagnostic fields the client-facing report shows. status is exactly one of: Critical, High, Medium, Low, Gap, Active, Opportunity, Info. summary is ONE plain sentence, at most 25 words, stating the finding. detail is at most two short supporting sentences, or an empty string when the summary already says it all. action is a short imperative recommended action, at most 15 words, or an empty string when the section has none. Base every field strictly on what the source says. Write in direct strategic language. Do not use em dashes in any of these fields.
 - business_snapshot: operational facts stated in the audit about the business (email platform used, how often they send email, whether marketing blasts or drip campaigns exist, key funnel assets such as lead magnets or landing pages, and use of events, launches, or campaign-based activity). Return null for anything the text does not state.
 - marketing_allocation: this is a strategic draft, not an extraction. Propose 3 to 5 channels or functions (e.g. SEO and content, email nurture, social proof, partnerships, paid amplification) with a percent allocation that sums to 100, weighting toward the weakest scored categories and the gaps in the findings. Each rationale must be one short sentence tied directly to the scores or findings. Keep the recommendations specific to what this audit reveals, never generic.
 Return only the JSON object, no other text.`;

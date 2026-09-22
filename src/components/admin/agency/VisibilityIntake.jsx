@@ -98,6 +98,10 @@ export default function VisibilityIntake({ client, onSaved, onCancel }) {
         (draft.audit_sections || []).map((s) => ({
           title: s.title || '',
           methodology: s.methodology || 'none',
+          status: s.status || '',
+          summary: s.summary || '',
+          detail: s.detail || '',
+          action: s.action || '',
           body: s.body || '',
           table: (s.table_header || []).length || (s.table_rows || []).length
             ? { header: s.table_header || [], rows: s.table_rows || [] }
@@ -153,6 +157,10 @@ export default function VisibilityIntake({ client, onSaved, onCancel }) {
             title: s.title.trim(),
             order: i,
             methodology: s.methodology || 'none',
+            status: (s.status || '').trim(),
+            summary: (s.summary || '').trim(),
+            detail: (s.detail || '').trim(),
+            action: (s.action || '').trim(),
             body: s.body || '',
             table: s.table?.rows?.length ? s.table : undefined,
             client_visible: s.client_visible !== false,

@@ -58,6 +58,34 @@ export default function SectionsEditor({ sections, onChange }) {
               </select>
               <button type="button" onClick={() => remove(i)} className="px-1 text-sm text-muted-foreground transition-colors hover:text-destructive" aria-label="Remove section">×</button>
             </div>
+            <div className="grid gap-2 sm:grid-cols-[10rem_1fr]">
+              <input
+                className="admin-input"
+                placeholder="Status (High, Gap, Active)"
+                value={s.status || ''}
+                onChange={(e) => update(i, { status: e.target.value })}
+              />
+              <input
+                className="admin-input"
+                placeholder="One-sentence summary shown to the client"
+                value={s.summary || ''}
+                onChange={(e) => update(i, { summary: e.target.value })}
+              />
+            </div>
+            <div className="grid gap-2 sm:grid-cols-2">
+              <textarea
+                className="admin-input min-h-16"
+                placeholder="Short supporting detail (optional)"
+                value={s.detail || ''}
+                onChange={(e) => update(i, { detail: e.target.value })}
+              />
+              <input
+                className="admin-input"
+                placeholder="Recommended action (optional)"
+                value={s.action || ''}
+                onChange={(e) => update(i, { action: e.target.value })}
+              />
+            </div>
             <textarea
               className="admin-input min-h-32"
               value={s.body || ''}

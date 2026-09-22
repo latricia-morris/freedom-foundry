@@ -26,6 +26,10 @@ function stripReport(record) {
       title: s.title,
       order: s.order,
       methodology: s.methodology,
+      status: s.status || null,
+      summary: s.summary || null,
+      detail: s.detail || null,
+      action: s.action || null,
       body: s.body,
       table: s.table,
     }));

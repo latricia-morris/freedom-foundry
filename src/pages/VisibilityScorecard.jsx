@@ -137,8 +137,8 @@ export default function VisibilityScorecard() {
 
       {clientSafeSections(latest).length > 0 && (
         <div className="dash-editorial-block">
-          <h3 className="mb-1 font-heading text-xl">Full Audit Findings</h3>
-          <p className="mb-5 text-xs text-muted-foreground/70">Every measurement from this snapshot, in the source's own words and order.</p>
+          <h3 className="mb-1 font-heading text-xl">Audit Findings</h3>
+          <p className="mb-5 text-xs text-muted-foreground/70">Key issues at a glance. Open any finding for the full source detail.</p>
           <AuditSections report={latest} />
         </div>
       )}

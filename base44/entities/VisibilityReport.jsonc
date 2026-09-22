@@ -89,6 +89,18 @@
             ],
             "default": "none"
           },
+          "status": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string"
+          },
           "body": {
             "type": "string"
           },
