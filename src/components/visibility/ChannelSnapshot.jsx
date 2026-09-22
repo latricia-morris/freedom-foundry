@@ -145,7 +145,7 @@ export default function ChannelSnapshot({ channels }) {
             {showHeaders && (
               <p className="mb-2 text-[10px] uppercase tracking-[0.24em] text-muted-foreground/70">{group.label}</p>
             )}
-            <div className="grid gap-2 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
               {group.items.map((r) => {
                 const Row = r.url ? 'a' : 'div';
                 return (
