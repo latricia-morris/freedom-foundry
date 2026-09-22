@@ -679,6 +679,58 @@ html.light-mode .dash-editorial-block {
       0 22px 46px hsl(220 16% 25% / 0.14);
   }
 
+  /* Brand Health dashboard kit — rounded, breathable widget surfaces */
+  .bh-card {
+    background: hsl(var(--card) / 0.85);
+    border: 1px solid hsl(var(--border) / 0.9);
+    border-radius: 1rem;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow:
+      inset 0 1px 0 hsl(220 28% 96% / 0.16),
+      inset 0 -1px 0 hsl(225 20% 2% / 0.65),
+      0 2px 4px hsl(225 20% 2% / 0.6),
+      0 8px 18px hsl(225 20% 2% / 0.5),
+      0 22px 46px hsl(225 20% 2% / 0.65);
+  }
+
+  html.light-mode .bh-card {
+    background: hsl(var(--card) / 0.92);
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.95),
+      inset 0 -1px 0 hsl(220 14% 65% / 0.35),
+      0 2px 4px hsl(220 16% 25% / 0.12),
+      0 8px 20px hsl(220 16% 25% / 0.12),
+      0 22px 46px hsl(220 16% 25% / 0.14);
+  }
+
+  .bh-card-hover {
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .bh-card-hover:hover {
+    transform: translateY(-2px);
+    border-color: hsl(var(--primary) / 0.45);
+    box-shadow:
+      inset 0 1px 0 hsl(220 28% 96% / 0.16),
+      inset 0 -1px 0 hsl(225 20% 2% / 0.65),
+      0 2px 4px hsl(225 20% 2% / 0.6),
+      0 8px 18px hsl(225 20% 2% / 0.5),
+      0 10px 32px hsl(18 74% 40% / 0.22);
+  }
+
+  /* Suggested actions — elevated forged-gradient container */
+  .action-gradient {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1rem;
+    background: linear-gradient(135deg, #b3232c 0%, #d9622c 58%, #e0854b 100%);
+    color: #ffffff;
+    box-shadow:
+      0 10px 36px hsl(18 74% 34% / 0.38),
+      inset 0 1px 0 hsl(0 0% 100% / 0.22);
+  }
+
   html.light-mode .vault-card {
     background:
       linear-gradient(#fcfdfe, #fcfdfe) padding-box,

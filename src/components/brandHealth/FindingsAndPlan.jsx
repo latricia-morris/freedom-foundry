@@ -26,9 +26,9 @@ export function FindingsList({ findings }) {
   return (
     <div className="space-y-4">
       {findings.map((f, i) => (
-        <div key={i} className="rounded-sm border border-border/60 bg-background/40 px-4 py-3">
+        <div key={i} className="rounded-xl border border-border/60 bg-background/40 px-4 py-3">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <p className="text-sm font-medium text-foreground">{f.title || 'Finding'}</p>
+            <p className="text-base font-medium text-foreground">{f.title || 'Finding'}</p>
             {f.priority ? (
               <span className={`rounded-sm border px-2 py-0.5 text-[10px] uppercase tracking-wider ${PRIORITY_STYLE[f.priority] || PRIORITY_STYLE.medium}`}>
                 {PRIORITY_LABEL[f.priority] || f.priority}

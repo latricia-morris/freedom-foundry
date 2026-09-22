@@ -13,7 +13,7 @@ const strategyNav = [
   { name: 'Corporate Brand', path: '/brand-portal/corporate' },
   { name: 'Personal Brand', path: '/brand-portal/personal' },
   { name: 'Media Kit', path: '/brand-portal/media-kit' },
-  { name: 'Digital Brand Health', path: '/brand-portal/brand-health' },
+  { name: 'Brand Health Index', path: '/brand-portal/brand-health' },
   { name: 'Checklist', path: '/brand-portal/checklist' },
 ];
 

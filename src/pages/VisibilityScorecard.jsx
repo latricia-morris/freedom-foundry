@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { ShieldCheck } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import HeroScore from '@/components/brandHealth/HeroScore';
+import DashCard from '@/components/brandHealth/DashCard';
+import AnchorNav from '@/components/brandHealth/AnchorNav';
+import GradientActions from '@/components/brandHealth/GradientActions';
+import KeyPoints from '@/components/brandHealth/KeyPoints';
 import VisibilityComparisonChart from '@/components/visibility/VisibilityComparisonChart';
 import VisibilityScoreBreakdown from '@/components/visibility/VisibilityScoreBreakdown';
 import VisibilityBusinessSnapshot from '@/components/visibility/VisibilityBusinessSnapshot';
@@ -9,12 +13,19 @@ import LockedActionPlan from '@/components/visibility/LockedActionPlan';
 import AuditSections from '@/components/visibility/AuditSections';
 import { clientSafeSections, formatDate, scoreLabel } from '@/lib/visibility';
 
+const NAV = [
+  { id: 'score-pattern', label: 'Score Pattern' },
+  { id: 'findings', label: 'Findings' },
+  { id: 'actions', label: 'Actions' },
+  { id: 'snapshot', label: 'Snapshot' },
+];
+
 /**
- * Client-facing digital diagnostic: composite score on the left quarter,
- * model comparison chart on the right, structured score breakdown with
- * plain-language definitions, business snapshot, and strategic allocation.
- * Priority recommendations appear only when the agency explicitly enables
- * them on the report; otherwise a locked teaser shows.
+ * Client-facing visibility dashboard: big gradient composite score hero,
+ * then an interactive presentation — score pattern and definitions,
+ * every audit finding rendered openly, priority recommendations elevated
+ * in a forged-gradient container, and the business snapshot. In-page pill
+ * navigation replaces any tab switching or hidden panels.
  */
 export default function VisibilityScorecard() {
   const [data, setData] = useState(null);
@@ -38,8 +49,8 @@ export default function VisibilityScorecard() {
   if (error) {
     return (
       <div className="dash-editorial-block">
-        <h1 className="font-heading text-3xl font-light">Visibility &amp; <span className="molten-text italic">Credibility</span></h1>
-        <p className="mt-2 text-sm">The report could not be loaded. Please try again in a moment.</p>
+        <h1 className="font-heading text-4xl font-light sm:text-5xl">Visibility &amp; <span className="molten-text italic">Credibility</span></h1>
+        <p className="mt-3 text-sm">The report could not be loaded. Please try again in a moment.</p>
       </div>
     );
   }
@@ -47,8 +58,8 @@ export default function VisibilityScorecard() {
   if (!data.client) {
     return (
       <div className="dash-editorial-block">
-        <h1 className="font-heading text-3xl font-light">Visibility &amp; <span className="molten-text italic">Credibility</span></h1>
-        <p className="mt-2 text-sm">
+        <h1 className="font-heading text-4xl font-light sm:text-5xl">Visibility &amp; <span className="molten-text italic">Credibility</span></h1>
+        <p className="mt-3 text-sm">
           Visibility reporting activates once your account is connected to a brand engagement. Your scorecard will appear here.
         </p>
       </div>
@@ -59,8 +70,8 @@ export default function VisibilityScorecard() {
   if (!reports.length) {
     return (
       <div className="dash-editorial-block">
-        <h1 className="font-heading text-3xl font-light">Visibility &amp; <span className="molten-text italic">Credibility</span></h1>
-        <p className="mt-2 text-sm">
+        <h1 className="font-heading text-4xl font-light sm:text-5xl">Visibility &amp; <span className="molten-text italic">Credibility</span></h1>
+        <p className="mt-3 text-sm">
           Your first visibility report is in progress. It will appear here as soon as it is published.
         </p>
       </div>
@@ -78,124 +89,100 @@ export default function VisibilityScorecard() {
       reports: prev.reports.map((r, i) => (i === 0 ? { ...r, social_channels: channels } : r)),
     }));
   };
+
   const composite = typeof latest.composite_score === 'number' ? latest.composite_score : null;
   const suggestions = latest.recommended_fixes || [];
   const hasSnapshot = (latest.social_channels || []).length > 0 || Object.values(latest.business_snapshot || {}).some(Boolean);
   const allocation = latest.marketing_allocation || [];
+  const findingsSections = clientSafeSections(latest);
 
   return (
     <div className="animate-fade-in space-y-6">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="font-heading text-3xl font-light text-foreground">
-            Visibility &amp; <span className="molten-text italic">Credibility</span>
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {data.client.company_name} · Snapshot from {formatDate(latest.report_date)}
-          </p>
-        </div>
-        {composite !== null && (
-          <span className="rounded-sm border border-primary/30 px-3 py-1 text-xs uppercase tracking-widest text-primary">
-            {scoreLabel(composite)}
-          </span>
-        )}
+      <div>
+        <h1 className="font-heading text-4xl font-light text-foreground sm:text-5xl">
+          Visibility &amp; <span className="molten-text italic">Credibility</span>
+        </h1>
+        <p className="mt-2 text-muted-foreground">
+          {data.client.company_name} · Snapshot from {formatDate(latest.report_date)}
+        </p>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_3fr]">
-        <div className="dash-editorial-block min-w-0 flex flex-col items-center justify-center px-5 py-10 text-center">
-          {composite !== null ? (
-            <>
-              <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">Composite Score</p>
-              <p className="molten-text font-heading text-6xl font-light leading-none sm:text-8xl">
-                {composite}
-                <span className="text-2xl text-muted-foreground" style={{ WebkitTextFillColor: 'hsl(var(--muted-foreground))' }}>/100</span>
-              </p>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                How discoverable and credible your brand appears to AI search engines &amp; the public right now.
-              </p>
-            </>
-          ) : (
-            <>
-              <ShieldCheck className="mb-3 h-10 w-10 text-primary" strokeWidth={1.5} />
-              <p className="text-sm text-muted-foreground">Scores are being finalized for this snapshot.</p>
-            </>
-          )}
-        </div>
-        <div className="dash-editorial-block min-w-0">
-          <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2">
-            <h3 className="font-heading text-xl">Score Pattern by Dimension</h3>
-            <span className="text-xs text-muted-foreground/70">One line per audit source · dashed line is the baseline</span>
-          </div>
+      <HeroScore
+        label="Composite Score"
+        value={composite}
+        pill={composite !== null ? scoreLabel(composite) : 'Scores being finalized'}
+        subline="How discoverable and credible your brand appears to AI search engines &amp; the public right now."
+      />
+
+      <AnchorNav items={NAV} />
+
+      <DashCard id="score-pattern">
+        <h3 className="font-heading text-2xl font-light text-foreground sm:text-3xl">Score Pattern by Dimension</h3>
+        <p className="mt-1 text-xs uppercase tracking-widest text-muted-foreground/60">
+          One line per audit source · dashed line is the baseline
+        </p>
+        <div className="mt-5">
           <VisibilityComparisonChart reports={reports} />
         </div>
-      </div>
-
-      <div className="dash-editorial-block">
-        <h3 className="mb-4 font-heading text-xl">What the Scores Measure</h3>
-        <VisibilityScoreBreakdown reports={reports} />
-      </div>
-
-      {clientSafeSections(latest).length > 0 && (
-        <div className="dash-editorial-block">
-          <h3 className="mb-1 font-heading text-xl">Audit Findings</h3>
-          <p className="mb-5 text-xs text-muted-foreground/70">Key issues at a glance. Open any finding for the full source detail.</p>
-          <AuditSections report={latest} />
+        <div className="my-8 border-t border-border/50" />
+        <h3 className="font-heading text-2xl font-light text-foreground sm:text-3xl">What the Scores Measure</h3>
+        <div className="mt-5">
+          <VisibilityScoreBreakdown reports={reports} />
         </div>
+      </DashCard>
+
+      {findingsSections.length > 0 && (
+        <DashCard id="findings">
+          <h3 className="font-heading text-2xl font-light text-foreground sm:text-3xl">Audit Findings</h3>
+          <p className="mt-1 text-sm text-muted-foreground">Every diagnostic from your audit, in full — nothing hidden.</p>
+          {(latest.key_findings || []).filter(Boolean).length > 0 && (
+            <div className="mt-5 rounded-lg border border-border/50 bg-background/40 p-4 sm:p-5">
+              <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/70">At a glance</p>
+              <KeyPoints points={latest.key_findings} max={4} />
+            </div>
+          )}
+          <div className="mt-6">
+            <AuditSections report={latest} />
+          </div>
+        </DashCard>
       )}
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <div className="dash-editorial-block">
-          <h3 className="mb-4 font-heading text-xl">Key Findings</h3>
-          <ul className="space-y-3">
-            {(latest.key_findings || []).map((f, i) => (
-              <li key={i} className="flex min-w-0 gap-3 break-words text-sm text-muted-foreground">
-                <span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-primary" />
-                {f}
-              </li>
-            ))}
-            {!(latest.key_findings || []).length && <li className="text-sm text-muted-foreground">Findings will appear with your next snapshot.</li>}
-          </ul>
-        </div>
-        <div className="dash-editorial-block">
-          {suggestions.length > 0 ? (
-            <>
-              <h3 className="mb-4 font-heading text-xl">Priority Recommendations</h3>
-              <ol className="space-y-3">
-                {suggestions.map((f, i) => (
-                  <li key={i} className="flex min-w-0 gap-3 break-words text-sm text-muted-foreground">
-                    <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-sm border border-primary/40 text-[10px] font-semibold text-primary">
-                      {i + 1}
-                    </span>
-                    {f}
-                  </li>
-                ))}
-              </ol>
-            </>
-          ) : (
-            <>
-              <h3 className="mb-4 font-heading text-xl">Recommendations</h3>
-              <LockedActionPlan label="Full action plan available with your engagement" />
-            </>
-          )}
-        </div>
-      </div>
+      {suggestions.length > 0 ? (
+        <GradientActions
+          id="actions"
+          title="Priority Recommendations"
+          subtitle="Where to focus next, in order of impact."
+          items={suggestions}
+        />
+      ) : (
+        <DashCard id="actions">
+          <h3 className="font-heading text-2xl font-light text-foreground sm:text-3xl">Recommendations</h3>
+          <div className="mt-5">
+            <LockedActionPlan label="Full action plan available with your engagement" />
+          </div>
+        </DashCard>
+      )}
 
       {hasSnapshot && (
-        <div className="dash-editorial-block">
-          <h3 className="mb-1 font-heading text-xl">Business Snapshot</h3>
-          <p className="mb-5 text-xs text-muted-foreground/70">A clear view of where your current visibility is concentrated.</p>
-          <VisibilityBusinessSnapshot report={latest} editable={isAdmin} onSaveChannels={handleSaveChannels} />
-        </div>
-      )}
-
-      {allocation.length > 0 && (
-        <div className="dash-editorial-block">
-          <h3 className="mb-1 font-heading text-xl">Suggested Marketing Emphasis</h3>
-          <p className="mb-5 text-xs text-muted-foreground/70">
-            Where emphasis earns the most visibility next, based on your score pattern.
-          </p>
-          <VisibilityAllocation allocation={allocation} />
-        </div>
+        <DashCard id="snapshot">
+          <h3 className="font-heading text-2xl font-light text-foreground sm:text-3xl">Business Snapshot</h3>
+          <p className="mt-1 text-sm text-muted-foreground">A clear view of where your current visibility is concentrated.</p>
+          <div className="mt-6">
+            <VisibilityBusinessSnapshot report={latest} editable={isAdmin} onSaveChannels={handleSaveChannels} />
+          </div>
+          {allocation.length > 0 && (
+            <>
+              <div className="my-8 border-t border-border/50" />
+              <h3 className="font-heading text-2xl font-light text-foreground sm:text-3xl">Suggested Marketing Emphasis</h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Where emphasis earns the most visibility next, based on your score pattern.
+              </p>
+              <div className="mt-5">
+                <VisibilityAllocation allocation={allocation} />
+              </div>
+            </>
+          )}
+        </DashCard>
       )}
     </div>
   );
