@@ -36,10 +36,14 @@ export default function AnchorNav({ items }) {
       window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
     };
     scrollToEl();
-    // one correction pass in case layout settles during the first scroll
+    // deterministic correction pass — snaps flush under the nav if the
+    // smooth glide was interrupted or the layout settled mid-scroll
     setTimeout(() => {
-      if (Math.abs(el.getBoundingClientRect().top - offset) > 24) scrollToEl();
-    }, 500);
+      if (Math.abs(el.getBoundingClientRect().top - offset) > 24) {
+        const top = el.getBoundingClientRect().top + window.scrollY - offset;
+        window.scrollTo({ top: Math.max(0, top), behavior: 'auto' });
+      }
+    }, 600);
   };
 
   return (
