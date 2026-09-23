@@ -1,293 +1,187 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  ArrowDownRight,
-  ArrowRight,
-  ChevronDown,
-  Compass,
-  Layers3,
-  Palette,
-  Sparkles,
-} from 'lucide-react';
+import { ArrowDownRight, ArrowRight, ChevronDown, Plus } from 'lucide-react';
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 const images = {
   hero: 'https://media.base44.com/images/public/6a6982f0647238bf2b5d67bf/0b259d369_modern-office-teamwork-co-working-space-quiet-a-2024-12-06-22-51-04-utc.webp',
-  colleagues: 'https://media.base44.com/images/public/6a6982f0647238bf2b5d67bf/106713cff_working-colleagues-2025-01-29-07-49-37-utc.webp',
-  interior: 'https://media.base44.com/images/public/6a6982f0647238bf2b5d67bf/2474a7b7d_stylish-and-cozy-interior-of-dining-room-2024-10-17-01-04-36-utc.webp',
-  livingRoom: 'https://media.base44.com/images/public/6a6982f0647238bf2b5d67bf/a38fb6e85_dark-blue-living-room-interior-with-cozy-luxury-le-2025-03-12-01-29-58-utc.webp',
-  womanAtWork: 'https://media.base44.com/images/public/6a6982f0647238bf2b5d67bf/9899a82d3_businesswoman-working-with-her-colleagues-at-offic-2025-03-16-06-52-50-utc.webp',
-  strategyTable: 'https://media.base44.com/images/public/6a6982f0647238bf2b5d67bf/b9ac87bed_businesspeople-sitting-and-working-at-desk-in-offi-2024-10-18-09-34-12-utc.webp',
+  workOne: 'https://media.base44.com/images/public/6a6982f0647238bf2b5d67bf/106713cff_working-colleagues-2025-01-29-07-49-37-utc.webp',
+  workTwo: 'https://media.base44.com/images/public/6a6982f0647238bf2b5d67bf/2474a7b7d_stylish-and-cozy-interior-of-dining-room-2024-10-17-01-04-36-utc.webp',
+  workThree: 'https://media.base44.com/images/public/6a6982f0647238bf2b5d67bf/b9ac87bed_businesspeople-sitting-and-working-at-desk-in-offi-2024-10-18-09-34-12-utc.webp',
+  approach: 'https://media.base44.com/images/public/6a6982f0647238bf2b5d67bf/9899a82d3_businesswoman-working-with-her-colleagues-at-offic-2025-03-16-06-52-50-utc.webp',
+  closing: 'https://media.base44.com/images/public/6a6982f0647238bf2b5d67bf/a38fb6e85_dark-blue-living-room-interior-with-cozy-luxury-le-2025-03-12-01-29-58-utc.webp',
 };
 
-const themes = {
-  hero: 'linear-gradient(135deg, #17110f 0%, #26130f 46%, #45191b 100%)',
-  cream: 'linear-gradient(135deg, #f8f0e5 0%, #f4e6d5 100%)',
-  ember: 'linear-gradient(135deg, #461b22 0%, #7d232b 52%, #b54d28 100%)',
-  ink: 'linear-gradient(135deg, #17110f 0%, #1b1313 48%, #08242a 100%)',
-  rust: 'linear-gradient(135deg, #7d232b 0%, #9c3828 54%, #d9622c 120%)',
-  closing: 'linear-gradient(135deg, #1b1110 0%, #371b1a 55%, #6e3026 100%)',
+const chapterColors = {
+  hero: '#17110f',
+  light: '#f8f0e5',
+  burgundy: '#7d232b',
+  ink: '#17110f',
+  closing: '#3b2220',
 };
 
-const outcomes = [
-  {
-    index: '01',
-    icon: Compass,
-    title: 'Your team stops second-guessing.',
-    description: 'Everyone knows what you stand for and where you are headed. Decisions get faster, more consistent, and your whole operation moves like it is actually unified.',
-  },
-  {
-    index: '02',
-    icon: Sparkles,
-    title: 'You show up with confidence.',
-    description: 'No more wondering whether your brand looks amateur next to the competition. You know exactly who you are and why the right people should choose you.',
-  },
-  {
-    index: '03',
-    icon: Layers3,
-    title: 'The right clients find you.',
-    description: 'Instead of competing on price with everyone else, you attract people who understand what you are about and are willing to pay for it.',
-  },
-  {
-    index: '04',
-    icon: Palette,
-    title: 'Growth becomes strategic, not chaotic.',
-    description: 'Every opportunity gets filtered through your brand clarity. You say yes to what fits, no to what does not, and build something sustainable.',
-  },
+const services = [
+  ['Brand Strategy', 'The strategic foundation that aligns your vision, values, and goals to guide every brand decision.'],
+  ['Brand Identity', 'Complete visual and verbal identity systems, including guidelines and assets that command respect.'],
+  ['Rebranding', 'Identity overhauls for established companies, mergers, and acquisitions, refreshing your presence while respecting what matters.'],
+  ['Graphic Design', 'High-impact layouts and assets that look sharp and move prospects to action.'],
+  ['Copywriting', 'Messaging frameworks and copy that captures your authentic voice and drives engagement.'],
+  ['Web Design', 'Bespoke web design that leaves the right impressions.'],
+  ['Speaking & Workshops', 'Engagements on branding, Christian entrepreneurship, and legacy-minded leadership.'],
+  ['Package Design', 'Product packaging that puts your brand directly in consumers’ hands.'],
 ];
 
-const pathways = [
-  ['01', 'The Brand Revival', 'For businesses that have outgrown the version of themselves the market still sees.'],
-  ['02', 'The Brand Foundation', 'For leaders who need strategic clarity before they invest in the next thing.'],
-  ['03', 'Digital Authority', 'For brands whose online presence does not reflect their actual capability.'],
-  ['04', 'The Foundry Extension', 'For teams that need strategic and creative direction as they grow.'],
+const outcomes = [
+  ['Your team stops second-guessing.', 'Everyone knows what you stand for and where you are headed. Decisions get faster, more consistent, and your whole operation moves like it’s actually unified.'],
+  ['You show up with confidence.', 'No more wondering if your brand looks amateur next to the competition. You know exactly who you are and why prospects should choose you.'],
+  ['The right clients find you.', 'Instead of competing on price with everyone else, you attract people who get what you’re about and are willing to pay for it.'],
+  ['Growth becomes strategic, not chaotic.', 'Every opportunity gets filtered through your brand clarity. You say yes to what fits, no to what doesn’t, and build something sustainable.'],
 ];
 
 const faqs = [
-  ['What makes Freedom Foundry different?', 'Freedom Foundry begins with the business beneath the brand. We do not make things look better without first making sure your positioning, audience signal, message, and strategic foundation are doing their jobs.'],
-  ['Who is a Brand Revival for?', 'A Brand Revival is for leaders whose business has evolved beyond the identity, website, message, or market perception currently representing it.'],
-  ['Can you rebrand us without losing our existing reputation?', 'Yes. A thoughtful revival protects the equity you have earned while correcting what is no longer serving the business. The goal is recognition with renewed relevance.'],
-  ['How long does a brand engagement take?', 'The right timeline depends on the depth of strategy, scope of implementation, and access to decision-makers. A focused foundation moves differently than a full identity and digital transformation.'],
+  ['What makes Ox & Iron different from other branding agencies?', 'Every brand here represents real people building something meaningful. The work begins with strategy, then carries that clarity through the way the brand looks, sounds, and moves.'],
+  ['How long does a branding project take?', 'The right timeline depends on the depth of strategy, scope of design work, and the decisions required to build a system that will last.'],
+  ['Do you work with small businesses or just large companies?', 'The work is built for businesses ready to lead with intention, whether they are established, scaling, evolving, or entering a new chapter.'],
+  ['What’s included in your brand strategy service?', 'Brand strategy clarifies who you are, who you serve, what matters, and how the brand should show up so future decisions have a clear foundation.'],
+  ['Can you help rebrand without losing our existing reputation?', 'Yes. A strong rebrand keeps the equity you have earned while making sure the brand reflects who the business is now and where it is headed.'],
+  ['What results can we expect from strategic branding?', 'A clearer message, stronger market presence, a more confident team, and a brand that helps the right people understand why you are the right choice.'],
 ];
 
-function ThemeSection({ theme, id, className = '', children }) {
-  return (
-    <section id={id} data-theme={theme} className={`relative bg-transparent ${className}`}>
-      {children}
-    </section>
-  );
+function mixHex(start, end, progress) {
+  const parse = (hex) => hex.replace('#', '').match(/.{1,2}/g).map((value) => parseInt(value, 16));
+  const [r1, g1, b1] = parse(start);
+  const [r2, g2, b2] = parse(end);
+  const value = (a, b) => Math.round(a + (b - a) * progress).toString(16).padStart(2, '0');
+  return `#${value(r1, r2)}${value(g1, g2)}${value(b1, b2)}`;
 }
 
 function NaturalImage({ src, alt, className = '' }) {
-  return (
-    <img
-      src={src}
-      alt={alt}
-      className={`block h-auto w-full max-w-full object-contain object-center ${className}`}
-    />
-  );
+  return <img src={src} alt={alt} className={`block h-auto w-full max-w-full object-contain object-center ${className}`} />;
+}
+
+function Chapter({ id, color, className = '', children }) {
+  return <section id={id} data-chapter-color={color} className={`relative bg-transparent ${className}`}>{children}</section>;
 }
 
 export default function LandingPage() {
   const rootRef = useRef(null);
-  const [activeTheme, setActiveTheme] = useState('hero');
-  const [openFaq, setOpenFaq] = useState(0);
+  const [pageColor, setPageColor] = useState(chapterColors.hero);
+  const [openFaq, setOpenFaq] = useState(null);
 
   useEffect(() => {
-    const root = rootRef.current;
-    if (!root) return undefined;
+    let frame;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const current = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (current) setActiveTheme(current.target.dataset.theme || 'cream');
-      },
-      { rootMargin: '-34% 0px -45% 0px', threshold: [0.08, 0.22, 0.48] }
-    );
+    const updateBackground = () => {
+      const sections = [...rootRef.current.querySelectorAll('[data-chapter-color]')];
+      const focusLine = window.innerHeight * 0.48;
+      const positions = sections.map((section) => {
+        const box = section.getBoundingClientRect();
+        return {
+          center: box.top + box.height / 2,
+          color: chapterColors[section.dataset.chapterColor],
+        };
+      });
 
-    root.querySelectorAll('[data-theme]').forEach((section) => observer.observe(section));
-    return () => observer.disconnect();
+      if (!positions.length) return;
+      if (focusLine <= positions[0].center) {
+        setPageColor(positions[0].color);
+        return;
+      }
+      if (focusLine >= positions[positions.length - 1].center) {
+        setPageColor(positions[positions.length - 1].color);
+        return;
+      }
+
+      for (let index = 0; index < positions.length - 1; index += 1) {
+        const current = positions[index];
+        const next = positions[index + 1];
+        if (focusLine >= current.center && focusLine <= next.center) {
+          const progress = (focusLine - current.center) / (next.center - current.center);
+          setPageColor(mixHex(current.color, next.color, Math.max(0, Math.min(1, progress))));
+          return;
+        }
+      }
+    };
+
+    const onScroll = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(updateBackground);
+    };
+
+    updateBackground();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
   }, []);
 
   return (
     <div ref={rootRef} className="relative min-h-[100dvh] overflow-hidden bg-[#17110f] text-[#f8f0e5]">
-      {/* Scroll-driven page atmosphere. Sections are transparent; this layer transitions behind them. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none fixed inset-0 z-0 transition-[background] duration-1000 ease-out motion-reduce:transition-none"
-        style={{ background: themes[activeTheme] }}
-      />
+      <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0 motion-reduce:hidden" style={{ backgroundColor: pageColor }} />
 
-      <header className="relative z-20 border-b border-[#f0d9b5]/15 bg-[#17110f]/40 backdrop-blur-md">
+      <header className="relative z-20 border-b border-[#f0d9b5]/15 bg-[#17110f]/45 backdrop-blur-sm">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-5 px-5 py-5 lg:px-8">
-          <Link to="/" data-testid="link-home" className="flex items-center gap-3">
-            <img
-              src={`${basePath}/forge-logo.png`}
-              alt="Freedom Foundry"
-              className="h-10 w-10 rounded-xl object-cover shadow-[0_0_20px_rgba(217,98,44,0.32)]"
-            />
-            <div className="leading-tight">
-              <p className="font-heading text-lg tracking-[0.04em]">FREEDOM FOUNDRY</p>
-              <p className="text-[10px] uppercase tracking-[0.22em] text-[#e3bd8f]">By The Brand Revivalist®</p>
-            </div>
+          <Link to="/" className="flex items-center gap-3" data-testid="link-home">
+            <img src={`${basePath}/forge-logo.png`} alt="Freedom Foundry" className="h-10 w-10 rounded-xl object-cover shadow-[0_0_20px_rgba(217,98,44,0.25)]" />
+            <div className="leading-tight"><p className="font-heading text-lg tracking-[0.04em]">FREEDOM FOUNDRY</p><p className="text-[10px] uppercase tracking-[0.22em] text-[#e3bd8f]">By The Brand Revivalist®</p></div>
           </Link>
-
-          <nav aria-label="Public navigation" className="order-3 flex w-full items-center gap-5 text-sm sm:order-2 sm:w-auto">
-            <a href="#approach" className="text-[#c7b7ab] transition-colors hover:text-[#f8f0e5]">Approach</a>
-            <Link to="/services" data-testid="link-services" className="text-[#c7b7ab] transition-colors hover:text-[#f8f0e5]">Services</Link>
-            <Link to="/portfolio" data-testid="link-portfolio" className="text-[#c7b7ab] transition-colors hover:text-[#f8f0e5]">Portfolio</Link>
+          <nav className="order-3 flex w-full items-center gap-5 text-sm sm:order-2 sm:w-auto" aria-label="Public navigation">
+            <Link to="/services" className="text-[#c7b7ab] transition-colors hover:text-[#f8f0e5]">Branding</Link>
+            <Link to="/services" className="text-[#c7b7ab] transition-colors hover:text-[#f8f0e5]">Graphic Design</Link>
+            <Link to="/portfolio" className="text-[#c7b7ab] transition-colors hover:text-[#f8f0e5]">Portfolio</Link>
+            <a href="#about" className="text-[#c7b7ab] transition-colors hover:text-[#f8f0e5]">About</a>
+            <Link to="/contact" className="text-[#c7b7ab] transition-colors hover:text-[#f8f0e5]">Contact</Link>
           </nav>
-
-          <div className="order-2 flex items-center gap-4 text-sm sm:order-3">
-            <Link to="/sign-in" data-testid="link-sign-in" className="text-[#c7b7ab] transition-colors hover:text-[#f8f0e5]">Sign in</Link>
-            <Link to="/sign-up" data-testid="link-create-account" className="border border-[#e5cba9]/45 px-4 py-2 text-[#f8f0e5] transition-colors hover:border-[#e5cba9] hover:bg-[#e5cba9]/10">Create account</Link>
-          </div>
+          <div className="order-2 flex items-center gap-4 text-sm sm:order-3"><Link to="/sign-in" className="text-[#c7b7ab] transition-colors hover:text-[#f8f0e5]">Sign in</Link><Link to="/sign-up" className="border border-[#e5cba9]/45 px-4 py-2 text-[#f8f0e5] transition-colors hover:border-[#e5cba9] hover:bg-[#e5cba9]/10">Create account</Link></div>
         </div>
       </header>
 
       <main className="relative z-10">
-        <ThemeSection theme="hero" className="overflow-hidden border-b border-[#f0d9b5]/10">
-          <div className="pointer-events-none absolute inset-0">
-            <img src={images.hero} alt="" className="h-full w-full object-cover object-center opacity-30 mix-blend-luminosity" />
-            <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(23,17,15,.95)_0%,rgba(23,17,15,.7)_52%,rgba(23,17,15,.35)_100%)]" />
+        <Chapter color="hero" className="overflow-hidden border-b border-[#f0d9b5]/10">
+          <div className="pointer-events-none absolute inset-0"><img src={images.hero} alt="" className="h-full w-full object-cover object-center opacity-40" /><div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(23,17,15,.91)_0%,rgba(23,17,15,.57)_54%,rgba(23,17,15,.22)_100%)]" /></div>
+          <div className="relative mx-auto flex min-h-[42rem] max-w-7xl items-end px-5 py-20 sm:py-28 lg:px-8 lg:py-32">
+            <div className="max-w-3xl"><p className="mb-6 text-xs uppercase tracking-[0.28em] text-[#dd8656]">Freedom Foundry by The Brand Revivalist®</p><h1 className="font-heading text-5xl font-light leading-[0.96] sm:text-6xl lg:text-7xl">Brand Strategy &amp; Design</h1><p className="mt-3 font-heading text-3xl italic leading-tight text-[#e5cba9] sm:text-4xl">Elevate your brand to a category of one.</p><Link to="/contact" className="mt-9 inline-flex items-center gap-3 bg-[#d9622c] px-5 py-3.5 text-sm font-semibold text-[#26130f] transition-transform hover:-translate-y-0.5 hover:bg-[#e7854e]">Schedule a Brand Strategy Call <ArrowRight className="h-4 w-4" /></Link></div>
           </div>
-          <div className="pointer-events-none absolute -right-40 top-[-8rem] h-[38rem] w-[38rem] rounded-full bg-[#8d2428]/25 blur-[120px]" />
-          <div className="pointer-events-none absolute bottom-[-14rem] left-[-10rem] h-[28rem] w-[28rem] rounded-full bg-[#c8673d]/15 blur-[100px]" />
+        </Chapter>
 
-          <div className="relative mx-auto grid min-h-[41rem] max-w-7xl gap-14 px-5 py-20 sm:py-28 lg:grid-cols-[1.1fr_.9fr] lg:items-end lg:px-8 lg:py-36">
-            <div>
-              <p className="mb-7 flex items-center gap-3 text-xs font-medium uppercase tracking-[0.28em] text-[#dd8656]"><span className="h-px w-10 bg-[#dd8656]" />Strategic Brand Development</p>
-              <h1 className="max-w-4xl font-heading text-6xl font-light leading-[0.92] sm:text-7xl lg:text-[6.8rem]">Build the brand your <span className="bg-gradient-to-r from-[#f0d9b5] via-[#dd8656] to-[#d9622c] bg-clip-text italic text-transparent">next chapter</span> requires.</h1>
-              <p className="mt-8 max-w-xl text-lg leading-8 text-[#cbbeb2]">Strategic brand development for businesses ready to stop outgrowing the version of themselves the market still sees.</p>
-              <div className="mt-10 flex flex-wrap items-center gap-5">
-                <Link to="/contact" data-testid="link-start-brand-revival" className="inline-flex items-center gap-3 bg-[#d9622c] px-5 py-3.5 text-sm font-semibold text-[#26130f] transition-transform hover:-translate-y-0.5 hover:bg-[#e7854e]">Start Your Brand Revival <ArrowRight className="h-4 w-4" /></Link>
-                <a href="#work" className="inline-flex items-center gap-2 text-sm text-[#e5cba9] transition-colors hover:text-[#f8f0e5]">Explore transformations <ArrowDownRight className="h-4 w-4" /></a>
-              </div>
-            </div>
+        <Chapter id="work" color="light" className="text-[#17110f]">
+          <div className="mx-auto max-w-7xl px-5 py-20 sm:py-28 lg:px-8"><h2 className="text-center font-heading text-5xl leading-none sm:text-6xl">Some of Our Work</h2><div className="mt-14 grid items-start gap-8 md:grid-cols-3"><Link to="/portfolio" className="group block"><div className="overflow-hidden bg-[#e6d8c8]"><NaturalImage src={images.workOne} alt="Selected brand work" className="transition duration-500 group-hover:scale-[1.01]" /></div></Link><Link to="/portfolio" className="group block md:mt-16"><div className="overflow-hidden bg-[#e6d8c8]"><NaturalImage src={images.workTwo} alt="Selected digital work" className="transition duration-500 group-hover:scale-[1.01]" /></div></Link><Link to="/portfolio" className="group block md:mt-5"><div className="overflow-hidden bg-[#e6d8c8]"><NaturalImage src={images.workThree} alt="Selected strategy work" className="transition duration-500 group-hover:scale-[1.01]" /></div></Link></div><div className="mt-12 flex flex-wrap justify-center gap-5"><Link to="/portfolio" className="inline-flex items-center gap-3 border border-[#17110f] px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.14em] text-[#17110f] transition-colors hover:bg-[#17110f] hover:text-[#f8f0e5]">Explore Our Portfolio <ArrowRight className="h-4 w-4" /></Link><Link to="/services" className="inline-flex items-center gap-3 border border-[#17110f] px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.14em] text-[#17110f] transition-colors hover:bg-[#17110f] hover:text-[#f8f0e5]">Discover Strategic Brand Solutions <ArrowRight className="h-4 w-4" /></Link></div></div>
+        </Chapter>
 
-            <aside className="relative mx-auto w-full max-w-lg lg:pb-3">
-              <div className="absolute -inset-6 rounded-[2px] bg-[#b3232c]/20 blur-3xl" />
-              <div className="relative border border-[#efd8b5]/25 bg-[#211714]/90 p-5 shadow-2xl backdrop-blur-sm sm:p-7">
-                <div className="flex items-center justify-between border-b border-[#efd8b5]/15 pb-5">
-                  <span className="text-xs uppercase tracking-[0.24em] text-[#d9c5b2]">Inside the Foundry</span>
-                  <span className="flex items-center gap-2 text-xs text-[#dd8656]"><span className="h-2 w-2 rounded-full bg-[#dd8656]" />Built to move</span>
-                </div>
-                <div className="border-b border-[#efd8b5]/15 py-8">
-                  <p className="text-xs uppercase tracking-[0.2em] text-[#b9957c]">The big picture</p>
-                  <p className="mt-3 max-w-sm font-heading text-4xl leading-tight text-[#f9eee1]">Clarity creates momentum.</p>
-                  <p className="mt-4 max-w-sm text-sm leading-7 text-[#c3b2a6]">A stronger brand gives your business a clear center from which to decide, communicate, and grow.</p>
-                </div>
-                <div className="grid grid-cols-2 gap-4 pt-5">
-                  <div className="border border-[#efd8b5]/15 bg-[#170f0e] p-4"><Compass className="h-5 w-5 text-[#dd8656]" /><p className="mt-6 text-sm text-[#e7d4c1]">Strategic clarity</p><p className="mt-1 text-xs leading-5 text-[#a99185]">A useful center for the next move.</p></div>
-                  <div className="border border-[#efd8b5]/15 bg-[#170f0e] p-4"><Palette className="h-5 w-5 text-[#dd8656]" /><p className="mt-6 text-sm text-[#e7d4c1]">Brand expression</p><p className="mt-1 text-xs leading-5 text-[#a99185]">A system that can carry the work.</p></div>
-                </div>
-              </div>
-            </aside>
-          </div>
-        </ThemeSection>
+        <Chapter color="light" className="text-[#17110f]">
+          <div className="mx-auto grid max-w-7xl gap-10 px-5 pb-20 pt-6 sm:pb-28 lg:grid-cols-[1.15fr_.85fr] lg:px-8"><div className="max-w-2xl space-y-6 text-[15px] leading-7 text-[#4b3a33]"><p>Mediocrity is a dream-killer. Market leadership demands showing up different, with the depth of clarity that lets you step out in conviction. While your competitors react to market shifts, you&apos;ll be the one shaping them.</p><p>Business moves at breakneck speed, often too fast for us to fully grasp what we are actually building. If you&apos;re reacting to the market, you&apos;ll never shape it.</p></div><div className="flex items-end justify-end"><div className="font-heading text-[8rem] leading-[.7] text-[#17110f] sm:text-[12rem]">F</div></div></div>
+        </Chapter>
 
-        <ThemeSection id="work" theme="cream" className="text-[#17110f]">
-          <div className="mx-auto max-w-7xl px-5 py-20 sm:py-28 lg:px-8">
-            <div className="mb-12 grid gap-6 lg:grid-cols-[1.1fr_.6fr] lg:items-end">
-              <div><p className="text-xs uppercase tracking-[0.25em] text-[#9d422c]">Selected transformations</p><h2 className="mt-4 max-w-3xl font-heading text-5xl leading-[0.94] sm:text-6xl">Proof that the brand can catch up to the business.</h2></div>
-              <p className="max-w-md text-sm leading-7 text-[#67544a]">Not a random wall of deliverables. A selection of work built to move perception, sharpen decisions, and create a presence that earns its place in the market.</p>
-            </div>
+        <Chapter color="ink" className="border-y border-[#f0d9b5]/10 text-[#f8f0e5]">
+          <div className="mx-auto max-w-7xl px-5 py-20 sm:py-28 lg:px-8"><p className="text-xs uppercase tracking-[0.25em] text-[#dd8656]">Brand First. Always.</p><h2 className="mt-4 max-w-4xl font-heading text-5xl leading-[.98] sm:text-6xl">We offer strategic brand development for established companies ready to own their market position.</h2><p className="mt-7 max-w-5xl text-base leading-8 text-[#d7c5b9]">If you&apos;re navigating transitions, scaling strategically, or entering new markets, your brand is either your greatest asset or your biggest liability. We make sure it&apos;s the former.</p><p className="mt-7 font-heading text-2xl text-[#e5cba9]">When you lead brand first, remarkable things happen:</p><div className="mt-8 grid gap-px border border-[#f0d9b5]/15 bg-[#f0d9b5]/15 md:grid-cols-2">{outcomes.map(([title, description]) => <article key={title} className="bg-[#17110f]/90 p-7 sm:p-9"><h3 className="font-heading text-3xl leading-tight">{title}</h3><p className="mt-4 text-sm leading-7 text-[#b9a79a]">{description}</p></article>)}</div><p className="mt-8 text-[#d7c5b9]">This is what brand strategy actually does. It gives you the clarity and confidence to show up in the market like you mean business.</p></div>
+        </Chapter>
 
-            <div className="grid items-start gap-7 md:grid-cols-3">
-              <Link to="/portfolio" className="group block text-[#17110f]">
-                <div className="overflow-hidden bg-[#d8cabc]/45"><NaturalImage src={images.colleagues} alt="A collaborative work environment" className="transition duration-700 group-hover:scale-[1.015]" /></div>
-                <div className="mt-4 border-t border-[#39231e]/20 pt-3"><div className="flex items-start justify-between gap-4"><p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#9d422c]">Brand Revival</p><ArrowDownRight className="h-4 w-4 shrink-0 text-[#9d422c] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" /></div><h3 className="mt-3 font-heading text-3xl leading-[0.98]">A brand system designed to lead, not just look good.</h3><p className="mt-3 text-xs uppercase tracking-[0.12em] text-[#756258]">Strategy · Identity · Rollout</p></div>
-              </Link>
-              <Link to="/portfolio" className="group block text-[#17110f] md:mt-0 lg:mt-24">
-                <div className="overflow-hidden bg-[#d8cabc]/45"><NaturalImage src={images.interior} alt="A refined interior environment" className="transition duration-700 group-hover:scale-[1.015]" /></div>
-                <div className="mt-4 border-t border-[#39231e]/20 pt-3"><div className="flex items-start justify-between gap-4"><p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#9d422c]">Digital Authority</p><ArrowDownRight className="h-4 w-4 shrink-0 text-[#9d422c] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" /></div><h3 className="mt-3 font-heading text-3xl leading-[0.98]">A web experience that finally matched the business behind it.</h3><p className="mt-3 text-xs uppercase tracking-[0.12em] text-[#756258]">Strategy · Website · Messaging</p></div>
-              </Link>
-              <Link to="/portfolio" className="group block text-[#17110f] md:mt-0 lg:mt-8">
-                <div className="overflow-hidden bg-[#d8cabc]/45"><NaturalImage src={images.strategyTable} alt="A strategy session at a work table" className="transition duration-700 group-hover:scale-[1.015]" /></div>
-                <div className="mt-4 border-t border-[#39231e]/20 pt-3"><div className="flex items-start justify-between gap-4"><p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#9d422c]">Brand in the Real World</p><ArrowDownRight className="h-4 w-4 shrink-0 text-[#9d422c] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" /></div><h3 className="mt-3 font-heading text-3xl leading-[0.98]">From first impression to real-world presence.</h3><p className="mt-3 text-xs uppercase tracking-[0.12em] text-[#756258]">Identity · Signage · Activation</p></div>
-              </Link>
-            </div>
-            <div className="mt-12"><Link to="/portfolio" data-testid="link-explore-portfolio" className="inline-flex items-center gap-2 border-b border-[#17110f] pb-2 text-sm font-semibold text-[#17110f] transition-colors hover:text-[#9d422c]">Explore the work <ArrowRight className="h-4 w-4" /></Link></div>
-          </div>
-        </ThemeSection>
+        <Chapter id="about" color="light" className="text-[#17110f]">
+          <div className="mx-auto grid max-w-7xl gap-12 px-5 py-20 sm:py-28 lg:grid-cols-[1fr_.9fr] lg:items-center lg:px-8"><div><p className="max-w-2xl text-[15px] leading-7 text-[#4b3a33]">Most design agencies create aesthetics, making things look good without asking if they actually work.</p><p className="mt-5 text-[15px] leading-7 text-[#4b3a33]">We don&apos;t operate that way.</p><p className="mt-5 max-w-2xl text-[15px] leading-7 text-[#4b3a33]">Every brand we build starts with strategy: clarity on who you are, who you serve, and why it matters. We then translate that strategy into the visual and verbal elements that communicate your brand in the market, ensuring your brand is cohesive, compelling, and built to perform.</p><p className="mt-5 max-w-2xl text-[15px] leading-7 text-[#4b3a33]">No handoffs means no lost-in-translation moments. No hoping your designer “gets” what the strategist meant.</p><p className="mt-5 max-w-2xl text-[15px] leading-7 text-[#4b3a33]">You come to one place. We develop the strategy AND execute the brand. Everything stays aligned, everything looks together, and everything works together to move you where you belong.</p><Link to="/services" className="mt-8 inline-flex items-center gap-3 border border-[#17110f] px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.14em] text-[#17110f] transition-colors hover:bg-[#17110f] hover:text-[#f8f0e5]">Discover Our Strategic Brand Solutions <ArrowRight className="h-4 w-4" /></Link></div><div className="overflow-hidden bg-[#e6d8c8]"><NaturalImage src={images.approach} alt="A team collaborating at work" /></div></div>
+        </Chapter>
 
-        <ThemeSection theme="ember" className="border-y border-[#f0d9b5]/15 text-[#fff3e5]">
-          <div className="mx-auto grid max-w-7xl gap-10 px-5 py-20 sm:py-28 lg:grid-cols-[.72fr_1.28fr] lg:px-8">
-            <div><p className="text-xs uppercase tracking-[0.25em] text-[#f3cfac]">The point of view</p><h2 className="mt-4 font-heading text-5xl leading-[0.94] sm:text-6xl">Brand First.<br />Always.</h2></div>
-            <div><p className="max-w-3xl font-heading text-3xl leading-tight text-[#fff3e5] sm:text-4xl">Mediocrity is a dream-killer. Market leadership demands showing up different, with the depth of clarity that lets you step out in conviction while your competitors react to market shifts.</p><p className="mt-7 max-w-2xl leading-8 text-[#f0d8c4]">Business moves at breakneck speed, often too fast for us to fully grasp what we are actually building. If you are reacting to the market, you will never shape it.</p></div>
-          </div>
-        </ThemeSection>
+        <Chapter color="burgundy" className="border-y border-[#f0d9b5]/15 text-[#fff3e5]">
+          <div className="mx-auto max-w-7xl px-5 py-20 sm:py-28 lg:px-8"><p className="font-heading text-5xl leading-none text-[#f3cfac]/45 sm:text-7xl">RISE ABOVE THE NOISE</p><div className="mt-10 grid gap-px border border-[#f0d9b5]/20 bg-[#f0d9b5]/20 md:grid-cols-2 lg:grid-cols-4">{services.map(([title, description]) => <Link to="/services" key={title} className="group min-h-60 bg-[#2c1517]/80 p-6 transition-colors hover:bg-[#17110f]/75"><h3 className="font-heading text-2xl">{title}</h3><p className="mt-4 text-sm leading-6 text-[#f0d8c4]">{description}</p><ArrowDownRight className="mt-8 h-4 w-4 text-[#dd8656] transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" /></Link>)}</div></div>
+        </Chapter>
 
-        <ThemeSection theme="ink" className="text-[#f8f0e5]">
-          <div className="mx-auto max-w-7xl px-5 py-20 sm:py-28 lg:px-8">
-            <div className="mb-12 grid gap-6 lg:grid-cols-[.8fr_1.2fr] lg:items-end"><div><p className="text-xs uppercase tracking-[0.25em] text-[#dd8656]">When you lead brand first</p></div><div><h2 className="font-heading text-5xl leading-[0.94] sm:text-6xl">What changes when the brand finally fits.</h2><p className="mt-5 max-w-2xl text-[#cbbeb2]">This is what brand strategy actually does. It gives you the clarity and confidence to show up in the market like you mean business.</p></div></div>
-            <div className="grid gap-px border border-[#f0d9b5]/15 bg-[#f0d9b5]/15 md:grid-cols-2">
-              {outcomes.map(({ index, icon: Icon, title, description }) => (
-                <article key={index} className="bg-[#17110f]/90 p-7 backdrop-blur-sm sm:p-9"><div className="flex items-center justify-between"><span className="font-mono text-xs text-[#dd8656]">{index}</span><Icon className="h-5 w-5 text-[#e5cba9]" strokeWidth={1.5} /></div><h3 className="mt-16 max-w-md font-heading text-3xl leading-tight text-[#f8f0e5]">{title}</h3><p className="mt-4 max-w-xl text-base leading-7 text-[#b9a79a]">{description}</p></article>
-              ))}
-            </div>
-          </div>
-        </ThemeSection>
+        <Chapter color="light" className="text-[#17110f]">
+          <div className="mx-auto max-w-7xl px-5 py-16 sm:py-20 lg:px-8"><h2 className="text-center font-heading text-4xl sm:text-5xl">Companies We&apos;ve Worked With</h2><div className="mt-10 grid grid-cols-2 border-y border-[#39231e]/20 sm:grid-cols-4 lg:grid-cols-8">{['Grandview', 'JINJI', 'WAKO USA', 'Grand Masterpiece', 'Veneration Forge', 'Keim Resources', 'Olive', 'All Green'].map((name) => <span key={name} className="flex min-h-28 items-center justify-center border-r border-[#39231e]/20 px-3 text-center font-heading text-xl text-[#17110f]/60">{name}</span>)}</div></div>
+        </Chapter>
 
-        <ThemeSection id="approach" theme="cream" className="text-[#17110f]">
-          <div className="mx-auto grid max-w-7xl gap-12 px-5 py-20 sm:py-28 lg:grid-cols-[.9fr_1.1fr] lg:items-center lg:px-8">
-            <div><p className="text-xs uppercase tracking-[0.25em] text-[#9d422c]">Not just aesthetics</p><h2 className="mt-4 max-w-2xl font-heading text-5xl leading-[0.94] sm:text-6xl">Not a prettier version of the same problem.</h2><div className="mt-8 max-w-xl space-y-5 text-[15px] leading-7 text-[#67544a]"><p>Most design agencies create aesthetics, making things look good without asking if they actually work. We do not operate that way.</p><p>Every brand we build starts with strategy: clarity on who you are, who you serve, and why it matters. Then we translate that strategy into visual and verbal systems that communicate your brand in the market.</p><p>No handoffs mean no lost-in-translation moments. Strategy and execution stay aligned, so everything looks together, works together, and moves you where you belong.</p></div><Link to="/services" className="mt-8 inline-flex items-center gap-3 border border-[#17110f] px-5 py-3.5 text-sm font-semibold text-[#17110f] transition-colors hover:bg-[#17110f] hover:text-[#f8f0e5]">Discover Strategic Brand Solutions <ArrowRight className="h-4 w-4" /></Link></div>
-            <div className="relative overflow-hidden bg-[#d8cabc]/45"><NaturalImage src={images.womanAtWork} alt="A strategic brand work session" /><div className="absolute bottom-0 left-0 max-w-xs bg-[#17110f] px-5 py-4 font-heading text-2xl leading-tight text-[#f8f0e5]">Strategy and expression, held together.</div></div>
-          </div>
-        </ThemeSection>
+        <Chapter color="closing" className="border-y border-[#f0d9b5]/15 text-[#f8f0e5]">
+          <div className="mx-auto grid max-w-7xl gap-10 px-5 py-20 sm:py-24 lg:grid-cols-[.9fr_1.1fr] lg:items-center lg:px-8"><div><h2 className="font-heading text-5xl leading-[.96] sm:text-6xl">Ready to Take the Lead?</h2><p className="mt-6 max-w-xl leading-7 text-[#d7c5b9]">If your current efforts feel disjointed, more like chasing than leading, it may be time to reset.</p><p className="mt-5 max-w-xl leading-7 text-[#d7c5b9]">Let&apos;s map a brand solution that fits your ambition: a cohesive strategy, a visual identity that commands respect, and messaging that compels action as your path to market becomes clear.</p><p className="mt-5 font-heading text-xl italic text-[#e5cba9]">Ready to discover what&apos;s possible when your brand leads the way?</p><Link to="/contact" className="mt-8 inline-flex items-center gap-3 border border-[#f0d9b5] px-6 py-3.5 text-sm font-semibold text-[#f8f0e5] transition-colors hover:bg-[#f0d9b5] hover:text-[#32161a]">Contact Us <ArrowRight className="h-4 w-4" /></Link></div><figure className="border border-[#efd8b5]/25 bg-[#211714]/55 p-7 backdrop-blur-sm sm:p-9"><blockquote className="font-heading text-3xl leading-tight text-[#f9eee1]">“This company is one of a kind. You don&apos;t see the attention to detail or the genuine desire to create something unique designed specifically for you.”</blockquote><figcaption className="mt-8 flex items-center justify-between border-t border-[#efd8b5]/15 pt-5"><span className="tracking-[0.2em] text-[#dd8656]">★★★★★</span><span className="text-xs uppercase tracking-[0.16em] text-[#c3b2a6]">Veneration Forge</span></figcaption></figure></div>
+        </Chapter>
 
-        <ThemeSection theme="rust" className="border-y border-[#f0d9b5]/15 text-[#fff3e5]">
-          <div className="mx-auto max-w-7xl px-5 py-20 sm:py-28 lg:px-8">
-            <div className="mb-12"><p className="text-xs uppercase tracking-[0.25em] text-[#f3cfac]">Ways to work together</p><h2 className="mt-4 max-w-3xl font-heading text-5xl leading-[0.94] sm:text-6xl">Build what is next with intention.</h2></div>
-            <div className="grid gap-px border border-[#f0d9b5]/25 bg-[#f0d9b5]/25 md:grid-cols-2 lg:grid-cols-4">
-              {pathways.map(([index, title, description]) => (
-                <Link to="/services" key={index} className="group flex min-h-72 flex-col bg-[#42181d]/70 p-6 backdrop-blur-sm transition-colors hover:bg-[#2c1115]/80"><span className="font-mono text-xs text-[#f3cfac]">{index}</span><h3 className="mt-14 font-heading text-3xl leading-[0.98]">{title}</h3><p className="mt-4 text-sm leading-6 text-[#f0d8c4]">{description}</p><ArrowDownRight className="mt-auto h-5 w-5 text-[#f3cfac] transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" /></Link>
-              ))}
-            </div>
-          </div>
-        </ThemeSection>
-
-        <ThemeSection theme="cream" className="text-[#17110f]">
-          <div className="mx-auto max-w-7xl px-5 py-16 sm:py-20 lg:px-8"><p className="text-center text-xs uppercase tracking-[0.25em] text-[#9d422c]">Companies We&apos;ve Helped Move Forward</p><div className="mt-8 grid grid-cols-2 border-y border-[#39231e]/20 sm:grid-cols-4 lg:grid-cols-8">{['Grandview', 'JINJI', 'WAKO USA', 'Grand Masterpiece', 'Veneration Forge', 'Keim Resources', 'Olive', 'All Green'].map((name) => <span key={name} className="flex min-h-28 items-center justify-center border-r border-[#39231e]/20 px-3 text-center font-heading text-xl text-[#17110f]/55 last:border-r-0">{name}</span>)}</div></div>
-        </ThemeSection>
-
-        <ThemeSection theme="closing" className="border-y border-[#f0d9b5]/15 text-[#f8f0e5]">
-          <div className="mx-auto grid max-w-7xl gap-10 px-5 py-20 sm:py-24 lg:grid-cols-[.9fr_1.1fr] lg:items-center lg:px-8">
-            <div><p className="text-xs uppercase tracking-[0.25em] text-[#dd8656]">The next move</p><h2 className="mt-4 max-w-xl font-heading text-5xl leading-[0.94] sm:text-6xl">Ready to Take the Lead?</h2><p className="mt-6 max-w-xl leading-7 text-[#d7c5b9]">If your current efforts feel disjointed, more like chasing than leading, it may be time to reset.</p><p className="mt-4 max-w-xl leading-7 text-[#d7c5b9]">Let&apos;s map a brand solution that fits your ambition: a cohesive strategy, visual identity, and messaging that compels action as your path forward becomes clear.</p><Link to="/contact" className="mt-8 inline-flex items-center gap-3 bg-[#d9622c] px-5 py-3.5 text-sm font-semibold text-[#26130f] transition-transform hover:-translate-y-0.5 hover:bg-[#e7854e]">Start Your Brand Revival <ArrowRight className="h-4 w-4" /></Link></div>
-            <figure className="border border-[#efd8b5]/25 bg-[#211714]/55 p-7 backdrop-blur-sm sm:p-9"><blockquote className="font-heading text-3xl leading-tight text-[#f9eee1] sm:text-4xl">“This company is one of a kind. The attention to detail and the genuine desire to create something specifically for you is rare.”</blockquote><figcaption className="mt-8 flex items-center justify-between border-t border-[#efd8b5]/15 pt-5"><span className="tracking-[0.2em] text-[#dd8656]">★★★★★</span><span className="text-xs uppercase tracking-[0.16em] text-[#c3b2a6]">Client testimonial</span></figcaption></figure>
-          </div>
-        </ThemeSection>
-
-        <ThemeSection theme="cream" className="text-[#17110f]">
-          <div className="mx-auto max-w-5xl px-5 py-20 sm:py-28 lg:px-8">
-            <div className="text-center"><p className="text-xs uppercase tracking-[0.25em] text-[#9d422c]">Clarity before commitment</p><h2 className="mt-4 font-heading text-5xl leading-[0.94] sm:text-6xl">Frequently Asked Questions</h2></div>
-            <div className="mt-12 border-t border-[#39231e]/20">
-              {faqs.map(([question, answer], index) => {
-                const isOpen = openFaq === index;
-                return (
-                  <article key={question} className="border-b border-[#39231e]/20">
-                    <button type="button" onClick={() => setOpenFaq(isOpen ? -1 : index)} className="flex w-full items-center justify-between gap-8 py-6 text-left text-base font-semibold text-[#17110f]">
-                      <span>{question}</span>
-                      <ChevronDown className={`h-5 w-5 shrink-0 text-[#9d422c] transition-transform ${isOpen ? 'rotate-180' : ''}`} />
-                    </button>
-                    {isOpen && <p className="max-w-3xl pb-6 text-sm leading-7 text-[#67544a]">{answer}</p>}
-                  </article>
-                );
-              })}
-            </div>
-          </div>
-        </ThemeSection>
+        <Chapter color="light" className="text-[#17110f]">
+          <div className="mx-auto max-w-5xl px-5 py-20 sm:py-28 lg:px-8"><h2 className="text-center font-heading text-5xl sm:text-6xl">Frequently Asked Questions</h2><div className="mt-12 border-t border-[#39231e]/20">{faqs.map(([question, answer], index) => { const open = openFaq === index; return <article key={question} className="border-b border-[#39231e]/20"><button type="button" onClick={() => setOpenFaq(open ? null : index)} className="flex w-full items-center justify-between gap-8 py-6 text-left text-base font-semibold"><span>{question}</span><span className="flex h-7 w-7 items-center justify-center text-[#9d422c]">{open ? '−' : <Plus className="h-4 w-4" />}</span></button>{open && <p className="max-w-3xl pb-6 text-sm leading-7 text-[#67544a]">{answer}</p>}</article>; })}</div></div>
+        </Chapter>
       </main>
 
-      <footer className="relative z-10 border-t border-[#f0d9b5]/10 bg-[#17110f]">
-        <div className="mx-auto flex max-w-7xl flex-wrap justify-between gap-4 px-5 py-9 text-sm text-[#a99185] lg:px-8">
-          <span>© {new Date().getFullYear()} The Brand Revivalist®</span>
-          <div className="flex gap-5"><Link to="/portfolio" data-testid="link-footer-portfolio" className="hover:text-[#f8f0e5]">Portfolio</Link><Link to="/privacy" data-testid="link-footer-privacy" className="hover:text-[#f8f0e5]">Privacy</Link><Link to="/terms" data-testid="link-footer-terms" className="hover:text-[#f8f0e5]">Terms</Link></div>
-        </div>
-      </footer>
+      <footer className="relative z-10 bg-[#17110f]"><div className="mx-auto flex max-w-7xl flex-wrap justify-between gap-4 px-5 py-9 text-sm text-[#a99185] lg:px-8"><span>© {new Date().getFullYear()} The Brand Revivalist®</span><div className="flex gap-5"><Link to="/portfolio" className="hover:text-[#f8f0e5]">Portfolio</Link><Link to="/privacy" className="hover:text-[#f8f0e5]">Privacy</Link><Link to="/terms" className="hover:text-[#f8f0e5]">Terms</Link></div></div></footer>
     </div>
   );
 }
