@@ -41,6 +41,129 @@
     },
     "original_filename": {
       "type": "string"
+    },
+    "file_name": {
+      "type": "string"
+    },
+    "file_type": {
+      "type": "string"
+    },
+    "width": {
+      "type": "number"
+    },
+    "height": {
+      "type": "number"
+    },
+    "group_id": {
+      "type": "string"
+    },
+    "visibility": {
+      "type": "string",
+      "enum": [
+        "public-portfolio",
+        "client-portal-only",
+        "agency-internal-only",
+        "restricted",
+        "needs-approval"
+      ],
+      "default": "needs-approval"
+    },
+    "order_source": {
+      "type": "string",
+      "enum": [
+        "manual",
+        "filename",
+        "agent",
+        "default"
+      ],
+      "default": "default"
+    },
+    "order_locked": {
+      "type": "boolean",
+      "default": false
+    },
+    "classification_status": {
+      "type": "string",
+      "enum": [
+        "suggested",
+        "approved",
+        "manual"
+      ],
+      "default": "suggested"
+    },
+    "classification_confidence": {
+      "type": "string",
+      "enum": [
+        "high",
+        "medium",
+        "low"
+      ]
+    },
+    "classification_reason": {
+      "type": "string"
+    },
+    "alt_text_status": {
+      "type": "string",
+      "enum": [
+        "suggested",
+        "approved",
+        "manual"
+      ],
+      "default": "suggested"
+    },
+    "suggested_group_id": {
+      "type": "string"
+    },
+    "suggested_family": {
+      "type": "string"
+    },
+    "suggested_subtype": {
+      "type": "string"
+    },
+    "suggested_device_type": {
+      "type": "string",
+      "enum": [
+        "desktop",
+        "mobile",
+        "tablet",
+        "none"
+      ]
+    },
+    "suggested_sort_order": {
+      "type": "number"
+    },
+    "suggested_display_role": {
+      "type": "string"
+    },
+    "suggested_pair_asset_id": {
+      "type": "string"
+    },
+    "suggested_alt_text": {
+      "type": "string"
+    },
+    "suggested_reason": {
+      "type": "string"
+    },
+    "suggestion_status": {
+      "type": "string",
+      "enum": [
+        "none",
+        "pending",
+        "approved",
+        "edited"
+      ],
+      "default": "none"
+    },
+    "is_hero_candidate": {
+      "type": "boolean",
+      "default": false
+    },
+    "needs_review": {
+      "type": "boolean",
+      "default": false
+    },
+    "review_reason": {
+      "type": "string"
     }
   },
   "required": [

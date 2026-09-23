@@ -90,7 +90,7 @@ export default function AdminPortfolioManager() {
         </p>
       </div>
 
-      <div className="mb-8 grid gap-4 sm:grid-cols-2">
+      <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <Link
           to="/admin/portfolio/new"
           className="dashboard-card group flex items-center justify-between gap-4 p-6 transition-colors hover:border-primary/40"
@@ -117,6 +117,20 @@ export default function AdminPortfolioManager() {
           </span>
           <span className="inline-flex shrink-0 items-center gap-2 rounded-md border border-primary/40 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-primary transition-colors group-hover:bg-primary/10">
             <Sparkles className="h-4 w-4" /> Import
+          </span>
+        </Link>
+        <Link
+          to="/admin/portfolio/curator"
+          className="dashboard-card group flex items-center justify-between gap-4 p-6 transition-colors hover:border-primary/40"
+        >
+          <span>
+            <span className="block font-heading text-2xl text-foreground">Curate a batch with the Curator</span>
+            <span className="mt-1 block text-sm text-muted-foreground">
+              Organize uploaded assets into grouped case-study drafts for your review.
+            </span>
+          </span>
+          <span className="inline-flex shrink-0 items-center gap-2 rounded-md border border-primary/40 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-primary transition-colors group-hover:bg-primary/10">
+            <Sparkles className="h-4 w-4" /> Curator
           </span>
         </Link>
       </div>

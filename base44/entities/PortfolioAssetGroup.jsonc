@@ -1,0 +1,139 @@
+{
+  "name": "PortfolioAssetGroup",
+  "type": "object",
+  "properties": {
+    "project_id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "family": {
+      "type": "string"
+    },
+    "subtype": {
+      "type": "string"
+    },
+    "display_role": {
+      "type": "string"
+    },
+    "sort_order": {
+      "type": "number",
+      "default": 0
+    },
+    "order_source": {
+      "type": "string",
+      "enum": [
+        "manual",
+        "filename",
+        "agent",
+        "default"
+      ],
+      "default": "default"
+    },
+    "order_locked": {
+      "type": "boolean",
+      "default": false
+    },
+    "visibility": {
+      "type": "string",
+      "enum": [
+        "public-portfolio",
+        "client-portal-only",
+        "agency-internal-only",
+        "restricted",
+        "needs-approval"
+      ],
+      "default": "needs-approval"
+    },
+    "curation_status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "needs-review",
+        "approved"
+      ],
+      "default": "draft"
+    },
+    "classification_confidence": {
+      "type": "string",
+      "enum": [
+        "high",
+        "medium",
+        "low"
+      ]
+    },
+    "curation_reason": {
+      "type": "string"
+    },
+    "suggested_name": {
+      "type": "string"
+    },
+    "suggested_family": {
+      "type": "string"
+    },
+    "suggested_subtype": {
+      "type": "string"
+    },
+    "suggested_display_role": {
+      "type": "string"
+    },
+    "suggested_sort_order": {
+      "type": "number"
+    },
+    "suggested_order_source": {
+      "type": "string",
+      "enum": [
+        "manual",
+        "filename",
+        "agent",
+        "default"
+      ]
+    },
+    "suggested_reason": {
+      "type": "string"
+    },
+    "suggestion_status": {
+      "type": "string",
+      "enum": [
+        "none",
+        "pending",
+        "approved",
+        "edited"
+      ],
+      "default": "pending"
+    },
+    "needs_review": {
+      "type": "boolean",
+      "default": false
+    },
+    "review_reason": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "project_id"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

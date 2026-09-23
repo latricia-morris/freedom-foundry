@@ -70,6 +70,7 @@ import AdminContactInbox from './pages/AdminContactInbox';
 import AdminPortfolioManager from './pages/AdminPortfolioManager';
 import AdminPortfolioEditor from './pages/AdminPortfolioEditor';
 import AdminPortfolioImport from './pages/AdminPortfolioImport';
+import PortfolioCuratorChat from './pages/admin/portfolio/PortfolioCuratorChat';
 import PortfolioPreview from './pages/PortfolioPreview';
 
 // Agency OS
@@ -185,6 +186,7 @@ const AuthenticatedApp = () => {
             <Route path="/admin/contact-inbox" element={<AdminContactInbox />} />
             <Route path="/admin/portfolio" element={<AdminPortfolioManager />} />
             <Route path="/admin/portfolio/import" element={<AdminPortfolioImport />} />
+            <Route path="/admin/portfolio/curator" element={<PortfolioCuratorChat />} />
             <Route path="/admin/portfolio/:id" element={<AdminPortfolioEditor />} />
             <Route path="/admin/portfolio/:id/preview" element={<PortfolioPreview />} />
             <Route path="/admin/agency" element={<AdminAgencyDashboard />} />
