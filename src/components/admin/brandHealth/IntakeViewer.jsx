@@ -12,7 +12,7 @@ export default function IntakeViewer({ audit }) {
   if (!definition) return null;
 
   const intake = audit.intake_data;
-  const rows = [...definition.required, ...definition.optional];
+  const rows = [...definition.required, ...(definition.baseline || []), ...definition.optional];
 
   return (
     <div>

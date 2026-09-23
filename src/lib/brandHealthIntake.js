@@ -1,3 +1,5 @@
+import { BASELINE_FIELDS } from '@/lib/matrix';
+
 // Locked client intake definitions for the Digital Brand Health
 // consultant-led reviews. The client completes intake only — the consultant
 // performs the review, scores, and publishes. Shared by the client intake
@@ -88,6 +90,7 @@ export const INTAKE_FIELDS = {
       { key: 'buyer_objections', label: 'Top buyer objections / hesitations' },
       { key: 'primary_conversion_action', label: 'Primary conversion action', options: ['Call', 'Booking', 'Inquiry', 'Application', 'Purchase', 'Store visit', 'Other'] }
     ],
+    baseline: BASELINE_FIELDS,
     optional: [
       { key: 'historical_channel_metrics', label: 'Historical channel metrics' },
       { key: 'monthly_traffic', label: 'Current monthly traffic' },
@@ -138,5 +141,9 @@ export const LONG_INTAKE_FIELDS = new Set([
   'existing_events',
   'existing_pr_media',
   'existing_referral_partners',
-  'marketing_plans_assets'
+  'marketing_plans_assets',
+  'baseline_visibility',
+  'baseline_credibility',
+  'baseline_consistency',
+  'baseline_competitive_advantage'
 ]);

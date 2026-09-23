@@ -6,6 +6,7 @@ import { useToast } from '@/components/ui/use-toast';
 import SubscoresEditor from '@/components/admin/brandHealth/SubscoresEditor';
 import ActionPlanEditor from '@/components/admin/brandHealth/ActionPlanEditor';
 import MatrixScoresEditor from '@/components/admin/brandHealth/MatrixScoresEditor';
+import MatrixReadinessPanel from '@/components/admin/brandHealth/MatrixReadinessPanel';
 import ChannelMatrixEditor from '@/components/admin/brandHealth/ChannelMatrixEditor';
 import JourneyCoverageEditor from '@/components/admin/brandHealth/JourneyCoverageEditor';
 import LeveragePanel from '@/components/admin/brandHealth/LeveragePanel';
@@ -200,6 +201,10 @@ export default function AdminBrandHealthAuditDetail() {
         </div>
       ) : (
         <>
+          <div className="dashboard-card mb-6 p-6">
+            <h3 className={SECTION_TITLE}>Matrix Readiness</h3>
+            <MatrixReadinessPanel audit={audit} onSave={updateAudit} busy={busy} />
+          </div>
           <div className="dashboard-card mb-6 p-6">
             <h3 className={SECTION_TITLE}>Matrix Measures &amp; Market Alignment Index</h3>
             <MatrixScoresEditor audit={audit} onSave={updateAudit} busy={busy} />

@@ -78,6 +78,19 @@ export default function IntakeForm({ audit, onSubmitted, onCancel }) {
         ))}
       </div>
 
+      {definition.baseline && definition.baseline.length > 0 && (
+        <>
+          <p className="mb-3 mt-8 text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
+            Baseline details — the Matrix needs these
+          </p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {definition.baseline.map((field) => (
+              <IntakeField key={field.key} field={field} value={values[field.key]} onChange={(v) => set(field.key, v)} />
+            ))}
+          </div>
+        </>
+      )}
+
       <p className="mb-3 mt-8 text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
         Optional — helpful if available
       </p>

@@ -5,6 +5,7 @@ import {
   channelPosition,
   stageCoverageMap,
   DEFAULT_MATRIX_WEIGHTS,
+  matrixFlags,
 } from '../../shared/brandHealth/matrix.ts';
 
 // Client-facing Digital Brand Health data: resolves the logged-in user to
@@ -36,6 +37,21 @@ export default async function (req: Request): Promise<Response> {
 
     const publishedIds = new Set((audits || []).filter((a) => a.status === PUBLISHED).map((a) => a.id));
 
+    // Marketing Matrix readiness per audit, computed from the same rules the
+    // client UI uses. A Matrix whose consultant findings are loaded and whose
+    // baseline minimum is met is results_available — its approved content is
+    // released without waiting on a separate publish step, so loaded findings
+    // are never trapped behind the intake screen.
+    const matrixState = {};
+    for (const a of audits || []) {
+      if (a.component !== 'marketing_matrix') continue;
+      matrixState[a.id] = matrixFlags(a);
+    }
+    const releasedIds = new Set([
+      ...publishedIds,
+      ...Object.entries(matrixState).filter(([, f]) => f.matrix_ready).map(([id]) => id),
+    ]);
+
     // Marketing Matrix: channels and leverage opportunities are separate
     // consultant-owned records. Only client-visible records belonging to a
     // published audit are shaped for the client — and only precomputed chart
@@ -45,7 +61,7 @@ export default async function (req: Request): Promise<Response> {
     const leverageRaw = await svc.entities.LeverageOpportunity.filter({ agency_client_id: client.id }, '-created_date', 300);
 
     const matrixChannels = (matrixChannelsRaw || [])
-      .filter((c) => c.client_visible && publishedIds.has(c.audit_id))
+      .filter((c) => c.client_visible && releasedIds.has(c.audit_id))
       .map((c) => {
         const audit = (audits || []).find((a) => a.id === c.audit_id);
         const pos = channelPosition(c as Record<string, unknown>);
@@ -68,7 +84,7 @@ export default async function (req: Request): Promise<Response> {
       });
 
     const leverage = (leverageRaw || [])
-      .filter((o) => o.client_visible && publishedIds.has(o.audit_id))
+      .filter((o) => o.client_visible && releasedIds.has(o.audit_id))
       .map((o) => ({
         audit_id: o.audit_id,
         title: o.title,
@@ -79,7 +95,7 @@ export default async function (req: Request): Promise<Response> {
       }));
 
     const findings = (notes || [])
-      .filter((n) => n.visibility === 'client_facing' && publishedIds.has(n.audit_id))
+      .filter((n) => n.visibility === 'client_facing' && releasedIds.has(n.audit_id))
       .map((n) => ({
         audit_id: n.audit_id,
         title: n.title,
@@ -91,7 +107,7 @@ export default async function (req: Request): Promise<Response> {
       }));
 
     const creditInfo = (credits || [])
-      .filter((c) => publishedIds.has(c.audit_id) && c.credit_eligible)
+      .filter((c) => releasedIds.has(c.audit_id) && c.credit_eligible)
       .map((c) => ({
         audit_id: c.audit_id,
         amount_cents: c.amount_cents,
@@ -117,7 +133,22 @@ export default async function (req: Request): Promise<Response> {
         review_scheduled_date: a.review_scheduled_date,
         info_requested_note: a.info_requested_note,
       };
-      if (a.status !== PUBLISHED) return base;
+      if (a.component === 'marketing_matrix') {
+        const flags = matrixState[a.id] || matrixFlags(a);
+        Object.assign(base, {
+          matrix_state: flags.matrix_state,
+          matrix_ready: flags.matrix_ready,
+          findings_loaded: flags.findings_loaded,
+          client_intake_complete: flags.client_intake_complete,
+          minimum_baseline_met: flags.minimum_baseline_met,
+          missing_baseline_fields: flags.missing_baseline_fields,
+          data_source: flags.data_source,
+          client_can_edit: false,
+        });
+      }
+
+      const resultsAvailable = a.component === 'marketing_matrix' && base.matrix_ready === true;
+      if (a.status !== PUBLISHED && !resultsAvailable) return base;
 
       const out = {
         ...base,

@@ -89,6 +89,87 @@ export function matrixStatusLabel(score) {
   return band ? band.label : null;
 }
 
+// --- Marketing Matrix readiness -------------------------------------------------
+// Baseline minimum: the eight details the Matrix needs to score well. A value
+// counts as present when it lives on the record, in the client's intake
+// answers, or in the mapped intake question. Consultant-loaded findings take
+// precedence — client_intake_complete is never the sole gate.
+export const BASELINE_FIELDS = [
+  { key: 'baseline_industry', label: 'Industry', question: 'What industry is your business in?', fallback: 'industry' },
+  { key: 'baseline_offer_type', label: 'Offer type', question: 'What type of offer do you sell?', fallback: 'offer_type' },
+  { key: 'baseline_positioning', label: 'Positioning', question: 'How is your brand positioned in the market?', fallback: 'brand_positioning' },
+  { key: 'baseline_visibility', label: 'Current visibility', question: 'Where is your business visible today? (search, social, referrals, media, events)', fallback: 'active_channels', long: true },
+  { key: 'baseline_credibility', label: 'Credibility', question: 'What proof makes buyers trust you? (reviews, results, credentials, case studies)', long: true },
+  { key: 'baseline_consistency', label: 'Consistency', question: 'How consistent is your marketing today, and what limits it?', long: true },
+  { key: 'baseline_growth_priority', label: 'Growth priority', question: 'What is your main growth priority for the next 90 days?', fallback: 'goal_90_days' },
+  { key: 'baseline_competitive_advantage', label: 'Competitive advantage', question: 'What makes you the stronger choice against competitors?', long: true },
+];
+
+/** Which baseline items are still unanswered. */
+export function baselineStatus(record) {
+  const intake = (record && record.intake_data) || {};
+  const missing = [];
+  for (const f of BASELINE_FIELDS) {
+    const candidates = [record?.[f.key], intake[f.key], f.fallback ? intake[f.fallback] : null];
+    const value = candidates.find((v) => typeof v === 'string' && v.trim());
+    if (!value) missing.push(f.key);
+  }
+  return { minimum_baseline_met: missing.length === 0, missing_baseline_fields: missing };
+}
+
+/** Computed Matrix state — findings precedence first, intake gate last. */
+export function computeMatrixState({ findings_loaded, client_intake_complete, minimum_baseline_met }) {
+  if (findings_loaded && minimum_baseline_met) return 'results_available';
+  if (findings_loaded && !minimum_baseline_met) return 'baseline_gap';
+  if (!findings_loaded && client_intake_complete && minimum_baseline_met) return 'results_available';
+  if (!findings_loaded && client_intake_complete && !minimum_baseline_met) return 'baseline_gap';
+  return 'awaiting_intake';
+}
+
+/** Full readiness snapshot for a Marketing Matrix record. */
+export function matrixFlags(record) {
+  const r = record || {};
+  const scores = r.matrix_scores || {};
+  const scored = ['channel_fit', 'journey_coverage', 'channel_integration', 'execution_readiness', 'customer_growth_readiness']
+    .some((k) => typeof (scores[k] || {}).score === 'number');
+  const findings_loaded = r.findings_loaded === true || !!r.consultant_findings_summary || scored;
+  const client_intake_complete = r.client_intake_complete === true || !!r.intake_received_date;
+  const { minimum_baseline_met, missing_baseline_fields } = baselineStatus(r);
+  const matrix_state = computeMatrixState({ findings_loaded, client_intake_complete, minimum_baseline_met });
+  const data_source = findings_loaded && client_intake_complete ? 'mixed' : findings_loaded ? 'consultant_loaded' : 'client_intake';
+  return {
+    data_source,
+    findings_loaded,
+    client_intake_complete,
+    minimum_baseline_met,
+    missing_baseline_fields,
+    matrix_state,
+    matrix_ready: matrix_state === 'results_available',
+    client_can_edit: false,
+  };
+}
+
+/**
+ * Readiness for a record whose flags were already computed server-side (the
+ * client-shaped audit payload). Explicit flags win: the client payload never
+ * carries baseline values or consultant findings, so deriving from it would
+ * wrongly report a baseline gap.
+ */
+export function resolveMatrixFlags(record) {
+  const r = record || {};
+  if (typeof r.matrix_state !== 'string' || !r.matrix_state) return matrixFlags(r);
+  return {
+    data_source: r.data_source || (r.findings_loaded ? 'consultant_loaded' : 'client_intake'),
+    findings_loaded: r.findings_loaded === true,
+    client_intake_complete: r.client_intake_complete === true,
+    minimum_baseline_met: r.minimum_baseline_met === true,
+    missing_baseline_fields: Array.isArray(r.missing_baseline_fields) ? r.missing_baseline_fields : [],
+    matrix_state: r.matrix_state,
+    matrix_ready: r.matrix_ready === true || r.matrix_state === 'results_available',
+    client_can_edit: false,
+  };
+}
+
 export const JOURNEY_STAGES = [
   {
     key: 'trigger',

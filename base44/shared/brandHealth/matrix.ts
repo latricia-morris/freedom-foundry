@@ -95,6 +95,88 @@ export function channelPosition(channel: Record<string, unknown>): { x: number; 
   return { x, y: fitAvg / 5 };
 }
 
+// --- Marketing Matrix readiness -------------------------------------------------
+// The baseline minimum: the eight details the Matrix needs in order to score
+// well. A baseline value counts as present when it lives on the record, in the
+// client's intake answers, or in the mapped intake question. Findings loaded
+// from a consultant interview always take precedence over the intake gate —
+// client_intake_complete is never the sole gate.
+
+export type BaselineField = {
+  key: string;
+  label: string;
+  question: string;
+  fallback?: string;
+};
+
+export const BASELINE_FIELDS: BaselineField[] = [
+  { key: 'baseline_industry', label: 'Industry', question: 'What industry is your business in?', fallback: 'industry' },
+  { key: 'baseline_offer_type', label: 'Offer type', question: 'What type of offer do you sell?', fallback: 'offer_type' },
+  { key: 'baseline_positioning', label: 'Positioning', question: 'How is your brand positioned in the market?', fallback: 'brand_positioning' },
+  { key: 'baseline_visibility', label: 'Current visibility', question: 'Where is your business visible today? (search, social, referrals, media, events)', fallback: 'active_channels' },
+  { key: 'baseline_credibility', label: 'Credibility', question: 'What proof makes buyers trust you? (reviews, results, credentials, case studies)' },
+  { key: 'baseline_consistency', label: 'Consistency', question: 'How consistent is your marketing today, and what limits it?' },
+  { key: 'baseline_growth_priority', label: 'Growth priority', question: 'What is your main growth priority for the next 90 days?', fallback: 'goal_90_days' },
+  { key: 'baseline_competitive_advantage', label: 'Competitive advantage', question: 'What makes you the stronger choice against competitors?' },
+];
+
+/** Which baseline items are still unanswered. */
+export function baselineStatus(record: Record<string, any> | null | undefined): {
+  minimum_baseline_met: boolean;
+  missing_baseline_fields: string[];
+} {
+  const intake = (record?.intake_data || {}) as Record<string, unknown>;
+  const missing: string[] = [];
+  for (const f of BASELINE_FIELDS) {
+    const candidates = [record?.[f.key], intake[f.key], f.fallback ? intake[f.fallback] : null];
+    const value = candidates.find((v) => typeof v === 'string' && v.trim());
+    if (!value) missing.push(f.key);
+  }
+  return { minimum_baseline_met: missing.length === 0, missing_baseline_fields: missing };
+}
+
+/** Computed Matrix state — findings precedence first, intake gate last. */
+export function computeMatrixState(input: {
+  findings_loaded: boolean;
+  client_intake_complete: boolean;
+  minimum_baseline_met: boolean;
+}): 'awaiting_intake' | 'baseline_gap' | 'ready_for_review' | 'results_available' {
+  const { findings_loaded, client_intake_complete, minimum_baseline_met } = input;
+  if (findings_loaded && minimum_baseline_met) return 'results_available';
+  if (findings_loaded && !minimum_baseline_met) return 'baseline_gap';
+  if (!findings_loaded && client_intake_complete && minimum_baseline_met) return 'results_available';
+  if (!findings_loaded && client_intake_complete && !minimum_baseline_met) return 'baseline_gap';
+  return 'awaiting_intake';
+}
+
+/** Full readiness snapshot for a Marketing Matrix record. */
+export function matrixFlags(record: Record<string, any> | null | undefined) {
+  const r = record || {};
+  const scores = (r.matrix_scores || {}) as Record<string, { score?: number }>;
+  const scored = [
+    'channel_fit',
+    'journey_coverage',
+    'channel_integration',
+    'execution_readiness',
+    'customer_growth_readiness',
+  ].some((k) => typeof scores[k]?.score === 'number');
+  const findings_loaded = r.findings_loaded === true || !!r.consultant_findings_summary || scored;
+  const client_intake_complete = r.client_intake_complete === true || !!r.intake_received_date;
+  const { minimum_baseline_met, missing_baseline_fields } = baselineStatus(r);
+  const matrix_state = computeMatrixState({ findings_loaded, client_intake_complete, minimum_baseline_met });
+  const data_source = findings_loaded && client_intake_complete ? 'mixed' : findings_loaded ? 'consultant_loaded' : 'client_intake';
+  return {
+    data_source,
+    findings_loaded,
+    client_intake_complete,
+    minimum_baseline_met,
+    missing_baseline_fields,
+    matrix_state,
+    matrix_ready: matrix_state === 'results_available',
+    client_can_edit: false,
+  };
+}
+
 /** Coverage lookup {stage: coverage} from the audit's journey rows. */
 export function stageCoverageMap(rows: Array<{ stage?: string; coverage?: number }> = {}): Record<string, number> {
   const map: Record<string, number> = {};

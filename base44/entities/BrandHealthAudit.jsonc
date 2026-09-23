@@ -45,6 +45,97 @@
     "info_requested_note": {
       "type": "string"
     },
+    "data_source": {
+      "type": "string",
+      "enum": [
+        "client_intake",
+        "consultant_loaded",
+        "mixed"
+      ],
+      "default": "client_intake"
+    },
+    "findings_loaded": {
+      "type": "boolean",
+      "default": false
+    },
+    "client_intake_complete": {
+      "type": "boolean",
+      "default": false
+    },
+    "minimum_baseline_met": {
+      "type": "boolean",
+      "default": false
+    },
+    "matrix_ready": {
+      "type": "boolean",
+      "default": false
+    },
+    "matrix_state": {
+      "type": "string",
+      "enum": [
+        "awaiting_intake",
+        "baseline_gap",
+        "ready_for_review",
+        "results_available"
+      ],
+      "default": "awaiting_intake"
+    },
+    "client_can_edit": {
+      "type": "boolean",
+      "default": false
+    },
+    "missing_baseline_fields": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "baseline_industry": {
+      "type": "string"
+    },
+    "baseline_offer_type": {
+      "type": "string"
+    },
+    "baseline_positioning": {
+      "type": "string"
+    },
+    "baseline_visibility": {
+      "type": "string"
+    },
+    "baseline_credibility": {
+      "type": "string"
+    },
+    "baseline_consistency": {
+      "type": "string"
+    },
+    "baseline_growth_priority": {
+      "type": "string"
+    },
+    "baseline_competitive_advantage": {
+      "type": "string"
+    },
+    "consultant_findings_summary": {
+      "type": "string"
+    },
+    "consultant_findings_payload": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "matrix_results_payload": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "results_generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_updated_by": {
+      "type": "string"
+    },
+    "last_updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
     "score": {
       "type": "number"
     },
