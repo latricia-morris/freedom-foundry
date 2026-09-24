@@ -206,3 +206,4 @@ export default function LandingPage() {
       <footer className="relative z-10 bg-[#0D0E11]"><div className="mx-auto flex max-w-7xl flex-wrap justify-between gap-4 px-5 py-9 text-sm text-[#C7CAD1] lg:px-8"><span>© {new Date().getFullYear()} The Brand Revivalist®</span><div className="flex gap-5"><Link to="/privacy" className="hover:text-[#F0F2F4]">Privacy</Link><Link to="/terms" className="hover:text-[#F0F2F4]">Terms</Link></div></div></footer>
     </div>
   );
+}
