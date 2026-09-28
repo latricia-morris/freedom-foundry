@@ -1,5 +1,4 @@
 import React from 'react';
-import { opportunityScore } from '@/lib/matrix';
 
 // Freedom Foundry palette
 const COPPER = '#E26E3C';
@@ -13,149 +12,107 @@ const TRACK_WIDTH_PX = 28;
 const CAP_HEIGHT_PX = 6;
 const CORNER_RADIUS = 4;
 
-function hasScore(ch) {
-  return (
-    Number.isFinite(Number(ch.maturity)) ||
-    Number.isFinite(Number(ch.strategic_fit)) ||
-    Number.isFinite(Number(ch.buyer_impact))
-  );
+function opportunityColor(score) {
+  if (score >= 65) return COPPER;
+  if (score >= 35) return EMBER;
+  return SLATE;
 }
 
-function targetLevel(ch) {
-  const fit = Number(ch.strategic_fit);
-  const impact = Number(ch.buyer_impact);
-  const f = Number.isFinite(fit) ? Math.max(1, Math.min(5, fit)) : 3;
-  const i = Number.isFinite(impact) ? Math.max(1, Math.min(5, impact)) : 3;
-  return (f + i) / 2 / 5;
+function opportunityLabel(score) {
+  if (score >= 65) return `Leverage · ${score}`;
+  if (score >= 35) return `Moderate · ${score}`;
+  return `Lower priority · ${score}`;
 }
 
-function currentLevel(ch) {
-  const maturity = Number(ch.maturity);
-  return Number.isFinite(maturity) ? Math.max(0, Math.min(5, maturity)) / 5 : 0;
-}
-
-export default function ChannelEqualizer({ audit, matrixChannels }) {
-  const bands = matrixChannels
+export default function ChannelEqualizer({ matrixChannels }) {
+  // x = current maturity (0-1), y = target level from fit+impact (0-1),
+  // opportunity = 0-100 score precomputed server-side. All come straight
+  // from get-brand-health; no client-side recomputation.
+  const bands = (matrixChannels || [])
     .map((ch) => {
-      const scored = hasScore(ch);
-      const level = currentLevel(ch);
-      const target = targetLevel(ch);
-      const score = opportunityScore(ch, audit);
-      const gap = target - level;
-      const gapPct = Math.round(gap * 100);
-      return { channel: ch, scored, level, target, score, gap, gapPct };
+      const level = Math.max(0, Math.min(1, Number(ch.x) || 0));
+      const target = Math.max(0, Math.min(1, Number(ch.y) || 0));
+      const opportunity = Math.max(0, Math.min(100, Number(ch.opportunity) || 0));
+      return { channel: ch, level, target, opportunity, gap: target - level };
     })
-    .sort((a, b) => (b.scored - a.scored) || (b.gap - a.gap));
+    .sort((a, b) => b.opportunity - a.opportunity);
 
   return (
     <div className="w-full">
       <div className="flex flex-wrap items-end justify-center gap-6 rounded-lg border border-border bg-card/40 p-8">
         {bands.map((band) => {
-          const gradientId = `eq-grad-${(band.channel.id || band.channel.channel_name).replace(/[^a-zA-Z0-9]/g, '')}`;
+          const gradientId = `eq-grad-${(band.channel.channel_name || 'ch').replace(/[^a-zA-Z0-9]/g, '')}`;
           const capBottom = TRACK_HEIGHT_PX * band.level - CAP_HEIGHT_PX / 2;
           const tickBottom = TRACK_HEIGHT_PX * band.target;
+          const color = opportunityColor(band.opportunity);
 
           return (
-            <div key={band.channel.id || band.channel.channel_name} className="flex flex-col items-center" style={{ width: 96 }}>
+            <div key={band.channel.channel_name} className="flex flex-col items-center" style={{ width: 96 }}>
               <div
                 className="relative overflow-visible"
                 style={{ height: TRACK_HEIGHT_PX, width: TRACK_WIDTH_PX + 16 }}
-                title={
-                  band.scored
-                    ? `${band.channel.channel_name} — now ${Math.round(band.level * 100)}%, target ${Math.round(band.target * 100)}%`
-                    : `${band.channel.channel_name} — not yet scored`
-                }
+                title={`${band.channel.channel_name} — now ${Math.round(band.level * 100)}%, target ${Math.round(band.target * 100)}%, opportunity ${band.opportunity}`}
               >
-                {/* track */}
                 <div
                   className="absolute bottom-0 bg-black/40"
                   style={{ width: TRACK_WIDTH_PX, height: TRACK_HEIGHT_PX, left: 8, borderRadius: CORNER_RADIUS }}
                 />
 
-                {band.scored ? (
-                  <>
-                    <svg width={TRACK_WIDTH_PX} height={TRACK_HEIGHT_PX} className="absolute bottom-0" style={{ left: 8 }}>
-                      <defs>
-                        <linearGradient id={gradientId} x1="0" y1="1" x2="0" y2="0">
-                          <stop offset="0%" stopColor={SLATE} stopOpacity="0.7" />
-                          <stop offset="45%" stopColor={BRASS} />
-                          <stop offset="100%" stopColor={COPPER} />
-                        </linearGradient>
-                      </defs>
-                      <rect
-                        x="0"
-                        y={TRACK_HEIGHT_PX * (1 - band.level)}
-                        width={TRACK_WIDTH_PX}
-                        height={TRACK_HEIGHT_PX * band.level}
-                        rx={CORNER_RADIUS}
-                        fill={`url(#${gradientId})`}
-                      />
-                    </svg>
+                <svg width={TRACK_WIDTH_PX} height={TRACK_HEIGHT_PX} className="absolute bottom-0" style={{ left: 8 }}>
+                  <defs>
+                    <linearGradient id={gradientId} x1="0" y1="1" x2="0" y2="0">
+                      <stop offset="0%" stopColor={SLATE} stopOpacity="0.7" />
+                      <stop offset="45%" stopColor={BRASS} />
+                      <stop offset="100%" stopColor={color} />
+                    </linearGradient>
+                  </defs>
+                  <rect
+                    x="0"
+                    y={TRACK_HEIGHT_PX * (1 - band.level)}
+                    width={TRACK_WIDTH_PX}
+                    height={TRACK_HEIGHT_PX * band.level}
+                    rx={CORNER_RADIUS}
+                    fill={`url(#${gradientId})`}
+                  />
+                </svg>
 
-                    <div
-                      className="absolute"
-                      style={{
-                        height: 2,
-                        width: 14,
-                        left: TRACK_WIDTH_PX + 10,
-                        bottom: tickBottom - 1,
-                        backgroundColor: EMBER,
-                      }}
-                    />
+                <div
+                  className="absolute"
+                  style={{
+                    height: 2,
+                    width: 14,
+                    left: TRACK_WIDTH_PX + 10,
+                    bottom: tickBottom - 1,
+                    backgroundColor: EMBER,
+                  }}
+                />
 
-                    <div
-                      className="absolute"
-                      style={{
-                        height: CAP_HEIGHT_PX,
-                        width: TRACK_WIDTH_PX + 10,
-                        left: 3,
-                        bottom: Math.max(0, capBottom),
-                        backgroundColor: CLOUDBONE,
-                        borderRadius: 2,
-                        boxShadow: '0 1px 4px rgba(0,0,0,0.4)',
-                      }}
-                    />
-                  </>
-                ) : (
-                  <div
-                    className="absolute inset-0 flex items-center justify-center"
-                    style={{ left: 8, width: TRACK_WIDTH_PX }}
-                  >
-                    <span className="text-[9px] leading-tight text-muted-foreground/50" style={{ writingMode: 'vertical-rl' }}>
-                      pending
-                    </span>
-                  </div>
-                )}
+                <div
+                  className="absolute"
+                  style={{
+                    height: CAP_HEIGHT_PX,
+                    width: TRACK_WIDTH_PX + 10,
+                    left: 3,
+                    bottom: Math.max(0, capBottom),
+                    backgroundColor: CLOUDBONE,
+                    borderRadius: 2,
+                    boxShadow: '0 1px 4px rgba(0,0,0,0.4)',
+                  }}
+                />
               </div>
 
               <span className="mt-3 text-center text-[11px] leading-tight text-foreground font-medium">
                 {band.channel.channel_name}
               </span>
-
-              {band.scored ? (
-                <>
-                  <span className="mt-1 text-[10px] text-muted-foreground">
-                    Now {Math.round(band.level * 100)}% → Target {Math.round(band.target * 100)}%
-                  </span>
-                  <span
-                    className="mt-1 px-2 py-0.5 text-[10px] font-semibold"
-                    style={{
-                      borderRadius: 3,
-                      backgroundColor: band.gapPct > 15 ? `${COPPER}26` : 'rgba(255,255,255,0.06)',
-                      color: band.gapPct > 15 ? COPPER : 'var(--muted-foreground)',
-                    }}
-                  >
-                    {band.gapPct > 15 ? `Leverage +${band.gapPct}%` : band.gapPct < -15 ? 'Pull back' : 'On target'}
-                  </span>
-                </>
-              ) : (
-                <span
-                  className="mt-1 px-2 py-0.5 text-[10px] font-semibold text-muted-foreground"
-                  style={{ borderRadius: 3, backgroundColor: 'rgba(255,255,255,0.06)' }}
-                >
-                  Not yet scored
-                </span>
-              )}
+              <span className="mt-1 text-[10px] text-muted-foreground">
+                Now {Math.round(band.level * 100)}% → Target {Math.round(band.target * 100)}%
+              </span>
+              <span
+                className="mt-1 px-2 py-0.5 text-[10px] font-semibold"
+                style={{ borderRadius: 3, backgroundColor: `${color}22`, color }}
+              >
+                {opportunityLabel(band.opportunity)}
+              </span>
             </div>
           );
         })}
@@ -170,7 +127,7 @@ export default function ChannelEqualizer({ audit, matrixChannels }) {
           <span className="inline-block h-0.5 w-3.5" style={{ backgroundColor: EMBER }} />
           Target level
         </span>
-        <span>"Not yet scored" means your consultant hasn't entered maturity/fit/impact for that channel yet</span>
+        <span>Badge = consultant-weighted opportunity score (0–100), sorted highest first</span>
       </div>
     </div>
   );
