@@ -69,8 +69,6 @@ function ScoreBar({ score }) {
 
 export default function MatrixView({ audit, findings = [], credit, matrixChannels = [], leverage = [] }) {
   const flatSummary = audit?.consultant_summary || '';
-  // Client-shaped fields actually sent by get-brand-health — not the internal
-  // consultant_findings_payload, which never crosses the wire.
   const scoresPublic = audit?.matrix_scores_public || {};
   const journeyPublic = Array.isArray(audit?.journey_public) ? audit.journey_public : [];
 
@@ -84,38 +82,37 @@ export default function MatrixView({ audit, findings = [], credit, matrixChannel
   );
 
   const hasScorecards = Object.keys(scoresPublic).length > 0;
+  const hasStrategyContent = !!flatSummary || hasScorecards;
 
   return (
     <div className="space-y-12">
-      <section id="bh-strategy">
-        <h3 className={H}>Your Marketing Strategy</h3>
-        {flatSummary ? (
-          <div className="dashboard-card mb-4 p-6">
-            <p className="whitespace-pre-line text-sm leading-relaxed text-foreground">{flatSummary}</p>
-          </div>
-        ) : null}
-        {hasScorecards ? (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {MATRIX_SCORECARDS.map((card) => {
-              const d = scoresPublic[card.key];
-              if (!d || typeof d.score !== 'number') return null;
-              return (
-                <div key={card.key} className="dashboard-card p-5">
-                  <div className="mb-1 flex flex-wrap items-baseline justify-between gap-2">
-                    <h4 className="font-heading text-lg text-foreground">{d.client_label || card.label}</h4>
-                    <span className="text-xs font-semibold text-foreground">{d.score}<span className="text-muted-foreground">/100</span></span>
+      {hasStrategyContent ? (
+        <section id="bh-strategy">
+          <h3 className={H}>Your Marketing Strategy</h3>
+          {flatSummary ? (
+            <div className="dashboard-card mb-4 p-6">
+              <p className="whitespace-pre-line text-sm leading-relaxed text-foreground">{flatSummary}</p>
+            </div>
+          ) : null}
+          {hasScorecards ? (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              {MATRIX_SCORECARDS.map((card) => {
+                const d = scoresPublic[card.key];
+                if (!d || typeof d.score !== 'number') return null;
+                return (
+                  <div key={card.key} className="dashboard-card p-5">
+                    <div className="mb-1 flex flex-wrap items-baseline justify-between gap-2">
+                      <h4 className="font-heading text-lg text-foreground">{d.client_label || card.label}</h4>
+                      <span className="text-xs font-semibold text-foreground">{d.score}<span className="text-muted-foreground">/100</span></span>
+                    </div>
+                    <ScoreBar score={d.score} />
                   </div>
-                  <ScoreBar score={d.score} />
-                </div>
-              );
-            })}
-          </div>
-        ) : !flatSummary ? (
-          <div className="dashboard-card flex items-center justify-center p-10 text-center">
-            <p className="text-sm text-muted-foreground">Your consultant will walk you through your marketing strategy in detail.</p>
-          </div>
-        ) : null}
-      </section>
+                );
+              })}
+            </div>
+          ) : null}
+        </section>
+      ) : null}
 
       {/* CHANNEL MAP — the equalizer IS the answer. No redundant list below it. */}
       <section id="bh-channel-map">
@@ -130,14 +127,10 @@ export default function MatrixView({ audit, findings = [], credit, matrixChannel
         )}
       </section>
 
-      <section id="bh-journey">
-        <h3 className={H}>Your Customer Journey</h3>
-        <p className={SUB}>Whether ideal buyers have a clear, credible path from first awareness through retention and referral.</p>
-        {journeyPublic.length === 0 ? (
-          <div className="dashboard-card flex items-center justify-center p-10 text-center">
-            <p className="text-sm text-muted-foreground">Your consultant will map your customer journey here.</p>
-          </div>
-        ) : (
+      {journeyPublic.length > 0 ? (
+        <section id="bh-journey">
+          <h3 className={H}>Your Customer Journey</h3>
+          <p className={SUB}>Whether ideal buyers have a clear, credible path from first awareness through retention and referral.</p>
           <div className="space-y-3">
             {JOURNEY_STAGES.map((stage) => {
               const row = journeyPublic.find((r) => r.stage === stage.key);
@@ -159,17 +152,13 @@ export default function MatrixView({ audit, findings = [], credit, matrixChannel
               );
             })}
           </div>
-        )}
-      </section>
+        </section>
+      ) : null}
 
-      <section id="bh-opportunities">
-        <h3 className={H}>Your Leverage Opportunities</h3>
-        <p className={SUB}>Specific, high-leverage moves your consultant identified beyond standard channel execution.</p>
-        {sortedLeverage.length === 0 ? (
-          <div className="dashboard-card flex items-center justify-center p-10 text-center">
-            <p className="text-sm text-muted-foreground">Your consultant will identify leverage opportunities here.</p>
-          </div>
-        ) : (
+      {sortedLeverage.length > 0 ? (
+        <section id="bh-opportunities">
+          <h3 className={H}>Your Leverage Opportunities</h3>
+          <p className={SUB}>Specific, high-leverage moves your consultant identified beyond standard channel execution.</p>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {sortedLeverage.map((item) => (
               <div key={item.id || item.title} className="dashboard-card p-4">
@@ -182,16 +171,12 @@ export default function MatrixView({ audit, findings = [], credit, matrixChannel
               </div>
             ))}
           </div>
-        )}
-      </section>
+        </section>
+      ) : null}
 
-      <section id="bh-actions">
-        <h3 className={H}>Your Action Plan</h3>
-        {sortedActions.length === 0 ? (
-          <div className="dashboard-card flex items-center justify-center p-10 text-center">
-            <p className="text-sm text-muted-foreground">Your action plan will appear here once it is approved.</p>
-          </div>
-        ) : (
+      {sortedActions.length > 0 ? (
+        <section id="bh-actions">
+          <h3 className={H}>Your Action Plan</h3>
           <div className="space-y-3">
             {sortedActions.map((action, i) => (
               <div key={i} className="dashboard-card p-4">
@@ -203,14 +188,14 @@ export default function MatrixView({ audit, findings = [], credit, matrixChannel
               </div>
             ))}
           </div>
-        )}
-        {credit ? (
-          <div className="dashboard-card mt-4 p-4">
-            <p className="text-sm text-foreground">Audit credit: {money(credit.amount_cents)}{credit.reviewed_date ? ` · reviewed ${fmtDate(credit.reviewed_date)}` : ''}</p>
-          </div>
-        ) : null}
-        <p className="mt-6 text-xs italic leading-relaxed text-muted-foreground">{CREDIT_LANGUAGE}</p>
-      </section>
+          {credit ? (
+            <div className="dashboard-card mt-4 p-4">
+              <p className="text-sm text-foreground">Audit credit: {money(credit.amount_cents)}{credit.reviewed_date ? ` · reviewed ${fmtDate(credit.reviewed_date)}` : ''}</p>
+            </div>
+          ) : null}
+          <p className="mt-6 text-xs italic leading-relaxed text-muted-foreground">{CREDIT_LANGUAGE}</p>
+        </section>
+      ) : null}
     </div>
   );
 }
