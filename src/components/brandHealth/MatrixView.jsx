@@ -16,12 +16,18 @@ import {
 /**
  * Full Marketing Matrix results view. Renders the five anchor sections the
  * page's AnchorNav expects (bh-strategy, bh-channel-map, bh-journey,
- * bh-opportunities, bh-actions). This replaces the previous file in full —
- * it does not assume any other component still exists for these sections.
+ * bh-opportunities, bh-actions). This is the ENTIRE file — paste all of it,
+ * end to end, do not paste only part of it.
  *
  * Props match exactly what AuditSection.jsx already passes:
  *   <MatrixView audit={audit} findings={findings} credit={credit}
  *               matrixChannels={matrixChannels} leverage={leverage} />
+ *
+ * FILE LENGTH CHECK: this file should end with the closing "}" that comes
+ * right after the CREDIT_LANGUAGE paragraph inside the Actions section,
+ * followed by the final closing "</div>" and "}" of the component. If your
+ * pasted copy ends earlier than that (e.g. right after ChannelEqualizer),
+ * the paste was cut short.
  */
 
 const SECTION_HEADING = 'mb-1 font-heading text-2xl text-foreground';
@@ -33,7 +39,7 @@ function labelFor(list, key) {
 }
 
 // ---------------------------------------------------------------------------
-// Channel Equalizer (Channel Map visual)
+// SECTION A: Channel Equalizer (Channel Map visual)
 // ---------------------------------------------------------------------------
 
 const DIRECTION_BY_PRIORITY = {
@@ -100,7 +106,7 @@ function ChannelEqualizer({ audit, matrixChannels }) {
 }
 
 // ---------------------------------------------------------------------------
-// Main component
+// SECTION B: Main component — THIS IS THE PART THAT WAS MISSING LAST TIME
 // ---------------------------------------------------------------------------
 
 export default function MatrixView({ audit, findings = [], credit, matrixChannels = [], leverage = [] }) {
@@ -108,7 +114,7 @@ export default function MatrixView({ audit, findings = [], credit, matrixChannel
 
   const journeyRows = seededJourneyRows(audit);
 
-  const sortedLeverage = [...leverage].sort((a, b) => {
+  const sortedLeverage = [...(leverage || [])].sort((a, b) => {
     const order = LEVERAGE_PRIORITIES.map((p) => p.key);
     return order.indexOf(a.priority) - order.indexOf(b.priority);
   });
