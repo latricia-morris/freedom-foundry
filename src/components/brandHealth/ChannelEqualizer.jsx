@@ -12,22 +12,19 @@ const TRACK_WIDTH_PX = 28;
 const CAP_HEIGHT_PX = 6;
 const CORNER_RADIUS = 4;
 
-function opportunityColor(score) {
-  if (score >= 65) return COPPER;
-  if (score >= 35) return EMBER;
-  return SLATE;
-}
-
-function opportunityLabel(score) {
-  if (score >= 65) return `Leverage · ${score}`;
-  if (score >= 35) return `Moderate · ${score}`;
-  return `Lower priority · ${score}`;
+function tierFor(rank, total) {
+  const pct = total <= 1 ? 0 : rank / (total - 1);
+  if (pct <= 0.34) return { label: 'Emphasize', color: COPPER };
+  if (pct <= 0.67) return { label: 'Maintain', color: EMBER };
+  return { label: 'Deprioritize', color: SLATE };
 }
 
 export default function ChannelEqualizer({ matrixChannels }) {
   // x = current maturity (0-1), y = target level from fit+impact (0-1),
-  // opportunity = 0-100 score precomputed server-side. All come straight
-  // from get-brand-health; no client-side recomputation.
+  // opportunity = 0-100 score precomputed server-side. Tiers are assigned by
+  // relative rank within this channel set, not fixed thresholds, so the
+  // emphasize/maintain/deprioritize split always stays meaningful even when
+  // scores cluster tightly.
   const bands = (matrixChannels || [])
     .map((ch) => {
       const level = Math.max(0, Math.min(1, Number(ch.x) || 0));
@@ -35,7 +32,8 @@ export default function ChannelEqualizer({ matrixChannels }) {
       const opportunity = Math.max(0, Math.min(100, Number(ch.opportunity) || 0));
       return { channel: ch, level, target, opportunity, gap: target - level };
     })
-    .sort((a, b) => b.opportunity - a.opportunity);
+    .sort((a, b) => b.opportunity - a.opportunity)
+    .map((band, idx, arr) => ({ ...band, tier: tierFor(idx, arr.length) }));
 
   return (
     <div className="w-full">
@@ -44,10 +42,10 @@ export default function ChannelEqualizer({ matrixChannels }) {
           const gradientId = `eq-grad-${(band.channel.channel_name || 'ch').replace(/[^a-zA-Z0-9]/g, '')}`;
           const capBottom = TRACK_HEIGHT_PX * band.level - CAP_HEIGHT_PX / 2;
           const tickBottom = TRACK_HEIGHT_PX * band.target;
-          const color = opportunityColor(band.opportunity);
+          const color = band.tier.color;
 
           return (
-            <div key={band.channel.channel_name} className="flex flex-col items-center" style={{ width: 96 }}>
+            <div key={band.channel.channel_name} className="flex flex-col items-center" style={{ width: 100 }}>
               <div
                 className="relative overflow-visible"
                 style={{ height: TRACK_HEIGHT_PX, width: TRACK_WIDTH_PX + 16 }}
@@ -108,10 +106,10 @@ export default function ChannelEqualizer({ matrixChannels }) {
                 Now {Math.round(band.level * 100)}% → Target {Math.round(band.target * 100)}%
               </span>
               <span
-                className="mt-1 px-2 py-0.5 text-[10px] font-semibold"
+                className="mt-1 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide"
                 style={{ borderRadius: 3, backgroundColor: `${color}22`, color }}
               >
-                {opportunityLabel(band.opportunity)}
+                {band.tier.label}
               </span>
             </div>
           );
@@ -127,7 +125,7 @@ export default function ChannelEqualizer({ matrixChannels }) {
           <span className="inline-block h-0.5 w-3.5" style={{ backgroundColor: EMBER }} />
           Target level
         </span>
-        <span>Badge = consultant-weighted opportunity score (0–100), sorted highest first</span>
+        <span>Tier = relative rank by opportunity score across your channels — emphasize the top third, deprioritize the bottom third</span>
       </div>
     </div>
   );
