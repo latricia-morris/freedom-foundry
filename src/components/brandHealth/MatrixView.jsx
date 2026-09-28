@@ -11,6 +11,7 @@ import ChannelEqualizer from './ChannelEqualizer';
 
 const H = 'mb-1 font-heading text-2xl text-foreground';
 const SUB = 'mb-6 max-w-2xl text-sm text-muted-foreground';
+const EMPTY = 'mb-6 text-sm text-muted-foreground/70';
 
 // Freedom Foundry palette
 const COPPER = '#E26E3C';
@@ -86,51 +87,57 @@ export default function MatrixView({ audit, findings = [], credit, matrixChannel
 
   return (
     <div className="space-y-12">
-      {hasStrategyContent ? (
-        <section id="bh-strategy">
-          <h3 className={H}>Your Marketing Strategy</h3>
-          {flatSummary ? (
-            <div className="dashboard-card mb-4 p-6">
-              <p className="whitespace-pre-line text-sm leading-relaxed text-foreground">{flatSummary}</p>
-            </div>
-          ) : null}
-          {hasScorecards ? (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              {MATRIX_SCORECARDS.map((card) => {
-                const d = scoresPublic[card.key];
-                if (!d || typeof d.score !== 'number') return null;
-                return (
-                  <div key={card.key} className="dashboard-card p-5">
-                    <div className="mb-1 flex flex-wrap items-baseline justify-between gap-2">
-                      <h4 className="font-heading text-lg text-foreground">{d.client_label || card.label}</h4>
-                      <span className="text-xs font-semibold text-foreground">{d.score}<span className="text-muted-foreground">/100</span></span>
+      {/* Every section keeps its id mounted so the tab/anchor nav always has
+          somewhere to scroll to, even when this section has no content yet. */}
+      <section id="bh-strategy">
+        <h3 className={H}>Your Marketing Strategy</h3>
+        {hasStrategyContent ? (
+          <>
+            {flatSummary ? (
+              <div className="dashboard-card mb-4 p-6">
+                <p className="whitespace-pre-line text-sm leading-relaxed text-foreground">{flatSummary}</p>
+              </div>
+            ) : null}
+            {hasScorecards ? (
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                {MATRIX_SCORECARDS.map((card) => {
+                  const d = scoresPublic[card.key];
+                  if (!d || typeof d.score !== 'number') return null;
+                  return (
+                    <div key={card.key} className="dashboard-card p-5">
+                      <div className="mb-1 flex flex-wrap items-baseline justify-between gap-2">
+                        <h4 className="font-heading text-lg text-foreground">{d.client_label || card.label}</h4>
+                        <span className="text-xs font-semibold text-foreground">{d.score}<span className="text-muted-foreground">/100</span></span>
+                      </div>
+                      <ScoreBar score={d.score} />
                     </div>
-                    <ScoreBar score={d.score} />
-                  </div>
-                );
-              })}
-            </div>
-          ) : null}
-        </section>
-      ) : null}
+                  );
+                })}
+              </div>
+            ) : null}
+          </>
+        ) : (
+          <p className={EMPTY}>Not published yet.</p>
+        )}
+      </section>
 
       {/* CHANNEL MAP — the equalizer IS the answer. No redundant list below it. */}
       <section id="bh-channel-map">
         <h3 className={H}>Your Channel Map</h3>
         <p className={SUB}>How hard to push each channel right now — fill is where it stands today, the line is where it should be.</p>
         {matrixChannels.length === 0 ? (
-          <div className="dashboard-card flex items-center justify-center p-10 text-center">
-            <p className="text-sm text-muted-foreground">Your consultant will publish the channel map here.</p>
-          </div>
+          <p className={EMPTY}>Not published yet.</p>
         ) : (
           <ChannelEqualizer matrixChannels={matrixChannels} />
         )}
       </section>
 
-      {journeyPublic.length > 0 ? (
-        <section id="bh-journey">
-          <h3 className={H}>Your Customer Journey</h3>
-          <p className={SUB}>Whether ideal buyers have a clear, credible path from first awareness through retention and referral.</p>
+      <section id="bh-journey">
+        <h3 className={H}>Your Customer Journey</h3>
+        <p className={SUB}>Whether ideal buyers have a clear, credible path from first awareness through retention and referral.</p>
+        {journeyPublic.length === 0 ? (
+          <p className={EMPTY}>Not published yet.</p>
+        ) : (
           <div className="space-y-3">
             {JOURNEY_STAGES.map((stage) => {
               const row = journeyPublic.find((r) => r.stage === stage.key);
@@ -152,13 +159,15 @@ export default function MatrixView({ audit, findings = [], credit, matrixChannel
               );
             })}
           </div>
-        </section>
-      ) : null}
+        )}
+      </section>
 
-      {sortedLeverage.length > 0 ? (
-        <section id="bh-opportunities">
-          <h3 className={H}>Your Leverage Opportunities</h3>
-          <p className={SUB}>Specific, high-leverage moves your consultant identified beyond standard channel execution.</p>
+      <section id="bh-opportunities">
+        <h3 className={H}>Your Leverage Opportunities</h3>
+        <p className={SUB}>Specific, high-leverage moves your consultant identified beyond standard channel execution.</p>
+        {sortedLeverage.length === 0 ? (
+          <p className={EMPTY}>Not published yet.</p>
+        ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {sortedLeverage.map((item) => (
               <div key={item.id || item.title} className="dashboard-card p-4">
@@ -171,12 +180,14 @@ export default function MatrixView({ audit, findings = [], credit, matrixChannel
               </div>
             ))}
           </div>
-        </section>
-      ) : null}
+        )}
+      </section>
 
-      {sortedActions.length > 0 ? (
-        <section id="bh-actions">
-          <h3 className={H}>Your Action Plan</h3>
+      <section id="bh-actions">
+        <h3 className={H}>Your Action Plan</h3>
+        {sortedActions.length === 0 ? (
+          <p className={EMPTY}>Not published yet.</p>
+        ) : (
           <div className="space-y-3">
             {sortedActions.map((action, i) => (
               <div key={i} className="dashboard-card p-4">
@@ -188,14 +199,14 @@ export default function MatrixView({ audit, findings = [], credit, matrixChannel
               </div>
             ))}
           </div>
-          {credit ? (
-            <div className="dashboard-card mt-4 p-4">
-              <p className="text-sm text-foreground">Audit credit: {money(credit.amount_cents)}{credit.reviewed_date ? ` · reviewed ${fmtDate(credit.reviewed_date)}` : ''}</p>
-            </div>
-          ) : null}
-          <p className="mt-6 text-xs italic leading-relaxed text-muted-foreground">{CREDIT_LANGUAGE}</p>
-        </section>
-      ) : null}
+        )}
+        {credit ? (
+          <div className="dashboard-card mt-4 p-4">
+            <p className="text-sm text-foreground">Audit credit: {money(credit.amount_cents)}{credit.reviewed_date ? ` · reviewed ${fmtDate(credit.reviewed_date)}` : ''}</p>
+          </div>
+        ) : null}
+        <p className="mt-6 text-xs italic leading-relaxed text-muted-foreground">{CREDIT_LANGUAGE}</p>
+      </section>
     </div>
   );
 }
