@@ -290,6 +290,9 @@ export const LEVERAGE_PRIORITIES = [
   { key: 'not_applicable', label: 'Not Applicable' },
 ];
 
+/** Action-plan priority order, most urgent first. */
+export const ACTION_PRIORITIES = ['critical', 'high', 'medium', 'opportunity'];
+
 export const QUADRANTS = [
   { key: 'priority_build', label: 'Priority Build', hint: 'High strategic fit · low execution strength', pos: 'top-left' },
   { key: 'scale_with_intention', label: 'Scale With Intention', hint: 'High strategic fit · strong execution strength', pos: 'top-right' },
