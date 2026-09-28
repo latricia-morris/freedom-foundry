@@ -13,6 +13,14 @@ const TRACK_WIDTH_PX = 28;
 const CAP_HEIGHT_PX = 6;
 const CORNER_RADIUS = 4;
 
+function hasScore(ch) {
+  return (
+    Number.isFinite(Number(ch.maturity)) ||
+    Number.isFinite(Number(ch.strategic_fit)) ||
+    Number.isFinite(Number(ch.buyer_impact))
+  );
+}
+
 function targetLevel(ch) {
   const fit = Number(ch.strategic_fit);
   const impact = Number(ch.buyer_impact);
@@ -29,14 +37,15 @@ function currentLevel(ch) {
 export default function ChannelEqualizer({ audit, matrixChannels }) {
   const bands = matrixChannels
     .map((ch) => {
+      const scored = hasScore(ch);
       const level = currentLevel(ch);
       const target = targetLevel(ch);
       const score = opportunityScore(ch, audit);
       const gap = target - level;
       const gapPct = Math.round(gap * 100);
-      return { channel: ch, level, target, score, gap, gapPct };
+      return { channel: ch, scored, level, target, score, gap, gapPct };
     })
-    .sort((a, b) => b.gap - a.gap);
+    .sort((a, b) => (b.scored - a.scored) || (b.gap - a.gap));
 
   return (
     <div className="w-full">
@@ -51,7 +60,11 @@ export default function ChannelEqualizer({ audit, matrixChannels }) {
               <div
                 className="relative overflow-visible"
                 style={{ height: TRACK_HEIGHT_PX, width: TRACK_WIDTH_PX + 16 }}
-                title={`${band.channel.channel_name} — now ${Math.round(band.level * 100)}%, target ${Math.round(band.target * 100)}%`}
+                title={
+                  band.scored
+                    ? `${band.channel.channel_name} — now ${Math.round(band.level * 100)}%, target ${Math.round(band.target * 100)}%`
+                    : `${band.channel.channel_name} — not yet scored`
+                }
               >
                 {/* track */}
                 <div
@@ -59,68 +72,90 @@ export default function ChannelEqualizer({ audit, matrixChannels }) {
                   style={{ width: TRACK_WIDTH_PX, height: TRACK_HEIGHT_PX, left: 8, borderRadius: CORNER_RADIUS }}
                 />
 
-                {/* gradient fill */}
-                <svg width={TRACK_WIDTH_PX} height={TRACK_HEIGHT_PX} className="absolute bottom-0" style={{ left: 8 }}>
-                  <defs>
-                    <linearGradient id={gradientId} x1="0" y1="1" x2="0" y2="0">
-                      <stop offset="0%" stopColor={SLATE} stopOpacity="0.7" />
-                      <stop offset="45%" stopColor={BRASS} />
-                      <stop offset="100%" stopColor={COPPER} />
-                    </linearGradient>
-                  </defs>
-                  <rect
-                    x="0"
-                    y={TRACK_HEIGHT_PX * (1 - band.level)}
-                    width={TRACK_WIDTH_PX}
-                    height={TRACK_HEIGHT_PX * band.level}
-                    rx={CORNER_RADIUS}
-                    fill={`url(#${gradientId})`}
-                  />
-                </svg>
+                {band.scored ? (
+                  <>
+                    <svg width={TRACK_WIDTH_PX} height={TRACK_HEIGHT_PX} className="absolute bottom-0" style={{ left: 8 }}>
+                      <defs>
+                        <linearGradient id={gradientId} x1="0" y1="1" x2="0" y2="0">
+                          <stop offset="0%" stopColor={SLATE} stopOpacity="0.7" />
+                          <stop offset="45%" stopColor={BRASS} />
+                          <stop offset="100%" stopColor={COPPER} />
+                        </linearGradient>
+                      </defs>
+                      <rect
+                        x="0"
+                        y={TRACK_HEIGHT_PX * (1 - band.level)}
+                        width={TRACK_WIDTH_PX}
+                        height={TRACK_HEIGHT_PX * band.level}
+                        rx={CORNER_RADIUS}
+                        fill={`url(#${gradientId})`}
+                      />
+                    </svg>
 
-                {/* target tick — small squared-off notch off the right edge of the track */}
-                <div
-                  className="absolute"
-                  style={{
-                    height: 2,
-                    width: 14,
-                    left: TRACK_WIDTH_PX + 10,
-                    bottom: tickBottom - 1,
-                    backgroundColor: EMBER,
-                  }}
-                />
+                    <div
+                      className="absolute"
+                      style={{
+                        height: 2,
+                        width: 14,
+                        left: TRACK_WIDTH_PX + 10,
+                        bottom: tickBottom - 1,
+                        backgroundColor: EMBER,
+                      }}
+                    />
 
-                {/* fader cap — squared bar, current level */}
-                <div
-                  className="absolute"
-                  style={{
-                    height: CAP_HEIGHT_PX,
-                    width: TRACK_WIDTH_PX + 10,
-                    left: 3,
-                    bottom: Math.max(0, capBottom),
-                    backgroundColor: CLOUDBONE,
-                    borderRadius: 2,
-                    boxShadow: '0 1px 4px rgba(0,0,0,0.4)',
-                  }}
-                />
+                    <div
+                      className="absolute"
+                      style={{
+                        height: CAP_HEIGHT_PX,
+                        width: TRACK_WIDTH_PX + 10,
+                        left: 3,
+                        bottom: Math.max(0, capBottom),
+                        backgroundColor: CLOUDBONE,
+                        borderRadius: 2,
+                        boxShadow: '0 1px 4px rgba(0,0,0,0.4)',
+                      }}
+                    />
+                  </>
+                ) : (
+                  <div
+                    className="absolute inset-0 flex items-center justify-center"
+                    style={{ left: 8, width: TRACK_WIDTH_PX }}
+                  >
+                    <span className="text-[9px] leading-tight text-muted-foreground/50" style={{ writingMode: 'vertical-rl' }}>
+                      pending
+                    </span>
+                  </div>
+                )}
               </div>
 
               <span className="mt-3 text-center text-[11px] leading-tight text-foreground font-medium">
                 {band.channel.channel_name}
               </span>
-              <span className="mt-1 text-[10px] text-muted-foreground">
-                Now {Math.round(band.level * 100)}% → Target {Math.round(band.target * 100)}%
-              </span>
-              <span
-                className="mt-1 px-2 py-0.5 text-[10px] font-semibold"
-                style={{
-                  borderRadius: 3,
-                  backgroundColor: band.gapPct > 15 ? `${COPPER}26` : 'rgba(255,255,255,0.06)',
-                  color: band.gapPct > 15 ? COPPER : 'var(--muted-foreground)',
-                }}
-              >
-                {band.gapPct > 15 ? `Leverage +${band.gapPct}%` : band.gapPct < -15 ? 'Pull back' : 'On target'}
-              </span>
+
+              {band.scored ? (
+                <>
+                  <span className="mt-1 text-[10px] text-muted-foreground">
+                    Now {Math.round(band.level * 100)}% → Target {Math.round(band.target * 100)}%
+                  </span>
+                  <span
+                    className="mt-1 px-2 py-0.5 text-[10px] font-semibold"
+                    style={{
+                      borderRadius: 3,
+                      backgroundColor: band.gapPct > 15 ? `${COPPER}26` : 'rgba(255,255,255,0.06)',
+                      color: band.gapPct > 15 ? COPPER : 'var(--muted-foreground)',
+                    }}
+                  >
+                    {band.gapPct > 15 ? `Leverage +${band.gapPct}%` : band.gapPct < -15 ? 'Pull back' : 'On target'}
+                  </span>
+                </>
+              ) : (
+                <span
+                  className="mt-1 px-2 py-0.5 text-[10px] font-semibold text-muted-foreground"
+                  style={{ borderRadius: 3, backgroundColor: 'rgba(255,255,255,0.06)' }}
+                >
+                  Not yet scored
+                </span>
+              )}
             </div>
           );
         })}
@@ -135,7 +170,7 @@ export default function ChannelEqualizer({ audit, matrixChannels }) {
           <span className="inline-block h-0.5 w-3.5" style={{ backgroundColor: EMBER }} />
           Target level
         </span>
-        <span>Badge = how much to lean in or pull back, in plain terms</span>
+        <span>"Not yet scored" means your consultant hasn't entered maturity/fit/impact for that channel yet</span>
       </div>
     </div>
   );
