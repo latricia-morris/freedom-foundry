@@ -1,6 +1,8 @@
 import React from 'react';
 import { CREDIT_LANGUAGE, fmtDate, money } from '@/lib/brandHealth';
 import {
+  PRIORITY_COLORS,
+  STRATEGIC_ROLES,
   MATRIX_SCORECARDS,
   JOURNEY_STAGES,
   JOURNEY_STATUS_LABELS,
@@ -48,11 +50,13 @@ export default function MatrixView({ audit, findings = [], credit, matrixChannel
     <div className="space-y-12">
       <section id="bh-strategy">
         <h3 className={H}>Your Marketing Strategy</h3>
+
         {flatSummary ? (
           <div className="dashboard-card mb-4 p-6">
             <p className="whitespace-pre-line text-sm leading-relaxed text-foreground">{flatSummary}</p>
           </div>
         ) : null}
+
         {payload ? (
           <div className="space-y-4">
             {MATRIX_SCORECARDS.map((card) => {
@@ -66,11 +70,17 @@ export default function MatrixView({ audit, findings = [], credit, matrixChannel
                       <span className="text-xs uppercase tracking-widest text-muted-foreground">{d.score}/100</span>
                     ) : null}
                   </div>
-                  {d.summary ? <p className="mb-2 text-sm leading-relaxed text-foreground">{d.summary}</p> : null}
-                  {d.interpretation ? <p className="mb-2 text-xs leading-relaxed text-muted-foreground">{d.interpretation}</p> : null}
+                  {d.summary ? (
+                    <p className="mb-2 text-sm leading-relaxed text-foreground">{d.summary}</p>
+                  ) : null}
+                  {d.interpretation ? (
+                    <p className="mb-2 text-xs leading-relaxed text-muted-foreground">{d.interpretation}</p>
+                  ) : null}
                   {Array.isArray(d.priorities) && d.priorities.length > 0 ? (
                     <ul className="mt-2 list-disc space-y-1 pl-4 text-xs text-muted-foreground">
-                      {d.priorities.slice(0, 3).map((p, idx) => <li key={idx}>{p}</li>)}
+                      {d.priorities.slice(0, 3).map((p, idx) => (
+                        <li key={idx}>{p}</li>
+                      ))}
                     </ul>
                   ) : null}
                 </div>
@@ -79,27 +89,52 @@ export default function MatrixView({ audit, findings = [], credit, matrixChannel
           </div>
         ) : !flatSummary ? (
           <div className="dashboard-card flex items-center justify-center p-10 text-center">
-            <p className="text-sm text-muted-foreground">Your consultant will walk you through your marketing strategy in detail.</p>
+            <p className="text-sm text-muted-foreground">
+              Your consultant will walk you through your marketing strategy in detail.
+            </p>
           </div>
         ) : null}
       </section>
 
-      {/* CHANNEL MAP — the equalizer IS the answer. No redundant list below it. */}
       <section id="bh-channel-map">
         <h3 className={H}>Your Channel Map</h3>
-        <p className={SUB}>How hard to push each channel right now — fill is where it stands today, the line is where it should be.</p>
+        <p className={SUB}>Each channel your consultant reviewed: current level (fill) vs. target level (line), based on strategic fit and buyer impact.</p>
         {matrixChannels.length === 0 ? (
           <div className="dashboard-card flex items-center justify-center p-10 text-center">
             <p className="text-sm text-muted-foreground">Your consultant will publish the channel map here.</p>
           </div>
         ) : (
-          <ChannelEqualizer audit={audit} matrixChannels={matrixChannels} />
+          <>
+            <ChannelEqualizer audit={audit} matrixChannels={matrixChannels} />
+            <h4 className="mt-8 mb-4 font-heading text-xl text-foreground">Your Channels</h4>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              {matrixChannels.slice().sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0)).map((ch) => {
+                const color = PRIORITY_COLORS[ch.consultant_priority] || PRIORITY_COLORS.not_applicable;
+                return (
+                  <div key={ch.id || ch.channel_name} className="dashboard-card p-4">
+                    <div className="mb-1 flex items-start gap-2">
+                      <span className="mt-1 h-2 w-2 flex-shrink-0 rounded-full" style={{ backgroundColor: color }} />
+                      <div>
+                        <p className="text-sm font-medium text-foreground">{ch.channel_name}</p>
+                        <p className="text-[11px] uppercase tracking-widest text-muted-foreground">
+                          {labelFor(STRATEGIC_ROLES, ch.strategic_role)}
+                          {ch.journey_stage ? ` · ${ch.journey_stage.replace(/_/g, ' ')}` : ''}
+                        </p>
+                      </div>
+                    </div>
+                    {ch.description ? <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{ch.description}</p> : null}
+                  </div>
+                );
+              })}
+            </div>
+          </>
         )}
       </section>
 
       <section id="bh-journey">
         <h3 className={H}>Your Customer Journey</h3>
         <p className={SUB}>Whether ideal buyers have a clear, credible path from first awareness through retention and referral.</p>
+
         {payload?.journey_coverage?.summary ? (
           <div className="dashboard-card mb-4 p-5">
             <p className="text-sm leading-relaxed text-foreground">{payload.journey_coverage.summary}</p>
@@ -108,6 +143,7 @@ export default function MatrixView({ audit, findings = [], credit, matrixChannel
             ) : null}
           </div>
         ) : null}
+
         <div className="space-y-3">
           {JOURNEY_STAGES.map((stage) => {
             const row = journeyRows.find((r) => r.stage === stage.key) || {};
@@ -152,6 +188,7 @@ export default function MatrixView({ audit, findings = [], credit, matrixChannel
 
       <section id="bh-actions">
         <h3 className={H}>Your Action Plan</h3>
+
         {payload ? (
           <div className="mb-4 space-y-3">
             {MATRIX_SCORECARDS.map((card) => {
@@ -168,6 +205,7 @@ export default function MatrixView({ audit, findings = [], credit, matrixChannel
             })}
           </div>
         ) : null}
+
         {sortedActions.length === 0 && !payload ? (
           <div className="dashboard-card flex items-center justify-center p-10 text-center">
             <p className="text-sm text-muted-foreground">Your action plan will appear here once it is approved.</p>
@@ -185,6 +223,7 @@ export default function MatrixView({ audit, findings = [], credit, matrixChannel
             ))}
           </div>
         )}
+
         {credit ? (
           <div className="dashboard-card mt-4 p-4">
             <p className="text-sm text-foreground">Audit credit: {money(credit.amount_cents)}{credit.reviewed_date ? ` · reviewed ${fmtDate(credit.reviewed_date)}` : ''}</p>
