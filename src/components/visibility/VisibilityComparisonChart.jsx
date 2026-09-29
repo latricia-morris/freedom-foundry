@@ -1,6 +1,6 @@
 import React from 'react';
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { SERIES_COLORS, VISIBILITY_CATEGORIES, reportSeries } from '@/lib/visibility';
+import { isValidScore, SERIES_COLORS, VISIBILITY_CATEGORIES, reportSeries } from '@/lib/visibility';
 
 /**
  * Model comparison chart: score scale on the left axis, scored dimensions
@@ -13,7 +13,7 @@ export default function VisibilityComparisonChart({ reports, height = 340 }) {
     const row = { dimension: c.short };
     series.forEach((s) => {
       const raw = s.report?.category_scores?.[c.key];
-      row[s.key] = typeof raw === 'number' ? raw : null;
+      row[s.key] = isValidScore(raw, 0, c.max) ? raw : null;
     });
     return row;
   });
@@ -56,7 +56,6 @@ export default function VisibilityComparisonChart({ reports, height = 340 }) {
                 stroke={color}
                 strokeWidth={2}
                 strokeDasharray={s.isBaseline ? '6 4' : undefined}
-                connectNulls
                 dot={{ r: 3.5, strokeWidth: 0, fill: color }}
                 activeDot={{ r: 5 }}
               />
