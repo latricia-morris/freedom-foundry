@@ -9,7 +9,6 @@ import {
   parseCompetitors,
   parseLines,
   parseSocialChannels,
-  sumScores,
   toLineText,
 } from '@/lib/visibility';
 
@@ -82,9 +81,12 @@ export default function VisibilityIntake({ client, onSaved, onCancel }) {
       if (!draft) throw new Error(res.data?.error || 'Extraction returned nothing.');
       setScores(Object.fromEntries(VISIBILITY_CATEGORIES.map((c) => [c.key, draft.category_scores?.[c.key] ?? ''])));
       setComposite(
-        typeof draft.composite_score === 'number'
+        typeof draft.composite_score === 'number' &&
+        Number.isFinite(draft.composite_score) &&
+        draft.composite_score >= 0 &&
+        draft.composite_score <= 100
           ? draft.composite_score
-          : sumScores(draft.category_scores) ?? ''
+          : ''
       );
       setFindingsText(toLineText(draft.key_findings));
       setFixesText(toLineText(draft.recommended_fixes));
