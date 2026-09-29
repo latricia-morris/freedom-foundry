@@ -14,17 +14,17 @@ export default function PortfolioPage() {
 
   useEffect(() => {
     let active = true;
-    base44.functions.invoke('portfolio-public', { action: 'list' })
-      .then((response) => { if (active) setItems(response?.data?.items || []); })
-      .catch(() => { if (active) setFailed(true); });
-    return () => { active = false; };
+    base44.functions.invoke('portfolio-public', { action: 'list' }).
+    then((response) => {if (active) setItems(response?.data?.items || []);}).
+    catch(() => {if (active) setFailed(true);});
+    return () => {active = false;};
   }, []);
 
   const filtered = useMemo(() => {
     if (!items) return [];
-    return items
-      .filter((item) => service === 'All Work' || (item.work_types || []).includes(service))
-      .sort((a, b) => (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0) || (a.order || 0) - (b.order || 0));
+    return items.
+    filter((item) => service === 'All Work' || (item.work_types || []).includes(service)).
+    sort((a, b) => (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0) || (a.order || 0) - (b.order || 0));
   }, [items, service]);
 
   return (
@@ -53,41 +53,41 @@ export default function PortfolioPage() {
         <h1 className="mt-6 font-heading text-5xl font-light leading-[0.98] text-foreground sm:text-7xl">
           Selected <span className="molten-text italic">work.</span>
         </h1>
-        <p className="mt-6 max-w-2xl text-base leading-8 text-muted-foreground">
-          A curated case-study library from The Brand Revivalist® — brand strategy, identity, and digital work,
-          shown with the thinking that shaped it.
+        <p className="mt-6 max-w-2xl text-base leading-8 text-muted-foreground">Please pardon t
+
+
         </p>
       </section>
 
-      {items === null && !failed && (
-        <div className="flex justify-center py-20">
+      {items === null && !failed &&
+      <div className="flex justify-center py-20">
           <LoaderCircle className="h-8 w-8 animate-spin text-primary" />
         </div>
-      )}
+      }
 
-      {items !== null && items.length > 0 && (
-        <>
+      {items !== null && items.length > 0 &&
+      <>
           <div className="sticky top-0 z-20 border-y border-border bg-[#100e0c]/90 backdrop-blur">
             <div className="mx-auto max-w-6xl px-5 py-3 sm:px-8">
               <div className="flex flex-wrap gap-2" role="group" aria-label="Service filters">
                 {['All Work', ...WORK_TYPES].map((label) => {
-                  const active = service === label;
-                  return (
-                    <button
-                      key={label}
-                      type="button"
-                      onClick={() => setService(label)}
-                      aria-pressed={active}
-                      className={`rounded-sm px-3 py-1.5 text-xs tracking-wide transition-colors ${
-                        active
-                          ? 'btn-forge font-semibold'
-                          : 'border border-border text-muted-foreground hover:border-primary/40 hover:text-foreground'
-                      }`}
-                    >
+                const active = service === label;
+                return (
+                  <button
+                    key={label}
+                    type="button"
+                    onClick={() => setService(label)}
+                    aria-pressed={active}
+                    className={`rounded-sm px-3 py-1.5 text-xs tracking-wide transition-colors ${
+                    active ?
+                    'btn-forge font-semibold' :
+                    'border border-border text-muted-foreground hover:border-primary/40 hover:text-foreground'}`
+                    }>
+                    
                       {label}
-                    </button>
-                  );
-                })}
+                    </button>);
+
+              })}
               </div>
               <div className="mt-3 flex flex-wrap items-center gap-3">
                 <span className="text-xs text-muted-foreground/70">
@@ -99,21 +99,21 @@ export default function PortfolioPage() {
           </div>
 
           <section className="mx-auto max-w-6xl px-5 py-12 sm:px-8">
-            {filtered.length === 0 ? (
-              <p className="py-16 text-center text-sm text-muted-foreground">
+            {filtered.length === 0 ?
+          <p className="py-16 text-center text-sm text-muted-foreground">
                 No projects match that selection yet.
-              </p>
-            ) : (
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              </p> :
+
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {filtered.map((project) => <PortfolioCard key={project.id} project={project} />)}
               </div>
-            )}
+          }
           </section>
         </>
-      )}
+      }
 
-      {items !== null && items.length === 0 && (
-        <section className="mx-auto max-w-6xl px-5 pb-20 sm:px-8">
+      {items !== null && items.length === 0 &&
+      <section className="mx-auto max-w-6xl px-5 pb-20 sm:px-8">
           <div className="dashboard-card ember-glow relative overflow-hidden p-10 sm:p-14">
             <div className="absolute -right-16 -bottom-16 h-64 w-64 ember-glow-bg" />
             <div className="relative z-10 max-w-2xl">
@@ -126,21 +126,21 @@ export default function PortfolioPage() {
                 get a feel for the kind of work the Foundry is built to hold.
               </p>
               <Link
-                to="/services"
-                className="btn-forge mt-8 inline-flex items-center gap-3 rounded-md px-5 py-3.5 text-sm font-semibold"
-              >
+              to="/services"
+              className="btn-forge mt-8 inline-flex items-center gap-3 rounded-md px-5 py-3.5 text-sm font-semibold">
+              
                 Learn about services <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
           </div>
         </section>
-      )}
+      }
 
-      {failed && (
-        <p className="py-20 text-center text-sm text-muted-foreground">
+      {failed &&
+      <p className="py-20 text-center text-sm text-muted-foreground">
           The portfolio could not be loaded. Please refresh in a moment.
         </p>
-      )}
+      }
 
       <footer className="mt-10 border-t border-border">
         <div className="mx-auto flex max-w-6xl flex-wrap justify-between gap-4 px-5 py-9 text-sm text-muted-foreground sm:px-8">
@@ -152,6 +152,6 @@ export default function PortfolioPage() {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>);
+
 }
