@@ -53,17 +53,22 @@ export default function PortfolioPage() {
         <h1 className="mt-6 font-heading text-5xl font-light leading-[0.98] text-foreground sm:text-7xl">
           Selected <span className="molten-text italic">work.</span>
         </h1>
-<p className="mt-6 max-w-2xl text-base leading-8 text-muted-foreground">
-  We’re currently migrating our portfolio to this platform. In the meantime, you can explore selected work on our agency site:{" "}
+<div className="mt-6 max-w-2xl">
+  <p className="text-base leading-8 text-muted-foreground">
+    We’re currently migrating our portfolio to this platform. In the meantime,
+    you can explore selected work on our agency site.
+  </p>
+
   <a
     href="https://oxandiron.co/our-work/"
     target="_blank"
     rel="noopener noreferrer"
-    className="font-semibold text-[#C89B3C] underline decoration-2 underline-offset-4 hover:text-[#A7791C] hover:decoration-[#A7791C]"
+    className="mt-5 inline-flex items-center justify-center rounded-full bg-gradient-to-r from-primary to-accent px-6 py-3 text-sm font-semibold text-primary-foreground shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
   >
-    View our work at Ox &amp; Iron →
+    View Our Work
+    <span className="ml-2" aria-hidden="true">→</span>
   </a>
-</p>
+</div>
       </section>
 
       {items === null && !failed &&
