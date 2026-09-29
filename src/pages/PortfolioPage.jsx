@@ -53,7 +53,7 @@ export default function PortfolioPage() {
         <h1 className="mt-6 font-heading text-5xl font-light leading-[0.98] text-foreground sm:text-7xl">
           Selected <span className="molten-text italic">work.</span>
         </h1>
-        <p className="mt-6 max-w-2xl text-base leading-8 text-muted-foreground">Please pardon t
+        <p className="mt-6 max-w-2xl text-base leading-8 text-muted-foreground">Please pardon. 
 
 
         </p>
