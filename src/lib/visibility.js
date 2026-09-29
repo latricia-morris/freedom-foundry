@@ -57,23 +57,26 @@ export const VISIBILITY_CATEGORIES = [
 // On-brand chart series: oxblood, ember orange, champagne gold, cloudbone gray.
 export const SERIES_COLORS = ['#660000', '#d9622c', '#f0d9b5', '#8f9aa6'];
 
+export function isValidScore(value, min, max) {
+  return (
+    typeof value === 'number' &&
+    Number.isFinite(value) &&
+    value >= min &&
+    value <= max
+  );
+}
+
 export function categoryRows(report) {
   const scores = report?.category_scores || {};
   return VISIBILITY_CATEGORIES.map((c) => {
     const raw = scores[c.key];
-    const score = typeof raw === 'number' ? raw : null;
+    const score = isValidScore(raw, 0, c.max) ? raw : null;
     return { ...c, score, pct: score === null ? null : Math.round((score / c.max) * 100) };
   });
 }
 
-export function sumScores(scores) {
-  const values = VISIBILITY_CATEGORIES.map((c) => scores?.[c.key]).filter((v) => typeof v === 'number');
-  if (!values.length) return null;
-  return values.reduce((a, b) => a + b, 0);
-}
-
 export function scoreLabel(score) {
-  if (typeof score !== 'number') return 'Pending';
+  if (!isValidScore(score, 0, 100)) return 'Pending';
   if (score >= 80) return 'Strong';
   if (score >= 60) return 'Fair';
   return 'Developing';
