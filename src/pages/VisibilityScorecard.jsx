@@ -11,7 +11,7 @@ import VisibilityBusinessSnapshot from '@/components/visibility/VisibilityBusine
 import VisibilityAllocation from '@/components/visibility/VisibilityAllocation';
 import LockedActionPlan from '@/components/visibility/LockedActionPlan';
 import AuditSections from '@/components/visibility/AuditSections';
-import { clientSafeSections, formatDate, scoreLabel } from '@/lib/visibility';
+import { clientSafeSections, formatDate, isValidScore, scoreLabel } from '@/lib/visibility';
 
 const NAV = [
   { id: 'score-pattern', label: 'Score Pattern' },
@@ -80,6 +80,7 @@ export default function VisibilityScorecard() {
 
   const latest = reports[0];
   const isAdmin = !!data.is_admin;
+  const compositeReport = reports.find((r) => isValidScore(r?.composite_score, 0, 100)) || null;
 
   const handleSaveChannels = async (channels) => {
     if (!latest?.id) return;
@@ -90,7 +91,7 @@ export default function VisibilityScorecard() {
     }));
   };
 
-  const composite = typeof latest.composite_score === 'number' ? latest.composite_score : null;
+  const composite = compositeReport ? compositeReport.composite_score : null;
   const suggestions = latest.recommended_fixes || [];
   const hasSnapshot = (latest.social_channels || []).length > 0 || Object.values(latest.business_snapshot || {}).some(Boolean);
   const allocation = latest.marketing_allocation || [];
@@ -110,8 +111,10 @@ export default function VisibilityScorecard() {
       <HeroScore
         label="Composite Score"
         value={composite}
-        pill={composite !== null ? scoreLabel(composite) : 'Scores being finalized'}
-        subline="How discoverable and credible your brand appears to AI search engines &amp; the public right now."
+        pill={composite !== null ? scoreLabel(composite) : 'Evidence incomplete'}
+        subline={composite !== null
+          ? "How discoverable and credible your brand appears to AI search engines &amp; the public right now."
+          : "Connect measurement sources to calculate a defensible score."}
       />
 
       <AnchorNav items={NAV} />
