@@ -1,6 +1,6 @@
 import React from 'react';
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ResponsiveContainer } from 'recharts';
-import { SERIES_COLORS, VISIBILITY_CATEGORIES } from '@/lib/visibility';
+import { isValidScore, SERIES_COLORS, VISIBILITY_CATEGORIES } from '@/lib/visibility';
 
 /**
  * Radar chart for visibility category scores.
@@ -11,7 +11,8 @@ export default function VisibilityRadarChart({ series, height = 320 }) {
   const data = VISIBILITY_CATEGORIES.map((c) => {
     const row = { category: c.short };
     safeSeries.forEach((s) => {
-      row[s.name] = s.report?.category_scores?.[c.key] ?? 0;
+      const raw = s.report?.category_scores?.[c.key];
+      row[s.name] = isValidScore(raw, 0, c.max) ? raw : null;
     });
     return row;
   });
