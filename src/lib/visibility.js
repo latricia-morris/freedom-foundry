@@ -80,19 +80,16 @@ export function scoreLabel(score) {
 }
 
 /**
- * Stable "Model N" display labels that replace provider names. Sources are
- * numbered by their earliest report date, so the numbering never shuffles.
+ * Display labels for audit sources. Each report carries the name of the AI
+ * model that produced it (Claude, Gemini, ChatGPT), and that name is what the
+ * client sees — no anonymized "Model N" placeholders.
  */
 export function sourceModelLabels(reports) {
-  const earliest = new Map();
+  const labels = {};
   for (const r of reports || []) {
     const key = r.source_model || 'Unlabeled source';
-    const t = r.report_date ? new Date(r.report_date).getTime() : Number.MAX_SAFE_INTEGER;
-    if (!earliest.has(key) || t < earliest.get(key)) earliest.set(key, t);
+    labels[key] = key;
   }
-  const ordered = [...earliest.entries()].sort((a, b) => a[1] - b[1]).map(([key]) => key);
-  const labels = {};
-  ordered.forEach((key, i) => { labels[key] = `Model ${i + 1}`; });
   return labels;
 }
 

@@ -126,7 +126,7 @@ export default function BrandHealthHome() {
       <div className="grid gap-6 lg:grid-cols-3">
         <PillarCard
           to="/brand-portal/brand-health/visibility"
-          title="Visibility & Credibility"
+          title="AI Visibility & Credibility"
           scores={[{ label: 'Composite Score', value: visScore }]}
           status={visReport ? `Snapshot ${formatDate(visReport.report_date)}` : 'Not Started'}
           statusTone={visReport ? 'complete' : 'muted'}
@@ -135,7 +135,7 @@ export default function BrandHealthHome() {
         />
         <PillarCard
           to="/brand-portal/brand-health/website"
-          title="Website Discoverability & Conversion Readiness"
+          title="Digital Clarity & Conversion Readiness"
           scores={[
             { label: 'Discoverability', value: wdScore },
             { label: 'Conversion', value: crScore },

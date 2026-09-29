@@ -13,9 +13,9 @@ const NAV = [
 ];
 
 /**
- * Website Discoverability & Conversion Readiness subpage: both
- * consultant-led reviews in one place, with intake, status, and published
- * reports handled per component.
+ * Digital Clarity & Conversion Readiness subpage: both consultant-led
+ * reviews in one place, with intake, status, and published reports handled
+ * per component.
  */
 export default function BrandHealthWebsite() {
   const { data, error, reload } = useBrandHealth();
@@ -64,7 +64,7 @@ export default function BrandHealthWebsite() {
       </Link>
       <div className="mb-8">
         <h1 className="font-heading text-4xl font-light text-foreground sm:text-5xl">
-          Website Discoverability <span className="text-muted-foreground">&amp;</span> <span className="molten-text italic">Conversion Readiness</span>
+          Digital Clarity <span className="text-muted-foreground">&amp;</span> <span className="molten-text italic">Conversion Readiness</span>
         </h1>
         <p className="mt-2 max-w-2xl leading-relaxed text-muted-foreground">
           Two consultant-led reviews of your website: whether the right people can find you, and whether
