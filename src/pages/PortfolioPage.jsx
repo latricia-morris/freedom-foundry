@@ -63,7 +63,7 @@ export default function PortfolioPage() {
     href="https://oxandiron.co/our-work/"
     target="_blank"
     rel="noopener noreferrer"
-    className="mt-5 inline-flex items-center justify-center rounded-full bg-gradient-to-r from-primary to-accent px-6 py-3 text-sm font-semibold text-primary-foreground shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+    className="mt-5 inline-flex items-center justify-center rounded-md bg-gradient-to-r from-orange-500 to-red-600 px-6 py-3 text-sm font-semibold text-white shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:from-orange-600 hover:to-red-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
   >
     View Our Work
     <span className="ml-2" aria-hidden="true">→</span>
