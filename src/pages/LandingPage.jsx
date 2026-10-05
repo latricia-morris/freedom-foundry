@@ -32,16 +32,16 @@ export default function FreedomFoundryLoginPage() {
 
       <div
         aria-hidden="true"
-        className="pointer-events-none fixed inset-0 -z-10 bg-[linear-gradient(180deg,rgba(4,4,5,0.85)_0%,rgba(4,4,5,0.78)_42%,rgba(4,4,5,0.90)_100%)] lg:bg-[linear-gradient(90deg,rgba(4,4,5,0.94)_0%,rgba(4,4,5,0.84)_39%,rgba(4,4,5,0.58)_63%,rgba(4,4,5,0.80)_100%)]"
+        className="pointer-events-none fixed inset-0 -z-10 bg-[linear-gradient(180deg,rgba(4,4,5,0.86)_0%,rgba(4,4,5,0.79)_44%,rgba(4,4,5,0.92)_100%)] lg:bg-[linear-gradient(90deg,rgba(4,4,5,0.95)_0%,rgba(4,4,5,0.85)_42%,rgba(4,4,5,0.60)_64%,rgba(4,4,5,0.82)_100%)]"
       />
 
       <div
         aria-hidden="true"
-        className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_14%_70%,rgba(87,4,10,0.34),transparent_36%),radial-gradient(circle_at_86%_14%,rgba(225,115,60,0.10),transparent_25%)]"
+        className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_12%_74%,rgba(87,4,10,0.36),transparent_36%),radial-gradient(circle_at_88%_14%,rgba(225,115,60,0.10),transparent_24%)]"
       />
 
       <header className="relative z-20">
-        <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-4 px-5 py-5 sm:px-8 sm:py-6 lg:px-12 lg:py-7">
+        <div className="mx-auto flex max-w-[1520px] items-center justify-between gap-4 px-5 py-5 sm:px-8 sm:py-6 lg:px-12 lg:py-7">
           <Link to="/" className="flex min-w-0 items-center gap-3">
             <img
               src={`${basePath}/forge-logo.png`}
@@ -70,42 +70,42 @@ export default function FreedomFoundryLoginPage() {
         </div>
       </header>
 
-      <main className="relative z-10 mx-auto max-w-[1440px] px-5 pb-10 pt-6 sm:px-8 sm:pb-12 sm:pt-10 lg:flex lg:min-h-[calc(100dvh-104px)] lg:items-center lg:px-12 lg:py-12">
-        <div className="grid w-full gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(410px,480px)] lg:items-center lg:gap-16 xl:gap-24">
-          <section className="min-w-0 max-w-[620px]">
-            <p className="text-[9px] font-medium uppercase tracking-[0.20em] text-[#D5A06A] sm:text-xs sm:tracking-[0.22em]">
+      <main className="relative z-10 mx-auto max-w-[1520px] px-5 pb-10 pt-6 sm:px-8 sm:pb-12 sm:pt-10 lg:flex lg:min-h-[calc(100dvh-104px)] lg:items-center lg:px-12 lg:py-12">
+        <div className="grid w-full gap-10 lg:grid-cols-[minmax(620px,1fr)_460px] lg:items-center lg:gap-16 xl:gap-24">
+          <section className="min-w-0 max-w-[720px]">
+            <p className="font-sans text-[10px] font-medium uppercase tracking-[0.20em] text-[#D5A06A] sm:text-xs sm:tracking-[0.22em]">
               Insider access by The Brand Revivalist
             </p>
 
-            <div className="mt-6 sm:mt-8">
-              <p className="font-sans text-[1.15rem] font-medium leading-[1.15] tracking-[-0.02em] sm:text-3xl">
+            <div className="mt-7 sm:mt-8">
+              <p className="font-sans text-[22px] font-medium leading-[1.15] tracking-normal sm:text-[28px] lg:text-[31px]">
                 <span className="bg-[linear-gradient(100deg,#E9BE83_0%,#D66A3B_48%,#B71929_100%)] bg-clip-text text-transparent">
                   Don&apos;t just build a business.
                 </span>
               </p>
 
-              <h1 className="mt-3 max-w-[600px] font-heading text-[clamp(2.75rem,7vw,5.15rem)] font-normal leading-[0.92] tracking-[-0.03em] text-[#F3F4F6] sm:mt-4">
+              <h1 className="mt-4 font-heading text-[44px] font-normal leading-[0.96] tracking-normal text-[#F3F4F6] sm:text-[56px] lg:text-[68px] xl:text-[76px]">
                 <span className="block">Forge your freedom</span>
                 <span className="block">and your legacy.</span>
               </h1>
             </div>
 
-            <p className="mt-6 max-w-[590px] text-[15px] leading-7 text-[#E5DFD7]/80 sm:mt-8 sm:text-base sm:leading-8">
+            <p className="mt-7 max-w-[590px] text-[15px] leading-7 text-[#E5DFD7]/80 sm:mt-8 sm:text-base sm:leading-8">
               Freedom Foundry is your access point to brand-building tools,
               strategic resources, and the thinking behind The Brand Revivalist.
               Create a free account to step inside or sign in to access your
               dedicated brand portal.
             </p>
 
-            <div className="mt-7 sm:mt-8">
+            <div className="mt-8">
               <Link
                 to="/sign-up"
-                className="group relative inline-flex max-w-full items-center gap-2.5 overflow-hidden rounded-[7px] bg-[linear-gradient(105deg,#9F1824_0%,#D55835_47%,#E29A61_100%)] px-5 py-3 text-[10px] font-medium uppercase tracking-[0.09em] text-white shadow-[0_8px_22px_rgba(184,52,32,0.22)] transition duration-300 hover:brightness-110 hover:shadow-[0_12px_28px_rgba(217,117,74,0.30)] focus:outline-none focus:ring-4 focus:ring-[#D8754A]/25 sm:text-[11px] sm:tracking-[0.11em]"
+                className="group relative inline-flex items-center gap-2.5 overflow-hidden rounded-[7px] bg-[linear-gradient(105deg,#9F1824_0%,#D55835_47%,#E29A61_100%)] px-5 py-3 text-[11px] font-medium uppercase tracking-[0.10em] text-white shadow-[0_8px_22px_rgba(184,52,32,0.22)] transition duration-300 hover:brightness-110 hover:shadow-[0_12px_28px_rgba(217,117,74,0.30)] focus:outline-none focus:ring-4 focus:ring-[#D8754A]/25"
               >
                 <span className="absolute inset-x-0 top-0 h-px bg-white/40" />
                 <span className="relative">Create a free account</span>
                 <ArrowRight
-                  className="relative h-3.5 w-3.5 shrink-0 transition-transform duration-300 group-hover:translate-x-1"
+                  className="relative h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1"
                   strokeWidth={1.7}
                 />
               </Link>
@@ -113,7 +113,7 @@ export default function FreedomFoundryLoginPage() {
           </section>
 
           <section
-            className="relative w-full min-w-0 max-w-[480px] justify-self-stretch overflow-hidden rounded-[7px] border border-white/[0.16] bg-[#090A0D]/[0.64] p-5 shadow-[0_30px_100px_rgba(0,0,0,0.56)] backdrop-blur-2xl sm:justify-self-end sm:p-7 lg:p-9"
+            className="relative w-full min-w-0 max-w-[460px] justify-self-stretch overflow-hidden rounded-[7px] border border-white/[0.16] bg-[#090A0D]/[0.64] p-5 shadow-[0_30px_100px_rgba(0,0,0,0.56)] backdrop-blur-2xl sm:justify-self-end sm:p-7 lg:p-8"
             style={{
               boxShadow:
                 '0 30px 100px rgba(0,0,0,.56), inset 0 1px 0 rgba(255,255,255,.11), inset 0 -1px 0 rgba(255,255,255,.025)',
@@ -136,7 +136,7 @@ export default function FreedomFoundryLoginPage() {
                 </span>
 
                 <div className="min-w-0">
-                  <p className="text-[9px] font-medium uppercase tracking-[0.15em] text-[#D5A06A] sm:text-[10px] sm:tracking-[0.16em]">
+                  <p className="font-sans text-[9px] font-medium uppercase tracking-[0.15em] text-[#D5A06A] sm:text-[10px] sm:tracking-[0.16em]">
                     Member access
                   </p>
 
@@ -153,7 +153,7 @@ export default function FreedomFoundryLoginPage() {
 
               <form className="mt-7 space-y-4 sm:mt-8 sm:space-y-5">
                 <label className="block">
-                  <span className="mb-2 block text-[9px] font-medium uppercase tracking-[0.13em] text-[#D7D0C8]/65 sm:text-[10px]">
+                  <span className="mb-2 block font-sans text-[9px] font-medium uppercase tracking-[0.13em] text-[#D7D0C8]/65 sm:text-[10px]">
                     Email address
                   </span>
 
@@ -174,7 +174,7 @@ export default function FreedomFoundryLoginPage() {
                 </label>
 
                 <label className="block">
-                  <span className="mb-2 block text-[9px] font-medium uppercase tracking-[0.13em] text-[#D7D0C8]/65 sm:text-[10px]">
+                  <span className="mb-2 block font-sans text-[9px] font-medium uppercase tracking-[0.13em] text-[#D7D0C8]/65 sm:text-[10px]">
                     Password
                   </span>
 
@@ -227,12 +227,12 @@ export default function FreedomFoundryLoginPage() {
 
                 <button
                   type="submit"
-                  className="group relative flex w-full items-center justify-center gap-2.5 overflow-hidden rounded-[7px] bg-[linear-gradient(105deg,#9F1824_0%,#D55835_47%,#E29A61_100%)] px-4 py-3 text-[10px] font-medium uppercase tracking-[0.08em] text-white shadow-[0_8px_22px_rgba(184,52,32,0.22)] transition duration-300 hover:brightness-110 hover:shadow-[0_12px_28px_rgba(217,117,74,0.30)] focus:outline-none focus:ring-4 focus:ring-[#D8754A]/25 sm:px-5 sm:text-[11px] sm:tracking-[0.11em]"
+                  className="group relative flex w-full items-center justify-center gap-2.5 overflow-hidden rounded-[7px] bg-[linear-gradient(105deg,#9F1824_0%,#D55835_47%,#E29A61_100%)] px-5 py-3 text-[11px] font-medium uppercase tracking-[0.10em] text-white shadow-[0_8px_22px_rgba(184,52,32,0.22)] transition duration-300 hover:brightness-110 hover:shadow-[0_12px_28px_rgba(217,117,74,0.30)] focus:outline-none focus:ring-4 focus:ring-[#D8754A]/25"
                 >
                   <span className="absolute inset-x-0 top-0 h-px bg-white/40" />
                   <span className="relative">Log in to Freedom Foundry</span>
                   <ArrowRight
-                    className="relative h-3.5 w-3.5 shrink-0 transition-transform duration-300 group-hover:translate-x-1"
+                    className="relative h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1"
                     strokeWidth={1.7}
                   />
                 </button>
@@ -255,7 +255,7 @@ export default function FreedomFoundryLoginPage() {
       </main>
 
       <footer className="relative z-20 border-t border-white/[0.06] lg:absolute lg:inset-x-0 lg:bottom-0 lg:border-t-0">
-        <div className="mx-auto flex max-w-[1440px] flex-col gap-4 px-5 py-6 text-[9px] uppercase tracking-[0.11em] text-white/35 sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-12 lg:py-0 lg:pb-6 lg:text-[10px] lg:tracking-[0.12em]">
+        <div className="mx-auto flex max-w-[1520px] flex-col gap-4 px-5 py-6 text-[9px] uppercase tracking-[0.11em] text-white/35 sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-12 lg:py-0 lg:pb-6 lg:text-[10px] lg:tracking-[0.12em]">
           <span>© {new Date().getFullYear()} The Brand Revivalist®</span>
 
           <div className="flex items-center gap-5">
@@ -271,4 +271,4 @@ export default function FreedomFoundryLoginPage() {
       </footer>
     </div>
   );
-} 
+}
