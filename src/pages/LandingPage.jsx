@@ -270,4 +270,4 @@ export default function FreedomFoundryLoginPage() {
       </footer>
     </div>
   );
-} 
+}
