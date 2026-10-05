@@ -32,24 +32,12 @@ export default function FreedomFoundryLoginPage() {
 
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-[linear-gradient(90deg,rgba(4,4,5,0.94)_0%,rgba(4,4,5,0.83)_37%,rgba(4,4,5,0.54)_62%,rgba(4,4,5,0.76)_100%)]"
+        className="absolute inset-0 bg-[linear-gradient(90deg,rgba(4,4,5,0.94)_0%,rgba(4,4,5,0.83)_38%,rgba(4,4,5,0.56)_63%,rgba(4,4,5,0.80)_100%)]"
       />
 
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-[radial-gradient(circle_at_16%_76%,rgba(87,4,10,0.38),transparent_34%),radial-gradient(circle_at_85%_15%,rgba(225,115,60,0.13),transparent_24%)]"
-      />
-
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 opacity-35"
-        style={{
-          backgroundImage:
-            'linear-gradient(rgba(255,255,255,.028) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.028) 1px, transparent 1px)',
-          backgroundSize: '48px 48px',
-          maskImage:
-            'linear-gradient(to bottom, rgba(0,0,0,.70), transparent 78%)',
-        }}
+        className="absolute inset-0 bg-[radial-gradient(circle_at_15%_76%,rgba(87,4,10,0.38),transparent_34%),radial-gradient(circle_at_86%_16%,rgba(225,115,60,0.11),transparent_24%)]"
       />
 
       <header className="relative z-20">
@@ -74,51 +62,50 @@ export default function FreedomFoundryLoginPage() {
 
           <a
             href="https://thebrandrevivalist.com"
-            className="hidden items-center gap-2 text-[10px] font-medium uppercase tracking-[0.14em] text-white/60 transition hover:text-white sm:inline-flex"
+            className="hidden items-center gap-2 text-[10px] font-medium uppercase tracking-[0.12em] text-white/60 transition hover:text-white sm:inline-flex"
           >
             The Brand Revivalist
-            <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.7} />
+            <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.6} />
           </a>
         </div>
       </header>
 
       <main className="relative z-10 mx-auto flex min-h-[calc(100dvh-85px)] max-w-[1440px] items-center px-5 pb-8 sm:px-8 lg:min-h-[calc(100dvh-104px)] lg:px-12 lg:pb-12">
-        <div className="grid w-full gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(400px,500px)] lg:items-center lg:gap-16 xl:gap-24">
-          <section className="max-w-2xl pt-4 lg:pt-0">
-            <p className="text-[10px] font-medium uppercase tracking-[0.24em] text-[#D5A06A] sm:text-xs">
+        <div className="grid w-full gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(410px,500px)] lg:items-center lg:gap-16 xl:gap-24">
+          <section className="max-w-3xl pt-4 lg:pt-0">
+            <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-[#D5A06A] sm:text-xs">
               Insider access by The Brand Revivalist
             </p>
 
-            <div className="mt-7">
-              <p className="font-sans text-2xl font-medium leading-[1.08] tracking-[-0.02em] sm:text-3xl lg:text-4xl">
+            <div className="mt-8">
+              <p className="font-sans text-[1.45rem] font-medium leading-none tracking-[-0.025em] sm:text-3xl">
                 <span className="bg-[linear-gradient(100deg,#E9BE83_0%,#D66A3B_48%,#B71929_100%)] bg-clip-text text-transparent">
                   Don&apos;t just build a business.
                 </span>
               </p>
 
-              <h1 className="mt-3 max-w-2xl font-heading text-5xl font-normal leading-[0.9] tracking-[-0.025em] text-[#F3F4F6] sm:text-6xl lg:text-7xl xl:text-8xl">
-                Forge your freedom
-                <span className="block">and your legacy.</span>
+              <h1 className="mt-4 whitespace-nowrap font-heading text-[3.6rem] font-normal leading-[0.92] tracking-[-0.035em] text-[#F3F4F6] sm:text-[4.5rem] lg:text-[4.8rem] xl:text-[5.35rem]">
+                Forge your freedom and your legacy.
               </h1>
             </div>
 
-            <p className="mt-8 max-w-xl text-[15px] leading-7 text-[#E5DFD7]/76 sm:text-base sm:leading-8">
+            <p className="mt-8 max-w-[39rem] text-[15px] leading-7 text-[#E5DFD7]/76 sm:text-base sm:leading-8">
               Freedom Foundry is your access point to brand-building tools,
               strategic resources, and the thinking behind The Brand Revivalist.
               Create a free account to step inside or sign in to access your
               dedicated brand portal.
             </p>
 
-            <div className="mt-9">
+            <div className="mt-8">
               <Link
                 to="/sign-up"
-                className="group relative inline-flex items-center gap-3 overflow-hidden rounded-[7px] bg-[linear-gradient(105deg,#9F1824_0%,#D55835_47%,#E29A61_100%)] px-6 py-4 text-xs font-medium uppercase tracking-[0.14em] text-white shadow-[0_12px_30px_rgba(184,52,32,0.30)] transition duration-300 hover:brightness-110 hover:shadow-[0_16px_36px_rgba(217,117,74,0.38)] focus:outline-none focus:ring-4 focus:ring-[#D8754A]/25"
+                className="group relative inline-flex items-center gap-2.5 overflow-hidden rounded-[7px] bg-[linear-gradient(105deg,#9F1824_0%,#D55835_47%,#E29A61_100%)] px-5 py-3 text-[11px] font-medium uppercase tracking-[0.11em] text-white shadow-[0_8px_22px_rgba(184,52,32,0.22)] transition duration-300 hover:brightness-110 hover:shadow-[0_12px_28px_rgba(217,117,74,0.30)] focus:outline-none focus:ring-4 focus:ring-[#D8754A]/25"
               >
-                <span className="absolute inset-x-0 top-0 h-px bg-white/45" />
+                <span className="absolute inset-x-0 top-0 h-px bg-white/40" />
                 <span className="relative">Create a free account</span>
                 <ArrowRight
-                  className="relative h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
-                  strokeWidth={1.8}
+                  className="relative h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1"
+                  strokeWidth={1.7}
                 />
               </Link>
             </div>
@@ -148,7 +135,7 @@ export default function FreedomFoundryLoginPage() {
                 </span>
 
                 <div>
-                  <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-[#D5A06A]">
+                  <p className="text-[10px] font-medium uppercase tracking-[0.16em] text-[#D5A06A]">
                     Member access
                   </p>
 
@@ -165,14 +152,14 @@ export default function FreedomFoundryLoginPage() {
 
               <form className="mt-8 space-y-5">
                 <label className="block">
-                  <span className="mb-2 block text-[10px] font-medium uppercase tracking-[0.14em] text-[#D7D0C8]/65">
+                  <span className="mb-2 block text-[10px] font-medium uppercase tracking-[0.13em] text-[#D7D0C8]/65">
                     Email address
                   </span>
 
                   <span className="relative block">
                     <Mail
                       className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/35"
-                      strokeWidth={1.8}
+                      strokeWidth={1.7}
                     />
 
                     <input
@@ -180,20 +167,20 @@ export default function FreedomFoundryLoginPage() {
                       name="email"
                       autoComplete="email"
                       placeholder="you@example.com"
-                      className="h-13 w-full rounded-[7px] border border-white/[0.15] bg-black/30 py-3 pl-11 pr-4 text-sm text-white outline-none transition placeholder:text-white/30 hover:border-white/25 focus:border-[#D8754A]/75 focus:bg-black/40 focus:ring-4 focus:ring-[#D8754A]/10"
+                      className="h-12 w-full rounded-[7px] border border-white/[0.15] bg-black/30 py-3 pl-11 pr-4 text-sm text-white outline-none transition placeholder:text-white/30 hover:border-white/25 focus:border-[#D8754A]/75 focus:bg-black/40 focus:ring-4 focus:ring-[#D8754A]/10"
                     />
                   </span>
                 </label>
 
                 <label className="block">
-                  <span className="mb-2 block text-[10px] font-medium uppercase tracking-[0.14em] text-[#D7D0C8]/65">
+                  <span className="mb-2 block text-[10px] font-medium uppercase tracking-[0.13em] text-[#D7D0C8]/65">
                     Password
                   </span>
 
                   <span className="relative block">
                     <LockKeyhole
                       className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/35"
-                      strokeWidth={1.8}
+                      strokeWidth={1.7}
                     />
 
                     <input
@@ -201,7 +188,7 @@ export default function FreedomFoundryLoginPage() {
                       name="password"
                       autoComplete="current-password"
                       placeholder="Enter your password"
-                      className="h-13 w-full rounded-[7px] border border-white/[0.15] bg-black/30 py-3 pl-11 pr-12 text-sm text-white outline-none transition placeholder:text-white/30 hover:border-white/25 focus:border-[#D8754A]/75 focus:bg-black/40 focus:ring-4 focus:ring-[#D8754A]/10"
+                      className="h-12 w-full rounded-[7px] border border-white/[0.15] bg-black/30 py-3 pl-11 pr-12 text-sm text-white outline-none transition placeholder:text-white/30 hover:border-white/25 focus:border-[#D8754A]/75 focus:bg-black/40 focus:ring-4 focus:ring-[#D8754A]/10"
                     />
 
                     <button
@@ -211,9 +198,9 @@ export default function FreedomFoundryLoginPage() {
                       className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-[7px] text-white/45 transition hover:bg-white/10 hover:text-white"
                     >
                       {showPassword ? (
-                        <EyeOff className="h-4 w-4" strokeWidth={1.8} />
+                        <EyeOff className="h-4 w-4" strokeWidth={1.7} />
                       ) : (
-                        <Eye className="h-4 w-4" strokeWidth={1.8} />
+                        <Eye className="h-4 w-4" strokeWidth={1.7} />
                       )}
                     </button>
                   </span>
@@ -224,7 +211,7 @@ export default function FreedomFoundryLoginPage() {
                     <input
                       type="checkbox"
                       name="remember"
-                      className="h-3.5 w-3.5 rounded-[7px] border-white/30 bg-black/30 accent-[#D8754A]"
+                      className="h-3.5 w-3.5 rounded-[3px] border-white/30 bg-black/30 accent-[#D8754A]"
                     />
                     Remember me
                   </label>
@@ -239,13 +226,13 @@ export default function FreedomFoundryLoginPage() {
 
                 <button
                   type="submit"
-                  className="group relative flex w-full items-center justify-center gap-3 overflow-hidden rounded-[7px] bg-[linear-gradient(105deg,#9F1824_0%,#D55835_47%,#E29A61_100%)] px-6 py-4 text-xs font-medium uppercase tracking-[0.15em] text-white shadow-[0_12px_30px_rgba(184,52,32,0.28)] transition duration-300 hover:brightness-110 hover:shadow-[0_16px_36px_rgba(217,117,74,0.38)] focus:outline-none focus:ring-4 focus:ring-[#D8754A]/25"
+                  className="group relative flex w-full items-center justify-center gap-2.5 overflow-hidden rounded-[7px] bg-[linear-gradient(105deg,#9F1824_0%,#D55835_47%,#E29A61_100%)] px-5 py-3 text-[11px] font-medium uppercase tracking-[0.11em] text-white shadow-[0_8px_22px_rgba(184,52,32,0.22)] transition duration-300 hover:brightness-110 hover:shadow-[0_12px_28px_rgba(217,117,74,0.30)] focus:outline-none focus:ring-4 focus:ring-[#D8754A]/25"
                 >
-                  <span className="absolute inset-x-0 top-0 h-px bg-white/45" />
+                  <span className="absolute inset-x-0 top-0 h-px bg-white/40" />
                   <span className="relative">Log in to Freedom Foundry</span>
                   <ArrowRight
-                    className="relative h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
-                    strokeWidth={1.8}
+                    className="relative h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1"
+                    strokeWidth={1.7}
                   />
                 </button>
               </form>
@@ -283,4 +270,4 @@ export default function FreedomFoundryLoginPage() {
       </footer>
     </div>
   );
-} 
+}
