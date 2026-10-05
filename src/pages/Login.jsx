@@ -5,13 +5,13 @@ import {
   Eye,
   EyeOff,
   LockKeyhole,
-  Mail,
-} from 'lucide-react';
+  Mail } from
+'lucide-react';
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 const videoUrl =
-  'https://media.base44.com/videos/public/6a6982f0647238bf2b5d67bf/8d01159f7_rising-golden-embers-on-black-background-2025-12-17-19-25-08-utc.mp4';
+'https://media.base44.com/videos/public/6a6982f0647238bf2b5d67bf/8d01159f7_rising-golden-embers-on-black-background-2025-12-17-19-25-08-utc.mp4';
 
 export default function FreedomFoundryLoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -25,20 +25,20 @@ export default function FreedomFoundryLoginPage() {
         playsInline
         preload="auto"
         aria-hidden="true"
-        className="fixed inset-0 -z-20 h-[100dvh] w-full object-cover"
-      >
+        className="fixed inset-0 -z-20 h-[100dvh] w-full object-cover">
+        
         <source src={videoUrl} type="video/mp4" />
       </video>
 
       <div
         aria-hidden="true"
-        className="pointer-events-none fixed inset-0 -z-10 bg-[linear-gradient(180deg,rgba(4,4,5,0.86)_0%,rgba(4,4,5,0.79)_44%,rgba(4,4,5,0.92)_100%)] lg:bg-[linear-gradient(90deg,rgba(4,4,5,0.95)_0%,rgba(4,4,5,0.85)_42%,rgba(4,4,5,0.60)_64%,rgba(4,4,5,0.82)_100%)]"
-      />
+        className="pointer-events-none fixed inset-0 -z-10 bg-[linear-gradient(180deg,rgba(4,4,5,0.86)_0%,rgba(4,4,5,0.79)_44%,rgba(4,4,5,0.92)_100%)] lg:bg-[linear-gradient(90deg,rgba(4,4,5,0.95)_0%,rgba(4,4,5,0.85)_42%,rgba(4,4,5,0.60)_64%,rgba(4,4,5,0.82)_100%)]" />
+      
 
       <div
         aria-hidden="true"
-        className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_12%_74%,rgba(87,4,10,0.36),transparent_36%),radial-gradient(circle_at_88%_14%,rgba(225,115,60,0.10),transparent_24%)]"
-      />
+        className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_12%_74%,rgba(87,4,10,0.36),transparent_36%),radial-gradient(circle_at_88%_14%,rgba(225,115,60,0.10),transparent_24%)]" />
+      
 
       <header className="relative z-20">
         <div className="mx-auto flex max-w-[1520px] items-center justify-between gap-4 px-5 py-5 sm:px-8 sm:py-6 lg:px-12 lg:py-7">
@@ -46,8 +46,8 @@ export default function FreedomFoundryLoginPage() {
             <img
               src={`${basePath}/forge-logo.png`}
               alt="Freedom Foundry"
-              className="h-10 w-10 shrink-0 object-contain drop-shadow-[0_0_18px_rgba(226,110,60,0.22)] sm:h-12 sm:w-12"
-            />
+              className="h-10 w-10 shrink-0 object-contain drop-shadow-[0_0_18px_rgba(226,110,60,0.22)] sm:h-12 sm:w-12" />
+            
 
             <div className="min-w-0 leading-tight">
               <p className="truncate font-heading text-[15px] tracking-[0.055em] text-[#F3F4F6] sm:text-lg">
@@ -62,8 +62,8 @@ export default function FreedomFoundryLoginPage() {
 
           <a
             href="https://thebrandrevivalist.com"
-            className="hidden shrink-0 items-center gap-2 text-[10px] font-medium uppercase tracking-[0.12em] text-white/60 transition hover:text-white sm:inline-flex"
-          >
+            className="hidden shrink-0 items-center gap-2 text-[10px] font-medium uppercase tracking-[0.12em] text-white/60 transition hover:text-white sm:inline-flex">
+            
             The Brand Revivalist
             <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.6} />
           </a>
@@ -79,14 +79,14 @@ export default function FreedomFoundryLoginPage() {
 
             <div className="mt-7 sm:mt-8">
               <p className="font-sans text-[22px] font-medium leading-[1.15] tracking-normal sm:text-[28px] lg:text-[31px]">
-                <span className="bg-[linear-gradient(100deg,#E9BE83_0%,#D66A3B_48%,#B71929_100%)] bg-clip-text text-transparent">
+                <span className="[font-family:'Urbanist',_sans-serif] text-[hsl(var(--popover-foreground))] not-italic text-lg">
                   Don&apos;t just build a business.
                 </span>
               </p>
 
               <h1 className="mt-4 font-heading text-[56px] font-normal leading-[0.96] tracking-normal text-[#F3F4F6] sm:text-[72px] lg:text-[88px] xl:text-[100px]">
-  <span className="block">Forge your freedom</span>
-  <span className="block">and your legacy.</span>
+  <span className="block text-4xl">Forge your freedom</span>
+  <span className="block text-4xl">and your legacy.</span>
 </h1>
             </div>
 
@@ -100,14 +100,14 @@ export default function FreedomFoundryLoginPage() {
             <div className="mt-8">
               <Link
                 to="/sign-up"
-                className="group relative inline-flex items-center gap-2.5 overflow-hidden rounded-[7px] bg-[linear-gradient(105deg,#9F1824_0%,#D55835_47%,#E29A61_100%)] px-5 py-3 text-[11px] font-medium uppercase tracking-[0.10em] text-white shadow-[0_8px_22px_rgba(184,52,32,0.22)] transition duration-300 hover:brightness-110 hover:shadow-[0_12px_28px_rgba(217,117,74,0.30)] focus:outline-none focus:ring-4 focus:ring-[#D8754A]/25"
-              >
+                className="group relative inline-flex items-center gap-2.5 overflow-hidden rounded-[7px] bg-[linear-gradient(105deg,#9F1824_0%,#D55835_47%,#E29A61_100%)] px-5 py-3 text-[11px] font-medium uppercase tracking-[0.10em] text-white shadow-[0_8px_22px_rgba(184,52,32,0.22)] transition duration-300 hover:brightness-110 hover:shadow-[0_12px_28px_rgba(217,117,74,0.30)] focus:outline-none focus:ring-4 focus:ring-[#D8754A]/25">
+                
                 <span className="absolute inset-x-0 top-0 h-px bg-white/40" />
                 <span className="relative">Create a free account</span>
                 <ArrowRight
                   className="relative h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1"
-                  strokeWidth={1.7}
-                />
+                  strokeWidth={1.7} />
+                
               </Link>
             </div>
           </section>
@@ -116,18 +116,18 @@ export default function FreedomFoundryLoginPage() {
             className="relative w-full min-w-0 max-w-[460px] justify-self-stretch overflow-hidden rounded-[7px] border border-white/[0.16] bg-[#090A0D]/[0.64] p-5 shadow-[0_30px_100px_rgba(0,0,0,0.56)] backdrop-blur-2xl sm:justify-self-end sm:p-7 lg:p-8"
             style={{
               boxShadow:
-                '0 30px 100px rgba(0,0,0,.56), inset 0 1px 0 rgba(255,255,255,.11), inset 0 -1px 0 rgba(255,255,255,.025)',
-            }}
-          >
+              '0 30px 100px rgba(0,0,0,.56), inset 0 1px 0 rgba(255,255,255,.11), inset 0 -1px 0 rgba(255,255,255,.025)'
+            }}>
+            
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-[linear-gradient(180deg,rgba(255,255,255,.085)_0%,rgba(255,255,255,.018)_48%,transparent_100%)] sm:h-40"
-            />
+              className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-[linear-gradient(180deg,rgba(255,255,255,.085)_0%,rgba(255,255,255,.018)_48%,transparent_100%)] sm:h-40" />
+            
 
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute -right-20 -top-24 h-56 w-56 rounded-full bg-[#C33C1B]/15 blur-3xl"
-            />
+              className="pointer-events-none absolute -right-20 -top-24 h-56 w-56 rounded-full bg-[#C33C1B]/15 blur-3xl" />
+            
 
             <div className="relative">
               <div className="flex items-center gap-3">
@@ -160,16 +160,16 @@ export default function FreedomFoundryLoginPage() {
                   <span className="relative block">
                     <Mail
                       className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/35"
-                      strokeWidth={1.7}
-                    />
+                      strokeWidth={1.7} />
+                    
 
                     <input
                       type="email"
                       name="email"
                       autoComplete="email"
                       placeholder="you@example.com"
-                      className="h-11 w-full min-w-0 rounded-[7px] border border-white/[0.15] bg-black/30 py-3 pl-11 pr-4 text-sm text-white outline-none transition placeholder:text-white/30 hover:border-white/25 focus:border-[#D8754A]/75 focus:bg-black/40 focus:ring-4 focus:ring-[#D8754A]/10 sm:h-12"
-                    />
+                      className="h-11 w-full min-w-0 rounded-[7px] border border-white/[0.15] bg-black/30 py-3 pl-11 pr-4 text-sm text-white outline-none transition placeholder:text-white/30 hover:border-white/25 focus:border-[#D8754A]/75 focus:bg-black/40 focus:ring-4 focus:ring-[#D8754A]/10 sm:h-12" />
+                    
                   </span>
                 </label>
 
@@ -181,28 +181,28 @@ export default function FreedomFoundryLoginPage() {
                   <span className="relative block">
                     <LockKeyhole
                       className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/35"
-                      strokeWidth={1.7}
-                    />
+                      strokeWidth={1.7} />
+                    
 
                     <input
                       type={showPassword ? 'text' : 'password'}
                       name="password"
                       autoComplete="current-password"
                       placeholder="Enter your password"
-                      className="h-11 w-full min-w-0 rounded-[7px] border border-white/[0.15] bg-black/30 py-3 pl-11 pr-12 text-sm text-white outline-none transition placeholder:text-white/30 hover:border-white/25 focus:border-[#D8754A]/75 focus:bg-black/40 focus:ring-4 focus:ring-[#D8754A]/10 sm:h-12"
-                    />
+                      className="h-11 w-full min-w-0 rounded-[7px] border border-white/[0.15] bg-black/30 py-3 pl-11 pr-12 text-sm text-white outline-none transition placeholder:text-white/30 hover:border-white/25 focus:border-[#D8754A]/75 focus:bg-black/40 focus:ring-4 focus:ring-[#D8754A]/10 sm:h-12" />
+                    
 
                     <button
                       type="button"
                       aria-label={showPassword ? 'Hide password' : 'Show password'}
                       onClick={() => setShowPassword((visible) => !visible)}
-                      className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-[7px] text-white/45 transition hover:bg-white/10 hover:text-white"
-                    >
-                      {showPassword ? (
-                        <EyeOff className="h-4 w-4" strokeWidth={1.7} />
-                      ) : (
-                        <Eye className="h-4 w-4" strokeWidth={1.7} />
-                      )}
+                      className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-[7px] text-white/45 transition hover:bg-white/10 hover:text-white">
+                      
+                      {showPassword ?
+                      <EyeOff className="h-4 w-4" strokeWidth={1.7} /> :
+
+                      <Eye className="h-4 w-4" strokeWidth={1.7} />
+                      }
                     </button>
                   </span>
                 </label>
@@ -212,29 +212,29 @@ export default function FreedomFoundryLoginPage() {
                     <input
                       type="checkbox"
                       name="remember"
-                      className="h-3.5 w-3.5 rounded-[3px] border-white/30 bg-black/30 accent-[#D8754A]"
-                    />
+                      className="h-3.5 w-3.5 rounded-[3px] border-white/30 bg-black/30 accent-[#D8754A]" />
+                    
                     Remember me
                   </label>
 
                   <Link
                     to="/forgot-password"
-                    className="text-xs text-[#E9B27C] transition hover:text-white"
-                  >
+                    className="text-xs text-[#E9B27C] transition hover:text-white">
+                    
                     Forgot password?
                   </Link>
                 </div>
 
                 <button
                   type="submit"
-                  className="group relative flex w-full items-center justify-center gap-2.5 overflow-hidden rounded-[7px] bg-[linear-gradient(105deg,#9F1824_0%,#D55835_47%,#E29A61_100%)] px-5 py-3 text-[11px] font-medium uppercase tracking-[0.10em] text-white shadow-[0_8px_22px_rgba(184,52,32,0.22)] transition duration-300 hover:brightness-110 hover:shadow-[0_12px_28px_rgba(217,117,74,0.30)] focus:outline-none focus:ring-4 focus:ring-[#D8754A]/25"
-                >
+                  className="group relative flex w-full items-center justify-center gap-2.5 overflow-hidden rounded-[7px] bg-[linear-gradient(105deg,#9F1824_0%,#D55835_47%,#E29A61_100%)] px-5 py-3 text-[11px] font-medium uppercase tracking-[0.10em] text-white shadow-[0_8px_22px_rgba(184,52,32,0.22)] transition duration-300 hover:brightness-110 hover:shadow-[0_12px_28px_rgba(217,117,74,0.30)] focus:outline-none focus:ring-4 focus:ring-[#D8754A]/25">
+                  
                   <span className="absolute inset-x-0 top-0 h-px bg-white/40" />
                   <span className="relative">Log in to Freedom Foundry</span>
                   <ArrowRight
                     className="relative h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1"
-                    strokeWidth={1.7}
-                  />
+                    strokeWidth={1.7} />
+                  
                 </button>
               </form>
 
@@ -243,8 +243,8 @@ export default function FreedomFoundryLoginPage() {
                   New to Freedom Foundry?{' '}
                   <Link
                     to="/sign-up"
-                    className="font-medium text-[#EDB985] transition hover:text-white"
-                  >
+                    className="font-medium text-[#EDB985] transition hover:text-white">
+                    
                     Create your free account.
                   </Link>
                 </p>
@@ -269,6 +269,6 @@ export default function FreedomFoundryLoginPage() {
           </div>
         </div>
       </footer>
-    </div>
-  );
-} 
+    </div>);
+
+}
