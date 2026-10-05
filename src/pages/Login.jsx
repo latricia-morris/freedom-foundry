@@ -84,8 +84,8 @@ export default function FreedomFoundryLoginPage() {
                 </span>
               </p>
 
-              <h1 className="mt-3 max-w-[600px] break-words font-heading text-[clamp(2.75rem,12vw,5.15rem)] font-normal leading-[0.93] tracking-[-0.035em] text-[#F3F4F6] sm:mt-4">
-                Forge your freedom
+              <h1 className="mt-3 max-w-[600px] font-heading text-[clamp(2.75rem,7vw,5.15rem)] font-normal leading-[0.92] tracking-[-0.03em] text-[#F3F4F6] sm:mt-4">
+                <span className="block">Forge your freedom</span>
                 <span className="block">and your legacy.</span>
               </h1>
             </div>
@@ -271,4 +271,4 @@ export default function FreedomFoundryLoginPage() {
       </footer>
     </div>
   );
-} 
+}
