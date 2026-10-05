@@ -17,7 +17,7 @@ export default function FreedomFoundryLoginPage() {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div className="relative min-h-[100dvh] overflow-hidden bg-[#050506] text-[#F7F3ED]">
+    <div className="relative min-h-[100dvh] overflow-hidden bg-[#050506] text-[#F3F4F6]">
       <video
         autoPlay
         muted
@@ -62,7 +62,7 @@ export default function FreedomFoundryLoginPage() {
             />
 
             <div className="min-w-0 leading-tight">
-              <p className="font-heading text-base tracking-[0.07em] text-[#F7F3ED] sm:text-lg">
+              <p className="font-heading text-base tracking-[0.07em] text-[#F3F4F6] sm:text-lg">
                 FREEDOM FOUNDRY
               </p>
 
@@ -74,7 +74,7 @@ export default function FreedomFoundryLoginPage() {
 
           <a
             href="https://thebrandrevivalist.com"
-            className="hidden items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/60 transition hover:text-white sm:inline-flex"
+            className="hidden items-center gap-2 text-[10px] font-medium uppercase tracking-[0.14em] text-white/60 transition hover:text-white sm:inline-flex"
           >
             The Brand Revivalist
             <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.7} />
@@ -85,18 +85,24 @@ export default function FreedomFoundryLoginPage() {
       <main className="relative z-10 mx-auto flex min-h-[calc(100dvh-85px)] max-w-[1440px] items-center px-5 pb-8 sm:px-8 lg:min-h-[calc(100dvh-104px)] lg:px-12 lg:pb-12">
         <div className="grid w-full gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(400px,500px)] lg:items-center lg:gap-16 xl:gap-24">
           <section className="max-w-2xl pt-4 lg:pt-0">
-            <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#D5A06A] sm:text-xs">
+            <p className="text-[10px] font-medium uppercase tracking-[0.24em] text-[#D5A06A] sm:text-xs">
               Insider access by The Brand Revivalist
             </p>
 
-            <h1 className="mt-6 max-w-xl font-heading text-5xl font-light leading-[0.94] tracking-[-0.025em] sm:text-6xl xl:text-7xl">
-              The work behind
-              <span className="mt-1 block bg-[linear-gradient(100deg,#E9BE83_0%,#D66A3B_50%,#B71929_100%)] bg-clip-text italic text-transparent">
-                brands built to last.
-              </span>
-            </h1>
+            <div className="mt-7">
+              <p className="font-sans text-2xl font-medium leading-[1.08] tracking-[-0.02em] sm:text-3xl lg:text-4xl">
+                <span className="bg-[linear-gradient(100deg,#E9BE83_0%,#D66A3B_48%,#B71929_100%)] bg-clip-text text-transparent">
+                  Don&apos;t just build a business.
+                </span>
+              </p>
 
-            <p className="mt-7 max-w-xl text-[15px] leading-7 text-[#E5DFD7]/76 sm:text-base sm:leading-8">
+              <h1 className="mt-3 max-w-2xl font-heading text-5xl font-normal leading-[0.9] tracking-[-0.025em] text-[#F3F4F6] sm:text-6xl lg:text-7xl xl:text-8xl">
+                Forge your freedom
+                <span className="block">and your legacy.</span>
+              </h1>
+            </div>
+
+            <p className="mt-8 max-w-xl text-[15px] leading-7 text-[#E5DFD7]/76 sm:text-base sm:leading-8">
               Freedom Foundry is your access point to brand-building tools,
               strategic resources, and the thinking behind The Brand Revivalist.
               Create a free account to step inside or sign in to access your
@@ -106,13 +112,13 @@ export default function FreedomFoundryLoginPage() {
             <div className="mt-9">
               <Link
                 to="/sign-up"
-                className="group relative inline-flex items-center gap-3 overflow-hidden rounded-[7px] bg-[linear-gradient(105deg,#9F1824_0%,#D55835_47%,#E29A61_100%)] px-6 py-4 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-[0_12px_30px_rgba(184,52,32,0.30)] transition duration-300 hover:brightness-110 hover:shadow-[0_16px_36px_rgba(217,117,74,0.38)] focus:outline-none focus:ring-4 focus:ring-[#D8754A]/25"
+                className="group relative inline-flex items-center gap-3 overflow-hidden rounded-[7px] bg-[linear-gradient(105deg,#9F1824_0%,#D55835_47%,#E29A61_100%)] px-6 py-4 text-xs font-medium uppercase tracking-[0.14em] text-white shadow-[0_12px_30px_rgba(184,52,32,0.30)] transition duration-300 hover:brightness-110 hover:shadow-[0_16px_36px_rgba(217,117,74,0.38)] focus:outline-none focus:ring-4 focus:ring-[#D8754A]/25"
               >
                 <span className="absolute inset-x-0 top-0 h-px bg-white/45" />
                 <span className="relative">Create a free account</span>
                 <ArrowRight
                   className="relative h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
-                  strokeWidth={2}
+                  strokeWidth={1.8}
                 />
               </Link>
             </div>
@@ -142,11 +148,11 @@ export default function FreedomFoundryLoginPage() {
                 </span>
 
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#D5A06A]">
+                  <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-[#D5A06A]">
                     Member access
                   </p>
 
-                  <h2 className="mt-1 font-heading text-3xl leading-none text-[#F7F3ED]">
+                  <h2 className="mt-1 font-heading text-3xl leading-none text-[#F3F4F6]">
                     Welcome back.
                   </h2>
                 </div>
@@ -159,7 +165,7 @@ export default function FreedomFoundryLoginPage() {
 
               <form className="mt-8 space-y-5">
                 <label className="block">
-                  <span className="mb-2 block text-[10px] font-bold uppercase tracking-[0.14em] text-[#D7D0C8]/65">
+                  <span className="mb-2 block text-[10px] font-medium uppercase tracking-[0.14em] text-[#D7D0C8]/65">
                     Email address
                   </span>
 
@@ -180,7 +186,7 @@ export default function FreedomFoundryLoginPage() {
                 </label>
 
                 <label className="block">
-                  <span className="mb-2 block text-[10px] font-bold uppercase tracking-[0.14em] text-[#D7D0C8]/65">
+                  <span className="mb-2 block text-[10px] font-medium uppercase tracking-[0.14em] text-[#D7D0C8]/65">
                     Password
                   </span>
 
@@ -233,13 +239,13 @@ export default function FreedomFoundryLoginPage() {
 
                 <button
                   type="submit"
-                  className="group relative flex w-full items-center justify-center gap-3 overflow-hidden rounded-[7px] bg-[linear-gradient(105deg,#9F1824_0%,#D55835_47%,#E29A61_100%)] px-6 py-4 text-xs font-bold uppercase tracking-[0.15em] text-white shadow-[0_12px_30px_rgba(184,52,32,0.28)] transition duration-300 hover:brightness-110 hover:shadow-[0_16px_36px_rgba(217,117,74,0.38)] focus:outline-none focus:ring-4 focus:ring-[#D8754A]/25"
+                  className="group relative flex w-full items-center justify-center gap-3 overflow-hidden rounded-[7px] bg-[linear-gradient(105deg,#9F1824_0%,#D55835_47%,#E29A61_100%)] px-6 py-4 text-xs font-medium uppercase tracking-[0.15em] text-white shadow-[0_12px_30px_rgba(184,52,32,0.28)] transition duration-300 hover:brightness-110 hover:shadow-[0_16px_36px_rgba(217,117,74,0.38)] focus:outline-none focus:ring-4 focus:ring-[#D8754A]/25"
                 >
                   <span className="absolute inset-x-0 top-0 h-px bg-white/45" />
                   <span className="relative">Log in to Freedom Foundry</span>
                   <ArrowRight
                     className="relative h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
-                    strokeWidth={2}
+                    strokeWidth={1.8}
                   />
                 </button>
               </form>
@@ -249,7 +255,7 @@ export default function FreedomFoundryLoginPage() {
                   New to Freedom Foundry?{' '}
                   <Link
                     to="/sign-up"
-                    className="font-semibold text-[#EDB985] transition hover:text-white"
+                    className="font-medium text-[#EDB985] transition hover:text-white"
                   >
                     Create your free account.
                   </Link>
