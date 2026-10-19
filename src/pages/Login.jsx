@@ -54,8 +54,8 @@ export default function FreedomFoundryLoginPage() {
                 FREEDOM FOUNDRY
               </p>
 
-              <p className="mt-1 truncate text-[8px] uppercase tracking-[0.16em] text-[#D7D0C8]/75 sm:text-[10px] sm:tracking-[0.19em]">
-                A Brand Revivalist Experience
+              <p className="mt-1 truncate text-[8px] uppercase tracking-[0.16em] text-[#D7D0C8]/75 sm:text-[10px] sm:tracking-[0.19em]">By 
+
               </p>
             </div>
           </Link>
