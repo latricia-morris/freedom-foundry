@@ -62,9 +62,9 @@ export default function FreedomFoundryLoginPage() {
 
           <a
             href="https://thebrandrevivalist.com"
-            className="hidden shrink-0 items-center gap-2 text-[10px] font-medium uppercase tracking-[0.12em] text-white/60 transition hover:text-white sm:inline-flex">
+            className="hidden shrink-0 items-center gap-2 font-medium uppercase tracking-[0.12em] text-white/60 transition hover:text-white sm:inline-flex text-xs">
             
-            The Brand Revivalist
+            Return to TheBrandRevivalist.com
             <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.6} />
           </a>
         </div>
