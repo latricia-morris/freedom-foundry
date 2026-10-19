@@ -11,7 +11,7 @@ export function canvaEmbedUrl(url) {
 export function linkSourceLabel(url) {
   if (/canva\.com/.test(url)) return 'Canva';
   if (/figma\.com/.test(url)) return 'Figma';
-  if (/drive\.google\.com/.test(url)) return 'Google Drive';
+  if (/drive\.google\.com/.test(url)) return 'Shared files';
   try {
     return new URL(url).hostname.replace(/^www\./, '');
   } catch {

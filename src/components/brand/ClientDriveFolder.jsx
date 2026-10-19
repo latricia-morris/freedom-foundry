@@ -1,60 +1,40 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import DriveBrowser from '@/components/portal/DriveBrowser';
-import { FolderOpen } from 'lucide-react';
 
-/**
- * Client-facing section on Brand Assets: the Google Drive folder the agency
- * linked to the client's portal, browsable alongside linked external assets.
- */
+/** The folder linked directly to this member's client, independent of plan. */
 export default function ClientDriveFolder() {
-  const [folder, setFolder] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { data, isPending, isError, refetch } = useQuery({
+    queryKey: ['portal-asset-folders'],
+    queryFn: async () => {
+      const response = await base44.functions.invoke('get-portal-brands', {});
+      return response.data;
+    },
+    refetchOnWindowFocus: true,
+  });
+  const folder = data?.brands?.find((brand) => brand.drive_folder_id);
 
-  useEffect(() => {
-    let active = true;
-    base44.functions.invoke('get-portal-brands')
-      .then((res) => {
-        if (!active) return;
-        const brands = res.data?.brands || [];
-        const withFolder = brands.find((b) => b.drive_folder_id);
-        setFolder(
-          withFolder
-            ? {
-                id: withFolder.drive_folder_id,
-                name: withFolder.drive_folder_name || withFolder.company_name || 'Brand Files',
-              }
-            : null
-        );
-      })
-      .catch(() => { if (active) setFolder(null); })
-      .finally(() => { if (active) setLoading(false); });
-    return () => { active = false; };
-  }, []);
-
-  if (loading) {
-    return (
-      <section className="mb-10">
-        <div className="mb-4 flex items-center gap-2">
-          <FolderOpen className="icon-warm h-4 w-4" strokeWidth={1.5} />
-          <h2 className="font-heading text-xl text-foreground">Google Drive</h2>
-        </div>
-        <div className="flex justify-center py-10">
-          <div className="w-8 h-8 border-2 border-border border-t-primary rounded-full animate-spin" />
-        </div>
-      </section>
-    );
-  }
-
+  if (isPending) return (
+    <section className="mb-10 flex justify-center py-10" aria-label="Loading shared folder">
+      <div className="h-8 w-8 animate-spin rounded-full border-2 border-border border-t-primary" />
+    </section>
+  );
+  if (isError) return (
+    <section className="mb-10 text-sm text-muted-foreground" role="alert">
+      Your shared folder could not be loaded. <button type="button" onClick={() => refetch()} className="underline">Try again</button>
+    </section>
+  );
   if (!folder) return null;
 
   return (
     <section className="mb-10">
-      <div className="mb-4 flex items-center gap-2">
-        <FolderOpen className="icon-warm h-4 w-4" strokeWidth={1.5} />
-        <h2 className="font-heading text-xl text-foreground">Google Drive</h2>
-      </div>
-      <DriveBrowser rootFolderId={folder.id} rootFolderName={folder.name} title={folder.name} />
+      <DriveBrowser
+        key={folder.drive_folder_id}
+        rootFolderId={folder.drive_folder_id}
+        rootFolderName={folder.drive_folder_name || folder.company_name || 'Brand Files'}
+        headingOutside
+      />
     </section>
   );
 }

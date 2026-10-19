@@ -1,4 +1,5 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.54';
+import { memberBrands } from '../../shared/portal/memberBrands.ts';
 
 const DRIVE_API = 'https://www.googleapis.com/drive/v3';
 const MAX_FILE_BYTES = 10 * 1024 * 1024;
@@ -6,25 +7,28 @@ const LIST_FIELDS = 'nextPageToken,files(id,name,mimeType,size,modifiedTime)';
 
 async function getDriveToken(base44) {
   const { accessToken } = await base44.asServiceRole.connectors.getConnection('googledrive');
-  if (!accessToken) throw new Error('The Google Drive connection is not available.');
+  if (!accessToken) throw new Error('The shared files connection is not available.');
   return accessToken;
 }
 
 async function driveFetch(token, url) {
-  const response = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+  const response = await fetch(url, { headers: { Authorization: `Bearer ${token}` }, signal: AbortSignal.timeout(15000) });
   if (!response.ok) {
-    const detail = await response.text().catch(() => '');
-    throw new Error(`Google Drive request failed (${response.status}): ${detail.slice(0, 180)}`);
+    console.error('Shared files request failed', response.status);
+    throw new Error('Your shared files could not be loaded. Please try again.');
   }
   return response;
 }
 
-async function memberFolderRoots(base44, userId) {
-  const rows = await base44.entities.PortalContent
-    .filter({ type: 'drive_link', user_id: userId }, '-created_date', 100)
-    .catch(() => []);
-  const roots = (rows || []).map((row) => row.drive_folder_id).filter(Boolean);
-  return [...new Set(roots)];
+async function memberFolderRoots(base44, user) {
+  const [brands, portal] = await Promise.all([
+    memberBrands(base44, user),
+    base44.asServiceRole.entities.PortalContent.filter(
+      { type: 'drive_link', user_id: user.id, visible: { $ne: false } },
+      { limit: 100, fields: ['drive_folder_id'] }
+    ),
+  ]);
+  return [...new Set([...brands, ...portal.items].map((row) => row.drive_folder_id).filter(Boolean))];
 }
 
 async function descendsFromRoot(token, folderId, roots, depth = 0) {
@@ -67,7 +71,7 @@ export default async function(req) {
     if (action === 'browse') {
       let folderId = body.folderId || '';
       if (!isAdmin) {
-        const roots = await memberFolderRoots(base44, user.id);
+        const roots = await memberFolderRoots(base44, user);
         if (!roots.length) {
           return Response.json({ error: 'No shared folder is linked to your account yet.' }, { status: 403 });
         }
@@ -117,7 +121,7 @@ export default async function(req) {
       const meta = await metaResponse.json();
 
       if (!isAdmin) {
-        const roots = await memberFolderRoots(base44, user.id);
+        const roots = await memberFolderRoots(base44, user);
         if (!roots.length) {
           return Response.json({ error: 'No shared folder is linked to your account yet.' }, { status: 403 });
         }
@@ -157,6 +161,7 @@ export default async function(req) {
 
     return Response.json({ error: `Unknown action: ${action}` }, { status: 400 });
   } catch (error) {
-    return Response.json({ error: error.message || 'The Drive request failed.' }, { status: 500 });
+    console.error('Shared files failed', error.message);
+    return Response.json({ error: 'Your shared files could not be loaded. Please try again.' }, { status: 500 });
   }
 }

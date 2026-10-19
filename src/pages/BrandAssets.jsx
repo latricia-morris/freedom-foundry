@@ -3,28 +3,13 @@ import apiClient from '@/api/client';
 import { useMembership } from '@/lib/useMembership';
 import LinkedAssetsGrid from '@/components/brand/LinkedAssetsGrid';
 import ClientDriveFolder from '@/components/brand/ClientDriveFolder';
-import { Lock, Upload, Download, Trash2 } from 'lucide-react';
-
-function ClientGate() {
-  return (
-    <div className="max-w-lg mx-auto py-16 text-center animate-fade-in">
-      <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6" style={{ background: 'linear-gradient(131deg, rgba(179,35,44,0.12), rgba(217,98,44,0.08))' }}>
-        <Lock className="w-7 h-7 text-muted-foreground" strokeWidth={1} />
-      </div>
-      <h2 className="font-heading text-2xl font-light text-foreground mb-3">Client Feature</h2>
-      <p className="text-sm text-muted-foreground leading-relaxed max-w-sm mx-auto">
-        This feature is reserved for clients working directly with The Brand Revivalist® and/or her agency, Ox & Iron.
-      </p>
-    </div>
-  );
-}
+import { Upload, Download, Trash2 } from 'lucide-react';
 
 const FILE_TYPES = ['logo', 'design_asset', 'print_collateral', 'digital_asset', 'deliverable', 'other'];
 const FILE_TYPE_LABELS = { logo: 'Logo', design_asset: 'Design Asset', print_collateral: 'Print Collateral', digital_asset: 'Digital Asset', deliverable: 'Deliverable', other: 'Other' };
 
 export default function BrandAssets() {
-  const { isClient, user, loading: memberLoading } = useMembership();
-  const isAdmin = user?.role === 'admin';
+  const { user, loading: memberLoading } = useMembership();
   const [assets, setAssets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -32,12 +17,11 @@ export default function BrandAssets() {
 
   useEffect(() => {
     if (memberLoading) return;
-    if (!isClient && !isAdmin) { setLoading(false); return; }
     apiClient.entities.BrandAsset.filter({}, '-created_date', 100)
       .then(a => setAssets(a || []))
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, [isClient, memberLoading]);
+  }, [memberLoading]);
 
   const handleUpload = async (file) => {
     setUploading(true);
@@ -62,7 +46,6 @@ export default function BrandAssets() {
   };
 
   if (memberLoading || loading) return <div className="flex justify-center py-20"><div className="w-8 h-8 border-2 border-border border-t-primary rounded-full animate-spin" /></div>;
-  if (!isClient && !isAdmin) return <ClientGate />;
 
   const filtered = filter === 'all' ? assets : assets.filter(a => a.file_type === filter);
 

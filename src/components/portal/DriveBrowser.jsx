@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import {
-  ChevronRight, Download, File as FileIcon, Folder, FolderOpen,
-  Image as ImageIcon, Loader2, RefreshCw, X,
+  ChevronRight, Download, File as FileIcon, Folder,
+  Image as ImageIcon, Loader2, X,
 } from 'lucide-react';
 import apiClient from '@/api/client';
+import FolderBrowserHeader from '@/components/portal/FolderBrowserHeader';
 
 function formatBytes(value) {
   if (!value || value <= 0) return '';
@@ -16,7 +17,7 @@ function iconFor(mimeType = '') {
   return mimeType.startsWith('image/') ? ImageIcon : FileIcon;
 }
 
-export default function DriveBrowser({ rootFolderId, rootFolderName = 'Brand Files', title, admin = false, onSelectFolder = null }) {
+export default function DriveBrowser({ rootFolderId, rootFolderName = 'Brand Files', title, admin = false, onSelectFolder = null, headingOutside = false }) {
   const [stack, setStack] = useState([{ id: rootFolderId, name: rootFolderName }]);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -32,6 +33,9 @@ export default function DriveBrowser({ rootFolderId, rootFolderName = 'Brand Fil
     try {
       const res = await apiClient.drive.browse(current.id);
       setData(res);
+      if (headingOutside && current.id === rootFolderId && res.folderName) {
+        setStack((previous) => previous.map((folder, index) => index === 0 ? { ...folder, name: res.folderName } : folder));
+      }
     } catch (err) {
       setError(err?.message || 'The folder could not be opened.');
       setData(null);
@@ -82,25 +86,12 @@ export default function DriveBrowser({ rootFolderId, rootFolderName = 'Brand Fil
   const files = (data?.files || []).filter((f) => !f.isFolder);
 
   return (
-    <div className="dashboard-card border border-border overflow-hidden">
-      {title && (
-        <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-border">
-          <div className="flex items-center gap-2.5">
-            <FolderOpen className="w-4 h-4 text-primary" strokeWidth={1.5} />
-            <h3 className="font-heading text-lg text-foreground">{title}</h3>
-          </div>
-          <button
-            type="button"
-            onClick={load}
-            disabled={loading}
-            className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} /> Refresh
-          </button>
-        </div>
-      )}
+    <>
+      {headingOutside && <FolderBrowserHeader name={stack[0].name} loading={loading} onRefresh={load} outside />}
+      <div className="dashboard-card border border-border overflow-hidden">
+      {title && !headingOutside && <FolderBrowserHeader name={title} loading={loading} onRefresh={load} />}
 
-      <div className="flex items-center gap-1 px-5 py-3 border-b border-border overflow-x-auto text-sm">
+      {(!headingOutside || stack.length > 1) && <div className="flex items-center gap-1 px-5 py-3 border-b border-border overflow-x-auto text-sm">
         {stack.map((folder, index) => (
           <span key={`${folder.id}-${index}`} className="flex items-center gap-1 shrink-0">
             {index > 0 && <ChevronRight className="w-3 h-3 text-muted-foreground" />}
@@ -115,7 +106,7 @@ export default function DriveBrowser({ rootFolderId, rootFolderName = 'Brand Fil
             </button>
           </span>
         ))}
-      </div>
+      </div>}
 
       <div className="p-3 sm:p-4">
         {loading ? (
@@ -198,6 +189,7 @@ export default function DriveBrowser({ rootFolderId, rootFolderName = 'Brand Fil
           )}
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 }

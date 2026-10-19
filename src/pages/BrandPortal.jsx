@@ -8,7 +8,7 @@ const sections = [
 { name: 'Personal Brand', path: '/brand-portal/personal', desc: 'Bios, fonts, voice, and personal identity.', open: true },
 { name: 'Corporate Brand', path: '/brand-portal/corporate', desc: 'Company identity, colors, and brand system.', open: true },
 { name: 'Brand Guidelines', path: '/brand-portal/guidelines', desc: 'Standards, usage rules, and style notes.', open: false },
-{ name: 'Brand Assets', path: '/brand-portal/assets', desc: 'Logos, files, and delivered design assets.', open: false },
+{ name: 'Brand Assets', path: '/brand-portal/assets', desc: 'Logos, files, and delivered design assets.', open: true },
 { name: 'Media Kit', path: '/brand-portal/media-kit', desc: 'Press-ready bios, headshots, and links.', open: true },
 { name: 'Brand Up', path: '/brand-portal/brand-up', desc: 'Empowering prompts and your reflections.', open: true },
 { name: 'Ignite OS', path: '/brand-portal/ignite', desc: 'Your activation operating system.', open: false }];

@@ -27,7 +27,7 @@ async function canvaTitle(url) {
 
 /** Admin manager for a client's external asset links (Canva and other URLs). */
 export default function LinkedAssetsCard({ client }) {
-  const [target, setTarget] = useState(null);
+  const [target, setTarget] = useState(() => client.primary_contact_email ? { email: client.primary_contact_email.trim().toLowerCase() } : null);
   const [links, setLinks] = useState(null);
   const [form, setForm] = useState({ title: '', url: '' });
   const [editingId, setEditingId] = useState(null);
@@ -36,10 +36,12 @@ export default function LinkedAssetsCard({ client }) {
 
   useEffect(() => {
     let active = true;
+    // The contact email is sufficient to attach assets immediately; account
+    // lookup must not block saving or claim that the contact email is missing.
+    const fallback = client.primary_contact_email ? { email: client.primary_contact_email.trim().toLowerCase() } : null;
+    setTarget(fallback);
     resolvePortalUser(client).catch(() => null).then((user) => {
-      // Fall back to the client's contact email so links can be saved before
-      // the client has a portal account; they surface once that email signs in.
-      if (active) setTarget(user || (client.primary_contact_email ? { email: client.primary_contact_email } : null));
+      if (active) setTarget(user || fallback);
     });
     return () => { active = false; };
   }, [client.id, client.primary_contact_email]);
@@ -48,7 +50,7 @@ export default function LinkedAssetsCard({ client }) {
     if (!target?.id && !target?.email) return;
     let active = true;
     base44.entities.ClientAssetLink.filter(
-      { $or: [{ user_id: target.id }, { user_email: (target.email || '').toLowerCase() }] },
+      { $or: [...(target.id ? [{ user_id: target.id }] : []), ...(target.email ? [{ user_email: target.email.toLowerCase() }] : [])] },
       '-created_date',
       100
     )
