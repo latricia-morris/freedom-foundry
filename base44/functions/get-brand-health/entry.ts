@@ -185,6 +185,12 @@ export default async function (req: Request): Promise<Response> {
             out.mai_label = a.mai_label || 'Market Alignment Index';
           }
         }
+        out.takeaway = {
+          prioritize: a.takeaway_prioritize || null,
+          maintain: a.takeaway_maintain || null,
+          test: a.takeaway_test || null,
+          evidence_note: a.evidence_note || null,
+        };
       }
       return out;
     };

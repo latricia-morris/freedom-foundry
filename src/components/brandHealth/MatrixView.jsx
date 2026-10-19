@@ -11,11 +11,12 @@ const DEFAULT_EVIDENCE_NOTE =
   'Effort levels describe commitment, not effectiveness. Results marked Client-reported come directly from you; results marked Recorded are documented in an identified source; anything marked Not tracked has no usable measurement yet. Recommendations rest on the stated basis for each channel, and available capacity should be confirmed before committing.';
 
 function Takeaway({ audit }) {
+  const t = audit.takeaway || {};
   const summary = audit.consultant_summary || '';
   const groups = [
-    { label: 'Prioritize', text: audit.takeaway_prioritize },
-    { label: 'Maintain', text: audit.takeaway_maintain },
-    { label: 'Test or measure', text: audit.takeaway_test },
+    { label: 'Prioritize', text: t.prioritize || audit.takeaway_prioritize },
+    { label: 'Maintain', text: t.maintain || audit.takeaway_maintain },
+    { label: 'Test or measure', text: t.test || audit.takeaway_test },
   ].filter((g) => g.text);
   if (!summary && !groups.length) return null;
   return (
@@ -65,7 +66,9 @@ function MeasurementNote({ audit, credit }) {
   return (
     <section id="bh-evidence" className={SECTION}>
       <h3 className={H}>Measurement and evidence note</h3>
-      <p className={`mt-2 max-w-3xl ${P}`}>{audit.evidence_note || DEFAULT_EVIDENCE_NOTE}</p>
+      <p className={`mt-2 max-w-3xl ${P}`}>
+        {audit.evidence_note || (audit.takeaway && audit.takeaway.evidence_note) || DEFAULT_EVIDENCE_NOTE}
+      </p>
       {credit ? (
         <p className="mt-4 text-sm text-muted-foreground">
           Audit credit: {money(credit.amount_cents)}
