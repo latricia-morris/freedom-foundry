@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import AdminProjectNav from '@/components/layout/AdminProjectNav';
+import { base44 } from '@/api/base44Client';
 
 const NAV_SECTIONS = [
   {
@@ -42,10 +43,32 @@ const NAV_SECTIONS = [
     label: 'Inbox',
     items: [
       { name: 'Contact Inbox', path: '/admin/contact-inbox' },
+      { name: 'Project Requests', path: '/admin/project-requests', badge: 'requests' },
       { name: 'Support Queue', path: '/admin/support-reports' },
     ],
   },
 ];
+
+/** Live count of unopened project requests, shown beside the inbox nav item. */
+function RequestsBadge() {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    let active = true;
+    const load = () => base44.entities.ServiceRequestSubmission
+      .count({ request_kind: 'project_request', status: 'submitted' })
+      .then((value) => { if (active) setCount(Number(value?.count ?? value) || 0); })
+      .catch(() => {});
+    load();
+    const unsubscribe = base44.entities.ServiceRequestSubmission.subscribe(load);
+    return () => { active = false; if (unsubscribe) unsubscribe(); };
+  }, []);
+  if (!count) return null;
+  return (
+    <span className="rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold leading-4 text-primary-foreground">
+      {count}
+    </span>
+  );
+}
 
 const COLLAPSE_KEY = 'ff-admin-nav-collapsed';
 
@@ -68,7 +91,8 @@ function SectionNav() {
                 }`
               }
             >
-              {item.name}
+              <span className="flex-1">{item.name}</span>
+              {item.badge === 'requests' ? <RequestsBadge /> : null}
             </NavLink>
           ))}
         </div>

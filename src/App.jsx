@@ -99,6 +99,8 @@ import AdminNavLayout from '@/components/layout/AdminNavLayout';
 import ThemePreferencePrompt from '@/components/ThemePreferencePrompt';
 import PortalProposals from './pages/PortalProposals';
 import BrainHub from './pages/BrainHub';
+import ProjectRequest from './pages/ProjectRequest';
+import AdminProjectRequests from './pages/AdminProjectRequests';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin, isAuthenticated } = useAuth();
@@ -180,7 +182,7 @@ const AuthenticatedApp = () => {
             <Route path="/brand-portal/brand-up" element={<BrandUp />} />
             <Route path="/brand-portal/checklist" element={<BrandChecklist />} />
             <Route path="/brand-portal/request-services" element={<Navigate to="/brand-portal/project-requests" replace />} />
-            <Route path="/brand-portal/project-requests" element={<ServiceRequest />} />
+            <Route path="/brand-portal/project-requests" element={<ProjectRequest />} />
             <Route path="/brand-portal/proposals" element={<PortalProposals />} />
             <Route path="/brand-portal/brain-hub" element={<BrainHub />} />
           </Route>
@@ -194,6 +196,7 @@ const AuthenticatedApp = () => {
             <Route path="/admin/client-import" element={<AdminClientImport />} />
             <Route path="/admin/portal-content" element={<AdminPortalContent />} />
             <Route path="/admin/support-reports" element={<AdminSupportReports />} />
+            <Route path="/admin/project-requests" element={<AdminProjectRequests />} />
             <Route path="/admin/contact-inbox" element={<AdminContactInbox />} />
             <Route path="/admin/portfolio" element={<AdminPortfolioManager />} />
             <Route path="/admin/portfolio/import" element={<AdminPortfolioImport />} />

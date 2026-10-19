@@ -72,6 +72,8 @@ export default async function(req) {
         { label: 'Client status', value: record.client_status || '' },
         { label: 'Objective', value: record.objective || '—' },
         { label: 'Timeline', value: record.timeline || '—' },
+        { label: 'Link', value: (record.details && record.details.link) || '—' },
+        { label: 'Attachments', value: String((record.inspiration_file_uris || []).length) },
       ];
     }
 

@@ -4,6 +4,27 @@ import { base44 } from '@/api/base44Client';
 import { resolvePortalUser } from '@/lib/clientPortalData';
 import { linkSourceLabel } from '@/lib/assetLinks';
 
+/**
+ * Reads a link's own title. Canva blocks plain server-side requests, so the
+ * browser asks a reader proxy first, then falls back to the backend function.
+ */
+async function canvaTitle(url) {
+  try {
+    const res = await fetch(`https://r.jina.ai/${url}`);
+    if (res.ok) {
+      const text = (await res.text()).slice(0, 4000);
+      const match = text.match(/^Title:\s*(.+)$/m);
+      if (match) return match[1].replace(/\s\|\s*Canva$/i, '').trim();
+    }
+  } catch { /* fall through to the backend */ }
+  try {
+    const res = await base44.functions.invoke('fetch-link-title', { url });
+    return (res?.data ?? res)?.title || '';
+  } catch {
+    return '';
+  }
+}
+
 /** Admin manager for a client's external asset links (Canva and other URLs). */
 export default function LinkedAssetsCard({ client }) {
   const [target, setTarget] = useState(null);
@@ -36,20 +57,37 @@ export default function LinkedAssetsCard({ client }) {
     return () => { active = false; };
   }, [target?.id, target?.email]);
 
+  // Canva links: prefill the title from the design's own name so it never has
+  // to be typed manually.
+  useEffect(() => {
+    const url = form.url.trim();
+    if (!url || form.title.trim() || !/canva\.com\//i.test(url)) return undefined;
+    const timer = setTimeout(async () => {
+      const title = await canvaTitle(url);
+      if (title) setForm((prev) => (prev.title.trim() ? prev : { ...prev, title }));
+    }, 600);
+    return () => clearTimeout(timer);
+  }, [form.url, form.title]);
+
   const resetForm = () => { setForm({ title: '', url: '' }); setEditingId(null); setError(''); };
 
   const handleSave = async () => {
-    if (!form.title.trim() || !form.url.trim()) { setError('A title and URL are required.'); return; }
+    if (!form.url.trim()) { setError('A URL is required.'); return; }
+    let title = form.title.trim();
+    if (!title && /canva\.com\//i.test(form.url)) {
+      title = (await canvaTitle(form.url.trim())) || 'Canva design';
+    }
+    if (!title) { setError('A title and URL are required.'); return; }
     if (!target) { setError('This client needs a contact email before links can be attached.'); return; }
     setBusy(true); setError('');
     try {
       if (editingId && editingId !== '__new__') {
-        await base44.entities.ClientAssetLink.update(editingId, { title: form.title.trim(), url: form.url.trim() });
+        await base44.entities.ClientAssetLink.update(editingId, { title, url: form.url.trim() });
       } else {
         const created = await base44.entities.ClientAssetLink.create({
           ...(target.id ? { user_id: target.id } : {}),
           user_email: (target.email || '').toLowerCase(),
-          title: form.title.trim(),
+          title,
           url: form.url.trim(),
           added_by: 'admin',
         });
@@ -95,6 +133,7 @@ export default function LinkedAssetsCard({ client }) {
               onChange={(e) => setForm({ ...form, url: e.target.value })}
             />
           </div>
+          <p className="mt-2 text-xs text-muted-foreground">Canva links fill the title in automatically from the design's name — edit it if you prefer something else.</p>
           {error ? <p className="mt-2 text-xs text-destructive">{error}</p> : null}
           <div className="mt-3 flex gap-2">
             <button
