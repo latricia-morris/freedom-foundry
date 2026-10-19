@@ -24,7 +24,12 @@ export default async function (req: Request): Promise<Response> {
           .filter(Boolean);
         return emails.includes(email);
       })
-      .map((c) => ({ id: c.id, company_name: c.company_name }));
+      .map((c) => ({
+        id: c.id,
+        company_name: c.company_name,
+        drive_folder_id: c.drive_folder_id || null,
+        drive_folder_name: c.drive_folder_name || null,
+      }));
 
     return Response.json({ brands });
   } catch (error) {

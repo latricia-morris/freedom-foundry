@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import apiClient from '@/api/client';
 import { useMembership } from '@/lib/useMembership';
 import LinkedAssetsGrid from '@/components/brand/LinkedAssetsGrid';
+import ClientDriveFolder from '@/components/brand/ClientDriveFolder';
 import { Lock, Upload, Download, Trash2 } from 'lucide-react';
 
 function ClientGate() {
@@ -76,6 +77,7 @@ export default function BrandAssets() {
 
       </div>
 
+      <ClientDriveFolder />
       <LinkedAssetsGrid user={user} />
 
       {/* Upload + Filter */}
