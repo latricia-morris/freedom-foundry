@@ -178,7 +178,7 @@ export default async function (req) {
       const tokenEntry = (doc.tokens || []).find((t) => t.token === body.token);
       if (doc.status === "superseded" || (tokenEntry && tokenEntry.active === false)) {
         const activeTok = (doc.tokens || []).find((t) => t.active);
-        return Response.json({ error: "superseded", active_token: activeTok?.token || "" }, { status: 409 });
+        return Response.json({ error: "superseded", active_token: activeTok?.token || "" });
       }
       const client = await svc.entities.AgencyClient.get(doc.agency_client_id).catch(() => null);
       if (doc.status === "published") {

@@ -44,13 +44,12 @@ export function downloadProposalPdf(doc, installments = [], signed = false) {
     pdf.setFont("helvetica", "normal").setFontSize(10.5);
     const lines = pdf.splitTextToSize(String(text), maxW - 14);
     lines.forEach((line, i) => {
-      ensure(size = 16);
+      ensure(16);
       pdf.text(i === 0 ? `- ${line}` : `  ${line}`, margin, y);
       y += 14;
     });
     y += 4;
   };
-  let size; // hoisted var used by bullet
 
   // Cover
   pdf.setFont("times", "bold").setFontSize(22);
