@@ -4,6 +4,9 @@ import { fmtDate } from '@/lib/proposalFormat';
 
 const eyebrow = 'text-warm text-[11px] font-semibold uppercase tracking-[0.16em]';
 
+const FAMILY_PORTRAIT_URL =
+  'https://media.base44.com/images/public/6a6982f0647238bf2b5d67bf/9c579b559_latriciaandkiddos2025-38.jpg';
+
 function LogoTile({ logo }) {
   if (!logo.url) return null;
   const light = logo.panel === 'light';
@@ -117,6 +120,21 @@ export default function OverviewSections({ proposal, onRequestChange }) {
             </div>
           </div>
           <p className="text-sm text-muted-foreground lg:hidden">Copy continues here; the full portrait is preserved on every screen size.</p>
+          <div className="mt-12 grid items-center gap-8 md:grid-cols-2">
+            <div className="rounded-sm bg-[#f5f5f5] p-4 shadow-[0_8px_24px_rgba(0,0,0,0.35)]">
+              <Image
+                src={FAMILY_PORTRAIT_URL}
+                alt="LaTricia Morris with her children"
+                fittingType="fit"
+                originWidth={1024}
+                originHeight={683}
+                className="w-full"
+              />
+            </div>
+            <p className="font-heading text-xl italic leading-relaxed text-muted-foreground">
+              LaTricia and her children &mdash; the family at the heart of the work.
+            </p>
+          </div>
           <div className="grid gap-6 pt-2 sm:grid-cols-3">
             {(meet.credentials || []).map((cred) => (
               <div key={cred.heading}>
