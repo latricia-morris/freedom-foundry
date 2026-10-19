@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import apiClient from '@/api/client';
 import { useMembership } from '@/lib/useMembership';
+import LinkedAssetsGrid from '@/components/brand/LinkedAssetsGrid';
 import { Lock, Upload, Download, Trash2 } from 'lucide-react';
 
 function ClientGate() {
@@ -74,6 +75,8 @@ export default function BrandAssets() {
         </div>
 
       </div>
+
+      <LinkedAssetsGrid user={user} />
 
       {/* Upload + Filter */}
       <div className="flex flex-wrap items-center gap-3 mb-6">

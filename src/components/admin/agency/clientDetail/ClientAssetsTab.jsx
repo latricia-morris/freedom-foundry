@@ -3,6 +3,7 @@ import { ArrowLeft, Folder, FolderOpen } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import DriveBrowser from '@/components/portal/DriveBrowser';
 import LinkDriveFolderCard from '@/components/admin/agency/clientDetail/LinkDriveFolderCard';
+import LinkedAssetsCard from '@/components/admin/agency/clientDetail/LinkedAssetsCard';
 import { resolvePortalUser } from '@/lib/clientPortalData';
 
 /** Every Google Drive folder tied to the client: linked folder, portal links, and project folders. */
@@ -102,6 +103,9 @@ export default function ClientAssetsTab({ client }) {
           ))}
         </div>
       )}
+      <div className="mt-6">
+        <LinkedAssetsCard client={client} />
+      </div>
     </div>
   );
 }
