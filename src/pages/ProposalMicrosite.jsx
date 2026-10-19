@@ -20,6 +20,14 @@ async function callMicrosite(action, payload = {}) {
     const res = await base44.functions.invoke('proposal-microsite', { action, ...payload });
     return (res && res.data) || {};
   } catch (e) {
+    const status = e?.response?.status || e?.status;
+    if (status === 401) {
+      // Not signed in yet: continue onboarding from the login page, then
+      // come straight back to this proposal.
+      base44.auth.redirectToLogin(window.location.pathname + window.location.search);
+      return { error: 'redirecting' };
+    }
+    if (status === 403) return { error: 'forbidden' };
     const msg = String(e?.message || '');
     if (msg.includes('superseded')) return { error: 'superseded' };
     if (msg.includes('expired')) return { error: 'expired' };
@@ -44,6 +52,7 @@ export default function ProposalMicrosite() {
 
   const load = useCallback(async () => {
     const res = await callMicrosite('view', { token });
+    if (res.error === 'redirecting') return;
     if (res.error) {
       setError(res.error);
       setActiveToken(res.active_token || '');
@@ -94,6 +103,14 @@ export default function ProposalMicrosite() {
   if (error === 'not_found') {
     return (
       <StateScreen title="Proposal not found" body="This proposal link is not valid. Please request a link from LaTricia Morris." />
+    );
+  }
+  if (error === 'forbidden') {
+    return (
+      <StateScreen
+        title="Different account needed"
+        body="This proposal was prepared for a different email address. Sign in with the email your invitation was sent to, or contact us and we will resend it to the right address."
+      />
     );
   }
   if (error === 'superseded') {

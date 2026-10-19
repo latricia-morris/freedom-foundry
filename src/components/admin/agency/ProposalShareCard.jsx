@@ -17,15 +17,8 @@ export default function ProposalShareCard({ proposal, itemCount, onReload }) {
     }
     setBusy('send');
     try {
-      await base44.entities.Proposal.update(proposal.id, {
-        status: 'sent',
-        sent_at: new Date().toISOString(),
-      });
-      await base44.entities.AuditLog.create({
-        actor_role: 'admin', entity_type: 'Proposal', entity_id: proposal.id,
-        action: 'proposal_sent', source: 'ui', before_value: { status: proposal.status },
-      });
-      toast({ title: 'Proposal sent status set', description: 'Share the client link below.' });
+      await base44.functions.invoke('agency-proposals', { action: 'send', proposal_id: proposal.id });
+      toast({ title: 'Invitation emailed', description: 'The client is invited to review and accept at the secure link below.' });
       onReload();
     } catch (e) {
       toast({ title: 'Could not send', description: e.message, variant: 'destructive' });
@@ -67,7 +60,8 @@ export default function ProposalShareCard({ proposal, itemCount, onReload }) {
     }
   };
 
-  const canSend = ['draft', 'internal_review', 'cancelled'].includes(proposal.status);
+  const canSend = ['draft', 'internal_review', 'cancelled', 'sent', 'viewed', 'selections_in_progress'].includes(proposal.status);
+  const isResend = ['sent', 'viewed', 'selections_in_progress'].includes(proposal.status);
   const awaitingDeposit = ['accepted_awaiting_deposit', 'deposit_checkout_opened'].includes(proposal.status);
 
   return (
@@ -76,7 +70,7 @@ export default function ProposalShareCard({ proposal, itemCount, onReload }) {
         <div>
           <h3 className="font-heading text-2xl text-foreground">Client link</h3>
           <p className="text-xs text-muted-foreground/70">
-            The client reviews, selects, signs, and pays the deposit at this secure link.
+            The client signs in (or creates a free account) at this secure link to review, select, sign, and pay.
           </p>
         </div>
         <span className={`rounded-sm border px-2.5 py-1 text-[10px] uppercase tracking-wider ${PROPOSAL_STATUS_STYLES[proposal.status] || 'border-border text-muted-foreground'}`}>
@@ -108,7 +102,7 @@ export default function ProposalShareCard({ proposal, itemCount, onReload }) {
       <div className="flex flex-wrap gap-2">
         {canSend && (
           <button type="button" onClick={send} disabled={busy === 'send'} className="btn-forge inline-flex items-center gap-2 rounded-md px-4 py-2 text-xs font-semibold uppercase tracking-widest disabled:opacity-50">
-            <Send className="h-4 w-4" /> {busy === 'send' ? 'Marking sent…' : 'Mark as sent'}
+            <Send className="h-4 w-4" /> {busy === 'send' ? 'Sending…' : isResend ? 'Resend invitation' : 'Send invitation'}
           </button>
         )}
         {awaitingDeposit && (

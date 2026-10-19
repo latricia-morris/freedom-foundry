@@ -25,6 +25,7 @@ export default function ClientProposal() {
 
   const [data, setData] = useState(null);
   const [missing, setMissing] = useState(false);
+  const [denied, setDenied] = useState(false);
   const [selections, setSelections] = useState({});
   const [step, setStep] = useState('select');
   const [busy, setBusy] = useState(false);
@@ -47,7 +48,18 @@ export default function ClientProposal() {
         });
         setSelections(next);
       })
-      .catch(() => { if (active) setMissing(true); });
+      .catch((e) => {
+        if (!active) return;
+        const status = e?.response?.status || e?.status;
+        if (status === 401) {
+          // Not signed in yet: onboarding continues from the login page,
+          // then returns here.
+          base44.auth.redirectToLogin(window.location.pathname + window.location.search);
+          return;
+        }
+        if (status === 403) { setDenied(true); return; }
+        setMissing(true);
+      });
     return () => { active = false; };
   }, [token]);
 
@@ -99,6 +111,21 @@ export default function ClientProposal() {
           <h1 className="font-heading text-3xl font-light text-foreground">Proposal not found</h1>
           <p className="mt-3 text-sm text-muted-foreground">
             This link may have expired or been replaced. Ask your project contact for a current link.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (denied) {
+    return (
+      <div className="flex min-h-[70dvh] items-center justify-center bg-background px-5">
+        <div className="max-w-md text-center">
+          <ShieldCheck className="mx-auto h-8 w-8 text-primary" strokeWidth={1.5} />
+          <h1 className="mt-4 font-heading text-3xl font-light text-foreground">Different account needed</h1>
+          <p className="mt-3 text-sm text-muted-foreground">
+            This proposal was prepared for a different email address. Sign in with the email the invitation was sent
+            to, or reply to that invitation and we will resend it to the right address.
           </p>
         </div>
       </div>

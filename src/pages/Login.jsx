@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { base44 } from '@/api/base44Client';
+import { safeReturnTo } from '@/lib/authReturnTo';
+import GoogleIcon from '@/components/GoogleIcon';
 import {
   ArrowRight,
   Eye,
   EyeOff,
+  Loader2,
   LockKeyhole,
   Mail } from
 'lucide-react';
@@ -15,6 +19,34 @@ const videoUrl =
 
 export default function FreedomFoundryLoginPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const returnTo = safeReturnTo();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+    try {
+      await base44.auth.loginViaEmailPassword(email, password);
+      window.location.href = returnTo;
+    } catch (err) {
+      setError(err.message || 'Sign in failed. Check your email and password.');
+      setLoading(false);
+    }
+  };
+
+  const handleGoogle = () => {
+    setGoogleLoading(true);
+    setError('');
+    base44.auth.loginWithProvider('google', returnTo);
+  };
+
+  const withReturnTo = (path) =>
+    returnTo !== '/' ? `${path}?returnTo=${encodeURIComponent(returnTo)}` : path;
 
   return (
     <div className="relative min-h-[100dvh] overflow-x-hidden bg-[#050506] text-[#F3F4F6]">
@@ -34,7 +66,6 @@ export default function FreedomFoundryLoginPage() {
         aria-hidden="true"
         className="pointer-events-none fixed inset-0 -z-10 bg-[linear-gradient(180deg,rgba(4,4,5,0.86)_0%,rgba(4,4,5,0.79)_44%,rgba(4,4,5,0.92)_100%)] lg:bg-[linear-gradient(90deg,rgba(4,4,5,0.95)_0%,rgba(4,4,5,0.85)_42%,rgba(4,4,5,0.60)_64%,rgba(4,4,5,0.82)_100%)]" />
       
-
       <div
         aria-hidden="true"
         className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_12%_74%,rgba(87,4,10,0.36),transparent_36%),radial-gradient(circle_at_88%_14%,rgba(225,115,60,0.10),transparent_24%)]" />
@@ -48,7 +79,6 @@ export default function FreedomFoundryLoginPage() {
               alt="Freedom Foundry"
               className="h-10 w-10 shrink-0 object-contain drop-shadow-[0_0_18px_rgba(226,110,60,0.22)] sm:h-12 sm:w-12" />
             
-
             <div className="min-w-0 leading-tight">
               <p className="truncate font-heading text-[15px] tracking-[0.055em] text-[#F3F4F6] sm:text-lg">
                 FREEDOM FOUNDRY
@@ -99,7 +129,7 @@ export default function FreedomFoundryLoginPage() {
 
             <div className="mt-8">
               <Link
-                to="/sign-up"
+                to={withReturnTo('/register')}
                 className="group relative inline-flex items-center gap-2.5 overflow-hidden rounded-[7px] bg-[linear-gradient(105deg,#9F1824_0%,#D55835_47%,#E29A61_100%)] px-5 py-3 text-[11px] font-medium uppercase tracking-[0.10em] text-white shadow-[0_8px_22px_rgba(184,52,32,0.22)] transition duration-300 hover:brightness-110 hover:shadow-[0_12px_28px_rgba(217,117,74,0.30)] focus:outline-none focus:ring-4 focus:ring-[#D8754A]/25">
                 
                 <span className="absolute inset-x-0 top-0 h-px bg-white/40" />
@@ -123,7 +153,6 @@ export default function FreedomFoundryLoginPage() {
               aria-hidden="true"
               className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-[linear-gradient(180deg,rgba(255,255,255,.085)_0%,rgba(255,255,255,.018)_48%,transparent_100%)] sm:h-40" />
             
-
             <div
               aria-hidden="true"
               className="pointer-events-none absolute -right-20 -top-24 h-56 w-56 rounded-full bg-[#C33C1B]/15 blur-3xl" />
@@ -151,7 +180,29 @@ export default function FreedomFoundryLoginPage() {
                 and brand-building tools.
               </p>
 
-              <form className="mt-7 space-y-4 sm:mt-8 sm:space-y-5">
+              <button
+                type="button"
+                onClick={handleGoogle}
+                disabled={googleLoading}
+                className="mt-7 flex w-full items-center justify-center gap-2.5 rounded-[7px] border border-white/[0.16] bg-white/[0.04] px-5 py-3 text-[11px] font-medium uppercase tracking-[0.10em] text-white transition duration-300 hover:bg-white/[0.09] focus:outline-none focus:ring-4 focus:ring-[#D8754A]/20 disabled:opacity-60 sm:mt-8">
+                
+                <GoogleIcon className="h-4 w-4" />
+                {googleLoading ? 'Opening Google…' : 'Continue with Google'}
+              </button>
+
+              <div className="mt-5 flex items-center gap-4">
+                <span aria-hidden="true" className="h-px flex-1 bg-white/[0.12]" />
+                <span className="text-[9px] uppercase tracking-[0.2em] text-white/40">or</span>
+                <span aria-hidden="true" className="h-px flex-1 bg-white/[0.12]" />
+              </div>
+
+              {error ? (
+                <p role="alert" className="mt-5 rounded-[7px] border border-[#B3232C]/40 bg-[#B3232C]/10 px-4 py-3 text-sm text-[#F0B4AE]">
+                  {error}
+                </p>
+              ) : null}
+
+              <form className="mt-5 space-y-4 sm:space-y-5" onSubmit={handleSubmit}>
                 <label className="block">
                   <span className="mb-2 block font-sans text-[9px] font-medium uppercase tracking-[0.13em] text-[#D7D0C8]/65 sm:text-[10px]">
                     Email address
@@ -162,11 +213,13 @@ export default function FreedomFoundryLoginPage() {
                       className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/35"
                       strokeWidth={1.7} />
                     
-
                     <input
                       type="email"
                       name="email"
                       autoComplete="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       placeholder="you@example.com"
                       className="h-11 w-full min-w-0 rounded-[7px] border border-white/[0.15] bg-black/30 py-3 pl-11 pr-4 text-sm text-white outline-none transition placeholder:text-white/30 hover:border-white/25 focus:border-[#D8754A]/75 focus:bg-black/40 focus:ring-4 focus:ring-[#D8754A]/10 sm:h-12" />
                     
@@ -183,11 +236,13 @@ export default function FreedomFoundryLoginPage() {
                       className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/35"
                       strokeWidth={1.7} />
                     
-
                     <input
                       type={showPassword ? 'text' : 'password'}
                       name="password"
                       autoComplete="current-password"
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
                       placeholder="Enter your password"
                       className="h-11 w-full min-w-0 rounded-[7px] border border-white/[0.15] bg-black/30 py-3 pl-11 pr-12 text-sm text-white outline-none transition placeholder:text-white/30 hover:border-white/25 focus:border-[#D8754A]/75 focus:bg-black/40 focus:ring-4 focus:ring-[#D8754A]/10 sm:h-12" />
                     
@@ -218,7 +273,7 @@ export default function FreedomFoundryLoginPage() {
                   </label>
 
                   <Link
-                    to="/forgot-password"
+                    to={withReturnTo('/forgot-password')}
                     className="text-xs text-[#E9B27C] transition hover:text-white">
                     
                     Forgot password?
@@ -227,14 +282,22 @@ export default function FreedomFoundryLoginPage() {
 
                 <button
                   type="submit"
-                  className="group relative flex w-full items-center justify-center gap-2.5 overflow-hidden rounded-[7px] bg-[linear-gradient(105deg,#9F1824_0%,#D55835_47%,#E29A61_100%)] px-5 py-3 text-[11px] font-medium uppercase tracking-[0.10em] text-white shadow-[0_8px_22px_rgba(184,52,32,0.22)] transition duration-300 hover:brightness-110 hover:shadow-[0_12px_28px_rgba(217,117,74,0.30)] focus:outline-none focus:ring-4 focus:ring-[#D8754A]/25">
+                  disabled={loading}
+                  className="group relative flex w-full items-center justify-center gap-2.5 overflow-hidden rounded-[7px] bg-[linear-gradient(105deg,#9F1824_0%,#D55835_47%,#E29A61_100%)] px-5 py-3 text-[11px] font-medium uppercase tracking-[0.10em] text-white shadow-[0_8px_22px_rgba(184,52,32,0.22)] transition duration-300 hover:brightness-110 hover:shadow-[0_12px_28px_rgba(217,117,74,0.30)] focus:outline-none focus:ring-4 focus:ring-[#D8754A]/25 disabled:opacity-60">
                   
                   <span className="absolute inset-x-0 top-0 h-px bg-white/40" />
-                  <span className="relative">Log in to Freedom Foundry</span>
-                  <ArrowRight
-                    className="relative h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1"
-                    strokeWidth={1.7} />
-                  
+                  {loading ? (
+                    <span className="relative inline-flex items-center gap-2">
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" /> Signing in…
+                    </span>
+                  ) : (
+                    <span className="relative">Log in to Freedom Foundry</span>
+                  )}
+                  {!loading && (
+                    <ArrowRight
+                      className="relative h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1"
+                      strokeWidth={1.7} />
+                  )}
                 </button>
               </form>
 
@@ -242,7 +305,7 @@ export default function FreedomFoundryLoginPage() {
                 <p className="text-sm leading-6 text-white/55">
                   New to Freedom Foundry?{' '}
                   <Link
-                    to="/sign-up"
+                    to={withReturnTo('/register')}
                     className="font-medium text-[#EDB985] transition hover:text-white">
                     
                     Create your free account.

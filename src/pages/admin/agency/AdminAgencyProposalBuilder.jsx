@@ -6,6 +6,7 @@ import { useToast } from '@/components/ui/use-toast';
 import LineItemsEditor from '@/components/admin/agency/LineItemsEditor';
 import PaymentRulesEditor from '@/components/admin/agency/PaymentRulesEditor';
 import ProposalShareCard from '@/components/admin/agency/ProposalShareCard';
+import NewProposalClientForm from '@/components/proposal/NewProposalClientForm';
 import { computeClientTotals } from '@/lib/agency';
 
 function makeToken() {
@@ -30,6 +31,7 @@ export default function AdminAgencyProposalBuilder() {
   const [meta, setMeta] = useState(null);
   const [saving, setSaving] = useState(false);
   const [setup, setSetup] = useState({ client_id: '', title: '', template_id: '' });
+  const [clientMode, setClientMode] = useState('existing');
 
   useEffect(() => {
     Promise.all([
@@ -101,18 +103,53 @@ export default function AdminAgencyProposalBuilder() {
         </Link>
         <h1 className="mb-8 font-heading text-4xl font-light text-foreground">New <span className="molten-text italic">Proposal</span></h1>
         <div className="dashboard-card space-y-4 p-6">
-          <label className="block">
+          <div>
             <span className="mb-1.5 block text-[10px] uppercase tracking-widest text-muted-foreground">Client</span>
-            <select className="admin-input py-2 text-sm" value={setup.client_id} onChange={(e) => setSetup({ ...setup, client_id: e.target.value })}>
-              <option value="">— Select a client —</option>
-              {clients.map((c) => <option key={c.id} value={c.id}>{c.company_name}</option>)}
-            </select>
-            {clients.length === 0 && (
-              <p className="mt-2 text-xs text-muted-foreground/70">
-                No clients yet — <Link to="/admin/agency/clients" className="link-warm">add one first</Link>.
-              </p>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setClientMode('existing')}
+                className={`rounded-full px-4 py-1.5 text-[10px] font-semibold uppercase tracking-wider transition-colors ${
+                  clientMode === 'existing' ? 'btn-forge' : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                Existing client
+              </button>
+              <button
+                type="button"
+                onClick={() => setClientMode('new')}
+                className={`rounded-full px-4 py-1.5 text-[10px] font-semibold uppercase tracking-wider transition-colors ${
+                  clientMode === 'new' ? 'btn-forge' : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                New client
+              </button>
+            </div>
+            {clientMode === 'existing' ? (
+              <div className="mt-2">
+                <select className="admin-input py-2 text-sm" value={setup.client_id} onChange={(e) => setSetup({ ...setup, client_id: e.target.value })}>
+                  <option value="">— Select a client —</option>
+                  {clients.map((c) => <option key={c.id} value={c.id}>{c.company_name}</option>)}
+                </select>
+                {clients.length === 0 && (
+                  <p className="mt-2 text-xs text-muted-foreground/70">
+                    No clients yet — add one under “New client”, or <Link to="/admin/agency/clients" className="link-warm">manage clients</Link>.
+                  </p>
+                )}
+              </div>
+            ) : (
+              <div className="mt-2">
+                <NewProposalClientForm
+                  onCreated={(created) => {
+                    setClients((prev) => [created, ...prev]);
+                    setSetup((s) => ({ ...s, client_id: created.id }));
+                    setClientMode('existing');
+                  }}
+                  onCancel={() => setClientMode('existing')}
+                />
+              </div>
             )}
-          </label>
+          </div>
           <label className="block">
             <span className="mb-1.5 block text-[10px] uppercase tracking-widest text-muted-foreground">Proposal title</span>
             <input className="admin-input py-2 text-sm" placeholder="Brand identity + website rebuild" value={setup.title} onChange={(e) => setSetup({ ...setup, title: e.target.value })} />

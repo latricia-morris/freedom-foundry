@@ -4,6 +4,8 @@ import { Upload } from 'lucide-react';
 import { fmtMoney } from '@/lib/proposalFormat';
 import { STATUS_LABELS, buildDraftPayload } from '@/lib/proposalStudioModel';
 import ProposalReviewPanel from '@/components/admin/proposal/ProposalReviewPanel';
+import NewProposalClientForm from '@/components/proposal/NewProposalClientForm';
+import { useToast } from '@/components/ui/use-toast';
 
 /**
  * Proposal Studio: select client, import one Markdown file or paste it, parse,
@@ -11,8 +13,11 @@ import ProposalReviewPanel from '@/components/admin/proposal/ProposalReviewPanel
  * client links and offline receipt recording.
  */
 export default function AdminProposalStudio() {
+  const { toast } = useToast();
   const [clients, setClients] = useState([]);
   const [clientId, setClientId] = useState('');
+  const [addingClient, setAddingClient] = useState(false);
+  const [rowBusy, setRowBusy] = useState('');
   const [markdown, setMarkdown] = useState('');
   const [parsed, setParsed] = useState(null);
   const [form, setForm] = useState({ validity_days: 30, approach: true, capabilities: true, meet: true, book: true, web_change_elected: false, overrides_confirmed: false, title: '', project_type: '' });
@@ -136,6 +141,24 @@ export default function AdminProposalStudio() {
             ))}
           </select>
         </label>
+        {addingClient ? (
+          <NewProposalClientForm
+            onCreated={(created) => {
+              setClients((prev) => [created, ...prev]);
+              setClientId(created.id);
+              setAddingClient(false);
+            }}
+            onCancel={() => setAddingClient(false)}
+          />
+        ) : (
+          <button
+            type="button"
+            onClick={() => setAddingClient(true)}
+            className="inline-flex items-center gap-2 rounded-sm border border-border px-3 py-2 text-xs text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+          >
+            + Add a new client (name, email, company, phone)
+          </button>
+        )}
         <label className="block space-y-1 text-[10px] uppercase tracking-widest text-muted-foreground">
           Paste the complete Markdown
           <textarea className="admin-input min-h-40" rows={8} value={markdown} onChange={(e) => setMarkdown(e.target.value)} />
@@ -186,7 +209,39 @@ export default function AdminProposalStudio() {
                   <td className="py-3">
                     <div className="flex flex-wrap gap-2">
                       {p.share_token ? (
-                        <a href={`/proposal/${p.share_token}`} target="_blank" rel="noreferrer" className="link-warm">Open link</a>
+                        <>
+                          <a href={`/proposal/${p.share_token}`} target="_blank" rel="noreferrer" className="link-warm">Open link</a>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              navigator.clipboard?.writeText(`${window.location.origin}/proposal/${p.share_token}`);
+                              toast({ title: 'Link copied' });
+                            }}
+                            className="rounded-sm border border-border px-3 py-1.5 text-[10px] uppercase tracking-widest text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+                          >
+                            Copy link
+                          </button>
+                          {['published', 'viewed', 'changes_requested'].includes(p.status) ? (
+                            <button
+                              type="button"
+                              disabled={rowBusy === p.id}
+                              onClick={async () => {
+                                setRowBusy(p.id);
+                                try {
+                                  await base44.functions.invoke('proposal-import', { action: 'send', proposal_id: p.id });
+                                  toast({ title: 'Invitation emailed', description: `${p.title} was sent for review.` });
+                                } catch (e) {
+                                  toast({ title: 'Could not email invitation', description: String(e?.message || ''), variant: 'destructive' });
+                                } finally {
+                                  setRowBusy('');
+                                }
+                              }}
+                              className="rounded-sm border border-border px-3 py-1.5 text-[10px] uppercase tracking-widest text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+                            >
+                              {rowBusy === p.id ? 'Sending…' : 'Email invite'}
+                            </button>
+                          ) : null}
+                        </>
                       ) : null}
                       {['signed_awaiting_payment', 'awaiting_offline_deposit'].includes(p.status) ? (
                         <button

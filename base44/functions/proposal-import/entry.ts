@@ -412,6 +412,36 @@ export default async function (req) {
       return Response.json({ ok: true });
     }
 
+    if (action === "send") {
+      // Admin-only: (re)send the review invitation email for a published doc.
+      const doc = await svc.entities.ProposalDoc.get(body.proposal_id).catch(() => null);
+      if (!doc) return Response.json({ error: "not_found" }, { status: 404 });
+      if (!doc.share_token) return Response.json({ error: "not_published" }, { status: 400 });
+      const client = await svc.entities.AgencyClient.get(doc.agency_client_id).catch(() => null);
+      const to = doc.recipient?.notice_email || client?.primary_contact_email || "";
+      if (!to) return Response.json({ error: "no_recipient_email" }, { status: 400 });
+      const isIndividual = doc.recipient?.is_individual === true;
+      const origin = req.headers.get("origin") || "https://brand-forge-vault.base44.app";
+      await svc.integrations.Core.SendEmail({
+        to,
+        template_name: "ProposalReady",
+        variables: {
+          first_name: doc.recipient?.greeting_name || doc.recipient?.full_name || "there",
+          company_name: isIndividual ? doc.title : (doc.recipient.company_name || "your project"),
+          proposal_url: `${origin}/proposal/${doc.share_token}`,
+        },
+      }).catch((e) => console.error("proposal invitation email failed", e.message));
+      await writeAudit(svc, {
+        actor: user.email,
+        actor_role: "admin",
+        entity_type: "ProposalDoc",
+        entity_id: doc.id,
+        action: "proposal_invitation_sent",
+        source: "admin_ui",
+      });
+      return Response.json({ ok: true });
+    }
+
     if (action === "request-change-resolve") {
       await svc.entities.ProposalDoc.update(body.proposal_id, {
         change_requests: (body.change_requests || []),

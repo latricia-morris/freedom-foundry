@@ -9,6 +9,7 @@ import {
   writeAudit,
 } from "../../shared/agency/core.ts";
 import { createDepositCheckout } from "../../shared/proposal/payments.ts";
+import { proposalGate } from "../../shared/proposal/access.ts";
 
 const FALLBACK_ORIGIN = "https://brand-forge-vault.base44.app";
 
@@ -61,6 +62,21 @@ async function findProposal(svc, token) {
   return rows && rows.length ? rows[0] : null;
 }
 
+// Resolve a token to its proposal + client, then enforce account access.
+// Anonymous requesters are sent to sign in; a signed-in email that is not on
+// the client record is rejected. Admins may always preview.
+async function gateFor(base44, svc, token) {
+  const proposal = await findProposal(svc, token);
+  if (!proposal) return { error: "not_found", status: 404 };
+  const client = await svc.entities.AgencyClient.get(proposal.client_id).catch(() => null);
+  const gate = await proposalGate(base44, [
+    client?.primary_contact_email,
+    ...(client?.portal_member_emails || []),
+  ]);
+  if (gate.error) return gate;
+  return { proposal, client, user: gate.user };
+}
+
 async function createCheckout(svc, req, proposal, installment, depositAmtCents) {
   const stripe = new Stripe(secrets.get("STRIPE_SECRET_KEY"));
   return createDepositCheckout(req, stripe, {
@@ -87,11 +103,11 @@ export default async function(req) {
     const action = body.action;
     const svc = base44.asServiceRole;
 
-    // Public: client opens their proposal link
+    // Client: opens their proposal link (account required)
     if (action === "view") {
-      const proposal = await findProposal(svc, body.token);
-      if (!proposal) return Response.json({ error: "not_found" }, { status: 404 });
-      const client = await svc.entities.AgencyClient.get(proposal.client_id).catch(() => null);
+      const g = await gateFor(base44, svc, body.token);
+      if (g.error) return Response.json({ error: g.error }, { status: g.status });
+      const proposal = g.proposal;
       if (proposal.status === "sent") {
         await svc.entities.Proposal.update(proposal.id, {
           status: "viewed",
@@ -110,14 +126,15 @@ export default async function(req) {
         "display_order",
         200
       );
-      return Response.json({ proposal: publicProposal(proposal, client), items: items.map(publicItem) });
+      return Response.json({ proposal: publicProposal(proposal, g.client), items: items.map(publicItem) });
     }
 
-    // Public: client signs + pays deposit. Totals are computed server-side
+    // Client signs + pays deposit. Totals are computed server-side
     // from stored line items — client-sent amounts are never trusted.
     if (action === "accept") {
-      const proposal = await findProposal(svc, body.token);
-      if (!proposal) return Response.json({ error: "not_found" }, { status: 404 });
+      const g = await gateFor(base44, svc, body.token);
+      if (g.error) return Response.json({ error: g.error }, { status: g.status });
+      const proposal = g.proposal;
       if (proposal.status === "deposit_paid") {
         return Response.json({ error: "already_paid" }, { status: 400 });
       }
@@ -226,10 +243,11 @@ export default async function(req) {
       });
     }
 
-    // Public: re-open deposit checkout after a cancelled/incomplete payment
+    // Re-open deposit checkout after a cancelled/incomplete payment
     if (action === "checkout") {
-      const proposal = await findProposal(svc, body.token);
-      if (!proposal) return Response.json({ error: "not_found" }, { status: 404 });
+      const g = await gateFor(base44, svc, body.token);
+      if (g.error) return Response.json({ error: g.error }, { status: g.status });
+      const proposal = g.proposal;
       if (!["accepted_awaiting_deposit", "deposit_checkout_opened"].includes(proposal.status)) {
         return Response.json({ error: "not_available" }, { status: 400 });
       }
@@ -251,14 +269,62 @@ export default async function(req) {
       return Response.json({ checkout_url: url });
     }
 
-    // Public: confirmation-page polling — has the verified webhook landed yet?
+    // Confirmation-page polling — has the verified webhook landed yet?
     if (action === "status") {
-      const proposal = await findProposal(svc, body.token);
-      if (!proposal) return Response.json({ error: "not_found" }, { status: 404 });
+      const g = await gateFor(base44, svc, body.token);
+      if (g.error) return Response.json({ error: g.error }, { status: g.status });
+      const proposal = g.proposal;
       return Response.json({
         status: proposal.status,
         project_activation_status: proposal.project_activation_status,
       });
+    }
+
+    // Admin-only: email the client an invitation to review the proposal.
+    // The draft is left editable until the admin explicitly sends it.
+    if (action === "send") {
+      const user = await base44.auth.me();
+      if (!user || user.role !== "admin") {
+        return Response.json({ error: "forbidden" }, { status: 403 });
+      }
+      const proposal = await svc.entities.Proposal.get(body.proposal_id).catch(() => null);
+      if (!proposal) return Response.json({ error: "not_found" }, { status: 404 });
+      if (!proposal.share_token) {
+        return Response.json({ error: "no_share_token" }, { status: 400 });
+      }
+      if (["accepted_awaiting_deposit", "deposit_checkout_opened", "deposit_paid"].includes(proposal.status)) {
+        return Response.json({ error: "already_accepted" }, { status: 400 });
+      }
+      const client = await svc.entities.AgencyClient.get(proposal.client_id).catch(() => null);
+      const to = client?.primary_contact_email || "";
+      if (!to) {
+        return Response.json({ error: "no_recipient_email" }, { status: 400 });
+      }
+      const origin = req.headers.get("origin") || FALLBACK_ORIGIN;
+      await svc.integrations.Core.SendEmail({
+        to,
+        template_name: "ProposalReady",
+        variables: {
+          first_name: (client?.primary_contact_name || "").split(" ")[0] || "there",
+          company_name: client?.company_name || proposal.title,
+          proposal_url: `${origin}/p/${proposal.share_token}`,
+        },
+      }).catch((e) => console.error("proposal invitation email failed", e.message));
+      const update = { sent_at: new Date().toISOString() };
+      if (!["sent", "viewed", "selections_in_progress"].includes(proposal.status)) {
+        update.status = "sent";
+      }
+      await svc.entities.Proposal.update(proposal.id, update);
+      await writeAudit(svc, {
+        actor: user.email,
+        actor_role: "admin",
+        entity_type: "Proposal",
+        entity_id: proposal.id,
+        action: "proposal_sent",
+        source: "admin_ui",
+        before_value: { status: proposal.status },
+      });
+      return Response.json({ ok: true });
     }
 
     // Admin-only manual override: verify a deposit taken outside Stripe

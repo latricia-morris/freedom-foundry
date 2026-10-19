@@ -11,6 +11,7 @@ import {
   OFFLINE_REMINDER,
 } from "../../shared/proposal/content.ts";
 import { writeAudit } from "../../shared/agency/core.ts";
+import { proposalGate } from "../../shared/proposal/access.ts";
 
 const FALLBACK_ORIGIN = "https://brand-forge-vault.base44.app";
 
@@ -98,6 +99,21 @@ async function findDoc(svc, token) {
   return rows && rows.length ? rows[0] : null;
 }
 
+// A share token alone never grants access: admins may always preview, and
+// otherwise the signed-in email must be the proposal's notice email or on the
+// client record.
+async function gateAccess(base44, svc, doc) {
+  const client = doc.agency_client_id
+    ? await svc.entities.AgencyClient.get(doc.agency_client_id).catch(() => null)
+    : null;
+  return proposalGate(base44, [
+    doc.recipient?.notice_email,
+    doc.recipient?.email,
+    client?.primary_contact_email,
+    ...(client?.portal_member_emails || []),
+  ]);
+}
+
 async function ensureInstallments(svc, doc, lines, totalCents, schedule) {
   let installments = await svc.entities.PaymentInstallment.filter({ proposal_id: doc.id }, "sort_order", 20);
   if (installments && installments.length) return installments;
@@ -175,6 +191,8 @@ export default async function (req) {
     if (action === "view") {
       const doc = await findDoc(svc, body.token);
       if (!doc) return Response.json({ error: "not_found" }, { status: 404 });
+      const gate = await gateAccess(base44, svc, doc);
+      if (gate.error) return Response.json({ error: gate.error }, { status: gate.status });
       const tokenEntry = (doc.tokens || []).find((t) => t.token === body.token);
       if (doc.status === "superseded" || (tokenEntry && tokenEntry.active === false)) {
         const activeTok = (doc.tokens || []).find((t) => t.active);
@@ -205,6 +223,8 @@ export default async function (req) {
     if (action === "sign") {
       const doc = await findDoc(svc, body.token);
       if (!doc) return Response.json({ error: "not_found" }, { status: 404 });
+      const gate = await gateAccess(base44, svc, doc);
+      if (gate.error) return Response.json({ error: gate.error }, { status: gate.status });
       const tokenEntry = (doc.tokens || []).find((t) => t.token === body.token);
       if (!tokenEntry || tokenEntry.active === false) return Response.json({ error: "superseded" }, { status: 409 });
       if (["signed_awaiting_payment", "awaiting_offline_deposit", "deposit_paid", "paid_in_full"].includes(doc.status)) {
@@ -347,6 +367,8 @@ export default async function (req) {
     if (action === "checkout") {
       const doc = await findDoc(svc, body.token);
       if (!doc) return Response.json({ error: "not_found" }, { status: 404 });
+      const gate = await gateAccess(base44, svc, doc);
+      if (gate.error) return Response.json({ error: gate.error }, { status: gate.status });
       const installments = await svc.entities.PaymentInstallment.filter({ proposal_id: doc.id }, "sort_order", 20);
       const deposit = (installments || []).find((i) => i.installment_type === "deposit");
       if (!deposit) return Response.json({ error: "not_available" }, { status: 400 });
@@ -363,12 +385,16 @@ export default async function (req) {
     if (action === "status") {
       const doc = await findDoc(svc, body.token);
       if (!doc) return Response.json({ error: "not_found" }, { status: 404 });
+      const gate = await gateAccess(base44, svc, doc);
+      if (gate.error) return Response.json({ error: gate.error }, { status: gate.status });
       return Response.json({ status: doc.status, project_activation_status: doc.project_activation_status || "" });
     }
 
     if (action === "offline") {
       const doc = await findDoc(svc, body.token);
       if (!doc) return Response.json({ error: "not_found" }, { status: 404 });
+      const gate = await gateAccess(base44, svc, doc);
+      if (gate.error) return Response.json({ error: gate.error }, { status: gate.status });
       if (!OFFLINE_INSTRUCTIONS) return Response.json({ error: "not_configured" }, { status: 400 });
       if (!["signed_awaiting_payment", "awaiting_offline_deposit"].includes(doc.status)) {
         return Response.json({ error: "not_available" }, { status: 400 });
@@ -384,6 +410,8 @@ export default async function (req) {
     if (action === "request-change") {
       const doc = await findDoc(svc, body.token);
       if (!doc) return Response.json({ error: "not_found" }, { status: 404 });
+      const gate = await gateAccess(base44, svc, doc);
+      if (gate.error) return Response.json({ error: gate.error }, { status: gate.status });
       const message = String(body.message || "").trim().slice(0, 4000);
       if (message.length < 5) return Response.json({ error: "message_required" }, { status: 400 });
       const entry = {
