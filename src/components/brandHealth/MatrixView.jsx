@@ -35,7 +35,7 @@ export default function MatrixView({ audit, matrixChannels = [], credit, clientN
     <div className="space-y-14">
       {showHeader && (
         <section id="mx-overview-top" className="scroll-mt-[140px] lg:scroll-mt-[180px]">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">Marketing Matrix</p>
+          <p className="text-warm text-[11px] font-semibold uppercase tracking-[0.16em]">Marketing Matrix</p>
           <h2 className="mt-1 font-heading text-3xl font-light text-foreground sm:text-4xl">
             Where your marketing stands, and where it should go next.
           </h2>
@@ -83,7 +83,7 @@ export default function MatrixView({ audit, matrixChannels = [], credit, clientN
         <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
           <span className="font-heading text-xl font-light text-foreground sm:text-2xl">Methodology and evidence</span>
           <span className="text-[10px] uppercase tracking-[0.16em] text-muted-foreground group-open:hidden">Show</span>
-          <span className="hidden text-[10px] uppercase tracking-[0.16em] text-primary group-open:inline">Hide</span>
+          <span className="text-warm hidden text-[10px] uppercase tracking-[0.16em] group-open:inline">Hide</span>
         </summary>
         <div className="mt-5 space-y-3 border-t border-border/60 pt-5 text-sm leading-relaxed text-muted-foreground">
           <p>{audit.evidence_note || DEFAULT_EVIDENCE_NOTE}</p>

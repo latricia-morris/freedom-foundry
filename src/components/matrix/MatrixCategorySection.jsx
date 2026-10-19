@@ -150,7 +150,7 @@ function ChannelBlock({ channel }) {
 
       {channel.next_action ? (
         <p className="mt-4 text-sm text-foreground">
-          <span className="font-medium text-primary">Next step: </span>
+          <span className="text-warm font-medium">Next step: </span>
           {channel.next_action}
         </p>
       ) : null}
@@ -200,7 +200,7 @@ export default function MatrixCategorySection({ category, channels = [], emphasi
           <h3 className="font-heading text-2xl font-light text-foreground sm:text-3xl">{category.name}</h3>
         </div>
         {emphasized && (
-          <span className="rounded-full border border-primary/50 bg-primary/10 px-3 py-1 text-[11px] font-medium text-primary">
+          <span className="text-warm rounded-full border border-primary/50 bg-primary/10 px-3 py-1 text-[11px] font-medium">
             Leading opportunity
           </span>
         )}

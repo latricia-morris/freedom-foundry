@@ -39,7 +39,7 @@ export default function MobileNav() {
               to={item.path}
               aria-current={active ? 'page' : undefined}
               className={`flex shrink-0 items-center justify-center rounded-lg px-1.5 py-2 text-center text-xs font-medium leading-tight tracking-normal transition-colors sm:px-2 sm:text-[13px] ${
-                active ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
+                active ? 'text-warm' : 'text-muted-foreground hover:text-foreground'
               }`}
             >
               <span className="whitespace-nowrap font-medium text-xs uppercase tracking-[0.08em] sm:text-[13px]">{item.label}</span>

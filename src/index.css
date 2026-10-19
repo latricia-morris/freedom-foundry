@@ -477,6 +477,16 @@ html.light-mode .dash-editorial-block {
     stroke: url(#warmGradient);
   }
 
+  /* Warm gradient stroke on hover, muted ink at rest */
+  .hover-icon-warm {
+    stroke: currentColor;
+  }
+
+  .group:hover .hover-icon-warm,
+  .group:focus-visible .hover-icon-warm {
+    stroke: url(#warmGradient);
+  }
+
   /* Warm gradient text for dark backgrounds */
   .text-warm {
     background: linear-gradient(131deg, #b3232c, #d9622c, #f0d9b5);

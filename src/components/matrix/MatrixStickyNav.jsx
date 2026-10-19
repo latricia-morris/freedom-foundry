@@ -74,7 +74,7 @@ export default function MatrixStickyNav({ items }) {
         <button
           type="button"
           onClick={() => go('mx-overview')}
-          className="shrink-0 rounded-full px-3.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-primary transition-colors hover:bg-primary/10"
+          className="text-warm shrink-0 rounded-full px-3.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] transition-colors hover:bg-primary/10"
         >
           ↑ Overview
         </button>

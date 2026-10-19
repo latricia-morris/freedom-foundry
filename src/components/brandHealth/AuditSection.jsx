@@ -82,7 +82,7 @@ export default function AuditSection({ component, audit, findings, credit, onOpe
     if (flags.matrix_state === 'baseline_gap') {
       return (
         <div className="dashboard-card flex flex-col items-center justify-center p-10 text-center">
-          <ClipboardList className="h-9 w-9 text-primary" strokeWidth={1.5} />
+          <ClipboardList className="icon-warm h-9 w-9" strokeWidth={1.5} />
           <h3 className="mt-3 font-heading text-xl text-foreground">We just need a few final details.</h3>
           <p className="mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
             Your Marketing Matrix is already in progress. Complete these remaining baseline items so we can
@@ -109,7 +109,7 @@ export default function AuditSection({ component, audit, findings, credit, onOpe
     // awaiting_intake
     return (
       <div className="dashboard-card flex flex-col items-center justify-center p-10 text-center">
-        <ClipboardList className="h-9 w-9 text-primary" strokeWidth={1.5} />
+        <ClipboardList className="icon-warm h-9 w-9" strokeWidth={1.5} />
         <h3 className="mt-3 font-heading text-xl text-foreground">Start your Marketing Matrix intake.</h3>
         <p className="mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
           We’ll use a few baseline details to evaluate the best-fit channels for your business.
@@ -137,7 +137,7 @@ export default function AuditSection({ component, audit, findings, credit, onOpe
   if (needsIntake) {
     return (
       <div className="dashboard-card flex flex-col items-center justify-center p-10 text-center">
-        <ClipboardList className="h-9 w-9 text-primary" strokeWidth={1.5} />
+        <ClipboardList className="icon-warm h-9 w-9" strokeWidth={1.5} />
         <h3 className="mt-3 font-heading text-xl text-foreground">{component.title}</h3>
         <p className="mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
           Before your consultant begins the review, complete a short intake so we know exactly what to

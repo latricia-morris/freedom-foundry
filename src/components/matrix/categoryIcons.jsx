@@ -35,5 +35,5 @@ export default function CategoryIcon({ iconKey, size = 'md', className = '' }) {
   const Icon = CATEGORY_ICONS[iconKey];
   if (!Icon) return null;
   const dims = size === 'sm' ? 'h-5 w-5' : 'h-6 w-6';
-  return <Icon className={`${dims} text-primary/85 ${className}`} strokeWidth={1.5} aria-hidden="true" />;
+  return <Icon className={`${dims} icon-warm ${className}`} strokeWidth={1.5} aria-hidden="true" />;
 }

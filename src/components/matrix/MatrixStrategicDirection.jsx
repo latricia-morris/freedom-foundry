@@ -23,7 +23,7 @@ export default function MatrixStrategicDirection({ audit }) {
     <section className="relative overflow-hidden rounded-[3px] border border-border bg-card/70 p-6 forged-panel sm:p-10">
       <div className="ember-glow-bg pointer-events-none absolute -right-24 -top-28 h-80 w-80" />
       <div className="relative">
-        <p className="text-[11px] font-medium tracking-[0.12em] text-primary">Strategic direction</p>
+        <p className="text-warm text-[11px] font-medium tracking-[0.12em]">Strategic direction</p>
         {lead ? (
           <p className="mt-3 max-w-3xl font-heading text-2xl font-light leading-snug text-foreground sm:text-[28px]">
             {lead}
@@ -36,7 +36,7 @@ export default function MatrixStrategicDirection({ audit }) {
           <div className="mt-8 grid gap-6 sm:grid-cols-3">
             {groups.map((g) => (
               <div key={g.label} className="border-t border-primary/25 pt-4">
-                <p className="text-sm font-medium text-primary">{g.label}</p>
+                <p className="text-warm text-sm font-medium">{g.label}</p>
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{g.text}</p>
               </div>
             ))}

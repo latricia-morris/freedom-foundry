@@ -48,7 +48,7 @@ function Card({ category, channels }) {
       aria-label={`${category.name} section`}
     >
       <ArrowUpRight
-        className="absolute right-4 top-4 h-4 w-4 text-muted-foreground/50 transition-colors group-hover:text-primary group-focus-visible:text-primary"
+        className="hover-icon-warm absolute right-4 top-4 h-4 w-4 text-muted-foreground/50 transition-colors"
         aria-hidden="true"
       />
       <div className="flex items-center gap-3 pr-6">
@@ -60,7 +60,7 @@ function Card({ category, channels }) {
 
       <p className="mt-3 text-[15px] leading-snug text-foreground/90">{headline}</p>
 
-      {direction && <p className="mt-2 text-xs font-medium text-primary">{direction}</p>}
+      {direction && <p className="text-warm mt-2 text-xs font-medium">{direction}</p>}
 
       {support ? (
         <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{support}</p>
