@@ -77,7 +77,7 @@ export default function LinkedAssetsCard({ client }) {
     if (!title && /canva\.com\//i.test(form.url)) {
       title = (await canvaTitle(form.url.trim())) || 'Canva design';
     }
-    if (!title) { setError('A title and URL are required.'); return; }
+    if (!title) { setError('A title is required.'); return; }
     if (!target) { setError('This client needs a contact email before links can be attached.'); return; }
     setBusy(true); setError('');
     try {
@@ -124,13 +124,13 @@ export default function LinkedAssetsCard({ client }) {
               className="admin-input"
               placeholder="Title (e.g. Social Media Kit)"
               value={form.title}
-              onChange={(e) => setForm({ ...form, title: e.target.value })}
+              onChange={(e) => { setError(''); setForm({ ...form, title: e.target.value }); }}
             />
             <input
               className="admin-input"
               placeholder="https://www.canva.com/design/..."
               value={form.url}
-              onChange={(e) => setForm({ ...form, url: e.target.value })}
+              onChange={(e) => { setError(''); setForm({ ...form, url: e.target.value }); }}
             />
           </div>
           <p className="mt-2 text-xs text-muted-foreground">Canva links fill the title in automatically from the design's name — edit it if you prefer something else.</p>
