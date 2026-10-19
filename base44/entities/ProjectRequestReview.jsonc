@@ -1,0 +1,47 @@
+{
+  "name": "ProjectRequestReview",
+  "type": "object",
+  "properties": {
+    "request_id": {
+      "type": "string"
+    },
+    "internal_notes": {
+      "type": "string"
+    },
+    "decision": {
+      "type": "string",
+      "enum": [
+        "not_decided",
+        "follow_up",
+        "accepted",
+        "declined"
+      ],
+      "default": "not_decided"
+    }
+  },
+  "required": [
+    "request_id"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -76,9 +76,125 @@
     "deposit_acknowledged": {
       "type": "boolean",
       "default": false
+    },
+    "submission_key": {
+      "type": "string"
+    },
+    "request_purpose": {
+      "type": "string"
+    },
+    "agency_client_id": {
+      "type": "string"
+    },
+    "brand_name": {
+      "type": "string"
+    },
+    "company_name": {
+      "type": "string"
+    },
+    "contact_name": {
+      "type": "string"
+    },
+    "contact_email": {
+      "type": "string"
+    },
+    "timeline_window": {
+      "type": "string",
+      "enum": [
+        "asap",
+        "one_month",
+        "one_to_three_months",
+        "three_to_six_months",
+        "flexible",
+        "specific_deadline"
+      ]
+    },
+    "deadline_date": {
+      "type": "string"
+    },
+    "deadline_firm": {
+      "type": "boolean",
+      "default": false
+    },
+    "deadline_note": {
+      "type": "string"
+    },
+    "budget_original": {
+      "type": "string"
+    },
+    "budget_basis": {
+      "type": "string",
+      "enum": [
+        "total_project",
+        "monthly"
+      ]
+    },
+    "budget_help_requested": {
+      "type": "boolean",
+      "default": false
+    },
+    "budget_provided": {
+      "type": "boolean",
+      "default": false
+    },
+    "budget_min": {
+      "type": "number"
+    },
+    "budget_max": {
+      "type": "number"
+    },
+    "acknowledgment_text": {
+      "type": "string"
+    },
+    "acknowledged_at": {
+      "type": "string"
     }
   },
   "required": [
     "service_type"
-  ]
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "data.user_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "created_by_id": "{{user.id}}"
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
 }

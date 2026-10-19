@@ -1,8 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.54';
 
-// Security scan for member uploads on the project request form.
-// Verifies the stored file's actual bytes match its declared type and rejects
-// anything that is not an accepted document/image/text format.
+// File size/type validation, not a malware-scanning service.
+// Keeps the existing document/text formats and validates image signatures.
 
 const MAX_BYTES = 10 * 1024 * 1024;
 
@@ -11,6 +10,7 @@ const SIGNATURES = [
   { ext: 'jpg', bytes: [0xff, 0xd8, 0xff] },
   { ext: 'jpeg', bytes: [0xff, 0xd8, 0xff] },
   { ext: 'gif', bytes: [0x47, 0x49, 0x46, 0x38] },
+  { ext: 'webp', bytes: [0x52, 0x49, 0x46, 0x46] },
   { ext: 'pdf', bytes: [0x25, 0x50, 0x44, 0x46] },
   { ext: 'docx', bytes: [0x50, 0x4b, 0x03, 0x04] },
   { ext: 'txt', bytes: null },
@@ -43,12 +43,12 @@ export default async function(req) {
     const entry = SIGNATURES.find((s) => s.ext === declaredExt);
     if (!entry) return Response.json({ ok: false, reason: 'This file type is not accepted.' });
 
-    const signed = await base44.asServiceRole.integrations.Core.CreateFileSignedUrl({ file_uri: fileUri });
+    const signed = await base44.integrations.Core.CreateFileSignedUrl({ file_uri: fileUri });
     const signedUrl = signed?.signed_url || signed?.data?.signed_url;
-    if (!signedUrl) return Response.json({ ok: false, reason: 'The file could not be opened for scanning.' });
+    if (!signedUrl) return Response.json({ ok: false, reason: 'The file could not be opened for validation.' });
 
     const res = await fetch(signedUrl, { signal: AbortSignal.timeout(15000) });
-    if (!res.ok) return Response.json({ ok: false, reason: 'The file could not be opened for scanning.' });
+    if (!res.ok) return Response.json({ ok: false, reason: 'The file could not be opened for validation.' });
     const buf = new Uint8Array(await res.arrayBuffer());
 
     if (buf.byteLength === 0) return Response.json({ ok: false, reason: 'The file is empty.' });
@@ -64,7 +64,12 @@ export default async function(req) {
       return Response.json({ ok: false, reason: 'The file contents do not match its type and were rejected.' });
     }
 
-    return Response.json({ ok: true, detected_type: detected, bytes: buf.byteLength, scanned_at: new Date().toISOString() });
+    if (declaredExt === 'webp' && String.fromCharCode(...buf.subarray(8, 12)) !== 'WEBP') return Response.json({ ok: false, reason: 'The file contents do not match WebP.' });
+    if (declaredExt === 'docx') {
+      const archive = new TextDecoder('latin1').decode(buf);
+      if (!archive.includes('[Content_Types].xml') || !archive.includes('word/document.xml')) return Response.json({ ok: false, reason: 'This is not a Word document.' });
+    }
+    return Response.json({ ok: true, detected_type: detected, bytes: buf.byteLength, validated_at: new Date().toISOString() });
   } catch (error) {
     console.error('scan-upload error:', error.message);
     return Response.json({ error: error.message }, { status: 500 });

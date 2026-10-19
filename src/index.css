@@ -41,6 +41,10 @@
     --font-body: 'Urbanist', sans-serif;
     --font-display: 'Cormorant Garamond', serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    --request-fire-start: 356 67% 40%;
+    --request-fire-end: 18 72% 36%;
+    --request-ink: 220 14% 96%;
+    --request-surface: 225 14% 6%;
     --sidebar-background: 225 13% 7%;
     --sidebar-foreground: 220 14% 96%;
     --sidebar-primary: 18 74% 56%;
