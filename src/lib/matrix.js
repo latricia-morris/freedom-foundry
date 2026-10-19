@@ -407,6 +407,109 @@ export function dotSizePx(opportunity) {
   return 16 + (Math.max(0, Math.min(100, opportunity || 0)) / 100) * 22;
 }
 
+// --- Effort model (client-facing Marketing Matrix report) ----------------------
+// Effort levels describe the commitment to a channel, not its effectiveness,
+// and are never shares of a fixed budget. Recommendations are directional.
+export const EFFORT_LEVELS = ['none', 'occasional', 'consistent', 'high'];
+export const EFFORT_LABELS = {
+  none: 'None',
+  occasional: 'Occasional',
+  consistent: 'Consistent',
+  high: 'High',
+  unknown: 'Unknown',
+};
+
+export const DIRECTIONS = [
+  'increase',
+  'maintain',
+  'reduce',
+  'establish',
+  'test_first',
+  'assess_first',
+];
+export const DIRECTION_LABELS = {
+  increase: 'Increase',
+  maintain: 'Maintain',
+  reduce: 'Reduce',
+  establish: 'Establish',
+  test_first: 'Test first',
+  assess_first: 'Assess first',
+};
+
+export const EVIDENCE_LABELS = {
+  recorded: 'Recorded',
+  client_reported: 'Client-reported',
+  estimated: 'Estimated',
+  not_tracked: 'Not tracked',
+};
+
+export const TARGET_STATUS_LABELS = {
+  admin_approved: 'Administrator-approved',
+  client_agreed: 'Client-agreed',
+  historical_baseline: 'Historical baseline',
+  proposed: 'Proposed, awaiting confirmation',
+};
+
+export const GOAL_TYPE_LABELS = {
+  execution: 'Execution goal',
+  outcome: 'Outcome goal',
+};
+
+export const RECOMMENDATION_BASIS_LABELS = {
+  supported_by_results: 'Supported by results',
+  strategic_hypothesis: 'Strategic hypothesis',
+  needs_further_assessment: 'Needs further assessment',
+};
+
+/** Publication blockers for a Marketing Matrix audit's included channels. */
+export function matrixPublishIssues(audit, channels) {
+  const issues = [];
+  for (const c of (channels || []).filter((ch) => ch.client_visible)) {
+    const name = c.channel_name || 'Untitled channel';
+    const eff = c.effort || {};
+    if (!EFFORT_LABELS[eff.current]) issues.push(`${name}: current effort is missing (set Unknown if not established).`);
+    if (!EFFORT_LABELS[eff.recommended]) issues.push(`${name}: no recommended effort set.`);
+    if (!DIRECTION_LABELS[eff.direction]) issues.push(`${name}: no direction set.`);
+    if (!String(eff.rationale || '').trim()) issues.push(`${name}: no rationale for the recommendation.`);
+    for (const r of c.results || []) {
+      if (!r.label && !String(r.value ?? '').trim()) continue;
+      const raw = String(r.value ?? '').trim();
+      if (!/^-?\d+(\.\d+)?$/.test(raw)) {
+        issues.push(`${name}: result "${r.label}" is not a valid number.`);
+        continue;
+      }
+      if (!String(r.period || '').trim()) issues.push(`${name}: result "${r.label}" is missing a period or date.`);
+      if (!EVIDENCE_LABELS[r.evidence]) issues.push(`${name}: result "${r.label}" is missing an evidence source.`);
+    }
+    const goal = c.goal || {};
+    if (String(goal.target || '').trim() && /\d/.test(String(goal.target)) && !String(goal.timeframe || '').trim()) {
+      issues.push(`${name}: a numerical target needs a timeframe.`);
+    }
+  }
+  return issues;
+}
+
+/** Client-shaped channel payload — the only fields that cross to the client. */
+export function shapeClientChannel(c) {
+  return {
+    channel_name: c.channel_name,
+    category: c.category,
+    description: c.description,
+    strategic_role: c.strategic_role,
+    journey_stage: c.journey_stage,
+    client_notes: c.client_notes,
+    effort: c.effort || {},
+    goal: c.goal || {},
+    results: c.results || [],
+    recommendation_basis: c.recommendation_basis || null,
+    measurement_objective: c.measurement_objective || null,
+    measurement_objective_label: c.measurement_objective_label || null,
+    measurement_fields: c.measurement_fields || [],
+    qualified_conversation_definition: c.qualified_conversation_definition || null,
+    next_action: c.next_action || null,
+  };
+}
+
 /** Five stage rows, seeded with the audit's saved values in canonical order. */
 export function seededJourneyRows(audit) {
   const saved = {};

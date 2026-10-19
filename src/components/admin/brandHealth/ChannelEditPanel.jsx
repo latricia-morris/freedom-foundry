@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Trash2 } from 'lucide-react';
+import ChannelEffortEditor from './ChannelEffortEditor';
 import {
   CHANNEL_CATEGORIES,
   CONSULTANT_PRIORITIES,
@@ -246,6 +247,8 @@ export default function ChannelEditPanel({ channel, audit, onChange, onDelete, b
             onChange={(e) => setDraft((d) => ({ ...d, related_service: e.target.value }))} onBlur={commitText('related_service')} />
         </label>
       </div>
+
+      <ChannelEffortEditor channel={channel} onChange={onChange} busy={busy} />
     </div>
   );
 }

@@ -14,7 +14,9 @@ import EvidenceList from '@/components/admin/brandHealth/EvidenceList';
 import NotesPanel from '@/components/admin/brandHealth/NotesPanel';
 import CreditPanel from '@/components/admin/brandHealth/CreditPanel';
 import IntakeViewer from '@/components/admin/brandHealth/IntakeViewer';
+import MatrixPreview from '@/components/admin/brandHealth/MatrixPreview';
 import { AUDIT_STATUSES, COMPONENT_LABELS, PUBLISHED_STATUS, STATUS_LABELS } from '@/lib/brandHealth';
+import { matrixPublishIssues } from '@/lib/matrix';
 
 const SECTION_TITLE = 'mb-3 font-heading text-xl text-foreground';
 
@@ -29,6 +31,9 @@ export default function AdminBrandHealthAuditDetail() {
   const [busy, setBusy] = useState(false);
   const [infoNote, setInfoNote] = useState('');
   const [summary, setSummary] = useState('');
+  const [takeaway, setTakeaway] = useState({ prioritize: '', maintain: '', test: '', note: '' });
+  const [publishIssues, setPublishIssues] = useState([]);
+  const [showPreview, setShowPreview] = useState(false);
   const { toast } = useToast();
 
   const load = () => {
@@ -37,6 +42,12 @@ export default function AdminBrandHealthAuditDetail() {
         setAudit(a);
         setInfoNote(a.info_requested_note || '');
         setSummary(a.consultant_summary || '');
+        setTakeaway({
+          prioritize: a.takeaway_prioritize || '',
+          maintain: a.takeaway_maintain || '',
+          test: a.takeaway_test || '',
+          note: a.evidence_note || '',
+        });
         if (a.agency_client_id) {
           base44.entities.AgencyClient.get(a.agency_client_id).then(setClient).catch(() => setClient(null));
         }
@@ -79,17 +90,37 @@ export default function AdminBrandHealthAuditDetail() {
     }
   };
 
-  const publishToggle = () => {
+  const publishToggle = async () => {
     const today = new Date().toISOString().slice(0, 10);
     if (audit.status === PUBLISHED_STATUS) {
+      setPublishIssues([]);
       updateAudit({ status: 'draft_complete', published_at: null });
-    } else {
-      updateAudit({
-        status: PUBLISHED_STATUS,
-        published_at: audit.published_at || today,
-        reviewed_date: audit.reviewed_date || today,
-      });
+      return;
     }
+    if (isMatrix) {
+      setBusy(true);
+      let channels = [];
+      try {
+        channels = await base44.entities.MatrixChannel.filter({ audit_id: auditId }, 'sort_order', 300);
+      } catch (err) {
+        setBusy(false);
+        toast({ title: 'Could not verify channels', description: err.message, variant: 'destructive' });
+        return;
+      }
+      setBusy(false);
+      const issues = matrixPublishIssues(audit, channels || []);
+      setPublishIssues(issues);
+      if (issues.length) {
+        toast({ title: 'Publish blocked', description: `${issues.length} item${issues.length === 1 ? '' : 's'} below need attention.`, variant: 'destructive' });
+        return;
+      }
+    }
+    setPublishIssues([]);
+    updateAudit({
+      status: PUBLISHED_STATUS,
+      published_at: audit.published_at || today,
+      reviewed_date: audit.reviewed_date || today,
+    });
   };
 
   const convertNoteToAction = async (note) => {
@@ -126,17 +157,38 @@ export default function AdminBrandHealthAuditDetail() {
             <span className="uppercase tracking-widest">{STATUS_LABELS[audit.status] || audit.status}</span>
           </p>
         </div>
-        <button
-          type="button"
-          onClick={publishToggle}
-          disabled={busy}
-          className={`inline-flex items-center gap-2 rounded-md px-4 py-2 text-xs font-semibold uppercase tracking-widest disabled:opacity-50 ${
-            isPublished ? 'border border-border text-muted-foreground transition-colors hover:text-foreground' : 'btn-forge border-transparent'
-          }`}
-        >
-          {isPublished ? 'Unpublish report' : 'Publish to client'}
-        </button>
+        <div className="flex flex-wrap gap-3">
+          {isMatrix && (
+            <button
+              type="button"
+              onClick={() => setShowPreview(true)}
+              disabled={busy}
+              className="inline-flex items-center gap-2 rounded-md border border-border px-4 py-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground transition-colors hover:text-foreground disabled:opacity-50"
+            >
+              Preview client report
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={publishToggle}
+            disabled={busy}
+            className={`inline-flex items-center gap-2 rounded-md px-4 py-2 text-xs font-semibold uppercase tracking-widest disabled:opacity-50 ${
+              isPublished ? 'border border-border text-muted-foreground transition-colors hover:text-foreground' : 'btn-forge border-transparent'
+            }`}
+          >
+            {isPublished ? 'Unpublish report' : 'Publish to client'}
+          </button>
+        </div>
       </div>
+
+      {publishIssues.length > 0 && (
+        <div className="dashboard-card mb-6 border-destructive/50 p-6">
+          <h3 className={SECTION_TITLE}>Unresolved items blocking publication</h3>
+          <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-muted-foreground">
+            {publishIssues.map((issue, i) => <li key={i}>{issue}</li>)}
+          </ul>
+        </div>
+      )}
 
       <div className="dashboard-card mb-6 p-6">
         <h3 className={SECTION_TITLE}>Status &amp; Schedule</h3>
@@ -236,6 +288,41 @@ export default function AdminBrandHealthAuditDetail() {
         />
       </div>
 
+      {isMatrix && (
+        <div className="dashboard-card mb-6 p-6">
+          <h3 className={SECTION_TITLE}>Strategic Takeaway Detail</h3>
+          <p className="mb-3 text-xs text-muted-foreground">
+            Compact takeaway groups under the summary above. Leave a field blank to omit that group.
+          </p>
+          <div className="grid gap-3 sm:grid-cols-3">
+            <label className="space-y-1 text-xs uppercase tracking-widest text-muted-foreground">
+              Prioritize
+              <textarea className="admin-input" rows={3} value={takeaway.prioritize} disabled={busy}
+                onChange={(e) => setTakeaway((t) => ({ ...t, prioritize: e.target.value }))}
+                onBlur={() => { if (takeaway.prioritize !== (audit.takeaway_prioritize || '')) updateAudit({ takeaway_prioritize: takeaway.prioritize || null }); }} />
+            </label>
+            <label className="space-y-1 text-xs uppercase tracking-widest text-muted-foreground">
+              Maintain
+              <textarea className="admin-input" rows={3} value={takeaway.maintain} disabled={busy}
+                onChange={(e) => setTakeaway((t) => ({ ...t, maintain: e.target.value }))}
+                onBlur={() => { if (takeaway.maintain !== (audit.takeaway_maintain || '')) updateAudit({ takeaway_maintain: takeaway.maintain || null }); }} />
+            </label>
+            <label className="space-y-1 text-xs uppercase tracking-widest text-muted-foreground">
+              Test or measure
+              <textarea className="admin-input" rows={3} value={takeaway.test} disabled={busy}
+                onChange={(e) => setTakeaway((t) => ({ ...t, test: e.target.value }))}
+                onBlur={() => { if (takeaway.test !== (audit.takeaway_test || '')) updateAudit({ takeaway_test: takeaway.test || null }); }} />
+            </label>
+          </div>
+          <label className="mt-3 block space-y-1 text-xs uppercase tracking-widest text-muted-foreground">
+            Measurement and evidence note
+            <textarea className="admin-input" rows={3} value={takeaway.note} disabled={busy}
+              onChange={(e) => setTakeaway((t) => ({ ...t, note: e.target.value }))}
+              onBlur={() => { if (takeaway.note !== (audit.evidence_note || '')) updateAudit({ evidence_note: takeaway.note || null }); }} />
+          </label>
+        </div>
+      )}
+
       <div className="dashboard-card mb-6 p-6">
         <h3 className={SECTION_TITLE}>Action Plan</h3>
         <ActionPlanEditor items={audit.action_plan} onSave={(rows) => updateAudit({ action_plan: rows })} />
@@ -255,6 +342,10 @@ export default function AdminBrandHealthAuditDetail() {
         <h3 className={SECTION_TITLE}>Audit Credit</h3>
         <CreditPanel audit={audit} credit={credit} reload={load} />
       </div>
+
+      {showPreview && (
+        <MatrixPreview audit={audit} clientName={client?.company_name} onClose={() => setShowPreview(false)} />
+      )}
     </div>
   );
 }

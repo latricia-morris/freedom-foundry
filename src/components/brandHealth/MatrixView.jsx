@@ -1,212 +1,118 @@
 import React from 'react';
-import { CREDIT_LANGUAGE, fmtDate, money, ACTION_PRIORITIES } from '@/lib/brandHealth';
-import {
-  MATRIX_SCORECARDS,
-  JOURNEY_STAGES,
-  JOURNEY_STATUS_LABELS,
-  LEVERAGE_CATEGORIES,
-  LEVERAGE_PRIORITIES,
-} from '@/lib/matrix';
-import ChannelEqualizer from './ChannelEqualizer';
+import { CREDIT_LANGUAGE, fmtDate, money } from '@/lib/brandHealth';
+import MatrixChannels from './MatrixChannels';
 
+const SECTION = 'scroll-mt-28';
 const H = 'mb-1 font-heading text-2xl text-foreground';
 const SUB = 'mb-6 max-w-2xl text-sm text-muted-foreground';
-const EMPTY = 'mb-6 text-sm text-muted-foreground/70';
+const P = 'text-base leading-relaxed text-foreground';
 
-// Freedom Foundry palette
-const COPPER = '#E26E3C';
-const BRASS = '#DC5338';
-const EMBER = '#D9754A';
-const SLATE = '#454E68';
-const CHIP_RADIUS = 3;
+const DEFAULT_EVIDENCE_NOTE =
+  'Effort levels describe commitment, not effectiveness. Results marked Client-reported come directly from you; results marked Recorded are documented in an identified source; anything marked Not tracked has no usable measurement yet. Recommendations rest on the stated basis for each channel, and available capacity should be confirmed before committing.';
 
-function labelFor(list, key) {
-  const found = (list || []).find((item) => item.key === key);
-  return found ? found.label : key || '—';
-}
-
-function priorityColor(key) {
-  const k = (key || '').toLowerCase();
-  if (k === 'critical') return COPPER;
-  if (k === 'high') return BRASS;
-  if (k === 'medium' || k === 'opportunity') return EMBER;
-  return SLATE;
-}
-
-function statusColor(key) {
-  const k = (key || '').toLowerCase();
-  if (k.includes('complete') || k.includes('strong')) return COPPER;
-  if (k.includes('partial')) return EMBER;
-  if (k.includes('missing') || k.includes('gap') || k.includes('none')) return SLATE;
-  return SLATE;
-}
-
-function Chip({ label, color }) {
+function Takeaway({ audit }) {
+  const summary = audit.consultant_summary || '';
+  const groups = [
+    { label: 'Prioritize', text: audit.takeaway_prioritize },
+    { label: 'Maintain', text: audit.takeaway_maintain },
+    { label: 'Test or measure', text: audit.takeaway_test },
+  ].filter((g) => g.text);
+  if (!summary && !groups.length) return null;
   return (
-    <span
-      className="px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider"
-      style={{ borderRadius: CHIP_RADIUS, backgroundColor: `${color}22`, color }}
-    >
-      {label}
-    </span>
+    <section id="bh-takeaway" className={SECTION}>
+      <h3 className={H}>Strategic takeaway</h3>
+      {summary ? <p className={`mt-2 max-w-3xl ${P}`}>{summary}</p> : null}
+      {groups.length ? (
+        <div className="mt-6 grid gap-5 lg:grid-cols-3">
+          {groups.map((g) => (
+            <div key={g.label} className="border-l border-border pl-4">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-primary">{g.label}</p>
+              <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{g.text}</p>
+            </div>
+          ))}
+        </div>
+      ) : null}
+    </section>
   );
 }
 
-function ScoreBar({ score }) {
-  if (typeof score !== 'number') return null;
+function ActionPlan({ actions }) {
   return (
-    <div className="mt-2 h-1.5 w-full overflow-hidden bg-black/30" style={{ borderRadius: CHIP_RADIUS }}>
-      <div
-        className="h-full"
-        style={{
-          width: `${Math.max(0, Math.min(100, score))}%`,
-          borderRadius: CHIP_RADIUS,
-          background: `linear-gradient(to right, ${SLATE}, ${BRASS}, ${COPPER})`,
-        }}
-      />
-    </div>
+    <section id="bh-actions" className={SECTION}>
+      <h3 className={H}>Prioritized action plan</h3>
+      <ol className="mt-4 space-y-3">
+        {actions.map((a, i) => (
+          <li key={i} className="rounded-[3px] border border-border bg-card/40 p-4">
+            <div className="flex items-baseline gap-3">
+              <span className="font-heading text-xl text-primary">{i + 1}</span>
+              <p className="font-medium text-foreground">{a.title}</p>
+            </div>
+            <div className="mt-2 space-y-1 pl-8 text-sm">
+              {a.associated_channel ? <p className="text-muted-foreground">Channel: {a.associated_channel}</p> : null}
+              {a.detail ? <p className="text-muted-foreground">{a.detail}</p> : null}
+              {a.completion_condition ? <p className="text-muted-foreground">Complete when: {a.completion_condition}</p> : null}
+              {a.due_date ? <p className="text-muted-foreground">Timeframe: {a.due_date}</p> : null}
+              {a.owner ? <p className="text-muted-foreground">Owner: {a.owner}</p> : null}
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
   );
 }
 
-export default function MatrixView({ audit, findings = [], credit, matrixChannels = [], leverage = [] }) {
-  const flatSummary = audit?.consultant_summary || '';
-  const scoresPublic = audit?.matrix_scores_public || {};
-  const journeyPublic = Array.isArray(audit?.journey_public) ? audit.journey_public : [];
-
-  const sortedLeverage = [...(leverage || [])].sort((a, b) => {
-    const order = LEVERAGE_PRIORITIES.map((p) => p.key);
-    return order.indexOf(a.priority) - order.indexOf(b.priority);
-  });
-  const actionPlan = Array.isArray(audit?.action_plan) ? audit.action_plan : [];
-  const sortedActions = [...actionPlan].sort(
-    (a, b) => ACTION_PRIORITIES.indexOf(a.priority) - ACTION_PRIORITIES.indexOf(b.priority)
+function MeasurementNote({ audit, credit }) {
+  return (
+    <section id="bh-evidence" className={SECTION}>
+      <h3 className={H}>Measurement and evidence note</h3>
+      <p className={`mt-2 max-w-3xl ${P}`}>{audit.evidence_note || DEFAULT_EVIDENCE_NOTE}</p>
+      {credit ? (
+        <p className="mt-4 text-sm text-muted-foreground">
+          Audit credit: {money(credit.amount_cents)}
+          {credit.reviewed_date ? ` · reviewed ${fmtDate(credit.reviewed_date)}` : ''}
+        </p>
+      ) : null}
+      <p className="mt-4 text-sm italic leading-relaxed text-muted-foreground">{CREDIT_LANGUAGE}</p>
+    </section>
   );
+}
 
-  const hasScorecards = Object.keys(scoresPublic).length > 0;
-  const hasStrategyContent = !!flatSummary || hasScorecards;
+/**
+ * Marketing Matrix client report: header, strategic takeaway, effort
+ * allocation matrix, prioritized action plan, and the measurement note.
+ * Sections without content are omitted; nothing here is generated or inferred.
+ */
+export default function MatrixView({ audit, matrixChannels = [], credit, clientName }) {
+  const included = (matrixChannels || []).filter((c) => c.effort && (c.effort.recommended || c.effort.current));
+  const actions = (audit.action_plan || []).slice(0, 5);
+  const assessmentDate = audit.results_generated_at || audit.created_date;
 
   return (
     <div className="space-y-12">
-      {/* Every section keeps its id mounted so the tab/anchor nav always has
-          somewhere to scroll to, even when this section has no content yet. */}
-      <section id="bh-strategy">
-        <h3 className={H}>Your Marketing Strategy</h3>
-        {hasStrategyContent ? (
-          <>
-            {flatSummary ? (
-              <div className="dashboard-card mb-4 p-6">
-                <p className="whitespace-pre-line text-sm leading-relaxed text-foreground">{flatSummary}</p>
-              </div>
-            ) : null}
-            {hasScorecards ? (
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                {MATRIX_SCORECARDS.map((card) => {
-                  const d = scoresPublic[card.key];
-                  if (!d || typeof d.score !== 'number') return null;
-                  return (
-                    <div key={card.key} className="dashboard-card p-5">
-                      <div className="mb-1 flex flex-wrap items-baseline justify-between gap-2">
-                        <h4 className="font-heading text-lg text-foreground">{d.client_label || card.label}</h4>
-                        <span className="text-xs font-semibold text-foreground">{d.score}<span className="text-muted-foreground">/100</span></span>
-                      </div>
-                      <ScoreBar score={d.score} />
-                    </div>
-                  );
-                })}
-              </div>
-            ) : null}
-          </>
-        ) : (
-          <p className={EMPTY}>Not published yet.</p>
-        )}
+      <section className={SECTION}>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">Marketing Matrix</p>
+        <h2 className="mt-1 font-heading text-3xl font-light text-foreground sm:text-4xl">
+          Where to focus your marketing effort, and how to measure progress.
+        </h2>
+        <p className="mt-2 text-sm text-muted-foreground">
+          {clientName ? `${clientName} · ` : ''}Assessment {fmtDate(assessmentDate)}
+          {audit.reviewed_date ? ` · Reviewed ${fmtDate(audit.reviewed_date)}` : ''}
+        </p>
       </section>
 
-      {/* CHANNEL MAP — the equalizer IS the answer. No redundant list below it. */}
-      <section id="bh-channel-map">
-        <h3 className={H}>Your Channel Map</h3>
-        <p className={SUB}>How hard to push each channel right now — fill is where it stands today, the line is where it should be.</p>
-        {matrixChannels.length === 0 ? (
-          <p className={EMPTY}>Not published yet.</p>
-        ) : (
-          <ChannelEqualizer matrixChannels={matrixChannels} />
-        )}
-      </section>
+      <Takeaway audit={audit} />
 
-      <section id="bh-journey">
-        <h3 className={H}>Your Customer Journey</h3>
-        <p className={SUB}>Whether ideal buyers have a clear, credible path from first awareness through retention and referral.</p>
-        {journeyPublic.length === 0 ? (
-          <p className={EMPTY}>Not published yet.</p>
-        ) : (
-          <div className="space-y-3">
-            {JOURNEY_STAGES.map((stage) => {
-              const row = journeyPublic.find((r) => r.stage === stage.key);
-              if (!row) return null;
-              const statusKey = row.status || 'partial';
-              return (
-                <div key={stage.key} className="dashboard-card p-4">
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <p className="text-sm font-medium text-foreground">{stage.label}</p>
-                    <div className="flex items-center gap-2">
-                      <Chip label={JOURNEY_STATUS_LABELS[statusKey] || statusKey} color={statusColor(statusKey)} />
-                      {typeof row.coverage === 'number' ? (
-                        <span className="text-xs text-muted-foreground">{row.coverage}%</span>
-                      ) : null}
-                    </div>
-                  </div>
-                  {row.client_notes ? <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{row.client_notes}</p> : null}
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </section>
+      {included.length ? (
+        <section id="bh-channels" className={SECTION}>
+          <h3 className={H}>Effort allocation</h3>
+          <p className={SUB}>What you commit to each channel today, what we recommend committing next, and the direction of travel.</p>
+          <MatrixChannels channels={included} />
+        </section>
+      ) : null}
 
-      <section id="bh-opportunities">
-        <h3 className={H}>Your Leverage Opportunities</h3>
-        <p className={SUB}>Specific, high-leverage moves your consultant identified beyond standard channel execution.</p>
-        {sortedLeverage.length === 0 ? (
-          <p className={EMPTY}>Not published yet.</p>
-        ) : (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {sortedLeverage.map((item) => (
-              <div key={item.id || item.title} className="dashboard-card p-4">
-                <div className="mb-1 flex items-center justify-between gap-2">
-                  <p className="text-sm font-medium text-foreground">{item.title}</p>
-                  <Chip label={labelFor(LEVERAGE_PRIORITIES, item.priority)} color={priorityColor(item.priority)} />
-                </div>
-                <p className="text-[11px] uppercase tracking-widest text-muted-foreground/70">{labelFor(LEVERAGE_CATEGORIES, item.category)}</p>
-                {item.client_summary ? <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{item.client_summary}</p> : null}
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
+      {actions.length ? <ActionPlan actions={actions} /> : null}
 
-      <section id="bh-actions">
-        <h3 className={H}>Your Action Plan</h3>
-        {sortedActions.length === 0 ? (
-          <p className={EMPTY}>Not published yet.</p>
-        ) : (
-          <div className="space-y-3">
-            {sortedActions.map((action, i) => (
-              <div key={i} className="dashboard-card p-4">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <p className="text-sm font-medium text-foreground">{action.title}</p>
-                  <Chip label={action.priority} color={priorityColor(action.priority)} />
-                </div>
-                {action.detail ? <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{action.detail}</p> : null}
-              </div>
-            ))}
-          </div>
-        )}
-        {credit ? (
-          <div className="dashboard-card mt-4 p-4">
-            <p className="text-sm text-foreground">Audit credit: {money(credit.amount_cents)}{credit.reviewed_date ? ` · reviewed ${fmtDate(credit.reviewed_date)}` : ''}</p>
-          </div>
-        ) : null}
-        <p className="mt-6 text-xs italic leading-relaxed text-muted-foreground">{CREDIT_LANGUAGE}</p>
-      </section>
+      <MeasurementNote audit={audit} credit={credit} />
     </div>
   );
 }

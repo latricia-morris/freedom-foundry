@@ -8,11 +8,10 @@ import AuditSection from '@/components/brandHealth/AuditSection';
 import { PUBLISHED_STATUS, latestByComponent } from '@/lib/brandHealth';
 
 const NAV = [
-  { id: 'bh-strategy', label: 'Strategy' },
-  { id: 'bh-channel-map', label: 'Channel Map' },
-  { id: 'bh-journey', label: 'Journey' },
-  { id: 'bh-opportunities', label: 'Opportunities' },
-  { id: 'bh-actions', label: 'Actions' },
+  { id: 'bh-takeaway', label: 'Takeaway' },
+  { id: 'bh-channels', label: 'Channels' },
+  { id: 'bh-actions', label: 'Action Plan' },
+  { id: 'bh-evidence', label: 'Evidence' },
 ];
 
 /** Marketing Matrix subpage: the consultant-built channel and journey map. */
@@ -64,7 +63,7 @@ export default function BrandHealthMatrix() {
       <div className="mb-8">
         <h1 className="font-heading text-4xl font-light text-foreground sm:text-5xl">Marketing <span className="molten-text italic">Matrix</span></h1>
         <p className="mt-2 max-w-2xl leading-relaxed text-muted-foreground">
-          Channel fit and customer journey alignment for your growth strategy.
+          Where to focus your marketing effort, and how to measure progress.
         </p>
       </div>
 
@@ -87,6 +86,7 @@ export default function BrandHealthMatrix() {
             reload={reload}
             matrixChannels={matrixChannels}
             leverage={leverage}
+            clientName={data.client?.company_name}
           />
         </>
       )}

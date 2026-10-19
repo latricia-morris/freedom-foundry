@@ -163,6 +163,18 @@
     "consultant_summary": {
       "type": "string"
     },
+    "takeaway_prioritize": {
+      "type": "string"
+    },
+    "takeaway_maintain": {
+      "type": "string"
+    },
+    "takeaway_test": {
+      "type": "string"
+    },
+    "evidence_note": {
+      "type": "string"
+    },
     "action_plan": {
       "type": "array",
       "items": {
@@ -192,6 +204,18 @@
               "done"
             ],
             "default": "open"
+          },
+          "associated_channel": {
+            "type": "string"
+          },
+          "completion_condition": {
+            "type": "string"
+          },
+          "due_date": {
+            "type": "string"
+          },
+          "owner": {
+            "type": "string"
           }
         },
         "required": [

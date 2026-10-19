@@ -89,6 +89,87 @@
         "retention_referral"
       ]
     },
+    "effort": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "goal": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "period": {
+            "type": "string"
+          },
+          "evidence": {
+            "type": "string",
+            "enum": [
+              "recorded",
+              "client_reported",
+              "estimated"
+            ]
+          },
+          "attribution": {
+            "type": "string",
+            "enum": [
+              "originated",
+              "influenced",
+              "uncertain"
+            ]
+          }
+        },
+        "required": [
+          "label",
+          "value"
+        ]
+      }
+    },
+    "recommendation_basis": {
+      "type": "string",
+      "enum": [
+        "supported_by_results",
+        "strategic_hypothesis",
+        "needs_further_assessment"
+      ]
+    },
+    "measurement_objective": {
+      "type": "string",
+      "enum": [
+        "qualified_demand",
+        "relationships",
+        "authority",
+        "revenue",
+        "other"
+      ]
+    },
+    "measurement_objective_label": {
+      "type": "string"
+    },
+    "measurement_fields": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "qualified_conversation_definition": {
+      "type": "string"
+    },
+    "next_action": {
+      "type": "string"
+    },
     "metrics": {
       "type": "object",
       "additionalProperties": true

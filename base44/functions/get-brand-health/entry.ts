@@ -1,9 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 import {
   computeMai,
-  opportunityScore,
-  channelPosition,
-  stageCoverageMap,
   DEFAULT_MATRIX_WEIGHTS,
   matrixFlags,
 } from '../../shared/brandHealth/matrix.ts';
@@ -54,34 +51,34 @@ export default async function (req: Request): Promise<Response> {
 
     // Marketing Matrix: channels and leverage opportunities are separate
     // consultant-owned records. Only client-visible records belonging to a
-    // published audit are shaped for the client — and only precomputed chart
-    // positions and the consultant-written summary cross the wire, never the
-    // internal ratings or the opportunity-score formula.
+    // released audit cross the wire, and only the client-report fields:
+    // effort categories, direction, rationale, commitment, goals, results
+    // (each with its evidence label), and the next action. Internal ratings
+    // (maturity, fit, impact, opportunity scores, consultant priorities) and
+    // any chart positions never reach the client.
     const matrixChannelsRaw = await svc.entities.MatrixChannel.filter({ agency_client_id: client.id }, 'sort_order', 300);
     const leverageRaw = await svc.entities.LeverageOpportunity.filter({ agency_client_id: client.id }, '-created_date', 300);
 
     const matrixChannels = (matrixChannelsRaw || [])
       .filter((c) => c.client_visible && releasedIds.has(c.audit_id))
-      .map((c) => {
-        const audit = (audits || []).find((a) => a.id === c.audit_id);
-        const pos = channelPosition(c as Record<string, unknown>);
-        return {
-          audit_id: c.audit_id,
-          channel_name: c.channel_name,
-          category: c.category,
-          description: c.description,
-          strategic_role: c.strategic_role,
-          journey_stage: c.journey_stage,
-          consultant_priority: c.consultant_priority,
-          client_notes: c.client_notes,
-          x: pos.x,
-          y: pos.y,
-          opportunity: opportunityScore(
-            c as Record<string, unknown>,
-            stageCoverageMap((audit?.journey_coverage || []) as Array<{ stage?: string; coverage?: number }>),
-          ),
-        };
-      });
+      .map((c) => ({
+        audit_id: c.audit_id,
+        channel_name: c.channel_name,
+        category: c.category,
+        description: c.description,
+        strategic_role: c.strategic_role,
+        journey_stage: c.journey_stage,
+        client_notes: c.client_notes,
+        effort: c.effort || {},
+        goal: c.goal || {},
+        results: c.results || [],
+        recommendation_basis: c.recommendation_basis || null,
+        measurement_objective: c.measurement_objective || null,
+        measurement_objective_label: c.measurement_objective_label || null,
+        measurement_fields: c.measurement_fields || [],
+        qualified_conversation_definition: c.qualified_conversation_definition || null,
+        next_action: c.next_action || null,
+      }));
 
     const leverage = (leverageRaw || [])
       .filter((o) => o.client_visible && releasedIds.has(o.audit_id))

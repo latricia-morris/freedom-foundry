@@ -177,6 +177,59 @@ export function matrixFlags(record: Record<string, any> | null | undefined) {
   };
 }
 
+// --- Effort model (client-facing Marketing Matrix report) ----------------------
+export const EFFORT_LABELS: Record<string, string> = {
+  none: 'None',
+  occasional: 'Occasional',
+  consistent: 'Consistent',
+  high: 'High',
+  unknown: 'Unknown',
+};
+
+export const DIRECTION_LABELS: Record<string, string> = {
+  increase: 'Increase',
+  maintain: 'Maintain',
+  reduce: 'Reduce',
+  establish: 'Establish',
+  test_first: 'Test first',
+  assess_first: 'Assess first',
+};
+
+export const EVIDENCE_LABELS: Record<string, string> = {
+  recorded: 'Recorded',
+  client_reported: 'Client-reported',
+  estimated: 'Estimated',
+  not_tracked: 'Not tracked',
+};
+
+/** Publication blockers for a Marketing Matrix audit's included channels. */
+export function matrixPublishIssues(audit: Record<string, any> | null, channels: Array<Record<string, any>>): string[] {
+  const issues: string[] = [];
+  for (const c of (channels || []).filter((ch: Record<string, any>) => ch.client_visible)) {
+    const name = c.channel_name || 'Untitled channel';
+    const eff = c.effort || {};
+    if (!EFFORT_LABELS[eff.current]) issues.push(`${name}: current effort is missing (set Unknown if not established).`);
+    if (!EFFORT_LABELS[eff.recommended]) issues.push(`${name}: no recommended effort set.`);
+    if (!DIRECTION_LABELS[eff.direction]) issues.push(`${name}: no direction set.`);
+    if (!String(eff.rationale || '').trim()) issues.push(`${name}: no rationale for the recommendation.`);
+    for (const r of c.results || []) {
+      if (!r.label && !String(r.value ?? '').trim()) continue;
+      const raw = String(r.value ?? '').trim();
+      if (!/^-?\d+(\.\d+)?$/.test(raw)) {
+        issues.push(`${name}: result "${r.label}" is not a valid number.`);
+        continue;
+      }
+      if (!String(r.period || '').trim()) issues.push(`${name}: result "${r.label}" is missing a period or date.`);
+      if (!EVIDENCE_LABELS[r.evidence]) issues.push(`${name}: result "${r.label}" is missing an evidence source.`);
+    }
+    const goal = c.goal || {};
+    if (String(goal.target || '').trim() && /\d/.test(String(goal.target)) && !String(goal.timeframe || '').trim()) {
+      issues.push(`${name}: a numerical target needs a timeframe.`);
+    }
+  }
+  return issues;
+}
+
 /** Coverage lookup {stage: coverage} from the audit's journey rows. */
 export function stageCoverageMap(rows: Array<{ stage?: string; coverage?: number }> = {}): Record<string, number> {
   const map: Record<string, number> = {};

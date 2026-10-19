@@ -20,7 +20,7 @@ const HEADING = 'mb-4 font-heading text-2xl text-foreground';
  *   results_available → results immediately, no blocker copy
  *   ready_for_review  → internal review state
  */
-export default function AuditSection({ component, audit, findings, credit, onOpenStatus, reload, matrixChannels = [], leverage = [] }) {
+export default function AuditSection({ component, audit, findings, credit, onOpenStatus, reload, matrixChannels = [], leverage = [], clientName }) {
   const [showIntake, setShowIntake] = useState(false);
   const [showBaseline, setShowBaseline] = useState(false);
   const isMatrix = !!component.matrix || (audit && audit.component === 'marketing_matrix');
@@ -75,7 +75,7 @@ export default function AuditSection({ component, audit, findings, credit, onOpe
             {COMPONENT_LABELS.marketing_matrix}{' '}
             <span className="text-sm uppercase tracking-widest text-muted-foreground/70">Your results</span>
           </h3>
-          <MatrixView audit={audit} findings={findings} credit={credit} matrixChannels={matrixChannels} leverage={leverage} />
+          <MatrixView audit={audit} findings={findings} credit={credit} matrixChannels={matrixChannels} leverage={leverage} clientName={clientName} />
         </div>
       );
     }
