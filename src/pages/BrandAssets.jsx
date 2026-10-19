@@ -21,7 +21,8 @@ const FILE_TYPES = ['logo', 'design_asset', 'print_collateral', 'digital_asset',
 const FILE_TYPE_LABELS = { logo: 'Logo', design_asset: 'Design Asset', print_collateral: 'Print Collateral', digital_asset: 'Digital Asset', deliverable: 'Deliverable', other: 'Other' };
 
 export default function BrandAssets() {
-  const { isClient, loading: memberLoading } = useMembership();
+  const { isClient, user, loading: memberLoading } = useMembership();
+  const isAdmin = user?.role === 'admin';
   const [assets, setAssets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -29,7 +30,7 @@ export default function BrandAssets() {
 
   useEffect(() => {
     if (memberLoading) return;
-    if (!isClient) { setLoading(false); return; }
+    if (!isClient && !isAdmin) { setLoading(false); return; }
     apiClient.entities.BrandAsset.filter({}, '-created_date', 100)
       .then(a => setAssets(a || []))
       .catch(() => {})
@@ -59,7 +60,7 @@ export default function BrandAssets() {
   };
 
   if (memberLoading || loading) return <div className="flex justify-center py-20"><div className="w-8 h-8 border-2 border-border border-t-primary rounded-full animate-spin" /></div>;
-  if (!isClient) return <ClientGate />;
+  if (!isClient && !isAdmin) return <ClientGate />;
 
   const filtered = filter === 'all' ? assets : assets.filter(a => a.file_type === filter);
 

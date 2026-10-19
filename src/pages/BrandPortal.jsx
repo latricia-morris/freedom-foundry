@@ -15,7 +15,8 @@ const sections = [
 
 
 export default function BrandPortal() {
-  const { isClient, loading } = useMembership();
+  const { isClient, user, loading } = useMembership();
+  const isAdmin = user?.role === 'admin';
 
   return (
     <div className="max-w-5xl animate-fade-in">
@@ -31,7 +32,7 @@ export default function BrandPortal() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {sections.map((section) => {
-          const gated = !section.open && !isClient;
+          const gated = !section.open && !isClient && !isAdmin;
           return (
             <div key={section.path}>
               {gated ?
