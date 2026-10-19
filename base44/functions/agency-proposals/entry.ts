@@ -8,6 +8,7 @@ import {
   handleDepositPaid,
   writeAudit,
 } from "../../shared/agency/core.ts";
+import { createDepositCheckout } from "../../shared/proposal/payments.ts";
 
 const FALLBACK_ORIGIN = "https://brand-forge-vault.base44.app";
 
@@ -62,32 +63,21 @@ async function findProposal(svc, token) {
 
 async function createCheckout(svc, req, proposal, installment, depositAmtCents) {
   const stripe = new Stripe(secrets.get("STRIPE_SECRET_KEY"));
-  const origin = req.headers.get("origin") || FALLBACK_ORIGIN;
-  const session = await stripe.checkout.sessions.create({
-    mode: "payment",
-    managed_payments: { enabled: false },
-    line_items: [{
-      price_data: {
-        currency: "usd",
-        unit_amount: depositAmtCents,
-        product_data: { name: `Project deposit — ${proposal.title}` },
-      },
-      quantity: 1,
-    }],
-    client_reference_id: proposal.id,
+  return createDepositCheckout(req, stripe, {
+    fallbackOrigin: FALLBACK_ORIGIN,
+    amountCents: depositAmtCents,
+    productName: `Project deposit — ${proposal.title}`,
+    proposalId: proposal.id,
     metadata: {
-      base44_app_id: secrets.get("BASE44_APP_ID"),
       base44_proposal_id: proposal.id,
       base44_installment_id: installment.id,
       payment_type: "deposit",
       accepted_contract_total_cents: String(proposal.accepted_contract_total_cents || 0),
       deposit_amount_cents: String(depositAmtCents),
     },
-    success_url: `${origin}/p/${proposal.share_token}?payment=success`,
-    cancel_url: `${origin}/p/${proposal.share_token}?payment=cancelled`,
+    successPath: `/p/${proposal.share_token}?payment=success`,
+    cancelPath: `/p/${proposal.share_token}?payment=cancelled`,
   });
-  console.log(`Agency checkout session created: ${session.id}`);
-  return { url: session.url, session_id: session.id };
 }
 
 export default async function(req) {

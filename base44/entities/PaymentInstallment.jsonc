@@ -71,6 +71,15 @@
     "external_payment_event_id": {
       "type": "string"
     },
+    "payment_method": {
+      "type": "string"
+    },
+    "payment_reference": {
+      "type": "string"
+    },
+    "recorded_by": {
+      "type": "string"
+    },
     "verification_status": {
       "type": "string",
       "enum": [

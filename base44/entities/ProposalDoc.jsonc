@@ -1,0 +1,233 @@
+{
+  "name": "ProposalDoc",
+  "type": "object",
+  "properties": {
+    "agency_client_id": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "project_type": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "published",
+        "viewed",
+        "changes_requested",
+        "signed_awaiting_payment",
+        "awaiting_offline_deposit",
+        "deposit_paid",
+        "paid_in_full",
+        "expired",
+        "superseded",
+        "cancelled"
+      ],
+      "default": "draft"
+    },
+    "version": {
+      "type": "number",
+      "default": 1
+    },
+    "share_token": {
+      "type": "string"
+    },
+    "tokens": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "version": {
+            "type": "number"
+          },
+          "active": {
+            "type": "boolean",
+            "default": false
+          },
+          "created_at": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "token",
+          "version"
+        ]
+      }
+    },
+    "issue_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "expiry_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "currency": {
+      "type": "string",
+      "default": "USD"
+    },
+    "recipient": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "content": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "investment": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "timeline": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "agreement_sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "heading": {
+            "type": "string"
+          },
+          "paragraphs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "heading"
+        ]
+      }
+    },
+    "agreement_version": {
+      "type": "string"
+    },
+    "sections_visible": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "media": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "parsed_source_hash": {
+      "type": "string"
+    },
+    "parsed_payload_cache": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "source_markdown": {
+      "type": "string"
+    },
+    "parse_review": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "publish_blockers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "signing": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "content_digest": {
+      "type": "string"
+    },
+    "deposit_installment_id": {
+      "type": "string"
+    },
+    "payment_preference": {
+      "type": "string",
+      "enum": [
+        "online",
+        "offline"
+      ],
+      "default": "online"
+    },
+    "change_requests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string"
+          },
+          "requested_at": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "open",
+              "addressed"
+            ],
+            "default": "open"
+          }
+        },
+        "required": [
+          "message"
+        ]
+      }
+    },
+    "sent_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "viewed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "signed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "admin_notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "agency_client_id",
+    "title"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
