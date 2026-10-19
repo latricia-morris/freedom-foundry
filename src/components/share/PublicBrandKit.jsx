@@ -1,5 +1,6 @@
-import { useEffect } from 'react';
-import { AlertTriangle, ArrowUpRight, Check, FileText, Mail, MapPin, Phone } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { AlertTriangle, ArrowUpRight, Check, FileText, Mail, MapPin, Phone, Printer } from 'lucide-react';
+import { toast } from '@/components/ui/use-toast';
 
 const KNOWN_FONTS = {
   'cormorant garamond': 'Cormorant Garamond',
@@ -51,11 +52,16 @@ function isImage(url) {
   return /\.(avif|gif|jpe?g|png|svg|webp)(?:\?.*)?$/i.test(url || '');
 }
 
-export function ShareSection({ eyebrow, children }) {
+export function ShareSection({ eyebrow, action, children }) {
   if (!children) return null;
   return (
     <section className="border-t border-[#3b3028]/12 pt-7 first:border-t-0 first:pt-0">
-      {eyebrow && <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.22em] text-[#9a6242]">{eyebrow}</p>}
+      {(eyebrow || action) && (
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          {eyebrow && <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#9a6242]">{eyebrow}</p>}
+          {action}
+        </div>
+      )}
       {children}
     </section>
   );
@@ -80,24 +86,40 @@ function PublicLink({ label, url, description }) {
   );
 }
 
+/** One saved color. The whole swatch copies its exact HEX value. */
 function ColorSwatch({ color }) {
   const value = typeof color?.hex === 'string' ? color.hex.trim() : '';
+  const name = typeof color?.name === 'string' ? color.name.trim() : '';
+  const role = typeof color?.role === 'string' ? color.role.trim() : '';
   const valid = HEX_COLOR.test(value);
+  const copy = () => {
+    if (!valid) return;
+    navigator.clipboard.writeText(value)
+      .then(() => toast({ title: 'Color copied', description: name ? `${name} (${value}) is on your clipboard.` : `${value} is on your clipboard.` }))
+      .catch(() => {});
+  };
   return (
-    <div className="overflow-hidden rounded-xl border border-[#3b3028]/12 bg-white/75">
+    <button
+      type="button"
+      onClick={copy}
+      disabled={!valid}
+      title={valid ? `Copy ${value}` : undefined}
+      className="overflow-hidden rounded-xl border border-[#3b3028]/12 bg-white/75 text-left transition-colors hover:border-[#9a6242]/40 disabled:cursor-default"
+    >
       <div
         className="h-20 border-b border-[#3b3028]/12"
         style={valid ? { backgroundColor: value } : {
           backgroundImage: 'repeating-linear-gradient(45deg, #ede8df 0, #ede8df 10px, #ded6ca 10px, #ded6ca 20px)',
         }}
-        aria-label={valid ? `${color?.name || 'Brand'} color ${value}` : 'Color preview unavailable'}
+        aria-label={valid ? `${name || 'Brand'} color ${value}` : 'Color preview unavailable'}
       />
       <div className="p-3">
-        <p className="truncate text-sm font-semibold text-[#29221e]">{color?.name || 'Brand color'}</p>
-        <p className="mt-0.5 font-mono text-xs text-[#655b54]">{value || 'No hex value supplied'}</p>
+        {name && <p className="truncate text-sm font-semibold text-[#29221e]">{name}</p>}
+        <p className={`font-mono text-xs text-[#655b54] ${name ? 'mt-0.5' : ''}`}>{value || 'No hex value supplied'}</p>
+        {role && <p className="mt-1 truncate text-xs text-[#655b54]">{role}</p>}
         {!valid && <p className="mt-2 flex items-center gap-1 text-xs text-black"><AlertTriangle className="h-3.5 w-3.5" /> Preview unavailable</p>}
       </div>
-    </div>
+    </button>
   );
 }
 
