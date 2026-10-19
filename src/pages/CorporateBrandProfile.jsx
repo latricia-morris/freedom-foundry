@@ -261,14 +261,15 @@ export default function CorporateBrandProfile() {
           <h2 className="font-heading text-lg mb-4">Brand Colors</h2>
           <div className="space-y-2">
             {form.colors.map((color, i) => (
-              <div key={i} className="flex gap-2 items-center">
+              <div key={i} className="grid grid-cols-[3rem_1fr_1fr_7rem_auto] gap-2 items-center">
                 <input type="color" value={color.hex || '#000000'} onChange={e => updateItem('colors', i, 'hex', e.target.value)} className="w-12 h-10 rounded-lg border border-border cursor-pointer" />
-                <input className={`${inputClass} flex-1`} value={color.name || ''} onChange={e => updateItem('colors', i, 'name', e.target.value)} placeholder="Color name" />
-                <input className={`${inputClass} w-32`} value={color.hex || ''} onChange={e => updateItem('colors', i, 'hex', e.target.value)} placeholder="#000000" />
+                <input className={inputClass} value={color.name || ''} onChange={e => updateItem('colors', i, 'name', e.target.value)} placeholder="Color name" />
+                <input className={inputClass} value={color.role || ''} onChange={e => updateItem('colors', i, 'role', e.target.value)} placeholder="Usage / role (optional)" />
+                <input className={inputClass} value={color.hex || ''} onChange={e => updateItem('colors', i, 'hex', e.target.value)} placeholder="#000000" />
                 <button onClick={() => removeItem('colors', i)} className="px-2 text-muted-foreground hover:text-foreground"><X className="w-4 h-4" /></button>
               </div>
             ))}
-            <AddLinkButton label="Add Color" onAdd={() => addItem('colors', { name: '', hex: '#000000' })} />
+            <AddLinkButton label="Add Color" onAdd={() => addItem('colors', { name: '', hex: '#000000', role: '' })} />
           </div>
         </section>
 

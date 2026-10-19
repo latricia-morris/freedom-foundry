@@ -828,6 +828,18 @@ p, li, span, label {
 .dash-editorial-block .text-primary {
   color: hsl(var(--primary));
 }
+/* Shared brand kit printing — keep chip/specimen colors in the PDF output */
+.brand-kit-print {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+@media print {
+  .brand-kit-noprint {
+    display: none !important;
+  }
+}
+
 /* Portfolio media integrity: never stretch or distort client work. */
 .portfolio-media,
 .portfolio-media img,

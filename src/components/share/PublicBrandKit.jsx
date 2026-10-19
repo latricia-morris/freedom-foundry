@@ -35,6 +35,22 @@ function readableArray(value) {
   return Array.isArray(value) ? value.filter(Boolean) : [];
 }
 
+/** Clipboard write with a fallback for browsers that refuse the async API. */
+async function copyText(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch {
+    const area = document.createElement('textarea');
+    area.value = text;
+    area.style.position = 'fixed';
+    area.style.opacity = '0';
+    document.body.appendChild(area);
+    area.focus();
+    area.select();
+    try { document.execCommand('copy'); } finally { area.remove(); }
+  }
+}
+
 function safeHref(value, type = 'web') {
   if (typeof value !== 'string' || !value.trim()) return null;
   if (type === 'email') return `mailto:${value.trim()}`;
@@ -123,22 +139,65 @@ function ColorSwatch({ color }) {
   );
 }
 
+const SPECIMEN_TEXT = 'The future feels unmistakably yours.';
+
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/**
+ * Tracks whether a font family is actually loaded in this browser.
+ * Only genuinely loaded webfonts count: a generic or missing family must
+ * never be presented as an accurate preview of the brand font.
+ */
+function useFontAvailability(family) {
+  const [state, setState] = useState(family ? 'loading' : 'none');
+  useEffect(() => {
+    if (!family) return undefined;
+    let active = true;
+    setState('loading');
+    const fontSet = document.fonts;
+    if (!fontSet) {
+      if (active) setState('unavailable');
+      return undefined;
+    }
+    (async () => {
+      try {
+        const spec = `16px "${family}"`;
+        let faces = await fontSet.load(spec);
+        if (!faces.length) { await wait(400); faces = await fontSet.load(spec); }
+        if (!faces.length) { await fontSet.ready; faces = await fontSet.load(spec); }
+        if (active) setState(faces.length ? 'available' : 'unavailable');
+      } catch {
+        if (active) setState('unavailable');
+      }
+    })();
+    return () => { active = false; };
+  }, [family]);
+  return state;
+}
+
 function FontSpecimen({ label, font }) {
   const supplied = typeof font === 'string' ? font.trim() : '';
   const registered = KNOWN_FONTS[supplied.toLowerCase()];
+  const family = registered || supplied;
+  const availability = useFontAvailability(family);
   if (!supplied) return null;
   return (
     <div className="rounded-xl border border-[#3b3028]/12 bg-white/75 p-4">
       <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#9a6242]">{label}</p>
-      {registered ? (
+      {availability === 'loading' && <p className="mt-3 text-xs text-[#655b54]">Loading font preview&hellip;</p>}
+      {availability === 'available' && (
         <>
-          <p className="mt-3 text-2xl text-[#29221e]" style={{ fontFamily: `"${registered}", serif` }}>The future feels unmistakably yours.</p>
-          <p className="mt-2 text-xs text-[#655b54]">{registered}</p>
+          <p className="mt-3 text-2xl text-[#29221e]" style={{ fontFamily: `"${family}", serif` }}>{SPECIMEN_TEXT}</p>
+          <p className="mt-2 text-xs text-[#655b54]">{supplied}</p>
         </>
-      ) : (
+      )}
+      {availability === 'unavailable' && (
         <>
-          <p className="mt-3 text-sm font-semibold text-[#29221e]">{supplied}</p>
-          <p className="mt-2 text-xs text-[#655b54]">Preview not available for this font.</p>
+          <p className="mt-3 text-2xl text-[#29221e]">{SPECIMEN_TEXT}</p>
+          <p className="mt-2 text-xs text-[#655b54]">{supplied}</p>
+          <p className="mt-2 text-xs font-medium text-[#29221e]">
+            Font preview unavailable. The text shown here uses a fallback font and does not represent {supplied}.
+          </p>
         </>
       )}
     </div>
@@ -184,6 +243,67 @@ function AssetGallery({ assets, logos, headshots, moodboards }) {
   );
 }
 
+/** Builds the complete permitted textual information for this share as Markdown. */
+function buildDetailsMarkdown(data, colorLines) {
+  const profile = data.profile || {};
+  const brand = data.brand || {};
+  const guidelines = data.guidelines || {};
+  const person = [profile.first_name, profile.last_name].filter(Boolean).join(' ');
+  const title = profile.company_name || profile.business_name || person || 'Shared Brand Kit';
+  const lines = [`# ${title}`];
+  const push = (label, value) => {
+    const v = typeof value === 'string' ? value.trim() : '';
+    if (v) lines.push('', `## ${label}`, '', v);
+  };
+  const tagline = (profile.tagline || brand.tagline || '').trim();
+  if (tagline) lines.push('', `_${tagline}_`);
+  push('Mission statement', profile.mission_statement || brand.mission_statement);
+  push('Short bio', profile.short_bio);
+  push('Biography', profile.long_bio);
+  push('Positioning', brand.positioning || profile.positioning);
+  push('Target audience', brand.target_audience || profile.target_audience);
+  push('Brand voice', brand.voice || profile.brand_voice);
+  push('Tonality', brand.tonality || profile.brand_tonality);
+  push('Brand personality', profile.brand_personality);
+  push('Brand specs', profile.brand_specs);
+  if (colorLines.length) lines.push('', '## Colors', '', ...colorLines.map((line) => `- ${line}`));
+  const fontEntries = Object.entries({
+    Heading: brand.fonts?.heading_font || profile.heading_font || guidelines.heading_font,
+    Subheading: brand.fonts?.subheading_font || profile.subheading_font || guidelines.subheading_font,
+    Body: brand.fonts?.body_font || profile.body_font || guidelines.body_font,
+    Accent: brand.fonts?.accent_font || profile.accent_font || guidelines.accent_font,
+  }).filter(([, f]) => typeof f === 'string' && f.trim());
+  if (fontEntries.length) lines.push('', '## Typography', '', ...fontEntries.map(([label, f]) => `- ${label}: ${f.trim()}`));
+  const links = [
+    profile.website && { label: 'Website', url: profile.website },
+    ...readableArray(profile.social_links).map((link) => ({ label: link?.platform || 'Social channel', url: link?.url })),
+    ...readableArray(profile.feature_links).map((link) => ({ label: link?.label || 'Featured link', url: link?.url })),
+    ...readableArray(profile.book_links).map((link) => ({ label: link?.title || 'Published book', url: link?.url })),
+    ...readableArray(profile.podcast_links).map((link) => ({ label: link?.platform || 'Podcast channel', url: link?.url })),
+  ].filter((link) => safeHref(link.url));
+  if (links.length) lines.push('', '## Links', '', ...links.map((link) => `- ${link.label}: ${safeHref(link.url)}`));
+  const guidance = [
+    ['Logo usage', guidelines.logo_usage_notes],
+    ['Color usage', guidelines.color_usage_notes],
+    ['Typography', guidelines.typography_notes],
+    ['Photography', guidelines.photography_style],
+    ['Tone & voice', guidelines.tone_notes],
+    ['Avoid', guidelines.brand_dont_list],
+    ['Additional standards', guidelines.additional_standards],
+  ].filter(([, value]) => value);
+  if (guidance.length) {
+    lines.push('', '## Guidance', '');
+    guidance.forEach(([label, value]) => lines.push(`### ${label}`, '', value, ''));
+  }
+  const contact = [
+    profile.email && `Email: ${profile.email}`,
+    profile.phone && `Phone: ${profile.phone}`,
+    [profile.location_city, profile.location_state, profile.location_country].filter(Boolean).join(', ') && `Location: ${[profile.location_city, profile.location_state, profile.location_country].filter(Boolean).join(', ')}`,
+  ].filter(Boolean);
+  if (contact.length) lines.push('', '## Contact', '', ...contact);
+  return lines.join('\n');
+}
+
 export default function PublicBrandKit({ data }) {
   usePublicFonts();
   const profile = data.profile || {};
@@ -202,6 +322,26 @@ export default function PublicBrandKit({ data }) {
     'Body': brand.fonts?.body_font || profile.body_font || guidelines.body_font,
     'Accent': brand.fonts?.accent_font || profile.accent_font || guidelines.accent_font,
   };
+  const colors = readableArray(profile.colors ?? brand.colors);
+  const colorLines = colors.map((color) => {
+    const hex = typeof color?.hex === 'string' ? color.hex.trim() : '';
+    const name = typeof color?.name === 'string' ? color.name.trim() : '';
+    return hex ? (name ? `${name}: ${hex}` : hex) : '';
+  }).filter(Boolean);
+
+  const copyAllColors = () => {
+    if (!colorLines.length) return;
+    navigator.clipboard.writeText(colorLines.join('\n'))
+      .then(() => toast({ title: 'All colors copied', description: 'The full palette is on your clipboard.' }))
+      .catch(() => {});
+  };
+
+  const copyAllDetails = () => {
+    const text = buildDetailsMarkdown(data, colorLines);
+    navigator.clipboard.writeText(text)
+      .then(() => toast({ title: 'All details copied', description: 'The complete shared information is on your clipboard.' }))
+      .catch(() => {});
+  };
   const links = [
     ...(profile.website ? [{ label: 'Website', url: profile.website, description: profile.website }] : []),
     ...readableArray(profile.social_links).map(link => ({ label: link?.platform || 'Social channel', url: link?.url, description: link?.url })),
@@ -211,22 +351,51 @@ export default function PublicBrandKit({ data }) {
   ];
 
   return (
-    <div className="min-h-screen bg-[#ede8df] px-4 py-8 text-[#29221e] sm:px-6 sm:py-12">
+    <div className="brand-kit-print min-h-screen bg-[#ede8df] px-4 py-8 text-[#29221e] sm:px-6 sm:py-12">
       <main className="mx-auto max-w-5xl">
         <header className="overflow-hidden rounded-3xl bg-[#251d18] px-6 py-9 text-[#f7f2ea] shadow-[0_24px_70px_rgba(37,29,24,0.2)] sm:px-10 sm:py-12">
           <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-[#e4a06e]">Shared brand kit</p>
           <h1 className="mt-4 max-w-3xl font-heading text-4xl font-light leading-tight sm:text-6xl">{title}</h1>
           {subtitle && <p className="mt-5 max-w-2xl text-base leading-relaxed text-[#f7f2ea]/72 sm:text-lg">{subtitle}</p>}
+          <div className="mt-6 flex flex-wrap gap-2 brand-kit-noprint">
+            <button
+              type="button"
+              onClick={copyAllDetails}
+              className="border border-white/25 px-4 py-2 text-sm font-semibold text-[#f7f2ea] transition-colors hover:bg-white/10"
+              style={{ borderRadius: '7px' }}
+            >
+              Copy all details
+            </button>
+            <button
+              type="button"
+              onClick={() => window.print()}
+              className="inline-flex items-center gap-2 border border-white/25 px-4 py-2 text-sm font-semibold text-[#f7f2ea] transition-colors hover:bg-white/10"
+              style={{ borderRadius: '7px' }}
+            >
+              <Printer className="h-4 w-4" /> Print / save PDF
+            </button>
+          </div>
         </header>
 
         <div className="mt-5 rounded-3xl bg-[#f7f2ea] p-6 shadow-[0_16px_50px_rgba(37,29,24,0.08)] sm:mt-6 sm:p-10">
           <div className="space-y-8">
             <AssetGallery assets={data.assets} logos={profile.logo_urls} headshots={profile.headshot_urls} moodboards={profile.moodboard_urls} />
 
-            {readableArray(brand.colors).length > 0 && (
-              <ShareSection eyebrow="Color palette">
+            {colors.length > 0 && (
+              <ShareSection
+                eyebrow="Color palette"
+                action={colorLines.length ? (
+                  <button
+                    type="button"
+                    onClick={copyAllColors}
+                    className="text-xs font-semibold text-[#9a6242] transition-colors hover:text-[#29221e]"
+                  >
+                    Copy all colors
+                  </button>
+                ) : null}
+              >
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-4">
-                  {brand.colors.map((color, index) => <ColorSwatch key={`${color?.name || 'color'}-${index}`} color={color} />)}
+                  {colors.map((color, index) => <ColorSwatch key={`${color?.name || 'color'}-${index}`} color={color} />)}
                 </div>
               </ShareSection>
             )}
