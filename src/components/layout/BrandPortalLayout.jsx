@@ -6,25 +6,19 @@ import { useLocation } from 'react-router-dom';
 import PortalContentSection from '@/components/portal/PortalContentSection';
 import { pageKeyFromPath } from '@/lib/portalPages';
 
-const strategyNav = [
-  { name: 'Overview', path: '/brand-portal', end: true },
+const portalNav = [
+  { name: 'Brand Health Index', path: '/brand-portal/brand-health' },
+  { name: 'Proposals', path: '/brand-portal/proposals' },
+  { name: 'Project Requests', path: '/brand-portal/project-requests', icon: 'send' },
+  { name: 'Ignite OS', path: '/brand-portal/ignite', icon: 'flame' },
   { name: 'Brand Up', path: '/brand-portal/brand-up' },
   { name: 'Big Picture', path: '/brand-portal/big-picture' },
   { name: 'Corporate Brand', path: '/brand-portal/corporate' },
   { name: 'Personal Brand', path: '/brand-portal/personal' },
   { name: 'Media Kit', path: '/brand-portal/media-kit' },
-  { name: 'Brand Health Index', path: '/brand-portal/brand-health' },
-  { name: 'Checklist', path: '/brand-portal/checklist' },
-];
-
-const buildNav = [
-  { name: 'Ignite OS', path: '/brand-portal/ignite', icon: 'flame' },
   { name: 'Brand Guidelines', path: '/brand-portal/guidelines' },
   { name: 'Brand Assets', path: '/brand-portal/assets' },
-];
-
-const supportNav = [
-  { name: 'Request Brand Services', path: '/brand-portal/request-services', icon: 'send' },
+  { name: 'Brain Hub', path: '/brand-portal/brain-hub' },
 ];
 
 
@@ -77,8 +71,7 @@ function NavItem({ item }) {
 export default function BrandPortalLayout() {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const currentItem = [...strategyNav, ...buildNav, ...supportNav]
-    .find((item) => location.pathname === item.path) || strategyNav[0];
+  const currentItem = portalNav.find((item) => location.pathname === item.path) || portalNav[0];
   const pageKey = pageKeyFromPath(location.pathname);
 
   const renderItems = (items) => items.map((item) => <NavItem key={item.path} item={item} />);
@@ -99,12 +92,7 @@ export default function BrandPortalLayout() {
           Brand Portal
         </p>
         <nav aria-label="Brand Portal pages" className="flex flex-col gap-1">
-          {renderItems(strategyNav)}
-          <div className="mx-3 my-2 border-t border-border" />
-          {renderItems(buildNav)}
-          <div className="mt-3 border-t border-border pt-3">
-            {renderItems(supportNav)}
-          </div>
+          {renderItems(portalNav)}
         </nav>
       </aside>
 
@@ -123,11 +111,7 @@ export default function BrandPortalLayout() {
         </button>
         {mobileOpen && (
           <nav onClickCapture={() => setMobileOpen(false)} aria-label="Mobile Brand Portal pages" className="mt-2 grid grid-cols-1 gap-1 rounded-xl border border-border bg-card p-2">
-            {renderItems(strategyNav)}
-            <div className="my-1 border-t border-border" />
-            {renderItems(buildNav)}
-            <div className="my-1 border-t border-border" />
-            {renderItems(supportNav)}
+            {renderItems(portalNav)}
           </nav>
         )}
       </div>

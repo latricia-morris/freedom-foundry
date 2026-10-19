@@ -96,6 +96,9 @@ import AdminFinancialOverview from './pages/admin/agency/AdminFinancialOverview'
 import AdminResourceLibrary from './pages/admin/agency/AdminResourceLibrary';
 import AdminAuditLogs from './pages/admin/agency/AdminAuditLogs';
 import AdminNavLayout from '@/components/layout/AdminNavLayout';
+import ThemePreferencePrompt from '@/components/ThemePreferencePrompt';
+import PortalProposals from './pages/PortalProposals';
+import BrainHub from './pages/BrainHub';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin, isAuthenticated } = useAuth();
@@ -118,7 +121,9 @@ const AuthenticatedApp = () => {
   }
 
   return (
-    <Routes>
+    <>
+      <ThemePreferencePrompt />
+      <Routes>
       {/* Auth routes */}
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
@@ -174,7 +179,10 @@ const AuthenticatedApp = () => {
             <Route path="/brand-portal/ignite" element={<IgniteOS />} />
             <Route path="/brand-portal/brand-up" element={<BrandUp />} />
             <Route path="/brand-portal/checklist" element={<BrandChecklist />} />
-            <Route path="/brand-portal/request-services" element={<ServiceRequest />} />
+            <Route path="/brand-portal/request-services" element={<Navigate to="/brand-portal/project-requests" replace />} />
+            <Route path="/brand-portal/project-requests" element={<ServiceRequest />} />
+            <Route path="/brand-portal/proposals" element={<PortalProposals />} />
+            <Route path="/brand-portal/brain-hub" element={<BrainHub />} />
           </Route>
           <Route element={<AdminRoute />}>
             <Route element={<AdminNavLayout />}>
@@ -219,6 +227,7 @@ const AuthenticatedApp = () => {
 
       <Route path="*" element={<PageNotFound />} />
     </Routes>
+    </>
   );
 };
 

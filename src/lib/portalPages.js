@@ -11,7 +11,9 @@ export const PORTAL_PAGES = [
   { key: 'brand_up', label: 'Brand Up', path: '/brand-portal/brand-up' },
   { key: 'checklist', label: 'Brand Checklist', path: '/brand-portal/checklist' },
   { key: 'ignite', label: 'Ignite OS', path: '/brand-portal/ignite' },
-  { key: 'request_services', label: 'Request Brand Services', path: '/brand-portal/request-services' },
+  { key: 'proposals', label: 'Proposals', path: '/brand-portal/proposals' },
+  { key: 'request_services', label: 'Project Requests', path: '/brand-portal/project-requests' },
+  { key: 'brain_hub', label: 'Brain Hub', path: '/brand-portal/brain-hub' },
 ];
 
 export function pageKeyFromPath(pathname) {

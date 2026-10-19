@@ -1,0 +1,51 @@
+{
+  "name": "BrainHubItem",
+  "type": "object",
+  "properties": {
+    "tab": {
+      "type": "string",
+      "enum": [
+        "mood_board",
+        "vision_board",
+        "checklist",
+        "idea_dump"
+      ],
+      "default": "idea_dump"
+    },
+    "title": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "link_url": {
+      "type": "string"
+    },
+    "done": {
+      "type": "boolean",
+      "default": false
+    },
+    "sort_order": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "tab",
+    "title"
+  ],
+  "rls": {
+    "read": {
+      "created_by_id": "{{user.id}}"
+    },
+    "create": {
+      "created_by_id": "{{user.id}}"
+    },
+    "update": {
+      "created_by_id": "{{user.id}}"
+    },
+    "delete": {
+      "created_by_id": "{{user.id}}"
+    }
+  }
+}
