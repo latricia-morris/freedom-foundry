@@ -110,7 +110,7 @@ function ColorSwatch({ color }) {
   const valid = HEX_COLOR.test(value);
   const copy = () => {
     if (!valid) return;
-    navigator.clipboard.writeText(value)
+    copyText(value)
       .then(() => toast({ title: 'Color copied', description: name ? `${name} (${value}) is on your clipboard.` : `${value} is on your clipboard.` }))
       .catch(() => {});
   };
@@ -331,14 +331,14 @@ export default function PublicBrandKit({ data }) {
 
   const copyAllColors = () => {
     if (!colorLines.length) return;
-    navigator.clipboard.writeText(colorLines.join('\n'))
+    copyText(colorLines.join('\n'))
       .then(() => toast({ title: 'All colors copied', description: 'The full palette is on your clipboard.' }))
       .catch(() => {});
   };
 
   const copyAllDetails = () => {
     const text = buildDetailsMarkdown(data, colorLines);
-    navigator.clipboard.writeText(text)
+    copyText(text)
       .then(() => toast({ title: 'All details copied', description: 'The complete shared information is on your clipboard.' }))
       .catch(() => {});
   };
