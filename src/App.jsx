@@ -75,6 +75,8 @@ import PortfolioPreview from './pages/PortfolioPreview';
 
 // Agency OS
 import ClientProposal from './pages/ClientProposal';
+import ProposalMicrosite from './pages/ProposalMicrosite';
+import AdminProposalStudio from './pages/admin/agency/AdminProposalStudio';
 import AdminAgencyDashboard from './pages/admin/agency/AdminAgencyDashboard';
 import AdminAgencyPipeline from './pages/admin/agency/AdminAgencyPipeline';
 import AdminAgencyTemplates from './pages/admin/agency/AdminAgencyTemplates';
@@ -132,6 +134,7 @@ const AuthenticatedApp = () => {
       <Route path="/portfolio" element={<PortfolioPage />} />
       <Route path="/portfolio/:slug" element={<CaseStudy />} />
       <Route path="/p/:token" element={<ClientProposal />} />
+      <Route path="/proposal/:token" element={<ProposalMicrosite />} />
       <Route path="/share/:token" element={<SharePage />} />
       <Route path="/member/:brandSlug/:profileType" element={<SharePage />} />
       <Route path="/terms" element={<Terms />} />
@@ -200,6 +203,7 @@ const AuthenticatedApp = () => {
             <Route path="/admin/agency/proposals" element={<AdminAgencyPipeline />} />
             <Route path="/admin/agency/templates" element={<AdminAgencyTemplates />} />
             <Route path="/admin/agency/proposals/new" element={<AdminAgencyProposalBuilder />} />
+            <Route path="/admin/agency/proposals/import" element={<AdminProposalStudio />} />
             <Route path="/admin/agency/proposals/:id" element={<AdminAgencyProposalBuilder />} />
             <Route path="/admin/agency/projects" element={<AdminAgencyProjects />} />
             <Route path="/admin/agency/projects/:id" element={<AdminAgencyProjectDetail />} />

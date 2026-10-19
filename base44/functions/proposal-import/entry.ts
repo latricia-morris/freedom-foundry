@@ -169,7 +169,6 @@ async function computeBlockers(doc, options = {}) {
   if (!phases.length) blockers.push("Timeline is undefined.");
   const text = JSON.stringify(doc.content || {});
   if (text.includes("{{")) blockers.push("An unfilled token remains in the content.");
-  (doc.agreement_overrides_confirmed ? [] : doc.parse_review || []).forEach(() => {});
   const overrides = (doc.parse_review || []).filter((n) => n.kind === "override");
   if (overrides.length && !options.overrides_confirmed) blockers.push("Agreement overrides need review confirmation before publication.");
   (doc.parse_review || []).filter((n) => n.kind === "unresolved").forEach((n) => blockers.push(`Unresolved: ${n.note || n.section || "imported content"}`));

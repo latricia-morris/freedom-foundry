@@ -13,6 +13,7 @@ const NAV_SECTIONS = [
       { name: 'Digital Brand Health', path: '/admin/brand-health' },
       { name: 'Channel Profiles', path: '/admin/channel-profiles' },
       { name: 'Pipeline', path: '/admin/agency/proposals' },
+      { name: 'Proposal Studio', path: '/admin/agency/proposals/import' },
       { name: 'Client Projects', path: '/admin/agency/projects' },
       { name: 'Templates', path: '/admin/agency/templates' },
       { name: 'Agency Build', path: '/admin/agency/agency-build' },
