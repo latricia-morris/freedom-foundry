@@ -2,17 +2,9 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { useBrandHealth } from '@/hooks/useBrandHealth';
-import AnchorNav from '@/components/brandHealth/AnchorNav';
 import AuditStatusPanel from '@/components/brandHealth/AuditStatusPanel';
 import AuditSection from '@/components/brandHealth/AuditSection';
-import { PUBLISHED_STATUS, latestByComponent } from '@/lib/brandHealth';
-
-const NAV = [
-  { id: 'bh-takeaway', label: 'Takeaway' },
-  { id: 'bh-channels', label: 'Channels' },
-  { id: 'bh-actions', label: 'Action Plan' },
-  { id: 'bh-evidence', label: 'Evidence' },
-];
+import { PUBLISHED_STATUS, latestByComponent, fmtDate } from '@/lib/brandHealth';
 
 /** Marketing Matrix subpage: the consultant-built channel and journey map. */
 export default function BrandHealthMatrix() {
@@ -63,15 +55,21 @@ export default function BrandHealthMatrix() {
       <div className="mb-8">
         <h1 className="font-heading text-4xl font-light text-foreground sm:text-5xl">Marketing <span className="molten-text italic">Matrix</span></h1>
         <p className="mt-2 max-w-2xl leading-relaxed text-muted-foreground">
-          Where to focus your marketing effort, and how to measure progress.
+          Where your marketing stands, and where it should go next.
         </p>
+        {published && audit && (
+          <p className="mt-2 text-sm text-muted-foreground">
+            {data.client?.company_name ? `${data.client.company_name} · ` : ''}
+            Assessment {fmtDate(audit.results_generated_at || audit.created_date || audit.published_at)}
+            {audit.reviewed_date ? ` · Reviewed ${fmtDate(audit.reviewed_date)}` : ''}
+          </p>
+        )}
       </div>
 
       {statusAudit ? (
         <AuditStatusPanel audit={statusAudit} onClose={() => setStatusAudit(null)} />
       ) : (
         <>
-          {published && <AnchorNav items={NAV} />}
           <AuditSection
             component={{
               key: 'marketing_matrix',

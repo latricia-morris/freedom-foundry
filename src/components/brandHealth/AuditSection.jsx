@@ -72,10 +72,9 @@ export default function AuditSection({ component, audit, findings, credit, onOpe
       return (
         <div>
           <h3 className={HEADING}>
-            {COMPONENT_LABELS.marketing_matrix}{' '}
             <span className="text-sm uppercase tracking-widest text-muted-foreground/70">Your results</span>
           </h3>
-          <MatrixView audit={audit} findings={findings} credit={credit} matrixChannels={matrixChannels} leverage={leverage} clientName={clientName} />
+          <MatrixView audit={audit} credit={credit} matrixChannels={matrixChannels} clientName={clientName} showHeader={false} />
         </div>
       );
     }

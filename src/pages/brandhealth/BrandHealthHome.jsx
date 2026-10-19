@@ -72,9 +72,9 @@ export default function BrandHealthHome() {
   const visScore = visReport && typeof visReport.composite_score === 'number' ? visReport.composite_score : null;
   const wdScore = publishedScore(wd);
   const crScore = publishedScore(cr);
-  const maiScore = mm && mm.status === PUBLISHED_STATUS && typeof mm.mai === 'number' ? mm.mai : null;
+  const matrixPublished = mm && mm.status === PUBLISHED_STATUS;
 
-  const live = [visScore, wdScore, crScore, maiScore].filter((s) => typeof s === 'number');
+  const live = [visScore, wdScore, crScore].filter((s) => typeof s === 'number');
   const overall = live.length ? Math.round(live.reduce((a, b) => a + b, 0) / live.length) : null;
 
   const statusOf = (a) =>
@@ -113,13 +113,12 @@ export default function BrandHealthHome() {
       <HeroScore
         label="Overall Brand Health"
         value={overall}
-        pill={live.length ? `${live.length} of 4 measures live` : 'Assessment in progress'}
+        pill={live.length ? `${live.length} of 3 measures live` : 'Assessment in progress'}
         subline="An average of every published score below. Open any area to explore its full dashboard."
         stats={[
           { label: 'Visibility', value: visScore },
           { label: 'Discoverability', value: wdScore },
           { label: 'Conversion', value: crScore },
-          { label: 'Alignment', value: maiScore },
         ]}
       />
 
@@ -148,11 +147,11 @@ export default function BrandHealthHome() {
         <PillarCard
           to="/brand-portal/brand-health/marketing-matrix"
           title="Marketing Matrix"
-          scores={[{ label: 'Market Alignment Index', value: maiScore }]}
+          lead={matrixPublished ? (mm.takeaway && mm.takeaway.prioritize) || undefined : undefined}
           status={statusOf(mm).label}
           statusTone={statusOf(mm).tone}
-          points={matrixPoints}
-          fallback="Channel fit and customer journey alignment for your growth strategy."
+          points={matrixPublished ? undefined : matrixPoints}
+          fallback="A consultant-built map of your marketing activity: what is working, what is not, and what to change next."
         />
       </div>
     </div>

@@ -13,9 +13,9 @@ const STATUS_TONES = {
  * Index pillar card: large molten-gradient score(s), a status pill, and
  * skimmable key points. The whole card opens the pillar's dashboard.
  */
-export default function PillarCard({ to, title, scores = [], status, statusTone = 'muted', points, fallback }) {
+export default function PillarCard({ to, title, scores = [], status, statusTone = 'muted', points, fallback, lead }) {
   const hasScore = scores.some((s) => typeof s.value === 'number');
-  const shown = hasScore ? scores : [{ label: '', value: null }];
+  const shown = hasScore ? scores : [];
 
   return (
     <Link
@@ -30,18 +30,22 @@ export default function PillarCard({ to, title, scores = [], status, statusTone 
         />
       </div>
 
-      <div className="mt-6 flex flex-wrap items-end gap-x-8 gap-y-5">
-        {shown.map((s, i) => (
-          <div key={i}>
-            <p className="molten-text font-heading text-6xl font-light leading-none sm:text-7xl">
-              {typeof s.value === 'number' ? s.value : '—'}
-            </p>
-            {s.label && (
-              <p className="mt-2 text-[10px] uppercase tracking-[0.22em] text-muted-foreground/70">{s.label}</p>
-            )}
-          </div>
-        ))}
-      </div>
+      {hasScore ? (
+        <div className="mt-6 flex flex-wrap items-end gap-x-8 gap-y-5">
+          {shown.map((s, i) => (
+            <div key={i}>
+              <p className="molten-text font-heading text-6xl font-light leading-none sm:text-7xl">
+                {typeof s.value === 'number' ? s.value : '—'}
+              </p>
+              {s.label && (
+                <p className="mt-2 text-[10px] uppercase tracking-[0.22em] text-muted-foreground/70">{s.label}</p>
+              )}
+            </div>
+          ))}
+        </div>
+      ) : lead ? (
+        <p className="mt-5 max-w-md text-[15px] font-light leading-relaxed text-foreground/90">{lead}</p>
+      ) : null}
 
       {status && (
         <span
