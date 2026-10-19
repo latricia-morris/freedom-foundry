@@ -68,6 +68,7 @@ export default function ClientAssetsTab({ client }) {
     <div>
       <LinkDriveFolderCard
         clientId={client.id}
+        client={client}
         linkedFolder={clientFolder}
         onLinked={(folder) => setClientFolder({ ...folder, source: 'client' })}
         onUnlinked={() => setClientFolder(null)}

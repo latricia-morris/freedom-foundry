@@ -28,8 +28,18 @@ export function parseProfileTypeSlug(slug) {
   return map[slug] || 'personal';
 }
 
+function makeShareToken() {
+  if (window.crypto && window.crypto.getRandomValues) {
+    const bytes = new Uint8Array(16);
+    window.crypto.getRandomValues(bytes);
+    return Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
+  }
+  return `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 12)}${Math.random().toString(36).slice(2, 12)}`;
+}
+
 export async function createShareLink(profileType, profileId, brandName) {
   const shareLink = await apiClient.entities.ShareLink.create({
+    token: makeShareToken(),
     profile_type: profileType,
     profile_id: profileId ? String(profileId) : null,
     is_active: true,
