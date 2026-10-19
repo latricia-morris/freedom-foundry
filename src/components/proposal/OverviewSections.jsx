@@ -1,5 +1,5 @@
 import React from 'react';
-import Image from '@/components/ui/image';
+import { Image } from '@/components/ui/image';
 import { fmtDate } from '@/lib/proposalFormat';
 
 const eyebrow = 'text-warm text-[11px] font-semibold uppercase tracking-[0.16em]';
