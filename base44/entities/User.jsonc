@@ -25,6 +25,13 @@
     },
     "headshot_image_url": {
       "type": "string"
+    },
+    "theme_preference": {
+      "type": "string",
+      "enum": [
+        "light",
+        "dark"
+      ]
     }
   }
 }
