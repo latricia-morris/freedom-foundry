@@ -17,7 +17,8 @@ const EMBERS_VIDEO =
 
 async function callMicrosite(action, payload = {}) {
   try {
-    return (await base44.functions.invoke('proposal-microsite', { action, ...payload })) || {};
+    const res = await base44.functions.invoke('proposal-microsite', { action, ...payload });
+    return (res && res.data) || {};
   } catch (e) {
     const msg = String(e?.message || '');
     if (msg.includes('superseded')) return { error: 'superseded' };

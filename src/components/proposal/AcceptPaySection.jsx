@@ -57,7 +57,7 @@ export default function AcceptPaySection({ proposal, installments, selections, t
       tab.opener = null;
     }
     try {
-      const res = await base44.functions.invoke('proposal-microsite', { action: 'checkout', token });
+      const res = (await base44.functions.invoke('proposal-microsite', { action: 'checkout', token }))?.data || {};
       if (res.paid) {
         tab?.close();
         await onRefresh();
@@ -86,7 +86,7 @@ export default function AcceptPaySection({ proposal, installments, selections, t
       tab.opener = null;
     }
     try {
-      const res = await base44.functions.invoke('proposal-microsite', {
+      const res = (await base44.functions.invoke('proposal-microsite', {
         action: 'sign',
         token,
         selections,
@@ -98,7 +98,7 @@ export default function AcceptPaySection({ proposal, installments, selections, t
         signature_kind: sigMode,
         signature_data: sigMode === 'draw' ? sigData : '',
         payment_preference: offlinePref ? 'offline' : 'online',
-      });
+      }))?.data || {};
       if (res.error) {
         tab?.close();
         setBusy(false);

@@ -49,7 +49,7 @@ export default function AdminProposalStudio() {
     setParseError('');
     setParsed(null);
     try {
-      const res = await base44.functions.invoke('proposal-import', { action: 'parse', markdown, proposal_id: docId || undefined });
+      const res = (await base44.functions.invoke('proposal-import', { action: 'parse', markdown, proposal_id: docId || undefined }))?.data || {};
       setParsed(res.parsed);
     } catch (e) {
       setParseError(String(e?.message || 'Parsing failed. Check the Markdown and try again.'));
@@ -67,19 +67,19 @@ export default function AdminProposalStudio() {
       const payload = buildDraftPayload({ parsed, client, form });
       let id = docId;
       if (!id) {
-        const created = await base44.functions.invoke('proposal-import', { action: 'save-draft', agency_client_id: client.id, payload });
+        const created = (await base44.functions.invoke('proposal-import', { action: 'save-draft', agency_client_id: client.id, payload }))?.data || {};
         id = created.id;
         setDocId(id);
       } else {
         await base44.functions.invoke('proposal-import', { action: 'save-draft', proposal_id: id, agency_client_id: client.id, payload });
       }
-      const res = await base44.functions.invoke('proposal-import', {
+      const res = (await base44.functions.invoke('proposal-import', {
         action: 'publish',
         proposal_id: id,
         web_change_elected: form.web_change_elected === true,
         overrides_confirmed: form.overrides_confirmed === true,
         expiry_date: payload.expiry_date,
-      });
+      }))?.data || {};
       if (res.error === 'blocked') setBlockers(res.blockers || []);
       else if (res.token) setPublishResult(res);
       const docs = await base44.entities.ProposalDoc.filter({}, '-created_date', 50);
