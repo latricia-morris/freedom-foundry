@@ -50,10 +50,8 @@ export default function MatrixView({ audit, matrixChannels = [], credit, clientN
 
       <section id="mx-overview" className="scroll-mt-[140px] space-y-5 lg:scroll-mt-[180px]">
         <div>
-          <h3 className="font-heading text-2xl font-light text-foreground sm:text-3xl">The full landscape</h3>
-          <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-            All ten marketing categories, in a fixed order. Every card links to its section, assessed or not.
-          </p>
+          <h3 className="font-heading text-2xl font-light text-foreground sm:text-3xl">Your marketing mix</h3>
+          <p className="mt-1 max-w-2xl text-sm text-muted-foreground">Where things stand across your marketing.</p>
         </div>
         <MatrixCategoryOverview groups={groups} />
       </section>
@@ -95,7 +93,7 @@ export default function MatrixView({ audit, matrixChannels = [], credit, clientN
               {credit.reviewed_date ? ` · reviewed ${fmtDate(credit.reviewed_date)}` : ''}
             </p>
           ) : null}
-          <p className="italic">{CREDIT_LANGUAGE}</p>
+          <p>{CREDIT_LANGUAGE}</p>
         </div>
       </details>
     </div>

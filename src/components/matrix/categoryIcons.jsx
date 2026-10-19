@@ -26,20 +26,14 @@ export const CATEGORY_ICONS = {
   direct_sales_retail: Store,
 };
 
-/** Gradient icon tile used across the Matrix overview and category sections. */
-export default function CategoryIcon({ iconKey, muted = false, size = 'md' }) {
+/**
+ * Unboxed line icon: one family, one stroke weight, consistent size per
+ * context, warm copper tone. No enclosing box, no gradient, and no
+ * colored-versus-muted distinction — assessment status is stated in text.
+ */
+export default function CategoryIcon({ iconKey, size = 'md', className = '' }) {
   const Icon = CATEGORY_ICONS[iconKey];
   if (!Icon) return null;
-  const dims = size === 'sm' ? 'h-10 w-10' : 'h-12 w-12';
-  return (
-    <span
-      className={`${dims} flex shrink-0 items-center justify-center rounded-[3px] ${
-        muted
-          ? 'border border-border bg-background/50 text-muted-foreground'
-          : 'forged-gradient text-white shadow-[0_4px_18px_hsl(18_74%_34%_/_0.35)]'
-      }`}
-    >
-      <Icon className={size === 'sm' ? 'h-4.5 w-4.5' : 'h-5 w-5'} strokeWidth={1.75} />
-    </span>
-  );
+  const dims = size === 'sm' ? 'h-5 w-5' : 'h-6 w-6';
+  return <Icon className={`${dims} text-primary/85 ${className}`} strokeWidth={1.5} aria-hidden="true" />;
 }

@@ -1,34 +1,30 @@
 import React from 'react';
-import { ArrowRight } from 'lucide-react';
-import { MATRIX_PARENT_CATEGORIES, categoryAnchor } from '@/lib/matrixCategories';
-import { CATEGORY_REVIEW_LENS } from '@/lib/matrixCategories';
-import { DIRECTION_LABELS, EFFORT_LABELS, EVIDENCE_LABELS, STRATEGIC_ROLES } from '@/lib/matrix';
+import { ArrowUpRight } from 'lucide-react';
+import { MATRIX_PARENT_CATEGORIES, categoryAnchor, CATEGORY_REVIEW_LENS } from '@/lib/matrixCategories';
+import { DIRECTION_LABELS, EFFORT_LABELS, EVIDENCE_LABELS } from '@/lib/matrix';
 import CategoryIcon from './categoryIcons';
 
-const roleLabel = (key) => (STRATEGIC_ROLES.find((r) => r.key === key) || {}).label || null;
 const effortLabel = (v) => (v === 'unknown' ? 'Not established' : EFFORT_LABELS[v] || null);
 
-/** One supporting element per card, in priority order — never a dummy chart. */
+const firstSentence = (text) => (String(text || '').split(/(?<=[.!?])\s/)[0] || '').trim();
+
+/** One supporting element per card, in priority order — labeled, never a bare count. */
 function supportingElement(channels) {
   for (const c of channels) {
     for (const r of c.results || []) {
       const raw = String(r.value ?? '').trim();
-      if (raw && r.period) {
+      const label = String(r.label || '').trim();
+      if (raw && label && r.period) {
         const num = Number(raw);
         const value = `${Number.isFinite(num) ? num.toLocaleString('en-US') : raw}${r.unit ? ` ${r.unit}` : ''}`;
-        return { text: `${value} · ${r.period}`, evidence: EVIDENCE_LABELS[r.evidence] || null };
+        return `${label}: ${value} · ${r.period}`;
       }
     }
   }
   for (const c of channels) {
     const cur = effortLabel((c.effort || {}).current);
     const rec = effortLabel((c.effort || {}).recommended);
-    if (cur && rec && cur !== rec) return { text: `${cur} → ${rec} effort`, evidence: null };
-  }
-  const withFinding = channels.find((c) => (c.effort || {}).rationale);
-  if (withFinding) {
-    const first = withFinding.effort.rationale.split(/(?<=[.!?])\s/)[0] || '';
-    if (first.length <= 140) return { text: first, evidence: null };
+    if (cur && rec && cur !== rec) return `${cur} to ${rec} effort`;
   }
   return null;
 }
@@ -36,58 +32,50 @@ function supportingElement(channels) {
 function Card({ category, channels }) {
   const anchor = categoryAnchor(category.key);
   const assessed = channels.length > 0;
-  const headline = assessed
-    ? roleLabel(channels[0].strategic_role) || 'Assessed in this cycle'
-    : 'Not assessed in this cycle';
-  const direction = assessed
-    ? DIRECTION_LABELS[channels.map((c) => (c.effort || {}).direction).find(Boolean)]
-    : null;
+  const lead = channels[0];
+  const allUnused = assessed && channels.every((c) => ((c.effort || {}).current || 'none') === 'none');
+  const finding = assessed ? firstSentence((lead.effort || {}).rationale) : null;
+  const headline = !assessed
+    ? 'Not assessed'
+    : finding || (allUnused ? 'Not currently in use' : 'Assessed in this cycle');
+  const direction = assessed ? DIRECTION_LABELS[(lead.effort || {}).direction] : null;
   const support = assessed ? supportingElement(channels) : null;
 
   return (
     <a
       href={`#${anchor}`}
-      className="bh-card bh-card-hover group flex scroll-mt-[140px] flex-col p-6 lg:scroll-mt-[180px]"
-      aria-label={`Explore the ${category.name} section`}
+      className="bh-card bh-card-hover group relative flex scroll-mt-[140px] flex-col p-5 lg:scroll-mt-[180px]"
+      aria-label={`${category.name} section`}
     >
-      <div className="flex items-center gap-4">
-        <CategoryIcon iconKey={category.key} muted={!assessed} />
-        <div className="min-w-0">
-          <p className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground/70">{category.num}</p>
-          <h3 className="truncate font-heading text-xl font-light leading-tight text-foreground sm:text-2xl">
-            {category.name}
-          </h3>
-        </div>
+      <ArrowUpRight
+        className="absolute right-4 top-4 h-4 w-4 text-muted-foreground/50 transition-colors group-hover:text-primary group-focus-visible:text-primary"
+        aria-hidden="true"
+      />
+      <div className="flex items-center gap-3 pr-6">
+        <CategoryIcon iconKey={category.key} size="sm" />
+        <h3 className="truncate font-heading text-lg font-light leading-tight text-foreground sm:text-xl">
+          {category.name}
+        </h3>
       </div>
 
-      <p className="mt-4 text-[15px] font-light leading-snug text-foreground/90">{headline}</p>
+      <p className="mt-3 text-[15px] leading-snug text-foreground/90">{headline}</p>
 
-      {direction && (
-        <p className="mt-2 text-xs font-semibold uppercase tracking-[0.16em] text-primary">{direction}</p>
-      )}
+      {direction && <p className="mt-2 text-xs font-medium text-primary">{direction}</p>}
 
-      <div className="mt-3 min-h-[2.5rem]">
-        {support ? (
-          <p className="text-xs leading-relaxed text-muted-foreground">
-            {support.text}
-            {support.evidence ? ` · ${support.evidence}` : ''}
-          </p>
-        ) : !assessed ? (
-          <p className="text-xs leading-relaxed text-muted-foreground">{CATEGORY_REVIEW_LENS[category.key]}</p>
-        ) : null}
-      </div>
-
-      <p className="link-warm mt-auto inline-flex items-center gap-1.5 pt-4">
-        {assessed ? `Explore ${category.name}` : 'See what remains unknown'}
-        <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-      </p>
+      {support ? (
+        <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{support}</p>
+      ) : !assessed ? (
+        <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+          Current activity and results have not been reviewed. {CATEGORY_REVIEW_LENS[category.key]}.
+        </p>
+      ) : null}
     </a>
   );
 }
 
 /**
- * The linked ten-category overview: a two-column card grid on desktop, one
- * column on mobile, fixed category order, every card linked to its section.
+ * The linked ten-category overview: compact black-glass cards, two columns on
+ * desktop, one on mobile, fixed category order, every card fully clickable.
  */
 export default function MatrixCategoryOverview({ groups }) {
   return (

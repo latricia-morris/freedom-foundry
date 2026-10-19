@@ -2,8 +2,6 @@ import React from 'react';
 import { ACTION_PRIORITIES } from '@/lib/matrix';
 import { categoryAnchor, parentCategoryFor } from '@/lib/matrixCategories';
 
-const PRIORITY_LABELS = { critical: 'Critical', high: 'High', medium: 'Medium', opportunity: 'Opportunity' };
-
 /**
  * Prioritized next moves: the fiery gradient panel, up to five reviewed
  * actions in actual priority order, each linked to its underlying finding.
@@ -37,9 +35,6 @@ export default function MatrixPriorityMoves({ actions, channels }) {
                 <div className="min-w-0">
                   <p className="break-words text-base font-medium leading-snug text-white">{a.title}</p>
                   <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-xs text-white/70">
-                    {PRIORITY_LABELS[a.priority] ? (
-                      <span className="uppercase tracking-[0.14em] text-white/85">{PRIORITY_LABELS[a.priority]}</span>
-                    ) : null}
                     {a.associated_channel ? <span>{a.associated_channel}</span> : null}
                     {a.due_date ? <span>Timeframe: {a.due_date}</span> : null}
                   </div>

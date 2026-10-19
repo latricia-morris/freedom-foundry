@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Trash2 } from 'lucide-react';
 import ChannelEffortEditor from './ChannelEffortEditor';
+import ChannelOptionsEditor from './ChannelOptionsEditor';
 import {
   CHANNEL_CATEGORIES,
   CONSULTANT_PRIORITIES,
@@ -248,6 +249,7 @@ export default function ChannelEditPanel({ channel, audit, onChange, onDelete, b
         </label>
       </div>
 
+      <ChannelOptionsEditor channel={channel} onChange={onChange} busy={busy} />
       <ChannelEffortEditor channel={channel} onChange={onChange} busy={busy} />
     </div>
   );

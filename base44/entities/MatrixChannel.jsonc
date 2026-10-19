@@ -93,6 +93,10 @@
       "type": "object",
       "additionalProperties": true
     },
+    "usage_profile": {
+      "type": "object",
+      "additionalProperties": true
+    },
     "goal": {
       "type": "object",
       "additionalProperties": true
