@@ -7,7 +7,7 @@ import { Image } from '@/components/ui/image';
 import ReviewAskModals from './ReviewAskModals';
 
 const COVER_URL =
-  'https://media.base44.com/images/public/6a6982f0647238bf2b5d67bf/b65182e14_1bookrightdownsized.png';
+'https://media.base44.com/images/public/6a6982f0647238bf2b5d67bf/b65182e14_1bookrightdownsized.png';
 
 /**
  * Brand Power Moves — the dashboard companion card for the book.
@@ -29,9 +29,9 @@ export default function WorkbookProgressCard() {
     }
     setLoading(true);
     Promise.all([
-      apiClient.entities.WorkbookDefinition.filter({ status: 'published' }, 'order', 50),
-      apiClient.entities.WorkbookResponse.filter({}).catch(() => []),
-    ]).then(([w, r]) => {
+    apiClient.entities.WorkbookDefinition.filter({ status: 'published' }, 'order', 50),
+    apiClient.entities.WorkbookResponse.filter({}).catch(() => [])]
+    ).then(([w, r]) => {
       setWorkbooks(w || []);
       setResponses(r || []);
       setLoading(false);
@@ -47,19 +47,19 @@ export default function WorkbookProgressCard() {
   const totalWorkbooks = workbooks.length;
   const startedWorkbooks = workbooks.filter((w) => (responsesByWorkbook[w.id]?.length || 0) > 0);
   const startedCount = startedWorkbooks.length;
-  const progress = totalWorkbooks > 0 ? Math.round((startedCount / totalWorkbooks) * 100) : 0;
+  const progress = totalWorkbooks > 0 ? Math.round(startedCount / totalWorkbooks * 100) : 0;
   const nextWorkbook = workbooks.find((w) => (responsesByWorkbook[w.id]?.length || 0) === 0);
 
-  const coverImage = (
-    <div className="w-24 sm:w-28 flex-shrink-0 self-center">
-      <Image
-        src={COVER_URL}
-        alt="Brand Power Moves book cover"
-        fittingType="fit"
-        className="w-full aspect-square"
-      />
-    </div>
-  );
+  const coverImage =
+  <div className="w-24 sm:w-28 flex-shrink-0 self-center">
+      <Image src="https://media.base44.com/images/public/6a6982f0647238bf2b5d67bf/284bb1431_1_book_right_downsized_transparent_background.png"
+
+    alt="Brand Power Moves book cover"
+    fittingType="fit"
+    className="w-full aspect-square" />
+    
+    </div>;
+
 
   if (!isBpmUnlocked) {
     return (
@@ -79,15 +79,15 @@ export default function WorkbookProgressCard() {
             </p>
             <Link
               to="/workbooks"
-              className="btn-forge inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-xs uppercase tracking-widest"
-            >
+              className="btn-forge inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-xs uppercase tracking-widest">
+              
               <Lock className="w-4 h-4" /> Unlock With Book Code
             </Link>
           </div>
           {coverImage}
         </div>
-      </div>
-    );
+      </div>);
+
   }
 
   return (
@@ -100,14 +100,14 @@ export default function WorkbookProgressCard() {
         <Link to="/workbooks" className="link-warm text-xs uppercase tracking-wider">View All</Link>
       </div>
 
-      {loading ? (
-        <div className="h-24 flex items-center justify-center">
+      {loading ?
+      <div className="h-24 flex items-center justify-center">
           <div className="w-6 h-6 border-2 border-border border-t-primary rounded-full animate-spin" />
-        </div>
-      ) : totalWorkbooks === 0 ? (
-        <p className="text-sm italic text-muted-foreground">Workbooks coming soon.</p>
-      ) : (
-        <>
+        </div> :
+      totalWorkbooks === 0 ?
+      <p className="text-sm italic text-muted-foreground">Workbooks coming soon.</p> :
+
+      <>
           <div className="flex gap-5 items-center mb-5">
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between mb-2">
@@ -116,9 +116,9 @@ export default function WorkbookProgressCard() {
               </div>
               <div className="h-2 w-full rounded-full overflow-hidden well-track">
                 <div
-                  className="h-full rounded-full molten-bar transition-all duration-700"
-                  style={{ width: `${progress}%` }}
-                />
+                className="h-full rounded-full molten-bar transition-all duration-700"
+                style={{ width: `${progress}%` }} />
+              
               </div>
               <p className="text-[10px] uppercase tracking-[0.2em] text-primary mt-2.5">
                 {startedCount} of {totalWorkbooks} moves in motion
@@ -127,30 +127,30 @@ export default function WorkbookProgressCard() {
             {coverImage}
           </div>
 
-          {nextWorkbook ? (
-            <div className="forged-well p-4">
+          {nextWorkbook ?
+        <div className="forged-well p-4">
               <p className="text-[10px] uppercase tracking-[0.2em] text-primary mb-1.5">Next Up</p>
               <div className="flex items-center justify-between gap-3">
                 <p className="font-heading text-base text-foreground">{nextWorkbook.title}</p>
                 <Link
-                  to={`/workbooks/${nextWorkbook.id}`}
-                  className="btn-forge inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-[11px] uppercase tracking-widest flex-shrink-0"
-                >
+              to={`/workbooks/${nextWorkbook.id}`}
+              className="btn-forge inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-[11px] uppercase tracking-widest flex-shrink-0">
+              
                   Start <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </div>
-            </div>
-          ) : (
-            <div className="forged-well p-4">
+            </div> :
+
+        <div className="forged-well p-4">
               <p className="text-sm text-muted-foreground">
                 All {totalWorkbooks} moves in motion — bring it home.
               </p>
             </div>
-          )}
+        }
         </>
-      )}
+      }
 
       <ReviewAskModals startedCount={startedCount} />
-    </div>
-  );
+    </div>);
+
 }
