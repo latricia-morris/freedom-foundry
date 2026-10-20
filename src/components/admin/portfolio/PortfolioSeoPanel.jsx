@@ -1,5 +1,5 @@
 import React from 'react';
-import { Check, ExternalLink, Sparkles, X } from 'lucide-react';
+import { Check, Sparkles, X } from 'lucide-react';
 import { readiness, seoDraft, slugify } from '@/lib/portfolioData';
 import KeywordLibrary from '@/components/admin/portfolio/KeywordLibrary';
 import SearchOutput from '@/components/admin/portfolio/SearchOutput';
@@ -159,7 +159,7 @@ export default function PortfolioSeoPanel({ form, onChange, assets, onSetStatus,
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground hover:text-primary"
                 >
-                  View public page <ExternalLink className="h-3.5 w-3.5" />
+                  View public page
                 </a>
               )}
             </>

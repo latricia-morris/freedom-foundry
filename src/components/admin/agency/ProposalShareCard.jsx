@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Ban, Copy, ExternalLink, Send, ShieldCheck } from 'lucide-react';
+import { Ban, Copy, Send, ShieldCheck } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useToast } from '@/components/ui/use-toast';
 import { formatUsd, PROPOSAL_STATUS_LABELS, PROPOSAL_STATUS_STYLES } from '@/lib/agency';
@@ -85,7 +85,7 @@ export default function ProposalShareCard({ proposal, itemCount, onReload }) {
             <Copy className="h-3.5 w-3.5" /> Copy
           </button>
           <a href={link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-[10px] uppercase tracking-widest text-muted-foreground hover:text-foreground">
-            <ExternalLink className="h-3.5 w-3.5" /> Test view
+            Test view
           </a>
         </div>
       )}

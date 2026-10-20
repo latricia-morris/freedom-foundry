@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2, CircleAlert, Copy, ExternalLink, FileUp, FolderOpen, Layers3, Plus, Save, Send, Shield, Sparkles, Trash2, HardDrive } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, CircleAlert, Copy, FileUp, FolderOpen, Layers3, Plus, Save, Send, Shield, Sparkles, Trash2, HardDrive } from 'lucide-react';
 import apiClient from '@/api/client';
 import { AdminDeliveryControls } from '@/components/delivery/AdminDeliveryControls';
 
@@ -334,7 +334,7 @@ export default function ClientSetupWorkspace() {
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <a href={`https://drive.google.com/drive/folders/${encodeURIComponent(payload.corporate.drive_folder_id)}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-lg border border-border px-3 py-2 text-xs text-muted-foreground hover:text-foreground"><ExternalLink className="h-3.5 w-3.5" /> Preview</a>
+                  <a href={`https://drive.google.com/drive/folders/${encodeURIComponent(payload.corporate.drive_folder_id)}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-lg border border-border px-3 py-2 text-xs text-muted-foreground hover:text-foreground">Preview</a>
                   <button type="button" onClick={removeDriveFolder} disabled={driveSaving} className="inline-flex items-center gap-1 rounded-lg border border-destructive/30 px-3 py-2 text-xs text-destructive disabled:opacity-50"><Trash2 className="h-3.5 w-3.5" /> Remove</button>
                 </div>
               </div>

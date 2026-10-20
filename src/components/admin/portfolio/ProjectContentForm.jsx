@@ -1,5 +1,5 @@
 import React from 'react';
-import { ExternalLink, RefreshCw } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
 import MultiSelectChips from '@/components/admin/portfolio/MultiSelectChips';
 import DraftStoryButton from '@/components/admin/portfolio/DraftStoryButton';
 import RewriteButton from '@/components/admin/portfolio/RewriteButton';
@@ -126,7 +126,7 @@ export default function ProjectContentForm({ form, onChange, projects, assets, o
             {STATUS_LABELS[form.website_link_status || 'unchecked']}
           </span>
           {form.website_last_checked && (
-            <span className="inline-flex items-center gap-1.5">Last checked {new Date(form.website_last_checked).toLocaleString()} <ExternalLink className="h-3 w-3" /></span>
+            <span className="inline-flex items-center gap-1.5">Last checked {new Date(form.website_last_checked).toLocaleString()}</span>
           )}
         </div>
         <p className="text-xs leading-5 text-muted-foreground/70">

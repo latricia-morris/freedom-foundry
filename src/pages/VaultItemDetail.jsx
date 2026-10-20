@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Lock, Download, ExternalLink, BookOpen, FileText } from 'lucide-react';
+import { ArrowLeft, Lock, Download, BookOpen, FileText } from 'lucide-react';
 import apiClient from '@/api/client';
 import CoursePlayer from '@/components/course/CoursePlayer';
 import WorkbookExperience from '@/components/workbook/WorkbookExperience';
@@ -86,7 +86,7 @@ export default function VaultItemDetail() {
               </div>
               <div className="flex flex-wrap gap-3">
                 <a href={item.download_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90">
-                  <ExternalLink className="w-4 h-4" /> View in a new tab
+                  View in a new tab
                 </a>
                 <a href={item.download_url} download className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-5 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-accent">
                   <Download className="w-4 h-4" /> Download PDF
@@ -119,7 +119,7 @@ export default function VaultItemDetail() {
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
                 >
-                  <ExternalLink className="w-4 h-4" /> View in a new tab
+                  View in a new tab
                 </a>
                 <a
                   href={item.download_url}

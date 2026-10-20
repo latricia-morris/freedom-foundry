@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, ExternalLink } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import ProjectTaskListPanel from '@/components/admin/agency/ProjectTaskListPanel';
 
@@ -65,7 +65,7 @@ export default function ClientProjectsTab({ client }) {
                 to={`/admin/agency/projects/${project.id}`}
                 className="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-[10px] uppercase tracking-widest text-muted-foreground transition-colors hover:text-foreground"
               >
-                <ExternalLink className="h-3.5 w-3.5" /> Open
+                Open
               </Link>
             </div>
             {isOpen && (

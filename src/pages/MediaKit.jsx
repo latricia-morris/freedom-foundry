@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import apiClient from '@/api/client';
-import { Upload, X, Check, Copy, Share2, ExternalLink, Sparkles } from 'lucide-react';
+import { ArrowUpRight, Upload, X, Check, Copy, Share2, Sparkles } from 'lucide-react';
 import AddLinkButton from '@/components/brand/AddLinkButton';
 import { toast } from '@/components/ui/use-toast';
 import PrivacyNote from '@/components/brand/PrivacyNote';
@@ -189,7 +189,7 @@ export default function MediaKit() {
         <div className="mb-6 p-4 rounded-xl border border-border bg-card flex items-center gap-3">
           <span className="text-sm text-foreground/70 flex-1 truncate">{shareLink}</span>
           <button onClick={() => copyText(shareLink)} className="text-xs font-semibold text-muted-foreground/80 transition-colors hover:text-foreground">Copy link</button>
-          <a href={shareLink} target="_blank" rel="noopener noreferrer" className="text-muted-foreground/80 hover:text-foreground transition-colors"><ExternalLink className="w-3.5 h-3.5" /></a>
+          <a href={shareLink} target="_blank" rel="noopener noreferrer" className="text-muted-foreground/80 hover:text-foreground transition-colors"><ArrowUpRight className="w-3.5 h-3.5" /></a>
         </div>
       )}
 

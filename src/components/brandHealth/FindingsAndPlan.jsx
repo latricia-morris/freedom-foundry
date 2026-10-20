@@ -1,5 +1,4 @@
 import React from 'react';
-import { ExternalLink } from 'lucide-react';
 import { CREDIT_LANGUAGE, fmtDate, money } from '@/lib/brandHealth';
 
 const PRIORITY_LABEL = {
@@ -43,7 +42,7 @@ export function FindingsList({ findings }) {
             <div className="mt-3 flex flex-wrap gap-3">
               {f.attachments.map((a, j) => (
                 <a key={j} href={a.url} target="_blank" rel="noreferrer" className="link-warm inline-flex items-center gap-1">
-                  <ExternalLink className="h-3 w-3" /> {a.title}
+                  {a.title}
                 </a>
               ))}
             </div>

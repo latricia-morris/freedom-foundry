@@ -1,5 +1,4 @@
 import React from 'react';
-import { ExternalLink } from 'lucide-react';
 import { COMPONENT_LABELS, fmtDate } from '@/lib/brandHealth';
 import HeroScore from './HeroScore';
 import DashCard from './DashCard';
@@ -75,7 +74,7 @@ export default function PublishedReport({ audit, findings, credit }) {
           <div className="mt-5 flex flex-wrap gap-3">
             {(audit.evidence || []).map((e, i) => (
               <a key={i} href={e.url} target="_blank" rel="noreferrer" className="link-warm inline-flex items-center gap-1">
-                <ExternalLink className="h-3 w-3" /> {e.title}
+                {e.title}
               </a>
             ))}
           </div>

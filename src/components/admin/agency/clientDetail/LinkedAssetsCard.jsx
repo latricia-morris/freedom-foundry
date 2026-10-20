@@ -1,27 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { Link2, Pencil, Plus, Trash2, X } from 'lucide-react';
+import { Pencil, Plus, Trash2, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { resolvePortalUser } from '@/lib/clientPortalData';
-import { linkSourceLabel } from '@/lib/assetLinks';
 
-/**
- * Reads a link's own title. Canva blocks plain server-side requests, so the
- * browser asks a reader proxy first, then falls back to the backend function.
- */
-async function canvaTitle(url) {
-  try {
-    const res = await fetch(`https://r.jina.ai/${url}`);
-    if (res.ok) {
-      const text = (await res.text()).slice(0, 4000);
-      const match = text.match(/^Title:\s*(.+)$/m);
-      if (match) return match[1].replace(/\s\|\s*Canva$/i, '').trim();
-    }
-  } catch { /* fall through to the backend */ }
+/** Reads a link's own title and preview image via the backend function. */
+async function canvaMeta(url) {
   try {
     const res = await base44.functions.invoke('fetch-link-title', { url });
-    return (res?.data ?? res)?.title || '';
+    return (res?.data ?? res) || {};
   } catch {
-    return '';
+    return {};
   }
 }
 
@@ -33,6 +21,7 @@ export default function LinkedAssetsCard({ client }) {
   const [editingId, setEditingId] = useState(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [meta, setMeta] = useState(null);
 
   useEffect(() => {
     let active = true;
@@ -59,37 +48,43 @@ export default function LinkedAssetsCard({ client }) {
     return () => { active = false; };
   }, [target?.id, target?.email]);
 
-  // Canva links: prefill the title from the design's own name so it never has
-  // to be typed manually.
+  // Canva links: prefill the title and preview image from the design's own
+  // metadata so neither has to be typed manually.
   useEffect(() => {
     const url = form.url.trim();
-    if (!url || form.title.trim() || !/canva\.com\//i.test(url)) return undefined;
+    if (!url || !/canva\./i.test(url)) return undefined;
     const timer = setTimeout(async () => {
-      const title = await canvaTitle(url);
-      if (title) setForm((prev) => (prev.title.trim() ? prev : { ...prev, title }));
+      const data = await canvaMeta(url);
+      if (data.title || data.image) {
+        setMeta(data);
+        setForm((prev) => (prev.title.trim() ? prev : { ...prev, title: data.title || '' }));
+      }
     }, 600);
     return () => clearTimeout(timer);
-  }, [form.url, form.title]);
+  }, [form.url]);
 
   const resetForm = () => { setForm({ title: '', url: '' }); setEditingId(null); setError(''); };
 
   const handleSave = async () => {
     if (!form.url.trim()) { setError('A URL is required.'); return; }
-    let title = form.title.trim();
-    if (!title && /canva\.com\//i.test(form.url)) {
-      title = (await canvaTitle(form.url.trim())) || 'Canva design';
-    }
-    if (!title) { setError('A title is required.'); return; }
     if (!target) { setError('This client needs a contact email before links can be attached.'); return; }
+    let title = form.title.trim();
+    let preview_url = meta?.image || '';
+    if (!title || !preview_url) {
+      const data = await canvaMeta(form.url.trim());
+      if (!title) title = data.title || '';
+      if (!preview_url) preview_url = data.image || '';
+    }
     setBusy(true); setError('');
     try {
       if (editingId && editingId !== '__new__') {
-        await base44.entities.ClientAssetLink.update(editingId, { title, url: form.url.trim() });
+        await base44.entities.ClientAssetLink.update(editingId, { title, url: form.url.trim(), preview_url });
       } else {
         const created = await base44.entities.ClientAssetLink.create({
           ...(target.id ? { user_id: target.id } : {}),
           user_email: (target.email || '').toLowerCase(),
           title,
+          preview_url,
           url: form.url.trim(),
           added_by: 'admin',
         });
@@ -111,7 +106,6 @@ export default function LinkedAssetsCard({ client }) {
     <div className="dashboard-card p-5">
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Link2 className="icon-warm h-5 w-5" strokeWidth={1.5} />
           <h3 className="font-heading text-lg text-foreground">Linked assets</h3>
           <span className="rounded-sm border border-border px-2 py-0.5 text-[9px] uppercase tracking-wider text-muted-foreground">
             Canva &amp; other links
@@ -177,17 +171,17 @@ export default function LinkedAssetsCard({ client }) {
             <div key={link.id} className="flex items-center gap-4 py-3">
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium text-foreground">{link.title}</p>
-                <p className="truncate text-xs text-muted-foreground">{linkSourceLabel(link.url)} &middot; {link.url}</p>
+                <p className="truncate text-xs text-muted-foreground">{link.url}</p>
               </div>
               <div className="flex flex-shrink-0 items-center gap-1">
                 <a
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                  className="link-warm px-2 py-2"
                   aria-label="Open link"
                 >
-                  <Link2 className="h-4 w-4" strokeWidth={1.5} />
+                  Open
                 </a>
                 <button
                   type="button"

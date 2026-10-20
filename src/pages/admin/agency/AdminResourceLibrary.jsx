@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { ExternalLink, Plus, Trash2 } from 'lucide-react';
+import { ArrowUpRight, Plus, Trash2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
 const CATEGORIES = ['SOPs & Process', 'Templates & Boilerplate', 'Reference & Research', 'Tools & Software', 'Contracts & Legal', 'Other'];
@@ -196,7 +196,7 @@ export default function AdminResourceLibrary() {
                         aria-label={`Open ${r.title}`}
                         className="rounded-sm p-1 text-muted-foreground/60 transition-colors hover:text-primary disabled:opacity-40"
                       >
-                        <ExternalLink className="h-4 w-4" />
+                        <ArrowUpRight className="h-4 w-4" />
                       </button>
                       <button
                         type="button"

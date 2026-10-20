@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight, ExternalLink } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { Image } from '@/components/ui/image';
 import PortfolioCard from '@/components/portfolio/PortfolioCard';
 import { ASSET_TYPE_LABELS, groupAssetsByStory } from '@/lib/portfolioData';
@@ -233,7 +233,7 @@ export default function CaseStudyView({ project, assets = [], beforeAfter = [], 
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-md border border-primary/40 px-4 py-2.5 text-sm transition-colors hover:border-primary hover:bg-primary/10"
               >
-                <span className="text-warm font-medium">Visit Site</span> <ExternalLink className="h-4 w-4 text-primary" />
+                <span className="text-warm font-medium">Visit Site</span>
               </a>
               <p className="text-xs text-muted-foreground/70">
                 External site. Current appearance and functionality may change after project delivery.
