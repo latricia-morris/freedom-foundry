@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { AlertTriangle, ArrowUpRight, Check, FileText, Mail, MapPin, Phone, Printer } from 'lucide-react';
+import { AlertTriangle, Check, FileText, Mail, MapPin, Phone, Printer } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
+import PublicLinkedAssets from '@/components/share/PublicLinkedAssets';
 
 const KNOWN_FONTS = {
   'cormorant garamond': 'Cormorant Garamond',
@@ -97,7 +98,6 @@ function PublicLink({ label, url, description }) {
         <span className="block truncate text-sm font-semibold text-[#29221e]">{label || 'Open link'}</span>
         {description && <span className="mt-0.5 block truncate text-xs text-[#655b54]">{description}</span>}
       </span>
-      <ArrowUpRight className="h-4 w-4 shrink-0 text-black transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
     </a>
   );
 }
@@ -380,6 +380,12 @@ export default function PublicBrandKit({ data }) {
         <div className="mt-5 rounded-3xl bg-[#f7f2ea] p-6 shadow-[0_16px_50px_rgba(37,29,24,0.08)] sm:mt-6 sm:p-10">
           <div className="space-y-8">
             <AssetGallery assets={data.assets} logos={profile.logo_urls} headshots={profile.headshot_urls} moodboards={profile.moodboard_urls} />
+
+            {readableArray(data.linked_assets).some(link => link?.url) && (
+              <ShareSection eyebrow="Linked assets">
+                <PublicLinkedAssets links={data.linked_assets} />
+              </ShareSection>
+            )}
 
             {colors.length > 0 && (
               <ShareSection

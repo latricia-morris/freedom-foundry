@@ -96,6 +96,19 @@ export default async function(req) {
       }
     }
 
+    // Microlink fallback for the title when the reader proxy is unavailable.
+    if (!title) {
+      try {
+        const res = await fetch(`https://api.microlink.io/?url=${encodeURIComponent(parsed.toString())}`, { signal: AbortSignal.timeout(20000) });
+        if (res.ok) {
+          const payload = await res.json();
+          const metaTitle = payload?.data?.title || '';
+          if (metaTitle) title = cleanTitle(metaTitle);
+          if (!image && payload?.data?.image?.url) image = payload.data.image.url;
+        }
+      } catch { /* best effort */ }
+    }
+
     // Markdown-format proxy fallback for the title when HTML was unavailable.
     if (!title) {
       try {

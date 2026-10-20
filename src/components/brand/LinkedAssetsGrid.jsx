@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { base44 } from '@/api/base44Client';
+import { resolveLinkMeta } from '@/lib/assetLinks';
 import { Image } from '@/components/ui/image';
 
 function LinkTile({ link }) {
@@ -12,9 +13,8 @@ function LinkTile({ link }) {
   useEffect(() => {
     if (preview || !/canva\./i.test(link.url)) return undefined;
     let active = true;
-    base44.functions.invoke('fetch-link-title', { url: link.url })
-      .then((res) => {
-        const data = (res?.data ?? res) || {};
+    resolveLinkMeta(link.url)
+      .then((data) => {
         if (!active || (!data.title && !data.image)) return;
         setMeta(data);
         const update = {};

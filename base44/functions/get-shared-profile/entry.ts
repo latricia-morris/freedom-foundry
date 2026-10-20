@@ -23,7 +23,27 @@ export default async function(req) {
 
     if (!profile) return Response.json({ error: 'Profile not found' }, { status: 404 });
 
-    return Response.json({ profile_type: link.profile_type, profile });
+    // Linked assets (Canva designs and other external links) belong to the
+    // profile's owner, matched by account id or contact email.
+    const ownerFilters = [
+      ...(profile.user_id ? [{ user_id: profile.user_id }] : []),
+      ...(profile.created_by_id ? [{ user_id: profile.created_by_id }] : []),
+      ...(profile.email ? [{ user_email: String(profile.email).toLowerCase() }] : []),
+    ];
+    let linked_assets = [];
+    if (ownerFilters.length) {
+      try {
+        linked_assets = await base44.asServiceRole.entities.ClientAssetLink.filter(
+          { $or: ownerFilters },
+          '-created_date',
+          50
+        );
+      } catch (e) {
+        console.error('get-shared-profile linked assets error:', e);
+      }
+    }
+
+    return Response.json({ profile_type: link.profile_type, profile, linked_assets });
   } catch (error) {
     console.error('get-shared-profile error:', error);
     return Response.json({ error: error.message }, { status: 500 });

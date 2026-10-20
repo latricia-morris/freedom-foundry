@@ -2,15 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { Pencil, Plus, Trash2, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { resolvePortalUser } from '@/lib/clientPortalData';
+import { resolveLinkMeta } from '@/lib/assetLinks';
 
-/** Reads a link's own title and preview image via the backend function. */
+/** Reads a link's own title and preview image. */
 async function canvaMeta(url) {
-  try {
-    const res = await base44.functions.invoke('fetch-link-title', { url });
-    return (res?.data ?? res) || {};
-  } catch {
-    return {};
-  }
+  return resolveLinkMeta(url);
 }
 
 /** Admin manager for a client's external asset links (Canva and other URLs). */
