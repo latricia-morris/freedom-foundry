@@ -2,6 +2,7 @@ import Stripe from "npm:stripe@17.0.0";
 import { secrets } from "base44:runtime";
 import { createClientFromRequest } from "npm:@base44/sdk@0.8.44";
 import { handleDepositPaid, writeAudit } from "../../shared/agency/core.ts";
+import { applyPaidSession } from "../../shared/brandAudit.ts";
 
 export default async function(req: Request): Promise<Response> {
   try {
@@ -25,6 +26,11 @@ export default async function(req: Request): Promise<Response> {
       case "checkout.session.completed": {
         const session = event.data.object;
         console.log(`Checkout completed: ${session.id}, customer: ${session.customer}`);
+        if (session.metadata?.base44_test_checkout === "true") break;
+        if (["brand_audit", "action_strategy"].includes(session.metadata?.payment_type)) {
+          const result = await applyPaidSession(createClientFromRequest(req).asServiceRole, session);
+          console.log(`Brand audit payment: ${JSON.stringify(result)}`);
+        }
         // Proposal microsite deposit: verified server-side, no auto-activation.
         if (session.metadata?.payment_type === "proposal_deposit" && session.metadata?.base44_proposal_id) {
           const base44 = createClientFromRequest(req).asServiceRole;

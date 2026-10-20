@@ -1,0 +1,178 @@
+{
+  "name": "BrandAuditRequest",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "user_email": {
+      "type": "string"
+    },
+    "brand_key": {
+      "type": "string"
+    },
+    "brand_label": {
+      "type": "string"
+    },
+    "agency_client_id": {
+      "type": "string"
+    },
+    "tier": {
+      "type": "string",
+      "enum": [
+        "courtesy",
+        "website",
+        "complete"
+      ]
+    },
+    "stage": {
+      "type": "string",
+      "enum": [
+        "offers",
+        "details",
+        "review"
+      ],
+      "default": "offers"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "awaiting_payment",
+        "submitted",
+        "information_needed",
+        "queued",
+        "in_review",
+        "ready_for_call",
+        "call_completed",
+        "released",
+        "unable_to_proceed",
+        "cancelled"
+      ],
+      "default": "draft"
+    },
+    "payment_status": {
+      "type": "string",
+      "enum": [
+        "none",
+        "pending",
+        "paid",
+        "failed",
+        "expired"
+      ],
+      "default": "none"
+    },
+    "amount_cents": {
+      "type": "number"
+    },
+    "stripe_session_id": {
+      "type": "string"
+    },
+    "stripe_payment_intent_id": {
+      "type": "string"
+    },
+    "receipt_url": {
+      "type": "string"
+    },
+    "paid_at": {
+      "type": "string"
+    },
+    "details": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "snapshot_at": {
+      "type": "string"
+    },
+    "submitted_at": {
+      "type": "string"
+    },
+    "terms_version": {
+      "type": "string"
+    },
+    "terms_accepted_at": {
+      "type": "string"
+    },
+    "call_scheduled_at": {
+      "type": "string"
+    },
+    "call_completed_at": {
+      "type": "string"
+    },
+    "released_at": {
+      "type": "string"
+    },
+    "released_by": {
+      "type": "string"
+    },
+    "report_path": {
+      "type": "string"
+    },
+    "strategy_status": {
+      "type": "string",
+      "enum": [
+        "hidden",
+        "available",
+        "awaiting_payment",
+        "preparing",
+        "delivered"
+      ],
+      "default": "hidden"
+    },
+    "strategy_released_at": {
+      "type": "string"
+    },
+    "strategy_released_by": {
+      "type": "string"
+    },
+    "strategy_session_id": {
+      "type": "string"
+    },
+    "strategy_paid_at": {
+      "type": "string"
+    },
+    "strategy_url": {
+      "type": "string"
+    },
+    "last_activity_at": {
+      "type": "string"
+    },
+    "reminders_sent": {
+      "type": "number",
+      "default": 0
+    },
+    "reminders_paused": {
+      "type": "boolean",
+      "default": false
+    },
+    "admin_notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "user_id",
+    "brand_key"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -4,7 +4,7 @@ import BrandUpCard from '@/components/dashboard/BrandUpCard';
 import SetupProgressCard from '@/components/dashboard/SetupProgressCard';
 import WorkbookProgressCard from '@/components/dashboard/WorkbookProgressCard';
 import ActivityCard from '@/components/dashboard/ActivityCard';
-import BrandHealthRequestCard from '@/components/dashboard/BrandHealthRequestCard';
+import BrandHealthRequestCard from '@/components/brandAudit/AuditDashboardCard';
 
 export default function Dashboard() {
   return (
