@@ -101,6 +101,8 @@ import PortalProposals from './pages/PortalProposals';
 import BrainHub from './pages/BrainHub';
 import ProjectRequest from './pages/ProjectRequest';
 import AdminProjectRequests from './pages/AdminProjectRequests';
+import BrandReview from './pages/BrandReview';
+import AdminBrandReviews from './pages/admin/AdminBrandReviews';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin, isAuthenticated } = useAuth();
@@ -164,6 +166,7 @@ const AuthenticatedApp = () => {
           <Route path="/podcast" element={<Podcast />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/billing" element={<Billing />} />
+          <Route path="/brand-review" element={<BrandReview />} />
           <Route path="/digital-brand-health" element={<Navigate to="/brand-portal/brand-health" replace />} />
           <Route element={<BrandPortalLayout />}>
             <Route path="/brand-portal" element={<BrandPortal />} />
@@ -211,6 +214,7 @@ const AuthenticatedApp = () => {
             <Route path="/admin/brand-health" element={<AdminBrandHealth />} />
             <Route path="/admin/brand-health/:auditId" element={<AdminBrandHealthAuditDetail />} />
             <Route path="/admin/channel-profiles" element={<AdminChannelProfiles />} />
+            <Route path="/admin/brand-reviews" element={<AdminBrandReviews />} />
             <Route path="/admin/agency/proposals" element={<AdminAgencyPipeline />} />
             <Route path="/admin/agency/templates" element={<AdminAgencyTemplates />} />
             <Route path="/admin/agency/proposals/new" element={<AdminAgencyProposalBuilder />} />
