@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { functions } from '@/api/client';
 import PublicBrandKit from '@/components/share/PublicBrandKit';
+import RefKitPage from '@/components/share/refkit/RefKitPage';
 
 export default function SharePage() {
   const { token: urlToken } = useParams();
@@ -52,5 +53,6 @@ export default function SharePage() {
     </div>
   );
 
+  if (['corporate', 'personal', 'media_kit'].includes(data.profile_type)) return <RefKitPage type={data.profile_type} profile={data.profile} />;
   return <PublicBrandKit data={data} />;
 }
