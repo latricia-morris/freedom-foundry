@@ -1,0 +1,7 @@
+import React, { useState } from 'react';
+import StudioField from '@/components/proposal/studio/StudioField';
+export default function StudioOffline({ studio }) {
+  const [form,setForm] = useState({amount:'',method:'check',reference:''});
+  if (!studio.offlineFor) return null;
+  return <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/90 p-5" role="dialog" aria-modal="true" aria-label="Record offline payment"><div className="w-full max-w-md space-y-4 border border-border bg-card p-6"><h2 className="font-heading text-2xl">Record offline payment</h2><p className="text-sm">{studio.offlineFor.title}</p>{['amount','reference'].map(key=><StudioField key={key} label={key==='amount'?'Amount USD':'Payment reference'} type={key==='amount'?'number':'text'} value={form[key]} onChange={v=>setForm({...form,[key]:v})} />)}<StudioField label="Payment method" value={form.method} options={[["check","Check"],["cash","Cash"]]} onChange={v=>setForm({...form,method:v})} /><div className="flex gap-4"><button type="button" className="btn-forge px-4 py-2 text-sm" disabled={studio.busy} onClick={()=>studio.recordOffline(form)}>Record receipt</button><button type="button" onClick={()=>studio.setOfflineFor(null)} className="text-sm">Cancel</button></div></div></div>;
+}

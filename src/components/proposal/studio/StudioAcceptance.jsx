@@ -1,0 +1,10 @@
+import React from 'react';
+import StudioField from '@/components/proposal/studio/StudioField';
+import { fmtMoney } from '@/lib/proposalFormat';
+export default function StudioAcceptance({ doc, editing, onChange, quote, preview = false }) {
+  return <div className="space-y-5"><h3 className="font-heading text-2xl">Review before acceptance</h3><p className="text-sm">Prepared for {doc.recipient.full_name} · {doc.recipient.company_name}</p><p className="text-sm">Designated signing and delivery email: {doc.recipient.notice_email || doc.recipient.email}</p><p className="text-sm">Version {doc.version || 1} · Current agreement {fmtMoney(quote?.totalCents || 0)} · Initial payment {fmtMoney(quote?.depositCents || 0)}</p>
+    <p className="text-sm text-muted-foreground">Future-only work is not accepted by signing this initial engagement and does not create an invoice or subscription.</p>
+    {editing && <div className="grid gap-3 sm:grid-cols-2">{['full_name','company_name','notice_email','phone','title'].map(key => <StudioField key={key} label={`Recipient ${key.replaceAll('_',' ')}`} value={doc.recipient[key]} onChange={v => onChange({ ...doc,recipient:{ ...doc.recipient,[key]:v,...(key==='notice_email' ? {email:v,designated_signers:[v]} : {}),...(key==='company_name' ? {contracting_party_name:v || doc.recipient.full_name,company_legal_name:v,is_individual:!v} : {}) } })} />)}</div>}
+    {!editing && preview && <div className="rounded-sm border border-border bg-muted/30 p-4"><p className="text-sm">Agency-side preview. Signing and payments are disabled here.</p><label className="mt-3 block text-sm">Signature<input disabled className="admin-input mt-1" value={doc.recipient.full_name} readOnly /></label><button disabled className="btn-forge mt-4 px-5 py-3 text-sm opacity-50">Sign and accept</button></div>}
+  </div>;
+}

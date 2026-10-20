@@ -4,7 +4,8 @@ import { secrets } from "base44:runtime";
 export const PROPOSAL_FALLBACK_ORIGIN = "https://brand-forge-vault.base44.app";
 
 export async function createDepositCheckout(req, stripe, cfg) {
-  const origin = req.headers.get("origin") || cfg.fallbackOrigin || PROPOSAL_FALLBACK_ORIGIN;
+  const origin = req.headers.get("X-Base44-App-Url");
+  if (!origin) throw new Error('The app return address is missing. Checkout was not created.');
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
     managed_payments: { enabled: false },

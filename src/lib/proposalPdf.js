@@ -1,6 +1,7 @@
 import { jsPDF } from "jspdf";
 import { fmtMoney, fmtDate } from "@/lib/proposalFormat";
 import { AGENCY } from "@/lib/proposalAgencyClient";
+import downloadStudioProposalPdf from '@/lib/studioProposalPdf';
 
 /**
  * Text-based agreement PDF: selectable text, wrapped paragraphs, page numbers,
@@ -9,6 +10,7 @@ import { AGENCY } from "@/lib/proposalAgencyClient";
  * and a signing-record appendix.
  */
 export function downloadProposalPdf(doc, installments = [], signed = false) {
+  if (doc.content?.studio?.schema_version === 2) return downloadStudioProposalPdf(doc, installments, signed);
   const pdf = new jsPDF({ unit: "pt", format: "a4" });
   const pageW = pdf.internal.pageSize.getWidth();
   const pageH = pdf.internal.pageSize.getHeight();

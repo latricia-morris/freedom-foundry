@@ -11,6 +11,7 @@ import AgreementSection from '@/components/proposal/AgreementSection';
 import AcceptPaySection from '@/components/proposal/AcceptPaySection';
 import ChangeRequestModal from '@/components/proposal/ChangeRequestModal';
 import { fmtDate } from '@/lib/proposalFormat';
+import StudioClientExperience from '@/components/proposal/studio/StudioClientExperience';
 
 const EMBERS_VIDEO =
   'https://media.base44.com/videos/public/6a6982f0647238bf2b5d67bf/8d01159f7_rising-golden-embers-on-black-background-2025-12-17-19-25-08-utc.mp4';
@@ -152,6 +153,7 @@ export default function ProposalMicrosite() {
 
   const proposal = data.proposal;
   const installments = data.installments || [];
+  if (proposal.content?.studio?.schema_version === 2) return <StudioClientExperience proposal={proposal} installments={installments} token={token} onRefresh={load} paymentCancelled={searchParams.get('payment') === 'cancelled'} />;
   const idx = PROPOSAL_SECTIONS.findIndex((s) => s.id === active);
   const prev = PROPOSAL_SECTIONS[idx - 1];
   const next = PROPOSAL_SECTIONS[idx + 1];

@@ -8,6 +8,7 @@ import {
   TIMELINE_PRESETS,
 } from "../../shared/proposal/content.ts";
 import { writeAudit } from "../../shared/agency/core.ts";
+import { studioAdminAction } from "../../shared/proposal/studioAdmin.ts";
 
 // Deterministic money helpers (never LLM arithmetic).
 const toCents = (v) => Math.round((Number(v) || 0) * 100);
@@ -183,6 +184,10 @@ export default async function (req) {
     const svc = base44.asServiceRole;
     const body = await req.json().catch(() => ({}));
     const action = body.action;
+    if (['parse-studio','quote-studio','preview-studio','new-version','publish','save-draft'].includes(action)) {
+      const result = await studioAdminAction(svc, user, body);
+      if (result) return result;
+    }
 
     if (action === "parse") {
       const markdown = String(body.markdown || "");
@@ -419,7 +424,7 @@ export default async function (req) {
       if (!doc.share_token) return Response.json({ error: "not_published" }, { status: 400 });
       const client = await svc.entities.AgencyClient.get(doc.agency_client_id).catch(() => null);
       const to = doc.recipient?.notice_email || client?.primary_contact_email || "";
-      if (!to) return Response.json({ error: "no_recipient_email" }, { status: 400 });
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(to)) return Response.json({ error: "A valid resolved signing email is required." }, { status: 400 });
       const isIndividual = doc.recipient?.is_individual === true;
       const origin = req.headers.get("origin") || "https://brand-forge-vault.base44.app";
       await svc.integrations.Core.SendEmail({

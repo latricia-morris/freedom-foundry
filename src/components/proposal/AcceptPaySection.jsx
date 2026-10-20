@@ -12,7 +12,7 @@ const LABEL = 'space-y-1 text-[10px] uppercase tracking-widest text-muted-foregr
  * immediate invoice, Stripe deposit payment or approved cash/check preference,
  * and the signed download. Payment amounts are always computed server-side.
  */
-export default function AcceptPaySection({ proposal, installments, selections, token, paymentCancelled, onRefresh }) {
+export default function AcceptPaySection({ proposal, installments, selections, token, paymentCancelled, onRefresh, quote, preview = false }) {
   const signed = proposal.signing?.status === 'signed';
   const deposit = installments.find((i) => i.installment_type === 'deposit');
   const paid = deposit?.status === 'paid';
@@ -37,13 +37,14 @@ export default function AcceptPaySection({ proposal, installments, selections, t
     items.filter((i) => i.kind === 'required').reduce((s, i) => s + (i.unit_price_cents || 0), 0) +
     items.filter((i) => i.kind === 'quantity_based').reduce((s, i) => s + (i.unit_price_cents || 0) * (selections[i.id]?.quantity ?? i.quantity_default ?? 0), 0) +
     items.filter((i) => i.kind === 'tier' && selections[i.id]?.selected).reduce((s, i) => s + (i.unit_price_cents || 0), 0);
-  const totalCents = signed ? (proposal.signing?.total_cents || 0) : Math.max(0, scopeCents + items.filter((i) => i.kind === 'addon' && selections[i.id]?.selected).reduce((s, i) => s + (i.unit_price_cents || 0), 0));
-  const depositDue = deposit ? deposit.amount_cents : Math.round((totalCents * ((inv.schedule?.[0]?.percent ?? 50) / 100)));
+  const totalCents = signed ? (proposal.signing?.total_cents || 0) : quote ? quote.totalCents : Math.max(0, scopeCents + items.filter((i) => i.kind === 'addon' && selections[i.id]?.selected).reduce((s, i) => s + (i.unit_price_cents || 0), 0));
+  const depositDue = deposit ? deposit.amount_cents : quote ? quote.depositCents : Math.round((totalCents * ((inv.schedule?.[0]?.percent ?? 50) / 100)));
   const remaining = (signed ? totalCents : 0) - (deposit?.amount_paid_cents || 0);
 
   const isFramed = typeof window !== 'undefined' && window.self !== window.top;
 
   const openCheckout = async () => {
+    if (preview) return;
     setBusy(true);
     setFormError('');
     let tab = null;
@@ -73,6 +74,7 @@ export default function AcceptPaySection({ proposal, installments, selections, t
   };
 
   const sign = async () => {
+    if (preview) return;
     setBusy(true);
     setFormError('');
     let tab = null;
@@ -90,6 +92,7 @@ export default function AcceptPaySection({ proposal, installments, selections, t
         action: 'sign',
         token,
         selections,
+        approved_digest: proposal.content_digest,
         signer_name: signerName,
         signer_email: signerEmail,
         signer_title: signerTitle,
@@ -248,6 +251,7 @@ export default function AcceptPaySection({ proposal, installments, selections, t
   return (
     <section id="accept" className="scroll-mt-24 space-y-8">
       <div>
+        {preview && <p className="mb-3 border border-border p-3 text-sm text-muted-foreground">Agency-side preview. Signing and payment are disabled.</p>}
         <p className="text-warm text-[11px] font-semibold uppercase tracking-[0.16em]">Accept &amp; Pay</p>
         <h2 className="mt-1 font-heading text-3xl font-light text-foreground sm:text-4xl">Review your agreement.</h2>
         <div className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
@@ -322,7 +326,7 @@ export default function AcceptPaySection({ proposal, installments, selections, t
 
         {formError ? <p className="text-sm text-red-400">{formError}</p> : null}
         <div className="flex flex-wrap items-center gap-4">
-          <button type="button" onClick={sign} disabled={!canSign || busy} className="btn-forge rounded-sm px-6 py-3 text-sm font-semibold disabled:opacity-50">
+          <button type="button" onClick={sign} disabled={preview || !canSign || busy || (quote?.errors?.length > 0) || (proposal.content?.studio?.schema_version === 2 && !quote)} className="btn-forge rounded-sm px-6 py-3 text-sm font-semibold disabled:opacity-50">
             {busy ? 'Working...' : 'Sign and accept'}
           </button>
           <p className="max-w-md text-xs leading-relaxed text-muted-foreground">

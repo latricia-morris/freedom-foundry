@@ -1,0 +1,4 @@
+import React from 'react';
+export default function StudioField({ label, value, onChange, type = 'text', multiline = false, options }) {
+  return <label className="block min-w-0 text-xs text-muted-foreground">{label}{options ? <select aria-label={label} className="admin-input mt-1" value={value ?? ''} onChange={e => onChange(e.target.value)}>{options.map(([v,l]) => <option key={v} value={v}>{l}</option>)}</select> : multiline ? <textarea aria-label={label} className="admin-input mt-1" rows={3} value={value || ''} onChange={e => onChange(e.target.value)} /> : <input aria-label={label} className="admin-input mt-1" type={type} step={type === 'number' ? '0.01' : undefined} value={value ?? ''} onChange={e => onChange(type === 'number' ? (e.target.value === '' ? null : Number(e.target.value)) : e.target.value)} />}</label>;
+}

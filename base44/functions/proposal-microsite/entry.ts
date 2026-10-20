@@ -12,6 +12,8 @@ import {
 } from "../../shared/proposal/content.ts";
 import { writeAudit } from "../../shared/agency/core.ts";
 import { proposalGate } from "../../shared/proposal/access.ts";
+import { isStudio, publicStudio } from "../../shared/proposal/studioDocument.ts";
+import { studioQuote } from "../../shared/proposal/studioPricing.ts";
 
 const FALLBACK_ORIGIN = "https://brand-forge-vault.base44.app";
 
@@ -29,6 +31,10 @@ function isExpired(doc) {
 }
 
 function publicPayload(doc, client) {
+  if (isStudio(doc)) {
+    const frozen = doc.parsed_payload_cache?.issued_snapshot || {};
+    return { ...publicStudio({ ...doc, ...frozen, signing: doc.signing, status: doc.status, content_digest: doc.content_digest }), consents: CONSENTS, consents_version: CONSENTS_VERSION, agency: AGENCY, payment_preference: doc.payment_preference || 'online', offline_available: Boolean(OFFLINE_INSTRUCTIONS), offline_instructions: OFFLINE_INSTRUCTIONS, offline_reminder: OFFLINE_REMINDER };
+  }
   const isIndividual = doc.recipient?.is_individual === true;
   return {
     id: doc.id,
@@ -120,7 +126,7 @@ async function ensureInstallments(svc, doc, lines, totalCents, schedule) {
   const drafts = [];
   let allocated = 0;
   schedule.forEach((entry, i) => {
-    const amount = Math.round((totalCents * (entry.percent || 0)) / 100);
+    const amount = entry.amount_cents != null ? Math.round(entry.amount_cents) : Math.round((totalCents * (entry.percent || 0)) / 100);
     if (amount <= 0) return;
     allocated += amount;
     drafts.push({
@@ -188,6 +194,13 @@ export default async function (req) {
     const body = await req.json().catch(() => ({}));
     const action = body.action;
 
+    if (action === 'quote-studio') {
+      const doc = await findDoc(svc, body.token);
+      if (!doc) return Response.json({ error: 'not_found' }, { status: 404 });
+      const gate = await gateAccess(base44, svc, doc);
+      if (gate.error) return Response.json({ error: gate.error }, { status: gate.status });
+      return Response.json({ quote: studioQuote(doc.parsed_payload_cache?.issued_snapshot?.investment || doc.investment, body.selections || {}) });
+    }
     if (action === "view") {
       const doc = await findDoc(svc, body.token);
       if (!doc) return Response.json({ error: "not_found" }, { status: 404 });
@@ -221,7 +234,8 @@ export default async function (req) {
     }
 
     if (action === "sign") {
-      const doc = await findDoc(svc, body.token);
+      const stored = await findDoc(svc, body.token);
+      const doc = stored ? { ...stored, ...(stored.parsed_payload_cache?.issued_snapshot || {}), signing: stored.signing, status: stored.status, content_digest: stored.content_digest } : null;
       if (!doc) return Response.json({ error: "not_found" }, { status: 404 });
       const gate = await gateAccess(base44, svc, doc);
       if (gate.error) return Response.json({ error: gate.error }, { status: gate.status });
@@ -246,6 +260,7 @@ export default async function (req) {
       };
       if (signer.name.length < 2) return Response.json({ error: "signature_required" }, { status: 400 });
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(signer.email)) return Response.json({ error: "signer_email_required" }, { status: 400 });
+      if (isStudio(doc) && !(doc.recipient.designated_signers || [doc.recipient.notice_email]).map(e => String(e).toLowerCase()).includes(signer.email.toLowerCase())) return Response.json({ error: 'Use the designated signing email.' }, { status: 403 });
       if (body.consents?.proposal !== true || body.consents?.electronic !== true) {
         return Response.json({ error: "agreement_required" }, { status: 400 });
       }
@@ -266,13 +281,15 @@ export default async function (req) {
         unit_price_cents: i.unit_price_cents || 0,
         display_order: i.display_order || 0,
       }));
-      const { lines, totalCents, errors } = applySelections(items, body.selections || {});
+      const studioPrice = isStudio(doc) ? studioQuote(doc.investment, body.selections || {}) : null;
+      const { lines, totalCents, errors } = studioPrice || applySelections(items, body.selections || {});
       if (errors.length) return Response.json({ error: "validation", errors }, { status: 400 });
       if (totalCents <= 0) return Response.json({ error: "validation", errors: ["Total must be greater than zero."] }, { status: 400 });
 
-      const schedule = doc.investment?.schedule || [];
+      const schedule = studioPrice ? studioPrice.obligations : doc.investment?.schedule || [];
       const depositPct = schedule[0]?.percent ?? 50;
-      const depositCents = Math.round((totalCents * depositPct) / 100);
+      const depositCents = studioPrice ? studioPrice.depositCents : Math.round((totalCents * depositPct) / 100);
+      if (isStudio(doc) && body.approved_digest !== doc.content_digest) return Response.json({ error: 'The issued version changed. Reload before signing.' }, { status: 409 });
 
       // Freeze the exact accepted version
       const nowISO = new Date().toISOString();
@@ -314,6 +331,9 @@ export default async function (req) {
           total_cents: totalCents,
           deposit_cents: depositCents,
           selections: body.selections || {},
+          snapshot: isStudio(doc) ? { ...publicPayload(doc, null), accepted_lines: lines, total_cents: totalCents, deposit_cents: depositCents, accepted_selections: body.selections || {}, approved_version_digest: doc.content_digest } : undefined,
+          proposal_version: doc.version,
+          approved_version_digest: doc.content_digest,
           ip_note: "Server timestamp recorded; identity evidenced by verified email challenge when required.",
         },
         content_digest: digest,
