@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { base44 } from '@/api/base44Client';
 import { safeReturnTo } from '@/lib/authReturnTo';
+import { loginWithMfa, continueMfa, loginWithGoogle } from '@/lib/authMfa';
 import GoogleIcon from '@/components/GoogleIcon';
 import {
   ArrowRight,
@@ -31,7 +31,11 @@ export default function FreedomFoundryLoginPage() {
     setError('');
     setLoading(true);
     try {
-      await base44.auth.loginViaEmailPassword(email, password);
+      const result = await loginWithMfa(email, password);
+      if (result?.mfa_required) {
+        await continueMfa(result, returnTo);
+        return;
+      }
       window.location.href = returnTo;
     } catch (err) {
       setError(err.message || 'Sign in failed. Check your email and password.');
@@ -39,10 +43,15 @@ export default function FreedomFoundryLoginPage() {
     }
   };
 
-  const handleGoogle = () => {
+  const handleGoogle = async () => {
     setGoogleLoading(true);
     setError('');
-    base44.auth.loginWithProvider('google', returnTo);
+    try {
+      await loginWithGoogle(returnTo);
+    } catch (err) {
+      setError(err.message || 'Google sign-in could not start. Please try again.');
+      setGoogleLoading(false);
+    }
   };
 
   const withReturnTo = (path) =>
@@ -300,6 +309,14 @@ export default function FreedomFoundryLoginPage() {
                   )}
                 </button>
               </form>
+
+              <p className="mt-4 text-center text-xs leading-5 text-white/50">
+                Signed up with Google?{' '}
+                <Link to={withReturnTo('/forgot-password')} className="text-[#E9B27C] transition hover:text-white">
+                  Set a password
+                </Link>{' '}
+                to also log in with your email.
+              </p>
 
               <div className="mt-6 border-t border-white/[0.12] pt-5 text-center sm:mt-7 sm:pt-6">
                 <p className="text-sm leading-6 text-white/55">

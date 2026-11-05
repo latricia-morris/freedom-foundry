@@ -5,6 +5,7 @@ import apiClient from '@/api/client';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import PasswordSection from '@/components/settings/PasswordSection';
 
 export default function Settings() {
   const [user, setUser] = useState(null);
@@ -116,6 +117,10 @@ export default function Settings() {
           </button>
           {saveError && <p role="alert" className="text-sm text-red-700">{saveError}</p>}
         </section>
+
+        <div className="h-px bg-black/10" />
+
+        <PasswordSection email={user?.email} />
 
         <div className="h-px bg-black/10" />
 
