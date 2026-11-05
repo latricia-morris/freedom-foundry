@@ -22,7 +22,7 @@ async function driveFetch(token, url) {
 
 async function memberFolderRoots(base44, user) {
   const [brands, portal] = await Promise.all([
-    memberBrands(base44, user),
+    memberBrands(base44, user, 'assets'),
     base44.asServiceRole.entities.PortalContent.filter(
       { type: 'drive_link', user_id: user.id, visible: { $ne: false } },
       { limit: 100, fields: ['drive_folder_id'] }

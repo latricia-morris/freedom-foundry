@@ -1,0 +1,69 @@
+{
+  "name": "ClientUpload",
+  "type": "object",
+  "properties": {
+    "agency_client_id": {
+      "type": "string"
+    },
+    "file_uri": {
+      "type": "string"
+    },
+    "file_name": {
+      "type": "string"
+    },
+    "size": {
+      "type": "number"
+    },
+    "mime_type": {
+      "type": "string"
+    },
+    "note": {
+      "type": "string"
+    },
+    "uploaded_by_email": {
+      "type": "string"
+    },
+    "uploaded_by_name": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "new",
+        "reviewed"
+      ],
+      "enumColors": [
+        "yellow",
+        "green"
+      ],
+      "default": "new"
+    }
+  },
+  "required": [
+    "agency_client_id",
+    "file_uri",
+    "file_name"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

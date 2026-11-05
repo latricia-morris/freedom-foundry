@@ -1,6 +1,8 @@
 import React from 'react';
-import { Outlet, NavLink } from 'react-router-dom';
-import { ChevronDown, Flame, Send, FolderOpen } from 'lucide-react';
+import { Outlet, NavLink, Navigate } from 'react-router-dom';
+import { ChevronDown, Flame, Send, FolderOpen, Users } from 'lucide-react';
+import { useBrandAccess, teamCanOpen } from '@/hooks/useBrandAccess';
+import { Spinner } from '@/components/crm/CrmUi';
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import PortalContentSection from '@/components/portal/PortalContentSection';
@@ -57,6 +59,12 @@ function NavItem({ item }) {
           />
 
         }
+          {item.icon === 'users' &&
+        <Users
+          className="w-4 h-4 flex-shrink-0"
+          strokeWidth={1.5}
+          />
+        }
           {item.icon === 'folder' &&
         <FolderOpen
           className="w-4 h-4 flex-shrink-0"
@@ -72,7 +80,15 @@ function NavItem({ item }) {
 export default function BrandPortalLayout() {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const currentItem = portalNav.find((item) => location.pathname === item.path) || portalNav[0];
+  const { restricted, managed, isLoading } = useBrandAccess();
+  const nav = [
+    ...(restricted ? portalNav.filter((item) => teamCanOpen(item.path)) : portalNav),
+    ...(managed.length ? [{ name: 'Team Access', path: '/brand-portal/team', icon: 'users' }] : []),
+  ];
+  const currentItem = nav.find((item) => location.pathname === item.path) || nav[0];
+
+  if (isLoading) return <Spinner />;
+  if (restricted && !teamCanOpen(location.pathname)) return <Navigate to="/brand-portal/workspace" replace />;
   const pageKey = pageKeyFromPath(location.pathname);
 
   const renderItems = (items) => items.map((item) => <NavItem key={item.path} item={item} />);
@@ -93,7 +109,7 @@ export default function BrandPortalLayout() {
           Brand Portal
         </p>
         <nav aria-label="Brand Portal pages" className="flex flex-col gap-1">
-          {renderItems(portalNav)}
+          {renderItems(nav)}
         </nav>
       </aside>
 
@@ -112,7 +128,7 @@ export default function BrandPortalLayout() {
         </button>
         {mobileOpen && (
           <nav onClickCapture={() => setMobileOpen(false)} aria-label="Mobile Brand Portal pages" className="mt-2 grid grid-cols-1 gap-1 rounded-xl border border-border bg-card p-2">
-            {renderItems(portalNav)}
+            {renderItems(nav)}
           </nav>
         )}
       </div>

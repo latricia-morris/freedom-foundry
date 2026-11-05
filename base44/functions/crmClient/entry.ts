@@ -22,7 +22,7 @@ export default async function (req) {
     if (!['workspace', 'send'].includes(action)) return Response.json({ error: 'Unknown action' }, { status: 400 });
 
     const sr = base44.asServiceRole;
-    const brands = await memberBrands(base44, user);
+    const brands = await memberBrands(base44, user, 'workspace');
     const ids = brands.map((b) => b.id);
 
     if (action === 'send') {

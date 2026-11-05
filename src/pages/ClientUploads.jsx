@@ -1,14 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
-import UploadNotice from '@/components/uploads/UploadNotice';
-import UploadDropzone from '@/components/uploads/UploadDropzone';
-import UploadHistory from '@/components/uploads/UploadHistory';
-
-// Temporary sample data until the intake folder is connected.
-const SAMPLE = [{ id: 's1', file_name: 'Sample — logo-primary.png', uploaded_by_email: 'sample@client.com', created_date: new Date().toISOString() }];
+import { Spinner } from '@/components/crm/CrmUi';
+import { useBrandAccess } from '@/hooks/useBrandAccess';
+import BrandPicker from '@/components/brandTeam/BrandPicker';
+import BrandUploadsPanel from '@/components/uploads/BrandUploadsPanel';
 
 export default function ClientUploads() {
+  const { brands, isLoading } = useBrandAccess();
+  const [brandId, setBrandId] = useState('');
+  const active = brandId || brands[0]?.id;
+
   return (
     <div className="max-w-3xl animate-fade-in space-y-6">
       <div>
@@ -17,9 +19,14 @@ export default function ClientUploads() {
         </Link>
         <h1 className="mt-3 font-heading text-3xl font-light text-foreground">Client <span className="molten-text italic">Uploads</span></h1>
       </div>
-      <UploadNotice folderName="Your Brand — Client Uploads" />
-      <UploadDropzone onUpload={async () => {}} busy={false} />
-      <UploadHistory uploads={SAMPLE} />
+      {isLoading ? <Spinner /> : !active ? (
+        <div className="dashboard-card p-8 text-center text-sm text-muted-foreground">Uploads open once the team links your email to a brand account.</div>
+      ) : (
+        <>
+          <BrandPicker brands={brands} value={active} onChange={setBrandId} />
+          <BrandUploadsPanel key={active} brandId={active} />
+        </>
+      )}
     </div>
   );
 }

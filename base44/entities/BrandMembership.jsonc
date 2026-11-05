@@ -1,0 +1,56 @@
+{
+  "name": "BrandMembership",
+  "type": "object",
+  "properties": {
+    "agency_client_id": {
+      "type": "string",
+      "description": "Brand (agency client) this access applies to"
+    },
+    "email": {
+      "type": "string",
+      "description": "Lowercased member email"
+    },
+    "role": {
+      "type": "string",
+      "enum": [
+        "brand_admin",
+        "team_member"
+      ],
+      "enumColors": [
+        "purple",
+        "blue"
+      ],
+      "default": "team_member"
+    },
+    "added_by_email": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "agency_client_id",
+    "email",
+    "role"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

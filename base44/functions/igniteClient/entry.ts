@@ -31,7 +31,7 @@ export default async function (req) {
       const f = await sr.entities.IgniteFolder.get(folder_id).catch((e) => (e.status === 404 ? null : Promise.reject(e)));
       folders = f ? [f] : [];
     } else {
-      const brands = await memberBrands(base44, user);
+      const brands = await memberBrands(base44, user, 'ignite');
       const ids = brands.map((b) => b.id);
       if (ids.length) {
         const page = await sr.entities.IgniteFolder.filter({ agency_client_id: { $in: ids } }, { sort: 'name', limit: 50 });

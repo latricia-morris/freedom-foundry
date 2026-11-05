@@ -113,6 +113,7 @@ import IgniteGuidelinesPage from './pages/ignite/IgniteGuidelinesPage';
 import ClientIgniteProject from './pages/ClientIgniteProject';
 import ClientWorkspace from './pages/ClientWorkspace';
 import ClientUploads from './pages/ClientUploads';
+import BrandTeam from './pages/BrandTeam';
 import CrmPipeline from './pages/admin/crm/CrmPipeline';
 import CrmTime from './pages/admin/crm/CrmTime';
 import CrmExpenses from './pages/admin/crm/CrmExpenses';
@@ -205,6 +206,7 @@ const AuthenticatedApp = () => {
             <Route path="/brand-portal/media-kit" element={<MediaKit />} />
             <Route path="/brand-portal/workspace" element={<ClientWorkspace />} />
             <Route path="/brand-portal/uploads" element={<ClientUploads />} />
+            <Route path="/brand-portal/team" element={<BrandTeam />} />
             <Route path="/brand-portal/brand-health" element={<BrandHealthHome />} />
             <Route path="/brand-portal/brand-health/visibility" element={<VisibilityScorecard />} />
             <Route path="/brand-portal/brand-health/website" element={<BrandHealthWebsite />} />
