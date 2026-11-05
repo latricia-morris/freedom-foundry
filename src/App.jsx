@@ -103,6 +103,7 @@ import ProjectRequest from './pages/ProjectRequest';
 import AdminProjectRequests from './pages/AdminProjectRequests';
 import BrandReview from './pages/BrandReview';
 import AdminBrandReviews from './pages/admin/AdminBrandReviews';
+import IgniteWorkspace from './pages/IgniteWorkspace';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin, isAuthenticated } = useAuth();
@@ -153,6 +154,9 @@ const AuthenticatedApp = () => {
 
       {/* Protected member + admin routes */}
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
+        <Route element={<AdminRoute />}>
+          <Route path="/ignite-os" element={<IgniteWorkspace />} />
+        </Route>
         <Route element={<Layout />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/vault" element={<Vault />} />

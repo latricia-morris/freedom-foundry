@@ -1,0 +1,32 @@
+{
+  "name": "IgniteFolder",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "guidelines": {
+      "type": "object",
+      "properties": {
+        "core_substance": {
+          "type": "string"
+        },
+        "customer_triggers": {
+          "type": "string"
+        },
+        "style_constraints": {
+          "type": "string"
+        },
+        "banned_terms": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

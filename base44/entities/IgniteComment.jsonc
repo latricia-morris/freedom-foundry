@@ -1,0 +1,22 @@
+{
+  "name": "IgniteComment",
+  "type": "object",
+  "properties": {
+    "task_id": {
+      "type": "string"
+    },
+    "list_id": {
+      "type": "string"
+    },
+    "body": {
+      "type": "string"
+    },
+    "author_name": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "task_id",
+    "body"
+  ]
+}

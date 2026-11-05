@@ -1,0 +1,35 @@
+{
+  "name": "IgniteList",
+  "type": "object",
+  "properties": {
+    "folder_id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "strategy_text": {
+      "type": "string"
+    },
+    "phases": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "event_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "is_template": {
+      "type": "boolean",
+      "default": false
+    },
+    "template_source_id": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

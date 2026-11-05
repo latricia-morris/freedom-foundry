@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700&family=Roboto:wght@400;500&display=swap');
+.ignite{--ff-bg-main:#000000;--ff-bg-surface:#111111;--ff-text-header:#ffffff;--ff-text-body:#f3f3ee;--ff-text-muted:#b8b9b9;--ff-border-radius:4px;--ff-brand-gradient:linear-gradient(135deg,#f0532d 0%,#a60000 100%);--ff-line:#2a2a2a;position:fixed;inset:0;z-index:40;display:grid;grid-template-columns:240px minmax(0,1fr);background:var(--ff-bg-main);color:var(--ff-text-body);font:14px/1.5 Roboto,Arial,sans-serif;overflow:hidden}
+.ignite :is(p,span,label,li){font-size:inherit}
+.ignite :is(h1,h2,h3){font-family:'Titillium Web',Arial,sans-serif;color:var(--ff-text-header);font-weight:700}
+.ignite .ig-side{background:var(--ff-bg-surface);border-right:1px solid #000;padding:20px 0;display:flex;flex-direction:column}
+.ignite .ig-brand{font:700 18px 'Titillium Web',sans-serif;color:#fff;padding:0 20px 20px;letter-spacing:.06em}
+.ignite .ig-nav{position:relative;display:block;width:100%;text-align:left;padding:11px 20px;color:var(--ff-text-muted);background:none;border:0;font:600 14px 'Titillium Web',sans-serif;text-decoration:none;cursor:pointer}
+.ignite .ig-nav:hover{color:#fff}
+.ignite .ig-nav.active{color:#fff;background:#181818}
+.ignite .ig-nav.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--ff-brand-gradient)}
+.ignite .ig-badge{margin-left:8px;display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--ff-brand-gradient);color:#fff;font-size:11px}
+.ignite .ig-main{display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.ignite .ig-top{display:flex;align-items:center;gap:10px;padding:14px 24px;border-bottom:1px solid var(--ff-line);min-width:0}
+.ignite .ig-scroll{flex:1;overflow:auto;padding:0 24px 40px}
+.ignite .ig-ribbon{position:sticky;top:0;z-index:5;background:var(--ff-bg-surface);border:1px solid var(--ff-line);border-radius:4px;padding:14px 18px;margin:16px 0 18px;box-shadow:0 -16px 0 #000}
+.ignite .ig-ribbon h2{font-size:12px;letter-spacing:.14em;margin:0 0 6px}
+.ignite .ig-ribbon p{margin:0;white-space:pre-wrap}
+.ignite .ig-btn{border:1px solid var(--ff-line);background:var(--ff-bg-surface);color:var(--ff-text-body);border-radius:4px;padding:8px 14px;font:600 13px 'Titillium Web',sans-serif;white-space:nowrap;cursor:pointer}
+.ignite .ig-btn:hover{border-color:#555}
+.ignite .ig-primary{background:var(--ff-brand-gradient);border-color:transparent;color:#fff}
+.ignite .ig-btn:disabled{opacity:.5;cursor:default}
+.ignite .ig-input,.ignite .ig-select{background:#000;border:1px solid var(--ff-line);color:var(--ff-text-body);border-radius:4px;padding:7px 10px;font:14px Roboto,sans-serif;min-width:0;box-shadow:none}
+.ignite .ig-input:focus,.ignite .ig-select:focus{outline:1px solid #f0532d}
+.ignite .ig-bigtitle{font:700 20px 'Titillium Web',sans-serif;color:#fff}
+.ignite .ig-phase{background:var(--ff-bg-surface);border:1px solid var(--ff-line);border-radius:4px;margin-bottom:14px}
+.ignite .ig-phasehead{display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;background:none;border:0;color:#fff;font:700 15px 'Titillium Web',sans-serif;text-align:left;cursor:pointer}
+.ignite .ig-chev{transition:transform .2s}
+.ignite .ig-chev.closed{transform:rotate(-90deg)}
+.ignite .ig-dot{width:8px;height:8px;border-radius:50%;background:var(--ff-brand-gradient);flex:0 0 8px}
+.ignite .ig-count{color:var(--ff-text-muted);font:400 12px Roboto,sans-serif}
+.ignite .ig-rows{display:grid;transition:grid-template-rows .25s ease}
+.ignite .ig-rows>div{overflow:hidden}
+.ignite .ig-row{display:grid;grid-template-columns:22px minmax(0,1fr) 28px 84px 130px;align-items:center;gap:14px;padding:9px 14px;border-top:1px solid var(--ff-line);white-space:nowrap}
+.ignite .ig-row.overdue{background:rgba(166,0,0,.12);box-shadow:inset 0 0 0 1px rgba(240,83,45,.35)}
+.ignite .ig-check{width:18px;height:18px;border:1px solid #555;border-radius:4px;background:#000;display:grid;place-items:center;padding:0;cursor:pointer}
+.ignite .ig-check.on{background:var(--ff-brand-gradient);border-color:transparent}
+.ignite .ig-title{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#fff;background:none;border:0;text-align:left;padding:0;font:500 14px Roboto,sans-serif;cursor:pointer}
+.ignite .ig-title:hover{text-decoration:underline}
+.ignite .ig-row.done .ig-title{color:var(--ff-text-muted);text-decoration:line-through}
+.ignite .ig-avatar{width:28px;height:28px;border-radius:50%;border:1px solid #444;display:grid;place-items:center;font:600 11px 'Titillium Web',sans-serif;color:#fff;background:#1c1c1c}
+.ignite .ig-due{font-size:12px;color:var(--ff-text-muted)}
+.ignite .ig-muted{color:var(--ff-text-muted)}
+.ignite .ig-label{display:block;font:700 11px 'Titillium Web',sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--ff-text-muted);margin-bottom:5px}
+.ignite .ig-locked{padding:8px 10px;border:1px dashed var(--ff-line);border-radius:4px;color:#fff}
+.ignite .ig-guides{position:fixed;top:0;right:0;bottom:0;width:320px;max-width:100%;background:var(--ff-bg-surface);border-left:1px solid var(--ff-line);transform:translateX(100%);transition:transform .3s ease;z-index:30;padding:20px;overflow:auto}
+.ignite .ig-guides.open{transform:none}
+.ignite .ig-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:grid;place-items:center;z-index:50;padding:16px}
+.ignite .ig-modal{width:850px;height:600px;max-width:100%;max-height:100%;background:var(--ff-bg-surface);border:1px solid var(--ff-line);border-radius:4px;display:flex;flex-direction:column;overflow:hidden}
+.ignite .ig-modalbody{flex:1;display:grid;grid-template-columns:65% 35%;min-height:0}
+.ignite .ig-left{display:flex;flex-direction:column;min-height:0;padding:18px;border-right:1px solid var(--ff-line);overflow:auto}
+.ignite .ig-right{padding:18px;display:flex;flex-direction:column;gap:16px;overflow:auto}
+.ignite .ig-feed{flex:1;min-height:60px;overflow:auto;display:flex;flex-direction:column;gap:8px;margin:8px 0}
+.ignite .ig-msg{font-size:13px}
+.ignite .ig-msg b{color:#fff;font-weight:500}
+.ignite .ig-time{color:var(--ff-text-muted);font-size:11px;margin-left:6px}
+.ignite .ig-link{color:#f0532d;background:none;border:0;padding:0;text-decoration:underline;font:inherit;cursor:pointer}
+.ignite .ig-mentions{position:absolute;bottom:100%;left:0;right:0;margin-bottom:4px;background:#000;border:1px solid var(--ff-line);border-radius:4px;max-height:160px;overflow:auto}
+.ignite .ig-mentions button{display:block;width:100%;text-align:left;padding:7px 10px;background:none;border:0;color:var(--ff-text-body);cursor:pointer}
+.ignite .ig-mentions button:hover{background:#1c1c1c}
+.ignite .ig-card{background:var(--ff-bg-surface);border:1px solid var(--ff-line);border-radius:4px;padding:16px}
+@media(max-width:760px){.ignite{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr)}.ignite .ig-side{flex-direction:row;overflow-x:auto;padding:0;border-right:0;border-bottom:1px solid var(--ff-line)}.ignite .ig-brand{display:none}.ignite .ig-nav{width:auto;white-space:nowrap}.ignite .ig-nav.active::before{top:auto;right:0;width:auto;height:3px}.ignite .ig-top{flex-wrap:wrap;padding:12px 16px}.ignite .ig-scroll{padding:0 16px 32px}.ignite .ig-modalbody{grid-template-columns:1fr;overflow:auto}.ignite .ig-left{border-right:0;overflow:visible}.ignite .ig-row{grid-template-columns:22px minmax(0,1fr) 28px 120px}.ignite .ig-row .ig-due{display:none}}
