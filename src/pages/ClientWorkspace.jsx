@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { Link } from 'react-router-dom';
+import { UploadCloud } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { Spinner, Panel, Empty } from '@/components/crm/CrmUi';
 import ClientProjectCard from '@/components/crm/client/ClientProjectCard';
@@ -26,10 +28,17 @@ export default function ClientWorkspace() {
 
   return (
     <div className="max-w-4xl animate-fade-in">
-      <div className="mb-8">
-        <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">Brand Portal</span>
-        <h1 className="mt-1 font-heading text-3xl font-light text-foreground">Client <span className="molten-text italic">Workspace</span></h1>
-        <p className="mt-1 text-sm text-muted-foreground">Your active projects, invoices and a direct line to the team.</p>
+      <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">Brand Portal</span>
+          <h1 className="mt-1 font-heading text-3xl font-light text-foreground">Client <span className="molten-text italic">Workspace</span></h1>
+          <p className="mt-1 text-sm text-muted-foreground">Your active projects, invoices and a direct line to the team.</p>
+        </div>
+        {clients.length > 0 && (
+          <Link to="/brand-portal/uploads" className="btn-forge inline-flex min-h-11 items-center gap-2 rounded-md px-5 py-2.5 text-xs font-semibold uppercase tracking-widest">
+            <UploadCloud className="h-4 w-4" /> Upload Files
+          </Link>
+        )}
       </div>
 
       {clients.length === 0 ? (
