@@ -8,6 +8,8 @@ import { PageHeader, Stat, Panel, Empty, Spinner, GhostLink, label } from '@/com
 import NeedsAttention from '@/components/crm/dashboard/NeedsAttention';
 import UpcomingWork from '@/components/crm/dashboard/UpcomingWork';
 import SalesSnapshot from '@/components/crm/dashboard/SalesSnapshot';
+import ActiveProjectsPanel from '@/components/crm/dashboard/ActiveProjectsPanel';
+import DashSection from '@/components/crm/dashboard/DashSection';
 
 const E = base44.entities;
 const page = (p) => p?.items || p || [];
@@ -43,29 +45,24 @@ export default function AdminAgencyDashboard() {
         <GhostLink to="/admin/crm/time"><Clock className="h-4 w-4" /> Log time</GhostLink>
       </PageHeader>
 
-      <div className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <div className="mb-10 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <Stat label="Active clients" value={clients} />
         <Stat label="Active projects" value={projects.length} />
         <Stat label="Collected" value={formatUsd(collected)} accent="text-primary" />
         <Stat label="Outstanding" value={formatUsd(outstanding)} />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <NeedsAttention projects={projects} proposals={proposals} />
+      <DashSection title="Sales & billing" hint="Deals, proposals, invoices and client messages">
         <SalesSnapshot />
+        <NeedsAttention projects={projects} proposals={proposals} />
+      </DashSection>
+
+      <DashSection title="Delivery" hint="The eye shows whether a client can see the project in their workspace">
+        <ActiveProjectsPanel projects={projects} />
         <UpcomingWork />
-        <Panel title="Active projects" to="/admin/agency/projects">
-          {projects.length === 0 ? <Empty>Projects appear here once a deposit is verified.</Empty> : (
-            <div className="divide-y divide-border/40">
-              {projects.slice(0, 6).map((p) => (
-                <Link key={p.id} to={`/admin/agency/projects/${p.id}`} className="flex items-center justify-between gap-3 px-5 py-3.5 hover:bg-accent/40">
-                  <p className="min-w-0 truncate text-sm text-foreground">{p.name}</p>
-                  <span className="shrink-0 text-xs capitalize text-muted-foreground">{label(p.status)}</span>
-                </Link>
-              ))}
-            </div>
-          )}
-        </Panel>
+      </DashSection>
+
+      <DashSection title="Activity">
         <Panel title="Recent activity" to="/audit-logs">
           {audits.length === 0 ? <Empty>Activity appears here as the system runs.</Empty> : (
             <div className="divide-y divide-border/40">
@@ -78,7 +75,7 @@ export default function AdminAgencyDashboard() {
             </div>
           )}
         </Panel>
-      </div>
+      </DashSection>
     </div>
   );
 }

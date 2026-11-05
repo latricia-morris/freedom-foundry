@@ -98,10 +98,10 @@ export default function AdminDashboard() {
       <div className="mb-10 relative">
         <div className="absolute -left-8 -top-8 w-64 h-64 ember-glow-bg z-[-1]" />
         <h1 className="font-heading text-4xl font-light text-foreground mb-3 tracking-wide">
-          Foundry Command
+          Member Platform
         </h1>
         <p className="text-base text-muted-foreground max-w-2xl leading-relaxed">
-          Oversee member profiles, guide brand architecture, and monitor activity across the platform.
+          Oversee member profiles, portal content and platform activity. Client work, sales and billing live in the Agency Command Center.
         </p>
       </div>
 
@@ -110,10 +110,10 @@ export default function AdminDashboard() {
         <AdminDashboardCard
           to="/admin/agency"
           icon={DollarSign}
-          title="Agency Operations"
-          description="Proposals, deposits, verified Stripe activation, projects, tasks, and controlled deliverable release."
+          title="Agency Command Center"
+          description="Clients, deals, proposals, projects, time, invoices, expenses and client messages."
           footer={
-            <span className="text-xs uppercase tracking-widest text-primary/80">Proposal → Payment → Delivery</span>
+            <span className="text-xs uppercase tracking-widest text-primary/80">Sales → Delivery → Billing</span>
           }
         />
 
@@ -213,15 +213,6 @@ export default function AdminDashboard() {
           }
         />
 
-        {/* Services Hub */}
-        <AdminDashboardCard
-          to="/admin/services"
-          icon={Wrench}
-          title="Services Hub"
-          description="Edit member-facing categories, routing copy, thresholds, and request notes."
-          footer={<span className="text-xs uppercase tracking-widest text-primary/80">Configuration + requests</span>}
-        />
-
         {/* Brand Up Engine */}
         <AdminDashboardCard
           to="/admin/brand-up"
@@ -262,18 +253,6 @@ export default function AdminDashboard() {
           footer={<span className="text-xs uppercase tracking-widest text-primary/80">Adaptive Client Portal</span>}
         />
 
-        {/* Referral Partners */}
-        <AdminDashboardCard
-          to="/admin/referral-partners"
-          icon={Users}
-          title="Referral Partners"
-          description="Manage invitation-only referral partners, review submitted opportunities, and track payouts."
-          footer={
-            <span className="text-xs uppercase tracking-widest text-primary/80 flex items-center gap-2">
-              <Activity className="w-3.5 h-3.5" /> Partner Submissions
-            </span>
-          }
-        />
       </div>
 
       {/* Recent Members Section */}

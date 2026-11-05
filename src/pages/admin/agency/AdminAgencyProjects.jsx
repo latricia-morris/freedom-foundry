@@ -30,6 +30,7 @@ const EMPTY_DRAFT = {
 export default function AdminAgencyProjects() {
   const { toast } = useToast();
   const [projects, setProjects] = useState([]);
+  const [minutes, setMinutes] = useState({});
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState(() => new Set());
@@ -48,6 +49,8 @@ export default function AdminAgencyProjects() {
       base44.entities.Project.filter({}, '-created_date', 300).catch(() => []),
       base44.entities.AgencyClient.filter({}, '-created_date', 300).catch(() => []),
     ]).then(([p, c]) => { setProjects(p || []); setClients(c || []); setLoading(false); });
+    base44.entities.TimeEntry.aggregate({ groupBy: 'project_id', sum: ['duration_minutes'] })
+      .then((r) => setMinutes(Object.fromEntries(r.rows.map((x) => [x.project_id, x.sum_duration_minutes || 0]))));
   };
   useEffect(() => { load(); }, []);
 
@@ -142,7 +145,7 @@ export default function AdminAgencyProjects() {
   };
 
   const cellCommit = async (project, field, value) => {
-    const clean = field === 'name' ? String(value ?? '').trim() : (value || null);
+    const clean = field === 'name' ? String(value ?? '').trim() : field === 'client_portal_enabled' ? value === 'on' : (value || null);
     if (field === 'name' && !clean) return;
     try {
       await base44.entities.Project.update(project.id, { [field]: clean });
@@ -156,7 +159,10 @@ export default function AdminAgencyProjects() {
   return (
     <div className="mx-auto max-w-6xl animate-fade-in pb-12">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-        <h1 className="font-heading text-4xl font-light text-foreground">Client <span className="molten-text italic">Projects</span></h1>
+        <div>
+          <h1 className="font-heading text-4xl font-light text-foreground">Client <span className="molten-text italic">Projects</span></h1>
+          <p className="mt-1 max-w-2xl text-sm text-muted-foreground">Every delivery project in one table. Set "Client view" to show a project in that client's workspace. Open a project for tasks, deliverables, time and invoices.</p>
+        </div>
         <AiProjectAssistant
           clients={clients}
           onDraft={(d) => { setDraft({ ...EMPTY_DRAFT, ...d }); setAiDraft(true); }}
@@ -184,6 +190,7 @@ export default function AdminAgencyProjects() {
           <ProjectsTable
             projects={visible}
             clients={clients}
+            minutes={minutes}
             draft={draft}
             aiDraft={aiDraft}
             busy={savingDraft}

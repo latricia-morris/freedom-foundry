@@ -7,6 +7,8 @@ import { PAYMENT_OPS_LABELS } from '@/lib/agency';
 const PROJECT_STATUSES = ['pending_activation', 'onboarding', 'active', 'waiting_on_client', 'internal_review', 'client_review', 'delivery_hold', 'completed', 'archived', 'on_hold'];
 const HEALTH = ['on_track', 'at_risk', 'delayed', 'waiting_on_client', 'on_hold'];
 
+const VIEW_OPTIONS = [{ value: 'off', label: 'Hidden' }, { value: 'on', label: 'Visible' }];
+
 const cellInput = 'w-full bg-transparent px-2 py-1.5 text-sm text-foreground outline-none placeholder:text-muted-foreground/60';
 
 /**
@@ -15,7 +17,7 @@ const cellInput = 'w-full bg-transparent px-2 py-1.5 text-sm text-foreground out
  * Enter saves.
  */
 export default function ProjectsTable({
-  projects, clients, draft, aiDraft, busy,
+  projects, clients, minutes = {}, draft, aiDraft, busy,
   onDraftChange, onCommitDraft, onCellCommit, selectedIds, onToggleRow, allSelected, onToggleAll,
 }) {
   const clientOptions = [{ value: '', label: '— client —' }, ...clients.map((c) => ({ value: c.id, label: c.company_name }))];
@@ -32,7 +34,7 @@ export default function ProjectsTable({
             <th className="w-10 px-3 py-2.5">
               <input type="checkbox" className="h-4 w-4 accent-[#d9622c]" checked={allSelected} onChange={onToggleAll} aria-label="Select all projects" />
             </th>
-            {['Project', 'Client', 'Status', 'Health', 'Payment state', 'Due date', 'Manager'].map((h) => (
+            {['Project', 'Client', 'Status', 'Health', 'Client view', 'Hours', 'Payment state', 'Due date', 'Manager'].map((h) => (
               <th key={h} className="px-3 py-2.5 text-left text-[10px] uppercase tracking-[0.2em] text-muted-foreground/70">{h}</th>
             ))}
           </tr>
@@ -40,7 +42,7 @@ export default function ProjectsTable({
         <tbody>
           {projects.length === 0 && (
             <tr>
-              <td colSpan={8} className="px-5 py-8 text-center text-sm text-muted-foreground">
+              <td colSpan={10} className="px-5 py-8 text-center text-sm text-muted-foreground">
                 No projects yet. Add your first below — type a name, pick a client, press Enter.
               </td>
             </tr>
@@ -69,6 +71,10 @@ export default function ProjectsTable({
               <td className="min-w-28 px-3 py-2">
                 <EditableCell type="select" value={p.client_project_health} options={healthOptions} onCommit={(v) => onCellCommit(p, 'client_project_health', v)} className="text-[10px] uppercase tracking-wider text-muted-foreground" />
               </td>
+              <td className="min-w-24 px-3 py-2">
+                <EditableCell type="select" value={p.client_portal_enabled ? 'on' : 'off'} options={VIEW_OPTIONS} onCommit={(v) => onCellCommit(p, 'client_portal_enabled', v)} className={`text-[10px] uppercase tracking-wider ${p.client_portal_enabled ? 'text-primary' : 'text-muted-foreground'}`} />
+              </td>
+              <td className="px-3 py-2 text-xs text-muted-foreground">{((minutes[p.id] || 0) / 60).toFixed(1)}h</td>
               <td className="px-3 py-2 text-xs text-muted-foreground">{PAYMENT_OPS_LABELS[p.payment_operational_status] || (p.payment_operational_status || '—').replace(/_/g, ' ')}</td>
               <td className="min-w-32 px-3 py-2">
                 <EditableCell type="date" value={p.client_target_completion_date} onCommit={(v) => onCellCommit(p, 'client_target_completion_date', v)} />
@@ -97,6 +103,8 @@ export default function ProjectsTable({
               </select>
             </td>
             <td className="px-2 py-1.5 text-xs text-muted-foreground/60">{(draft.client_project_health || 'on_track').replace(/_/g, ' ')}</td>
+            <td className="px-2 py-1.5 text-xs text-muted-foreground/60">hidden</td>
+            <td className="px-2 py-1.5 text-xs text-muted-foreground/60">—</td>
             <td className="px-2 py-1.5 text-xs text-muted-foreground/60">{aiDraft ? 'AI draft — Enter saves' : '—'}</td>
             <td className="px-2 py-1.5">
               <input type="date" className={cellInput} value={draft.client_target_completion_date} disabled={busy} onChange={(e) => onDraftChange({ client_target_completion_date: e.target.value })} onKeyDown={enterCommit} />

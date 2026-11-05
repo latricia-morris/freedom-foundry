@@ -1,0 +1,41 @@
+{
+  "name": "Client Message Admin Alert",
+  "description": "Emails the admin inbox when a client sends a message from their Client Workspace (agency replies are ignored)",
+  "trigger": {
+    "config": {
+      "trigger_type": "entity",
+      "entity_name": "ClientMessage",
+      "events": [
+        "create"
+      ]
+    },
+    "condition": "${ (.trigger.data.is_from_client // false) == true }"
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "client_message_admin_alert",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "notify_admin": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "send-admin-notification",
+            "args": {
+              "kind": "client_message",
+              "id": "${ .trigger.entity_id }"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Email the admin inbox",
+            "description": "Client message alert"
+          }
+        }
+      }
+    ]
+  }
+}

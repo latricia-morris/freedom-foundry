@@ -20,7 +20,7 @@ export default function RequestComposer({ data }) {
   return <>
     <RequestAccount data={data} brandId={form.agency_client_id || (data.brands.length === 1 ? data.brands[0].id : '')} onChange={(value) => update('agency_client_id', value)} />
     <form onSubmit={request.submit} className="dashboard-card rounded-[7px] p-5 sm:p-7" aria-label="Request a project">
-      <fieldset disabled={request.submitting} className="min-w-0 space-y-7">
+      <fieldset disabled={request.submitting} className="min-w-0 space-y-12 sm:space-y-14">
         <ServiceChoices options={data.services} selected={form.service_options} onChange={(value) => update('service_options', value)} />
         <section className="space-y-3"><label htmlFor="project-description" className="block font-medium">Tell us about the project</label>
           <p id="description-help" className="text-sm text-muted-foreground">What needs to be created or improved, and what would you like it to accomplish? A few clear sentences are enough.</p>

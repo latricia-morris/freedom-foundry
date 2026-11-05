@@ -4,6 +4,7 @@ import { ArrowLeft, PackageCheck } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useToast } from '@/components/ui/use-toast';
 import ProjectTaskListPanel from '@/components/admin/agency/ProjectTaskListPanel';
+import ProjectCrmSummary from '@/components/admin/agency/projects/ProjectCrmSummary';
 import {
   DELIVERABLE_REVIEW_LABELS, formatUsd, INSTALLMENT_STATUS_LABELS,
   PAYMENT_OPS_LABELS, RELEASE_RULE_LABELS,
@@ -107,6 +108,8 @@ export default function AdminAgencyProjectDetail() {
           <div><p className="uppercase tracking-widest text-muted-foreground/60">Activated</p><p className="mt-1 text-sm text-foreground">{project.activated_at ? new Date(project.activated_at).toLocaleDateString() : '—'}</p></div>
         </div>
       </div>
+
+      <ProjectCrmSummary project={project} />
 
       {installments.length > 0 && (
         <div className="dashboard-card mb-6 overflow-x-auto p-0">

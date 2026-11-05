@@ -1,5 +1,4 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { resendConfigured } from '../../shared/email/config.ts';
 import { sendAdminNotificationEmail } from '../../shared/email/service.ts';
 
 // Sends the admin-inbox notification when an important record is created.
@@ -11,6 +10,7 @@ const HANDLERS = {
   contact_submission: 'ContactSubmission',
   bug_report: 'BugReport',
   service_request: 'ServiceRequestSubmission',
+  client_message: 'ClientMessage',
 };
 
 export default async function(req) {
@@ -21,9 +21,6 @@ export default async function(req) {
     const entityName = HANDLERS[kind];
     if (!entityName || !id) {
       return Response.json({ error: 'Unknown notification kind or missing record id' }, { status: 400 });
-    }
-    if (!resendConfigured()) {
-      return Response.json({ skipped: 'Resend API key not configured — no email sent.' });
     }
 
     const base44 = createClientFromRequest(req);
@@ -63,6 +60,26 @@ export default async function(req) {
         { label: 'Page', value: record.page_url || '—' },
         { label: 'Screenshots', value: String((record.screenshot_urls || []).length) },
         { label: 'Status', value: record.status || 'open' },
+      ];
+    } else if (kind === 'client_message') {
+      if (!record.is_from_client) return Response.json({ ok: true, skipped: 'agency message' });
+      const client = await service.entities.AgencyClient.get(record.agency_client_id).catch(() => null);
+      heading = `New client message from ${client?.company_name || 'a client'}`;
+      message = record.body || '';
+      context = [
+        { label: 'Client', value: client?.company_name || '—' },
+        { label: 'From', value: `${record.sender_name || ''} ${record.sender_email ? `(${record.sender_email})` : ''}`.trim() },
+        { label: 'Reply in', value: 'Agency › Inbox › Client Messages' },
+      ];
+    } else if (record.request_kind === 'project_request') {
+      heading = `New project request${record.brand_name || record.company_name ? ` from ${record.brand_name || record.company_name}` : ''}`;
+      message = record.notes || '';
+      context = [
+        { label: 'Contact', value: `${record.contact_name || ''} ${record.contact_email ? `(${record.contact_email})` : ''}`.trim() || '—' },
+        { label: 'Services', value: (record.service_options || []).join(', ') || record.service_type || '—' },
+        { label: 'Timeline', value: (record.timeline_window || '—').replace(/_/g, ' ') + (record.deadline_date ? ` (deadline ${record.deadline_date})` : '') },
+        { label: 'Budget', value: record.budget_original || (record.budget_help_requested ? 'Wants budget guidance' : '—') },
+        { label: 'Attachments', value: String((record.inspiration_file_uris || []).length) },
       ];
     } else {
       heading = `New service request — ${record.service_type || 'Member services'}`;

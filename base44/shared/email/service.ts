@@ -125,6 +125,7 @@ export async function sendQuizResultEmail(base44, { to, firstName, primaryArchet
 
 // 4. Internal admin alert
 export async function sendAdminNotificationEmail(base44, { heading, message, context = [], relatedEntity = '', relatedId = '' }) {
+  if (!resendApiKey()) return sendPlatformAdminEmail(base44, { heading, message, context, relatedEntity, relatedId });
   return sendTransactionalEmail(base44, {
     to: ADMIN_INBOX(),
     templateKey: 'admin_notification',
@@ -132,6 +133,26 @@ export async function sendAdminNotificationEmail(base44, { heading, message, con
     relatedEntity,
     relatedId,
   });
+}
+
+// Without a Resend key, admin alerts go through the platform mailer. The admin
+// inbox is a registered app user, so platform delivery is allowed.
+async function sendPlatformAdminEmail(base44, { heading, message, context, relatedEntity, relatedId }) {
+  const to = ADMIN_INBOX();
+  const template = renderTemplate('admin_notification', { heading, message, context });
+  const log = await base44.entities.EmailLog.create({
+    to, subject: template.subject, template_key: 'admin_notification', channel: 'base44',
+    status: 'queued', payload: { heading, message, context }, related_entity: relatedEntity, related_id: relatedId,
+  }).catch((e) => { console.error('email log create failed [admin_notification]:', e.message); return null; });
+  try {
+    await base44.integrations.Core.SendEmail({ to, subject: template.subject, body: template.html, from_name: 'Freedom Foundry', category: 'transactional' });
+    if (log) await base44.entities.EmailLog.update(log.id, { status: 'sent', sent_at: new Date().toISOString() }).catch(() => {});
+    return { ok: true, logId: log?.id || '' };
+  } catch (error) {
+    console.error('platform admin email failed:', error.message);
+    if (log) await base44.entities.EmailLog.update(log.id, { status: 'failed', error: error.message }).catch(() => {});
+    return { ok: false, error: error.message };
+  }
 }
 
 // 5. Support acknowledgment / auto-response (sends from the support inbox)

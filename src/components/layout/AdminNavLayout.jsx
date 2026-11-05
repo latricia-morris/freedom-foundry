@@ -16,7 +16,7 @@ const NAV_SECTIONS = [
       { name: 'Deal Pipeline', path: '/admin/crm/pipeline' },
       { name: 'Proposals', path: '/admin/agency/proposals', end: true },
       { name: 'Proposal Studio', path: '/admin/agency/proposals/import' },
-      { name: 'Templates', path: '/admin/agency/templates' },
+      { name: 'Proposal Templates', path: '/admin/agency/templates' },
     ],
   },
   {
@@ -34,7 +34,7 @@ const NAV_SECTIONS = [
       { name: 'Invoices', path: '/admin/crm/invoices' },
       { name: 'Expenses', path: '/admin/crm/expenses' },
       { name: 'Reports', path: '/admin/crm/reports' },
-      { name: 'Financial Overview', path: '/financial-overview' },
+      { name: 'Books & Payments', path: '/financial-overview' },
     ],
   },
   {
@@ -49,17 +49,15 @@ const NAV_SECTIONS = [
   {
     label: 'Platform',
     items: [
-      { name: 'Command', path: '/admin', end: true },
+      { name: 'Member Platform', path: '/admin', end: true },
       { name: 'Agency Build', path: '/admin/agency/agency-build' },
       { name: 'Resource Library', path: '/resource-library' },
       { name: 'Audit Logs', path: '/audit-logs' },
       { name: 'Members', path: '/admin/users' },
       { name: 'Brand Up', path: '/admin/brand-up' },
-      { name: 'Services Hub', path: '/admin/services' },
       { name: 'Quiz Leads', path: '/admin/quiz-leads' },
       { name: 'Client Import', path: '/admin/client-import' },
       { name: 'Portal Content', path: '/admin/portal-content' },
-      { name: 'Referral Partners', path: '/admin/referral-partners' },
     ],
   },
   {
@@ -145,7 +143,7 @@ export default function AdminNavLayout() {
         item.end
           ? location.pathname === item.path
           : location.pathname === item.path || location.pathname.startsWith(`${item.path}/`),
-      )?.name || 'Command';
+      )?.name || 'Member Platform';
 
   return (
     <div className="flex min-h-[calc(100vh-10rem)] flex-col gap-6 lg:flex-row lg:gap-8">
