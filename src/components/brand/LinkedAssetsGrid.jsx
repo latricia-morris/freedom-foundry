@@ -52,10 +52,13 @@ function LinkTile({ link }) {
  * links saved by the agency, shown apart from Drive-browsed files. Each tile
  * shows the design's own preview image and original title.
  */
-export default function LinkedAssetsGrid({ user }) {
-  const [links, setLinks] = useState(null);
+export default function LinkedAssetsGrid({ user, brandLinks }) {
+  const [ownLinks, setLinks] = useState(null);
+  // A selected brand supplies its own links; otherwise load the member's.
+  const links = brandLinks !== undefined ? brandLinks : ownLinks;
 
   useEffect(() => {
+    if (brandLinks !== undefined) return;
     if (!user?.id && !user?.email) return;
     let active = true;
     // A link matches by the client's account id or their contact email,
@@ -68,9 +71,9 @@ export default function LinkedAssetsGrid({ user }) {
       .then((rows) => active && setLinks(rows || []))
       .catch(() => active && setLinks([]));
     return () => { active = false; };
-  }, [user?.id, user?.email]);
+  }, [user?.id, user?.email, brandLinks]);
 
-  if (!user?.id && !user?.email) return null;
+  if (brandLinks === undefined && !user?.id && !user?.email) return null;
 
   return (
     <section className="mb-10">

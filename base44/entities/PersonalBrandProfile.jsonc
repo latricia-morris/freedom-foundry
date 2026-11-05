@@ -5,6 +5,10 @@
     "user_id": {
       "type": "string"
     },
+    "agency_client_id": {
+      "type": "string",
+      "description": "Brand this profile belongs to"
+    },
     "first_name": {
       "type": "string"
     },

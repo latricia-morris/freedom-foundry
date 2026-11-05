@@ -5,6 +5,10 @@
     "user_id": {
       "type": "string"
     },
+    "agency_client_id": {
+      "type": "string",
+      "description": "Brand this asset belongs to"
+    },
     "title": {
       "type": "string"
     },

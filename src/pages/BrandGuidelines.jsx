@@ -3,6 +3,8 @@ import apiClient from '@/api/client';
 import { useMembership } from '@/lib/useMembership';
 import { Lock, Check } from 'lucide-react';
 import ClientGuidelines from '@/components/guidelines/ClientGuidelines';
+import { usePortalBrand } from '@/hooks/usePortalBrand';
+import { brandStore } from '@/lib/brandContent';
 
 function ClientGate() {
   return (
@@ -22,7 +24,11 @@ function ClientGate() {
 }
 
 export default function BrandGuidelines() {
-  const { isClient, loading: memberLoading } = useMembership();
+  const { isClient: isClientAccount, loading: memberLoading } = useMembership();
+  const { brand } = usePortalBrand();
+  const store = brandStore('guidelines', brand?.id);
+  // Anyone with access to the selected brand sees its guidelines.
+  const isClient = !!brand || isClientAccount;
   const [guidelines, setGuidelines] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -38,9 +44,8 @@ export default function BrandGuidelines() {
   useEffect(() => {
     if (memberLoading) return;
     if (!isClient) { setLoading(false); return; }
-    apiClient.entities.BrandGuidelines.filter({}, '-created_date', 1)
-      .then(r => {
-        const g = r?.[0] || null;
+    store.load()
+      .then(g => {
         setGuidelines(g);
         if (g) setForm({ ...init, ...g });
       })
@@ -54,9 +59,9 @@ export default function BrandGuidelines() {
     setSaving(true);
     try {
       if (guidelines?.id) {
-        await apiClient.entities.BrandGuidelines.update(guidelines.id, form);
+        await store.update(guidelines.id, form);
       } else {
-        const created = await apiClient.entities.BrandGuidelines.create(form);
+        const created = await store.create(form);
         setGuidelines(created);
       }
       setSaved(true);
@@ -79,7 +84,7 @@ export default function BrandGuidelines() {
         <p className="text-sm text-muted-foreground">Standards, usage rules, and style notes for your brand.</p>
       </div>
 
-      <ClientGuidelines />
+      <ClientGuidelines brandId={brand?.id} />
 
       <div className="bg-card text-card-foreground border border-border rounded-2xl p-6 md:p-8 shadow-sm space-y-6">
         {/* Font Kit */}

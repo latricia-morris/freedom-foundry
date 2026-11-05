@@ -4,21 +4,26 @@ import { useMembership } from '@/lib/useMembership';
 import LinkedAssetsGrid from '@/components/brand/LinkedAssetsGrid';
 import ClientDriveFolder from '@/components/brand/ClientDriveFolder';
 import { Upload, Download, Trash2 } from 'lucide-react';
+import { usePortalBrand } from '@/hooks/usePortalBrand';
+import { brandStore } from '@/lib/brandContent';
 
 const FILE_TYPES = ['logo', 'design_asset', 'print_collateral', 'digital_asset', 'deliverable', 'other'];
 const FILE_TYPE_LABELS = { logo: 'Logo', design_asset: 'Design Asset', print_collateral: 'Print Collateral', digital_asset: 'Digital Asset', deliverable: 'Deliverable', other: 'Other' };
 
 export default function BrandAssets() {
   const { user, loading: memberLoading } = useMembership();
+  const { brand } = usePortalBrand();
+  const store = brandStore('assets', brand?.id);
   const [assets, setAssets] = useState([]);
+  const [links, setLinks] = useState(undefined);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [filter, setFilter] = useState('all');
 
   useEffect(() => {
     if (memberLoading) return;
-    apiClient.entities.BrandAsset.filter({}, '-created_date', 100)
-      .then(a => setAssets(a || []))
+    store.list()
+      .then(r => { setAssets(r.items); setLinks(r.links); })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, [memberLoading]);
@@ -30,7 +35,7 @@ export default function BrandAssets() {
       const ext = file.name.split('.').pop()?.toLowerCase();
       let file_type = 'other';
       if (['png', 'svg', 'ai', 'eps'].includes(ext)) file_type = 'logo';
-      const created = await apiClient.entities.BrandAsset.create({
+      const created = await store.create({
         title: file.name.replace(/\.[^.]+$/, ''),
         file_url,
         file_type,
@@ -41,7 +46,7 @@ export default function BrandAssets() {
   };
 
   const handleDelete = async (id) => {
-    await apiClient.entities.BrandAsset.delete(id);
+    await store.remove(id);
     setAssets(prev => prev.filter(a => a.id !== id));
   };
 
@@ -60,8 +65,8 @@ export default function BrandAssets() {
 
       </div>
 
-      <ClientDriveFolder />
-      <LinkedAssetsGrid user={user} />
+      <ClientDriveFolder brandId={brand?.id} />
+      <LinkedAssetsGrid user={user} brandLinks={links} />
 
       {/* Upload + Filter */}
       <div className="flex flex-wrap items-center gap-3 mb-6">

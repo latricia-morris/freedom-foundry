@@ -9,10 +9,14 @@ import BookLinks from '@/components/brand/BookLinks';
 import PodcastLinks from '@/components/brand/PodcastLinks';
 import { createShareLink } from '@/lib/shareUtils';
 import SetupTaskFooter from '@/components/brand/SetupTaskFooter';
+import { usePortalBrand } from '@/hooks/usePortalBrand';
+import { brandStore } from '@/lib/brandContent';
 
 const FILE_ACCEPT = ".png,.jpg,.jpeg,.pdf,.ai,.eps,.webp";
 
 export default function MediaKit() {
+  const { brand } = usePortalBrand();
+  const store = brandStore('media_kit', brand?.id);
   const [kit, setKit] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -32,9 +36,8 @@ export default function MediaKit() {
   const [form, setForm] = useState(init);
 
   useEffect(() => {
-    apiClient.entities.MediaKit.filter({}, '-created_date', 1)
-      .then(r => {
-        const rec = r?.[0] || null;
+    store.load()
+      .then(rec => {
         setKit(rec);
         if (rec) setForm({ ...init, ...rec });
       })
@@ -54,8 +57,7 @@ export default function MediaKit() {
 
   const handlePopulateFromPersonal = async () => {
     try {
-      const personal = await apiClient.entities.PersonalBrandProfile.filter({}, '-created_date', 1);
-      const p = personal?.[0];
+      const p = await brandStore('personal', brand?.id).load();
       if (!p) {
         toast({ title: "No Personal Brand found", description: "Fill out your Personal Brand page first." });
         return;
@@ -91,9 +93,9 @@ export default function MediaKit() {
     setSaving(true);
     try {
       if (kit?.id) {
-        await apiClient.entities.MediaKit.update(kit.id, form);
+        await store.update(kit.id, form);
       } else {
-        const created = await apiClient.entities.MediaKit.create(form);
+        const created = await store.create(form);
         setKit(created);
       }
       setSaved(true);
@@ -107,7 +109,7 @@ export default function MediaKit() {
     try {
       let kitId = kit?.id;
       if (!kitId) {
-        const created = await apiClient.entities.MediaKit.create(form);
+        const created = await store.create(form);
         setKit(created);
         kitId = created.id;
       }
@@ -134,9 +136,9 @@ export default function MediaKit() {
     const timer = setTimeout(async () => {
       try {
         if (kitRef.current?.id) {
-          await apiClient.entities.MediaKit.update(kitRef.current.id, form);
+          await store.update(kitRef.current.id, form);
         } else {
-          const created = await apiClient.entities.MediaKit.create(form);
+          const created = await store.create(form);
           setKit(created);
         }
       } catch (_) {}

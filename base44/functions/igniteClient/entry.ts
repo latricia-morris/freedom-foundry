@@ -19,7 +19,7 @@ export default async function (req) {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me().catch((e) => (e.status === 401 ? null : Promise.reject(e)));
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
-    const { action, folder_id, project_id } = await req.json().catch(() => ({}));
+    const { action, folder_id, project_id, agency_client_id } = await req.json().catch(() => ({}));
     if (!['portal', 'project', 'guidelines'].includes(action)) return Response.json({ error: 'Unknown action' }, { status: 400 });
 
     const sr = base44.asServiceRole;
@@ -32,7 +32,8 @@ export default async function (req) {
       folders = f ? [f] : [];
     } else {
       const brands = await memberBrands(base44, user, 'ignite');
-      const ids = brands.map((b) => b.id);
+      // Optional: narrow to the brand selected in the portal.
+      const ids = brands.map((b) => b.id).filter((id) => !agency_client_id || id === agency_client_id);
       if (ids.length) {
         const page = await sr.entities.IgniteFolder.filter({ agency_client_id: { $in: ids } }, { sort: 'name', limit: 50 });
         folders = page.items;

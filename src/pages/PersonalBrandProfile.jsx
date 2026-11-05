@@ -8,11 +8,15 @@ import PrivacyNote from '@/components/brand/PrivacyNote';
 import SetupTaskFooter from '@/components/brand/SetupTaskFooter';
 import AssetPreview from '@/components/brand/AssetPreview';
 import BookLinks from '@/components/brand/BookLinks';
+import { usePortalBrand } from '@/hooks/usePortalBrand';
+import { brandStore } from '@/lib/brandContent';
 
 
 const FILE_ACCEPT = ".png,.jpg,.jpeg,.pdf,.ai,.eps,.webp";
 
 export default function PersonalBrandProfile() {
+  const { brand } = usePortalBrand();
+  const store = brandStore('personal', brand?.id);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -31,9 +35,8 @@ export default function PersonalBrandProfile() {
   const [form, setForm] = useState(init);
 
   useEffect(() => {
-    apiClient.entities.PersonalBrandProfile.filter({}, '-created_date', 1)
-      .then(p => {
-        const r = p?.[0] || null;
+    store.load()
+      .then(r => {
         setProfile(r);
         if (r) setForm({ ...init, ...r });
       })
@@ -54,9 +57,9 @@ export default function PersonalBrandProfile() {
     setSaving(true);
     try {
       if (profile?.id) {
-        await apiClient.entities.PersonalBrandProfile.update(profile.id, form);
+        await store.update(profile.id, form);
       } else {
-        const created = await apiClient.entities.PersonalBrandProfile.create(form);
+        const created = await store.create(form);
         setProfile(created);
       }
       setSaved(true);
@@ -70,7 +73,7 @@ export default function PersonalBrandProfile() {
     try {
       let profileId = profile?.id;
       if (!profileId) {
-        const created = await apiClient.entities.PersonalBrandProfile.create(form);
+        const created = await store.create(form);
         setProfile(created);
         profileId = created.id;
       }
@@ -92,9 +95,9 @@ export default function PersonalBrandProfile() {
     const timer = setTimeout(async () => {
       try {
         if (profileRef.current?.id) {
-          await apiClient.entities.PersonalBrandProfile.update(profileRef.current.id, form);
+          await store.update(profileRef.current.id, form);
         } else {
-          const created = await apiClient.entities.PersonalBrandProfile.create(form);
+          const created = await store.create(form);
           setProfile(created);
         }
       } catch (_) {}

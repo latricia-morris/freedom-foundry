@@ -4,7 +4,7 @@ import { base44 } from '@/api/base44Client';
 import DriveBrowser from '@/components/portal/DriveBrowser';
 
 /** The folder linked directly to this member's client, independent of plan. */
-export default function ClientDriveFolder() {
+export default function ClientDriveFolder({ brandId }) {
   const { data, isPending, isError, refetch } = useQuery({
     queryKey: ['portal-asset-folders'],
     queryFn: async () => {
@@ -13,7 +13,7 @@ export default function ClientDriveFolder() {
     },
     refetchOnWindowFocus: true,
   });
-  const folder = data?.brands?.find((brand) => brand.drive_folder_id);
+  const folder = data?.brands?.find((brand) => brand.drive_folder_id && (!brandId || brand.id === brandId));
 
   if (isPending) return (
     <section className="mb-10 flex justify-center py-10" aria-label="Loading shared folder">

@@ -5,6 +5,10 @@
     "user_id": {
       "type": "string"
     },
+    "agency_client_id": {
+      "type": "string",
+      "description": "Brand these guidelines belong to"
+    },
     "heading_font": {
       "type": "string"
     },

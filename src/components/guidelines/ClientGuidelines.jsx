@@ -3,8 +3,8 @@ import GuidelineBundle from './GuidelineBundle';
 import { useGuidelines } from './useIgniteClient';
 
 // Client-facing guideline library: renders nothing unless something was added to their account.
-export default function ClientGuidelines() {
-  const { data, isPending } = useGuidelines();
+export default function ClientGuidelines({ brandId }) {
+  const { data, isPending } = useGuidelines(undefined, true, brandId);
   if (isPending) return <div className="flex justify-center py-8"><div className="w-6 h-6 border-2 border-border border-t-primary rounded-full animate-spin" /></div>;
   const g = data?.guideline;
   if (!g) return null;
