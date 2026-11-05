@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 
@@ -20,4 +21,17 @@ export function useBrandAccess() {
   const restricted = !isAdmin && brands.length > 0 && brands.every((b) => b.role === 'team_member');
   const managed = brands.filter((b) => isAdmin || b.role === 'owner' || b.role === 'brand_admin');
   return { brands, isAdmin, restricted, managed, isLoading };
+}
+
+const SELECTED_KEY = 'ff-portal-brand';
+
+/** The brand chosen in the portal selector, remembered between visits. */
+export function useSelectedBrand(brands) {
+  const [id, setId] = useState(() => window.localStorage.getItem(SELECTED_KEY) || '');
+  const brand = brands.find((b) => b.id === id) || brands[0] || null;
+  const select = (next) => {
+    window.localStorage.setItem(SELECTED_KEY, next);
+    setId(next);
+  };
+  return [brand, select];
 }

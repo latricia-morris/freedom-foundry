@@ -1,7 +1,8 @@
 import React from 'react';
 import { Outlet, NavLink, Navigate } from 'react-router-dom';
 import { ChevronDown, Flame, Send, FolderOpen, Users } from 'lucide-react';
-import { useBrandAccess, teamCanOpen } from '@/hooks/useBrandAccess';
+import { useBrandAccess, useSelectedBrand, teamCanOpen } from '@/hooks/useBrandAccess';
+import PortalBrandSelector from '@/components/layout/PortalBrandSelector';
 import { Spinner } from '@/components/crm/CrmUi';
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -80,11 +81,16 @@ function NavItem({ item }) {
 export default function BrandPortalLayout() {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { restricted, managed, isLoading } = useBrandAccess();
+  const { brands, isAdmin, isLoading } = useBrandAccess();
+  const [brand, selectBrand] = useSelectedBrand(brands);
+  // Navigation follows the role on the selected brand.
+  const restricted = !isAdmin && brand?.role === 'team_member';
+  const canManageBrand = !!brand && (isAdmin || brand.role !== 'team_member');
   const nav = [
     ...(restricted ? portalNav.filter((item) => teamCanOpen(item.path)) : portalNav),
-    ...(managed.length ? [{ name: 'Team Access', path: '/brand-portal/team', icon: 'users' }] : []),
+    ...(canManageBrand ? [{ name: 'Team Access', path: '/brand-portal/team', icon: 'users' }] : []),
   ];
+  const selector = <PortalBrandSelector brands={brands} brand={brand} onSelect={selectBrand} />;
   const currentItem = nav.find((item) => location.pathname === item.path) || nav[0];
 
   if (isLoading) return <Spinner />;
@@ -108,12 +114,14 @@ export default function BrandPortalLayout() {
         <p className="mb-3 px-3 text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
           Brand Portal
         </p>
+        {selector}
         <nav aria-label="Brand Portal pages" className="flex flex-col gap-1">
           {renderItems(nav)}
         </nav>
       </aside>
 
       <div className="lg:hidden">
+        <PortalBrandSelector brands={brands} brand={brand} onSelect={selectBrand} id="portal-brand-mobile" />
         <button
           type="button"
           onClick={() => setMobileOpen((open) => !open)}
@@ -134,7 +142,7 @@ export default function BrandPortalLayout() {
       </div>
 
       <main className="min-w-0 flex-1 lg:py-2">
-        <Outlet />
+        <Outlet key={brand?.id || 'personal'} context={{ brand, brands, isAdmin }} />
         {pageKey && <PortalContentSection key={pageKey} pageKey={pageKey} />}
       </main>
     </div>
