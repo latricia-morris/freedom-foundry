@@ -1,0 +1,84 @@
+@import url('https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700&family=Roboto:wght@400;500&display=swap');
+.glx{--ff-bg-main:#000000;--ff-bg-surface:#111111;--ff-text-header:#ffffff;--ff-text-body:#f3f3ee;--ff-text-muted:#b8b9b9;--ff-line:#2a2a2a;--ff-brand-gradient:linear-gradient(135deg,#f0532d 0%,#a60000 100%);background:var(--ff-bg-main);color:var(--ff-text-body);font:15px/1.65 Roboto,Arial,sans-serif}
+.glx :is(p,span,label,li){font-size:inherit}
+.glx :is(h1,h2,h3,h4,h5,h6){font-family:'Titillium Web',Arial,sans-serif;color:var(--ff-text-header)}
+.glx .gl-bar{position:sticky;top:0;z-index:6;display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:12px 0;background:var(--ff-bg-main)}
+.glx .gl-search{position:relative;flex:1 1 260px;display:flex;align-items:center;gap:8px;background:var(--ff-bg-surface);border:1px solid var(--ff-line);border-radius:4px;padding:0 12px;color:var(--ff-text-muted)}
+.glx .gl-search:focus-within{border-color:#f0532d}
+.glx .gl-search input{flex:1;min-width:0;background:none;border:0;outline:0;color:#fff;padding:10px 0;font:15px Roboto,sans-serif;box-shadow:none}
+.glx .gl-results{position:absolute;top:calc(100% + 4px);left:0;right:0;max-height:360px;overflow:auto;background:var(--ff-bg-surface);border:1px solid var(--ff-line);border-radius:4px;z-index:10}
+.glx .gl-results button{display:block;width:100%;text-align:left;padding:10px 12px;background:none;border:0;border-bottom:1px solid var(--ff-line);color:inherit;cursor:pointer}
+.glx .gl-results button:hover{background:#1a1a1a}
+.glx .gl-results p{margin:0;padding:12px;color:var(--ff-text-muted)}
+.glx .gl-rpath{display:block;font:600 12px 'Titillium Web',sans-serif;color:#fff;letter-spacing:.04em}
+.glx .gl-rsnip{display:block;font-size:13px;color:var(--ff-text-muted)}
+.glx mark{background:rgba(240,83,45,.32);color:#fff;border-radius:2px;padding:0 1px}
+.glx .gl-res{display:flex;gap:8px;flex-wrap:wrap}
+.glx .gl-btn{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:4px;border:1px solid var(--ff-line);background:var(--ff-bg-surface);color:#fff;font:600 13px 'Titillium Web',sans-serif;text-decoration:none;white-space:nowrap}
+.glx .gl-btn:hover{border-color:#555}
+.glx .gl-btn.primary{background:var(--ff-brand-gradient);border-color:transparent}
+.glx .gl-body{display:grid;grid-template-columns:240px minmax(0,1fr);gap:32px;margin-top:8px}
+.glx .gl-toc{position:sticky;top:72px;align-self:start;max-height:calc(100vh - 140px);overflow:auto;border-right:1px solid var(--ff-line);padding-right:12px}
+.glx .gl-toctoggle{display:none}
+.glx .gl-toclist,.glx .gl-h2list{list-style:none;margin:0;padding:0}
+.glx .gl-h1row{display:flex;align-items:center;gap:4px}
+.glx .gl-h1link{flex:1;text-align:left;background:none;border:0;color:#fff;font:600 14px 'Titillium Web',sans-serif;padding:7px 0;cursor:pointer}
+.glx .gl-exp{background:none;border:0;color:var(--ff-text-muted);padding:4px;cursor:pointer;display:grid}
+.glx .gl-exp svg{transition:transform .2s}
+.glx .gl-exp svg.closed{transform:rotate(-90deg)}
+.glx .gl-h2list{border-left:1px solid var(--ff-line);margin:0 0 6px 4px;padding-left:12px}
+.glx .gl-h2list button{background:none;border:0;color:var(--ff-text-muted);text-align:left;padding:4px 0;font:13px Roboto,sans-serif;cursor:pointer}
+.glx .gl-h2list button:hover,.glx .gl-h1link:hover{color:#f0532d}
+.glx .gl-doc{min-width:0;max-width:78ch}
+.glx .gl-sec{padding:4px 0 28px;scroll-margin-top:80px;border-bottom:1px solid var(--ff-line);margin-bottom:28px}
+.glx .gl-sec:last-child{border-bottom:0}
+.glx .gl-h1{font-size:30px;line-height:1.15;margin:0 0 14px;font-weight:700}
+.glx .gl-sub{scroll-margin-top:80px;margin-top:14px;border-radius:4px}
+.glx .gl-h2{font:700 20px 'Titillium Web',sans-serif;color:#fff;cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px;padding:6px 0}
+.glx .gl-h2::-webkit-details-marker{display:none}
+.glx .gl-h2::before{content:'';width:7px;height:7px;border-right:2px solid #f0532d;border-bottom:2px solid #f0532d;transform:rotate(-45deg);transition:transform .2s;flex:0 0 7px}
+.glx details[open]>.gl-h2::before{transform:rotate(45deg)}
+.glx .flash{animation:glflash 1.6s ease}
+@keyframes glflash{0%{background:rgba(240,83,45,.18)}100%{background:transparent}}
+.glx .gl-prose h3{font-size:17px;margin:20px 0 8px}
+.glx .gl-prose :is(h4,h5,h6){font-size:15px;margin:16px 0 6px}
+.glx .gl-prose p{margin:0 0 14px}
+.glx .gl-prose :is(ul,ol){margin:0 0 14px;padding-left:22px}
+.glx .gl-prose ul{list-style:disc}
+.glx .gl-prose ol{list-style:decimal}
+.glx .gl-prose li{margin:4px 0}
+.glx .gl-prose a{color:#f0532d}
+.glx .gl-prose img{max-width:100%;height:auto;display:block;margin:14px 0;border-radius:4px}
+.glx .gl-prose table{border-collapse:collapse;margin:0 0 16px;font-size:14px;display:block;overflow-x:auto;max-width:100%}
+.glx .gl-prose :is(th,td){border:1px solid var(--ff-line);padding:8px 10px;text-align:left;vertical-align:top}
+.glx .gl-prose th{background:var(--ff-bg-surface);color:#fff;font-family:'Titillium Web',sans-serif}
+.glx .gl-prose blockquote{margin:0 0 14px;padding:10px 16px;border-left:3px solid #f0532d;background:var(--ff-bg-surface)}
+.glx .gl-prose pre{background:var(--ff-bg-surface);padding:12px;overflow:auto;border-radius:4px}
+.glx .gl-prose hr{border:0;border-top:1px solid var(--ff-line);margin:20px 0}
+.glx .gl-prose :is(strong,b){color:#fff}
+.glx .gl-error{color:#ff8a6b;margin:0 0 10px}
+.glx .gl-muted{color:var(--ff-text-muted)}
+.glx .gl-card{background:var(--ff-bg-surface);border:1px solid var(--ff-line);border-radius:4px;padding:18px}
+.glx .gl-label{display:block;font:700 11px 'Titillium Web',sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--ff-text-muted);margin-bottom:6px}
+.glx .gl-link{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-top:1px solid var(--ff-line);color:#fff;text-decoration:none}
+.glx .gl-link:hover{background:#181818}
+.glx .gl-task{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:14px;align-items:center;padding:10px 14px;border-top:1px solid var(--ff-line)}
+.glx .gl-task.done .gl-ttitle{color:var(--ff-text-muted);text-decoration:line-through}
+.glx .gl-pill{font:600 11px 'Titillium Web',sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border:1px solid var(--ff-line);border-radius:4px;color:var(--ff-text-muted);white-space:nowrap}
+.glx .gl-pill.live{background:var(--ff-brand-gradient);color:#fff;border-color:transparent}
+.gl-compact .gl-body{grid-template-columns:1fr;gap:12px}
+.gl-compact .gl-toc{position:static;max-height:none;border:1px solid var(--ff-line);border-radius:4px;padding:0}
+.gl-compact .gl-toctoggle{display:flex;width:100%;justify-content:space-between;align-items:center;background:none;border:0;color:#fff;padding:10px 12px;font:600 13px 'Titillium Web',sans-serif;cursor:pointer}
+.gl-compact .gl-toc:not(.m-open) .gl-toclist{display:none}
+.gl-compact .gl-toclist{padding:0 12px 10px}
+.gl-compact .gl-h1{font-size:24px}
+@media(max-width:639px){
+.glx .gl-body{grid-template-columns:1fr;gap:12px}
+.glx .gl-toc{position:static;max-height:none;border:1px solid var(--ff-line);border-radius:4px;padding:0}
+.glx .gl-toctoggle{display:flex;width:100%;justify-content:space-between;align-items:center;background:none;border:0;color:#fff;padding:10px 12px;font:600 13px 'Titillium Web',sans-serif;cursor:pointer}
+.glx .gl-toc:not(.m-open) .gl-toclist{display:none}
+.glx .gl-toclist{padding:0 12px 10px}
+.glx .gl-h1{font-size:24px}
+.glx .gl-task{grid-template-columns:minmax(0,1fr) auto}
+.glx .gl-task .gl-tdue{display:none}
+}

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import apiClient from '@/api/client';
 import { useMembership } from '@/lib/useMembership';
 import { Lock, Check } from 'lucide-react';
+import ClientGuidelines from '@/components/guidelines/ClientGuidelines';
 
 function ClientGate() {
   return (
@@ -77,6 +78,8 @@ export default function BrandGuidelines() {
         <h1 className="font-heading text-3xl font-light text-foreground mt-1 mb-1">Brand <span className="molten-text italic">Guidelines</span></h1>
         <p className="text-sm text-muted-foreground">Standards, usage rules, and style notes for your brand.</p>
       </div>
+
+      <ClientGuidelines />
 
       <div className="bg-card text-card-foreground border border-border rounded-2xl p-6 md:p-8 shadow-sm space-y-6">
         {/* Font Kit */}

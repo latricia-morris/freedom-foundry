@@ -104,6 +104,13 @@ import AdminProjectRequests from './pages/AdminProjectRequests';
 import BrandReview from './pages/BrandReview';
 import AdminBrandReviews from './pages/admin/AdminBrandReviews';
 import IgniteWorkspace from './pages/IgniteWorkspace';
+import IgniteHome from './pages/ignite/IgniteHome';
+import IgniteClientPage from './pages/ignite/IgniteClientPage';
+import IgniteProjectPage from './pages/ignite/IgniteProjectPage';
+import IgniteTemplatesPage from './pages/ignite/IgniteTemplatesPage';
+import IgniteNotificationsPage from './pages/ignite/IgniteNotificationsPage';
+import IgniteGuidelinesPage from './pages/ignite/IgniteGuidelinesPage';
+import ClientIgniteProject from './pages/ClientIgniteProject';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin, isAuthenticated } = useAuth();
@@ -155,7 +162,14 @@ const AuthenticatedApp = () => {
       {/* Protected member + admin routes */}
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
         <Route element={<AdminRoute />}>
-          <Route path="/ignite-os" element={<IgniteWorkspace />} />
+          <Route path="/ignite-os" element={<IgniteWorkspace />}>
+            <Route index element={<IgniteHome />} />
+            <Route path="clients/:clientId" element={<IgniteClientPage />} />
+            <Route path="clients/:clientId/projects/:projectId" element={<IgniteProjectPage />} />
+            <Route path="templates" element={<IgniteTemplatesPage />} />
+            <Route path="notifications" element={<IgniteNotificationsPage />} />
+            <Route path="clients/:clientId/guidelines" element={<IgniteGuidelinesPage />} />
+          </Route>
         </Route>
         <Route element={<Layout />}>
           <Route path="/dashboard" element={<Dashboard />} />
@@ -186,6 +200,7 @@ const AuthenticatedApp = () => {
             <Route path="/brand-portal/brand-health/marketing-matrix" element={<BrandHealthMatrix />} />
             <Route path="/brand-portal/visibility" element={<Navigate to="/brand-portal/brand-health/visibility" replace />} />
             <Route path="/brand-portal/ignite" element={<IgniteOS />} />
+            <Route path="/brand-portal/ignite/:projectId" element={<ClientIgniteProject />} />
             <Route path="/brand-portal/brand-up" element={<BrandUp />} />
             <Route path="/brand-portal/checklist" element={<BrandChecklist />} />
             <Route path="/brand-portal/request-services" element={<Navigate to="/brand-portal/project-requests" replace />} />

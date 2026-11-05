@@ -3,6 +3,7 @@ import apiClient from '@/api/client';
 import { useMembership } from '@/lib/useMembership';
 import { Lock, Check, X, Flame } from 'lucide-react';
 import AddLinkButton from '@/components/brand/AddLinkButton';
+import ClientIgniteProjects from '@/components/guidelines/ClientIgniteProjects';
 
 function ClientGate() {
   return (
@@ -97,6 +98,8 @@ export default function IgniteOS() {
         </h1>
         <p className="text-sm text-muted-foreground">Your brand activation operating system — from development to deployment.</p>
       </div>
+
+      <ClientIgniteProjects />
 
       <div className="bg-card text-card-foreground border border-border rounded-2xl p-6 md:p-8 shadow-sm space-y-6">
         <div>

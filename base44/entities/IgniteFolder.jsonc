@@ -5,28 +5,33 @@
     "name": {
       "type": "string"
     },
-    "guidelines": {
-      "type": "object",
-      "properties": {
-        "core_substance": {
-          "type": "string"
-        },
-        "customer_triggers": {
-          "type": "string"
-        },
-        "style_constraints": {
-          "type": "string"
-        },
-        "banned_terms": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
+    "agency_client_id": {
+      "type": "string"
     }
   },
   "required": [
     "name"
-  ]
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
 }

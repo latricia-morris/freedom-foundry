@@ -6,7 +6,7 @@ import { StrategyRibbon } from './Bits';
 import { useTasks, useTaskUpdate } from './useIgnite';
 import { E, saveAsTemplate } from './igniteApi';
 
-export default function ListCockpit({ list, onOpen }) {
+export default function ListCockpit({ list, onOpen, toolbarExtra, children }) {
   const qc = useQueryClient();
   const { data: tasks = [], isPending } = useTasks(list.id);
   const update = useTaskUpdate();
@@ -40,7 +40,9 @@ export default function ListCockpit({ list, onOpen }) {
         <select className="ig-select" value={phase} onChange={(e) => setPhase(e.target.value)}>{phases.map((p) => <option key={p}>{p}</option>)}</select>
         <button className="ig-btn">Add task</button>
         <button type="button" className="ig-btn ig-primary" onClick={save} disabled={saving || !tasks.length}>{saving ? 'Saving…' : 'Save Template'}</button>
+        {toolbarExtra}
       </form>
+      {children}
       {isPending ? <p className="ig-muted">Loading tasks…</p> : phases.map((p) => (
         <PhaseAccordion key={p} phase={p} tasks={tasks.filter((t) => (t.phase || 'Unphased') === p)} onOpen={onOpen} onUpdate={update} />
       ))}

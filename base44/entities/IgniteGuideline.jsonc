@@ -1,0 +1,63 @@
+{
+  "name": "IgniteGuideline",
+  "type": "object",
+  "properties": {
+    "folder_id": {
+      "type": "string"
+    },
+    "source_file_uri": {
+      "type": "string"
+    },
+    "source_name": {
+      "type": "string"
+    },
+    "source_format": {
+      "type": "string",
+      "enum": [
+        "html",
+        "xml"
+      ],
+      "enumColors": [
+        "blue",
+        "purple"
+      ]
+    },
+    "section_count": {
+      "type": "number"
+    },
+    "published_url": {
+      "type": "string"
+    },
+    "pdf_file_uri": {
+      "type": "string"
+    },
+    "pdf_name": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "folder_id"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
