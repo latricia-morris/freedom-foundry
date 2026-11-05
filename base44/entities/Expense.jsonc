@@ -1,0 +1,92 @@
+{
+  "name": "Expense",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "software",
+        "contractors",
+        "advertising",
+        "travel",
+        "equipment",
+        "office",
+        "other"
+      ],
+      "enumColors": [
+        "blue",
+        "purple",
+        "pink",
+        "yellow",
+        "green",
+        "gray",
+        "gray"
+      ],
+      "default": "software"
+    },
+    "amount": {
+      "type": "number",
+      "default": 0
+    },
+    "currency": {
+      "type": "string",
+      "default": "USD"
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "vendor": {
+      "type": "string"
+    },
+    "project_id": {
+      "type": "string"
+    },
+    "project_name": {
+      "type": "string"
+    },
+    "billable": {
+      "type": "boolean",
+      "default": false
+    },
+    "invoiced": {
+      "type": "boolean",
+      "default": false
+    },
+    "receipt_file_uri": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "name",
+    "amount"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

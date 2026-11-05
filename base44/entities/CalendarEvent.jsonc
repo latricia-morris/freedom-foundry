@@ -1,0 +1,76 @@
+{
+  "name": "CalendarEvent",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "meeting",
+        "call",
+        "deadline",
+        "review",
+        "other"
+      ],
+      "enumColors": [
+        "blue",
+        "green",
+        "red",
+        "purple",
+        "gray"
+      ],
+      "default": "meeting"
+    },
+    "start_time": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "end_time": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "location": {
+      "type": "string"
+    },
+    "video_link": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "agency_client_id": {
+      "type": "string"
+    },
+    "project_id": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "title",
+    "start_time"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

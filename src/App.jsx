@@ -111,6 +111,14 @@ import IgniteTemplatesPage from './pages/ignite/IgniteTemplatesPage';
 import IgniteNotificationsPage from './pages/ignite/IgniteNotificationsPage';
 import IgniteGuidelinesPage from './pages/ignite/IgniteGuidelinesPage';
 import ClientIgniteProject from './pages/ClientIgniteProject';
+import ClientWorkspace from './pages/ClientWorkspace';
+import CrmPipeline from './pages/admin/crm/CrmPipeline';
+import CrmTime from './pages/admin/crm/CrmTime';
+import CrmExpenses from './pages/admin/crm/CrmExpenses';
+import CrmInvoices from './pages/admin/crm/CrmInvoices';
+import CrmCalendar from './pages/admin/crm/CrmCalendar';
+import CrmReports from './pages/admin/crm/CrmReports';
+import CrmMessages from './pages/admin/crm/CrmMessages';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin, isAuthenticated } = useAuth();
@@ -194,6 +202,7 @@ const AuthenticatedApp = () => {
             <Route path="/brand-portal/guidelines" element={<BrandGuidelines />} />
             <Route path="/brand-portal/assets" element={<BrandAssets />} />
             <Route path="/brand-portal/media-kit" element={<MediaKit />} />
+            <Route path="/brand-portal/workspace" element={<ClientWorkspace />} />
             <Route path="/brand-portal/brand-health" element={<BrandHealthHome />} />
             <Route path="/brand-portal/brand-health/visibility" element={<VisibilityScorecard />} />
             <Route path="/brand-portal/brand-health/website" element={<BrandHealthWebsite />} />
@@ -242,6 +251,13 @@ const AuthenticatedApp = () => {
             <Route path="/admin/agency/projects" element={<AdminAgencyProjects />} />
             <Route path="/admin/agency/projects/:id" element={<AdminAgencyProjectDetail />} />
             <Route path="/admin/agency/agency-build" element={<AdminAgencyBuild />} />
+            <Route path="/admin/crm/pipeline" element={<CrmPipeline />} />
+            <Route path="/admin/crm/time" element={<CrmTime />} />
+            <Route path="/admin/crm/expenses" element={<CrmExpenses />} />
+            <Route path="/admin/crm/invoices" element={<CrmInvoices />} />
+            <Route path="/admin/crm/calendar" element={<CrmCalendar />} />
+            <Route path="/admin/crm/reports" element={<CrmReports />} />
+            <Route path="/admin/crm/messages" element={<CrmMessages />} />
             <Route path="/financial-overview" element={<AdminFinancialOverview />} />
             <Route path="/resource-library" element={<AdminResourceLibrary />} />
             <Route path="/audit-logs" element={<AdminAuditLogs />} />

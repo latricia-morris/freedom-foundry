@@ -94,6 +94,10 @@ export default function AdminAgencyProjectDetail() {
             <select className="admin-input w-auto py-1.5 text-xs" value={project.client_project_health} onChange={(e) => updateProject({ client_project_health: e.target.value })}>
               {HEALTH.map((s) => <option key={s} value={s}>{s.replace(/_/g, ' ')}</option>)}
             </select>
+            <select aria-label="Client workspace visibility" className="admin-input w-auto py-1.5 text-xs" value={project.client_portal_enabled ? 'on' : 'off'} onChange={(e) => updateProject({ client_portal_enabled: e.target.value === 'on' })}>
+              <option value="off">Hidden from client</option>
+              <option value="on">Visible in client workspace</option>
+            </select>
           </div>
         </div>
         <div className="mt-4 grid gap-4 text-xs text-muted-foreground/80 sm:grid-cols-4">

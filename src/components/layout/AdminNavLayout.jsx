@@ -6,32 +6,53 @@ import { base44 } from '@/api/base44Client';
 
 const NAV_SECTIONS = [
   {
-    label: 'Agency OS',
+    label: 'Agency',
+    items: [{ name: 'Command Center', path: '/admin/agency', end: true }],
+  },
+  {
+    label: 'Clients & Sales',
     items: [
-      { name: 'Operations', path: '/admin/agency', end: true },
       { name: 'Clients', path: '/admin/agency/clients' },
+      { name: 'Deal Pipeline', path: '/admin/crm/pipeline' },
+      { name: 'Proposals', path: '/admin/agency/proposals', end: true },
+      { name: 'Proposal Studio', path: '/admin/agency/proposals/import' },
+      { name: 'Templates', path: '/admin/agency/templates' },
+    ],
+  },
+  {
+    label: 'Delivery',
+    items: [
+      { name: 'Client Projects', path: '/admin/agency/projects' },
+      { name: 'Ignite OS Workspace', path: '/ignite-os' },
+      { name: 'Time Tracking', path: '/admin/crm/time' },
+      { name: 'Calendar', path: '/admin/crm/calendar' },
+    ],
+  },
+  {
+    label: 'Finance',
+    items: [
+      { name: 'Invoices', path: '/admin/crm/invoices' },
+      { name: 'Expenses', path: '/admin/crm/expenses' },
+      { name: 'Reports', path: '/admin/crm/reports' },
+      { name: 'Financial Overview', path: '/financial-overview' },
+    ],
+  },
+  {
+    label: 'Brand Intelligence',
+    items: [
       { name: 'Visibility Reports', path: '/admin/agency/visibility' },
       { name: 'Digital Brand Health', path: '/admin/brand-health' },
       { name: 'Channel Profiles', path: '/admin/channel-profiles' },
       { name: 'Brand Reviews', path: '/admin/brand-reviews' },
-      { name: 'Ignite OS Workspace', path: '/ignite-os' },
-      { name: 'Pipeline', path: '/admin/agency/proposals' },
-      { name: 'Proposal Studio', path: '/admin/agency/proposals/import' },
-      { name: 'Client Projects', path: '/admin/agency/projects' },
-      { name: 'Templates', path: '/admin/agency/templates' },
-      { name: 'Agency Build', path: '/admin/agency/agency-build' },
-      { name: 'Financial Overview', path: '/financial-overview' },
-      { name: 'Resource Library', path: '/resource-library' },
-      { name: 'Audit Logs', path: '/audit-logs' },
     ],
-  },
-  {
-    label: 'Overview',
-    items: [{ name: 'Command', path: '/admin', end: true }],
   },
   {
     label: 'Platform',
     items: [
+      { name: 'Command', path: '/admin', end: true },
+      { name: 'Agency Build', path: '/admin/agency/agency-build' },
+      { name: 'Resource Library', path: '/resource-library' },
+      { name: 'Audit Logs', path: '/audit-logs' },
       { name: 'Members', path: '/admin/users' },
       { name: 'Brand Up', path: '/admin/brand-up' },
       { name: 'Services Hub', path: '/admin/services' },
@@ -44,6 +65,7 @@ const NAV_SECTIONS = [
   {
     label: 'Inbox',
     items: [
+      { name: 'Client Messages', path: '/admin/crm/messages' },
       { name: 'Contact Inbox', path: '/admin/contact-inbox' },
       { name: 'Project Requests', path: '/admin/project-requests', badge: 'requests' },
       { name: 'Support Queue', path: '/admin/support-reports' },

@@ -1,0 +1,55 @@
+{
+  "name": "ClientMessage",
+  "type": "object",
+  "properties": {
+    "agency_client_id": {
+      "type": "string"
+    },
+    "project_id": {
+      "type": "string"
+    },
+    "body": {
+      "type": "string"
+    },
+    "is_from_client": {
+      "type": "boolean",
+      "default": false
+    },
+    "sender_name": {
+      "type": "string"
+    },
+    "sender_email": {
+      "type": "string"
+    },
+    "read_by_agency": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "agency_client_id",
+    "body"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

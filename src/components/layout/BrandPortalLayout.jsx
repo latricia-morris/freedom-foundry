@@ -7,6 +7,7 @@ import PortalContentSection from '@/components/portal/PortalContentSection';
 import { pageKeyFromPath } from '@/lib/portalPages';
 
 const portalNav = [
+  { name: 'Client Workspace', path: '/brand-portal/workspace', icon: 'folder' },
   { name: 'Brand Health Index', path: '/brand-portal/brand-health' },
   { name: 'Proposals', path: '/brand-portal/proposals' },
   { name: 'Project Requests', path: '/brand-portal/project-requests', icon: 'send' },

@@ -1,0 +1,81 @@
+{
+  "name": "TimeEntry",
+  "type": "object",
+  "properties": {
+    "project_id": {
+      "type": "string"
+    },
+    "project_name": {
+      "type": "string"
+    },
+    "agency_client_id": {
+      "type": "string"
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "duration_minutes": {
+      "type": "number",
+      "default": 0
+    },
+    "activity_type": {
+      "type": "string",
+      "enum": [
+        "strategy",
+        "design",
+        "development",
+        "copywriting",
+        "meeting",
+        "admin",
+        "other"
+      ],
+      "enumColors": [
+        "purple",
+        "pink",
+        "blue",
+        "yellow",
+        "green",
+        "gray",
+        "gray"
+      ],
+      "default": "design"
+    },
+    "description": {
+      "type": "string"
+    },
+    "billable": {
+      "type": "boolean",
+      "default": true
+    },
+    "team_member": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "date",
+    "duration_minutes"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
