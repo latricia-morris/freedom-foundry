@@ -24,7 +24,7 @@ export default function Dashboard() {
       </div>
       <div className="flex items-center justify-center gap-3 py-6">
         <div className="h-px w-12 bg-border" />
-        <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground/60">Don't just build a Brand. Buil
+        <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground/60">your Don't just build a Brand. Build
 
         </span>
         <div className="h-px w-12 bg-border" />
