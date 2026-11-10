@@ -47,7 +47,7 @@ export default function AuditDashboardCard() {
           <p className="mt-3 text-muted-foreground">{c.body}</p>
         </div>
         <div className="flex shrink-0 flex-col items-start gap-2 lg:items-end">
-          <Link className="request-primary inline-flex min-h-[44px] items-center justify-center px-6 py-3 text-sm font-semibold capitalize text-center" to={c.to}>{c.cta}</Link>
+          <Link className="request-primary inline-flex items-center justify-center px-6 py-3 capitalize text-center min-h-[31px] text-xs [font-family:'Urbanist',_sans-serif] font-light" to={c.to}>{c.cta}</Link>
           {c.note && <p className="text-sm text-muted-foreground lg:text-right">{c.note}</p>}
         </div>
       </div>
