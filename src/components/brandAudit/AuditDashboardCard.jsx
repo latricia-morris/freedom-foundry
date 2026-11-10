@@ -8,7 +8,7 @@ import '@/components/projectRequests/requests.css';
 function cardCopy(state) {
   const r = state.request;
   const to = `/brand-review?brand=${encodeURIComponent(state.brand.key)}`;
-  if (r?.status === 'released' || (!r && state.legacy_released)) {
+  if (r?.status === 'released' || !r && state.legacy_released) {
     const paid = r && r.tier !== 'courtesy';
     return { eyebrow: 'BRAND HEALTH INDEX', title: 'Your report is ready to revisit.', body: paid ? 'Review the findings and next steps we discussed, with your report and recommendations together in your account.' : 'Revisit the findings we discussed and the gaps worth addressing.', cta: paid ? 'View my report & recommendations' : 'View my report', to: r?.report_path || '/brand-portal/brand-health' };
   }
@@ -28,18 +28,18 @@ export default function AuditDashboardCard() {
   if (isPending) return <div className={`${shell} min-h-[220px] text-sm text-muted-foreground`} role="status">Checking your Brand Health Index…</div>;
   if (error) return <div className={shell} role="alert"><p className="text-sm">Your Brand Health status could not be loaded. <button className="underline" onClick={() => refetch()}>Try again</button></p></div>;
   const c = cardCopy(data);
-  const pick = (k) => { storeBrand(k); setBrandKey(k); };
+  const pick = (k) => {storeBrand(k);setBrandKey(k);};
   return (
     <section className={`${shell} min-h-[220px]`} aria-labelledby="audit-card-title" data-testid="audit-invitation">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-xs font-semibold tracking-[0.18em] text-primary">{c.eyebrow}</p>
-        {data.brands.length > 1 ? (
-          <label className="flex items-center gap-2 text-xs text-muted-foreground">Brand
+        {data.brands.length > 1 ?
+        <label className="flex items-center gap-2 text-xs text-muted-foreground">Brand
             <select className="admin-input !w-auto !py-1.5 text-sm" value={data.brand.key} onChange={(e) => pick(e.target.value)}>
               {data.brands.map((b) => <option key={b.key} value={b.key}>{b.label}</option>)}
             </select>
-          </label>
-        ) : <span className="text-xs text-muted-foreground">{data.brand.label}</span>}
+          </label> :
+        <span className="text-xs text-muted-foreground">{data.brand.label}</span>}
       </div>
       <div className="mt-4 flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
         <div className="max-w-2xl">
@@ -47,11 +47,11 @@ export default function AuditDashboardCard() {
           <p className="mt-3 text-muted-foreground">{c.body}</p>
         </div>
         <div className="flex shrink-0 flex-col items-start gap-2 lg:items-end">
-          <Link className="request-primary inline-flex min-h-[44px] items-center justify-center px-6 py-3 text-sm font-semibold" to={c.to}>{c.cta}</Link>
+          <Link className="request-primary inline-flex min-h-[44px] items-center justify-center px-6 py-3 text-sm font-semibold capitalize text-center" to={c.to}>{c.cta}</Link>
           {c.note && <p className="text-sm text-muted-foreground lg:text-right">{c.note}</p>}
         </div>
       </div>
       {data.request?.strategy_status && <AuditStrategyOffer request={data.request} brandKey={data.brand.key} />}
-    </section>
-  );
+    </section>);
+
 }
