@@ -170,8 +170,8 @@ export default function BrandPersonaQuiz() {
               className="group flex w-full items-center justify-between gap-3 rounded-xl border border-white/[0.1] bg-white/[0.035] px-5 py-4 text-left transition-all hover:border-[#d9622c]/60 hover:bg-white/[0.075]">
               
                 <span>
-                  <span className="block text-base font-semibold text-white/90">{opt.label}</span>
-                  <span className="mt-0.5 block text-sm text-white/50">{opt.desc}</span>
+                  <span className="block text-base text-white/90 [font-family:'Urbanist',_sans-serif] font-light">{opt.label}</span>
+                  <span className="mt-0.5 block text-sm text-white/50 [font-family:'Cormorant_Garamond',_serif]">{opt.desc}</span>
                 </span>
                 <ArrowRight className="h-4 w-4 shrink-0 text-[#d9622c] opacity-0 transition-opacity group-hover:opacity-100" />
               </button>
