@@ -40,7 +40,7 @@ export default function TaskChat({ task, siblings, onOpen }) {
   };
 
   return (
-    <div style={{ marginTop: 16, borderTop: '1px solid #2a2a2a', paddingTop: 12, display: 'flex', flexDirection: 'column', minHeight: 170, flex: 1 }}>
+    <div style={{ marginTop: 16, borderTop: '1px solid var(--ff-line)', paddingTop: 12, display: 'flex', flexDirection: 'column', minHeight: 170, flex: 1 }}>
       <span className="ig-label">Chat activity feed</span>
       <div className="ig-feed">
         {!comments.length && <p className="ig-muted" style={{ margin: 0 }}>No messages yet.</p>}

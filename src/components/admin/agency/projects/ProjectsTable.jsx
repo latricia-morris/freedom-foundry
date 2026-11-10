@@ -92,7 +92,7 @@ export default function ProjectsTable({
               <input className={cellInput} placeholder="+ Add project" value={draft.name} disabled={busy} onChange={(e) => onDraftChange({ name: e.target.value })} onKeyDown={enterCommit} />
             </td>
             <td className="px-2 py-1.5">
-              <select className={cellInput} value={draft.client_id} disabled={busy} onChange={(e) => onDraftChange({ client_id: e.target.value })} onKeyDown={enterCommit}>
+              <select className={`${cellInput} ${draft.name.trim() && !draft.client_id ? 'rounded-sm ring-1 ring-primary' : ''}`} value={draft.client_id} disabled={busy} onChange={(e) => onDraftChange({ client_id: e.target.value })} onKeyDown={enterCommit}>
                 <option value="">— client —</option>
                 {clients.map((c) => <option key={c.id} value={c.id}>{c.company_name}</option>)}
               </select>
@@ -105,7 +105,11 @@ export default function ProjectsTable({
             <td className="px-2 py-1.5 text-xs text-muted-foreground/60">{(draft.client_project_health || 'on_track').replace(/_/g, ' ')}</td>
             <td className="px-2 py-1.5 text-xs text-muted-foreground/60">hidden</td>
             <td className="px-2 py-1.5 text-xs text-muted-foreground/60">—</td>
-            <td className="px-2 py-1.5 text-xs text-muted-foreground/60">{aiDraft ? 'AI draft — Enter saves' : '—'}</td>
+            <td className="px-2 py-1.5">
+              <button type="button" onClick={onCommitDraft} disabled={busy || !draft.name.trim()} className="btn-forge rounded-md px-3 py-1.5 text-[10px] font-semibold uppercase tracking-widest disabled:opacity-40">
+                {busy ? 'Saving…' : 'Save'}
+              </button>
+            </td>
             <td className="px-2 py-1.5">
               <input type="date" className={cellInput} value={draft.client_target_completion_date} disabled={busy} onChange={(e) => onDraftChange({ client_target_completion_date: e.target.value })} onKeyDown={enterCommit} />
             </td>

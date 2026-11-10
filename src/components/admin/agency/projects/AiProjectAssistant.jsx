@@ -48,7 +48,6 @@ export default function AiProjectAssistant({ clients, onDraft }) {
       });
       setOpen(false);
       setText('');
-      toast({ title: 'AI draft ready', description: 'Review the highlighted row, then press Enter to save.' });
     } catch (e) {
       toast({ title: 'AI draft failed', description: e.message, variant: 'destructive' });
     } finally {

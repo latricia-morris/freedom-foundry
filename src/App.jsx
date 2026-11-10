@@ -20,7 +20,6 @@ import ResetPassword from './pages/ResetPassword';
 import OAuthConsent from './pages/OAuthConsent';
 
 // Public pages
-import LandingPage from './pages/LandingPage';
 import PortfolioPage from './pages/PortfolioPage';
 import CaseStudy from './pages/CaseStudy';
 import SharePage from './pages/SharePage';
@@ -157,7 +156,7 @@ const AuthenticatedApp = () => {
       <Route path="/sign-up" element={<Navigate to="/register" replace />} />
 
       {/* Public pages */}
-      <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LandingPage />} />
+      <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />} />
       <Route path="/portfolio" element={<PortfolioPage />} />
       <Route path="/portfolio/:slug" element={<CaseStudy />} />
       <Route path="/p/:token" element={<ClientProposal />} />

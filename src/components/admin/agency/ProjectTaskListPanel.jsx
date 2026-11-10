@@ -4,6 +4,7 @@ import { useToast } from '@/components/ui/use-toast';
 import ListToolbar from '@/components/agency/ListToolbar';
 import BulkActionBar from '@/components/agency/BulkActionBar';
 import { useListControls } from '@/hooks/useListControls';
+import TaskQuickAdd from '@/components/admin/agency/TaskQuickAdd';
 import { TASK_STATUS_LABELS } from '@/lib/agency';
 
 const ACTIVE_TASK_STATUSES = ['not_started', 'scheduled', 'in_production', 'internal_review', 'client_review_in_progress', 'waiting_on_client', 'blocked', 'on_hold', 'revisions_requested'];
@@ -97,12 +98,14 @@ export default function ProjectTaskListPanel({ projectId }) {
     load();
   };
 
-  if (tasks.length === 0) return null;
+  const quickAdd = <TaskQuickAdd projectId={projectId} nextOrder={tasks.length} onAdded={load} />;
+  if (tasks.length === 0) return quickAdd;
 
   const phases = [...new Set(visibleTasks.map((t) => t.phase || 'General'))];
 
   return (
     <>
+      {quickAdd}
       <ListToolbar
         sortOptions={TASK_SORT_FIELDS}
         value={controls}

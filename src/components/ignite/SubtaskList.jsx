@@ -21,8 +21,8 @@ export default function SubtaskList({ task }) {
           <button className={`ig-check ${s.is_completed ? 'on' : ''}`} aria-label="Toggle subtask" onClick={() => save(subs.map((x) => (x.subtask_id === s.subtask_id ? { ...x, is_completed: !x.is_completed } : x)))}>
             {s.is_completed && <Check size={12} color="#fff" strokeWidth={3} />}
           </button>
-          <span style={{ flex: 1, color: s.is_completed ? '#b8b9b9' : undefined }}>{s.subtask_title}</span>
-          <button className="ig-link" style={{ color: '#b8b9b9' }} aria-label="Remove subtask" onClick={() => save(subs.filter((x) => x.subtask_id !== s.subtask_id))}><X size={12} /></button>
+          <span style={{ flex: 1, color: s.is_completed ? 'var(--ff-text-muted)' : undefined }}>{s.subtask_title}</span>
+          <button className="ig-link" style={{ color: 'var(--ff-text-muted)' }} aria-label="Remove subtask" onClick={() => save(subs.filter((x) => x.subtask_id !== s.subtask_id))}><X size={12} /></button>
         </div>
       ))}
       {subs.length < 25 && (

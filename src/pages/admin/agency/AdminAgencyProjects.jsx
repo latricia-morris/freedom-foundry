@@ -114,7 +114,7 @@ export default function AdminAgencyProjects() {
     { key: 'due_date', label: 'Due Date', type: 'date' },
   ];
 
-  const commitDraft = async () => {
+  const commitDraft = async (draft = EMPTY_DRAFT) => {
     if (!draft.name.trim()) {
       toast({ title: 'Project name required', variant: 'destructive' });
       return;
@@ -165,7 +165,13 @@ export default function AdminAgencyProjects() {
         </div>
         <AiProjectAssistant
           clients={clients}
-          onDraft={(d) => { setDraft({ ...EMPTY_DRAFT, ...d }); setAiDraft(true); }}
+          onDraft={(d) => {
+            const next = { ...EMPTY_DRAFT, ...d };
+            setDraft(next);
+            setAiDraft(true);
+            if (next.client_id) commitDraft(next);
+            else toast({ title: 'Choose a client to finish', description: 'The AI draft is in the highlighted row. Pick its client, then press Save.' });
+          }}
         />
       </div>
 
@@ -195,7 +201,7 @@ export default function AdminAgencyProjects() {
             aiDraft={aiDraft}
             busy={savingDraft}
             onDraftChange={(patch) => setDraft((prev) => ({ ...prev, ...patch }))}
-            onCommitDraft={commitDraft}
+            onCommitDraft={() => commitDraft(draft)}
             onCellCommit={cellCommit}
             selectedIds={selected}
             onToggleRow={toggleRow}
