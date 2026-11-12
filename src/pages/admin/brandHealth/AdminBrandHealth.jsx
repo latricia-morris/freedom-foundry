@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, FilePlus2 } from 'lucide-react';
+import { ArrowUpRight, FilePlus2, Upload } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useToast } from '@/components/ui/use-toast';
 import { COMPONENTS, COMPONENT_LABELS, STATUS_LABELS, fmtDate } from '@/lib/brandHealth';
@@ -77,13 +77,18 @@ export default function AdminBrandHealth() {
             Consultant-led audits: discovery, conversion readiness, and marketing matrix — scored, noted, and published by you.
           </p>
         </div>
-        <button
-          type="button"
-          onClick={() => setShowForm((prev) => !prev)}
-          className="btn-forge inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-xs font-semibold uppercase tracking-widest"
-        >
-          <FilePlus2 className="h-4 w-4" /> {showForm ? 'Hide form' : 'Create audit'}
-        </button>
+        <div className="flex flex-wrap gap-2">
+          <Link to="/admin/brand-health/intake?type=website_discoverability" className="btn-forge inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-xs font-semibold uppercase tracking-widest">
+            <Upload className="h-4 w-4" /> Load a report
+          </Link>
+          <button
+            type="button"
+            onClick={() => setShowForm((prev) => !prev)}
+            className="inline-flex items-center gap-1.5 rounded-md border border-border px-4 py-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+          >
+            <FilePlus2 className="h-4 w-4" /> {showForm ? 'Hide form' : 'Schedule blank audit'}
+          </button>
+        </div>
       </div>
 
       {showForm && (

@@ -90,6 +90,7 @@ import AdminVisibilityClientDetail from './pages/admin/agency/AdminVisibilityCli
 import AdminVisibilityPresent from './pages/admin/agency/AdminVisibilityPresent';
 import AdminBrandHealth from './pages/admin/brandHealth/AdminBrandHealth';
 import AdminBrandHealthAuditDetail from './pages/admin/brandHealth/AdminBrandHealthAuditDetail';
+import AdminBrandHealthIntake from './pages/admin/brandHealth/AdminBrandHealthIntake';
 import AdminChannelProfiles from './pages/admin/brandHealth/AdminChannelProfiles';
 import AdminFinancialOverview from './pages/admin/agency/AdminFinancialOverview';
 import AdminResourceLibrary from './pages/admin/agency/AdminResourceLibrary';
@@ -243,6 +244,7 @@ const AuthenticatedApp = () => {
             <Route path="/admin/agency/visibility" element={<AdminVisibilityReports />} />
             <Route path="/admin/agency/visibility/:clientId" element={<AdminVisibilityClientDetail />} />
             <Route path="/admin/brand-health" element={<AdminBrandHealth />} />
+            <Route path="/admin/brand-health/intake" element={<AdminBrandHealthIntake />} />
             <Route path="/admin/brand-health/:auditId" element={<AdminBrandHealthAuditDetail />} />
             <Route path="/admin/channel-profiles" element={<AdminChannelProfiles />} />
             <Route path="/admin/brand-reviews" element={<AdminBrandReviews />} />

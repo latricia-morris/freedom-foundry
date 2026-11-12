@@ -40,6 +40,7 @@ const NAV_SECTIONS = [
   {
     label: 'Brand Intelligence',
     items: [
+      { name: 'Report Intake', path: '/admin/brand-health/intake' },
       { name: 'Visibility Reports', path: '/admin/agency/visibility' },
       { name: 'Digital Brand Health', path: '/admin/brand-health' },
       { name: 'Channel Profiles', path: '/admin/channel-profiles' },

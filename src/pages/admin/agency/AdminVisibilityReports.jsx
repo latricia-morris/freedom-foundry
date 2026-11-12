@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Eye, FilePlus2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
-import VisibilityIntake from '@/components/admin/agency/VisibilityIntake';
 import { formatDate, scoreLabel } from '@/lib/visibility';
 
 const STATUS_STYLES = {
@@ -17,7 +16,6 @@ export default function AdminVisibilityReports() {
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [intakeClientId, setIntakeClientId] = useState(null);
 
   const load = () => {
     setLoading(true);
@@ -50,7 +48,6 @@ export default function AdminVisibilityReports() {
       });
   }, [clients, reports, search]);
 
-  const intakeClient = clients.find((c) => c.id === intakeClientId) || null;
 
   return (
     <div className="mx-auto max-w-5xl animate-fade-in pb-12">
@@ -62,17 +59,6 @@ export default function AdminVisibilityReports() {
           Turn raw AI audit output into gated client scorecards. Paste or upload findings, review the extracted draft, publish the snapshot.
         </p>
       </div>
-
-      {intakeClient && (
-        <VisibilityIntake
-          client={intakeClient}
-          onCancel={() => setIntakeClientId(null)}
-          onSaved={() => {
-            setIntakeClientId(null);
-            load();
-          }}
-        />
-      )}
 
       <div className="dashboard-card mb-4 flex flex-wrap items-center justify-between gap-3 p-4">
         <input
@@ -136,13 +122,12 @@ export default function AdminVisibilityReports() {
                   <td className="px-5 py-3 text-sm text-muted-foreground">{count ? sources : '—'}</td>
                   <td className="px-5 py-3">
                     <div className="flex justify-end gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setIntakeClientId(client.id)}
+                      <Link
+                        to={`/admin/brand-health/intake?client=${client.id}&type=visibility`}
                         className="btn-forge inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[10px] font-semibold uppercase tracking-widest"
                       >
-                        <FilePlus2 className="h-3.5 w-3.5" /> New report
-                      </button>
+                        <FilePlus2 className="h-3.5 w-3.5" /> Load report
+                      </Link>
                       {count > 0 && (
                         <Link
                           to={`/admin/agency/visibility/${client.id}`}
