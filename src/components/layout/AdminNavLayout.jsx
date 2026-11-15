@@ -51,6 +51,7 @@ const NAV_SECTIONS = [
     label: 'Platform',
     items: [
       { name: 'Member Platform', path: '/admin', end: true },
+      { name: 'Courses & Books', path: '/admin/learn' },
       { name: 'Agency Build', path: '/admin/agency/agency-build' },
       { name: 'Resource Library', path: '/resource-library' },
       { name: 'Audit Logs', path: '/audit-logs' },

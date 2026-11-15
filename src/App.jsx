@@ -115,6 +115,10 @@ import ClientWorkspace from './pages/ClientWorkspace';
 import ClientUploads from './pages/ClientUploads';
 import BrandTeam from './pages/BrandTeam';
 import LearnLibrary from './pages/learn/LearnLibrary';
+import LearnOffering from './pages/learn/LearnOffering';
+import LearnLesson from './pages/learn/LearnLesson';
+import AdminLearn from './pages/admin/learn/AdminLearn';
+import AdminLearnEditor from './pages/admin/learn/AdminLearnEditor';
 import CrmPipeline from './pages/admin/crm/CrmPipeline';
 import CrmTime from './pages/admin/crm/CrmTime';
 import CrmExpenses from './pages/admin/crm/CrmExpenses';
@@ -185,6 +189,8 @@ const AuthenticatedApp = () => {
         <Route element={<Layout />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/learn" element={<LearnLibrary />} />
+          <Route path="/learn/:offeringId" element={<LearnOffering />} />
+          <Route path="/learn/:offeringId/:lessonId" element={<LearnLesson />} />
           <Route path="/vault" element={<Vault />} />
           <Route path="/vault/:id" element={<VaultItemDetail />} />
           <Route path="/workbooks" element={<Workbooks />} />
@@ -226,6 +232,8 @@ const AuthenticatedApp = () => {
           <Route element={<AdminRoute />}>
             <Route element={<AdminNavLayout />}>
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/learn" element={<AdminLearn />} />
+            <Route path="/admin/learn/:id" element={<AdminLearnEditor />} />
             <Route path="/admin/users" element={<AdminUsers />} />
             <Route path="/admin/users/:id" element={<AdminUserDetail />} />
             <Route path="/admin/brand-up" element={<BrandUpAdmin />} />
