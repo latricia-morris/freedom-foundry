@@ -844,6 +844,25 @@ p, li, span, label {
   }
 }
 
+/* Academy reading surface: no selecting, no long-press menu, nothing on paper. */
+.learn-protected {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  transition: filter 0.2s ease, opacity 0.2s ease;
+}
+
+.learn-protected--veiled {
+  filter: blur(18px);
+  opacity: 0.25;
+}
+
+@media print {
+  .learn-protected {
+    display: none !important;
+  }
+}
+
 /* Portfolio media integrity: never stretch or distort client work. */
 .portfolio-media,
 .portfolio-media img,

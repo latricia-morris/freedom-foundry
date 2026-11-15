@@ -1,0 +1,86 @@
+{
+  "name": "LearnEntitlement",
+  "type": "object",
+  "properties": {
+    "offering_id": {
+      "type": "string"
+    },
+    "user_id": {
+      "type": "string"
+    },
+    "user_email": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "active",
+        "review",
+        "revoked"
+      ],
+      "enumColors": [
+        "yellow",
+        "green",
+        "red",
+        "gray"
+      ],
+      "default": "pending"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "free",
+        "purchase",
+        "admin"
+      ],
+      "enumColors": [
+        "gray",
+        "green",
+        "blue"
+      ],
+      "default": "free"
+    },
+    "stripe_session_id": {
+      "type": "string"
+    },
+    "expected_amount_cents": {
+      "type": "number"
+    },
+    "amount_paid_cents": {
+      "type": "number"
+    },
+    "currency": {
+      "type": "string"
+    },
+    "paid_at": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "offering_id",
+    "user_id"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

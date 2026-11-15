@@ -114,6 +114,7 @@ import ClientIgniteProject from './pages/ClientIgniteProject';
 import ClientWorkspace from './pages/ClientWorkspace';
 import ClientUploads from './pages/ClientUploads';
 import BrandTeam from './pages/BrandTeam';
+import LearnLibrary from './pages/learn/LearnLibrary';
 import CrmPipeline from './pages/admin/crm/CrmPipeline';
 import CrmTime from './pages/admin/crm/CrmTime';
 import CrmExpenses from './pages/admin/crm/CrmExpenses';
@@ -183,6 +184,7 @@ const AuthenticatedApp = () => {
         </Route>
         <Route element={<Layout />}>
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/learn" element={<LearnLibrary />} />
           <Route path="/vault" element={<Vault />} />
           <Route path="/vault/:id" element={<VaultItemDetail />} />
           <Route path="/workbooks" element={<Workbooks />} />

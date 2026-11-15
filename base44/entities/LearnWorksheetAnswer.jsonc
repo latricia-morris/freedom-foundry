@@ -1,0 +1,45 @@
+{
+  "name": "LearnWorksheetAnswer",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "offering_id": {
+      "type": "string"
+    },
+    "lesson_id": {
+      "type": "string"
+    },
+    "answers": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "user_id",
+    "lesson_id"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

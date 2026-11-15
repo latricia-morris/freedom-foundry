@@ -3,6 +3,7 @@ import { secrets } from "base44:runtime";
 import { createClientFromRequest } from "npm:@base44/sdk@0.8.44";
 import { handleDepositPaid, writeAudit } from "../../shared/agency/core.ts";
 import { applyPaidSession } from "../../shared/brandAudit.ts";
+import { applyLearnPayment } from "../../shared/learn.ts";
 
 export default async function(req: Request): Promise<Response> {
   try {
@@ -27,6 +28,10 @@ export default async function(req: Request): Promise<Response> {
         const session = event.data.object;
         console.log(`Checkout completed: ${session.id}, customer: ${session.customer}`);
         if (session.metadata?.base44_test_checkout === "true") break;
+        if (session.metadata?.payment_type === "learn_offering") {
+          const result = await applyLearnPayment(createClientFromRequest(req).asServiceRole.entities, session);
+          console.log(`Academy payment ${session.id}: ${JSON.stringify(result)}`);
+        }
         if (["brand_audit", "action_strategy"].includes(session.metadata?.payment_type)) {
           const result = await applyPaidSession(createClientFromRequest(req).asServiceRole, session);
           console.log(`Brand audit payment: ${JSON.stringify(result)}`);
@@ -101,6 +106,15 @@ export default async function(req: Request): Promise<Response> {
             source: "stripe_webhook",
           });
           console.log(`Agency deposit handling: ${JSON.stringify(result)}`);
+        }
+        break;
+      }
+      case "checkout.session.async_payment_succeeded": {
+        const session = event.data.object;
+        if (session.metadata?.base44_test_checkout === "true") break;
+        if (session.metadata?.payment_type === "learn_offering") {
+          const result = await applyLearnPayment(createClientFromRequest(req).asServiceRole.entities, session);
+          console.log(`Academy delayed payment ${session.id}: ${JSON.stringify(result)}`);
         }
         break;
       }
