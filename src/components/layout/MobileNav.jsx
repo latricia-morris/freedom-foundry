@@ -5,7 +5,6 @@ import { useAdminView } from '@/components/layout/AdminViewContext';
 const brandNav = [
   { label: 'Home', path: '/dashboard' },
   { label: 'Academy', path: '/learn' },
-  { label: 'Vault', path: '/vault' },
   { label: 'Brand Portal', path: '/brand-portal' },
   { label: 'Services', path: '/services' },
 ];

@@ -15,6 +15,7 @@ export default function OfferingForm({ offering, saving, onSave, onRemove }) {
   const submit = () => onSave({
     title: d.title.trim(), subtitle: d.subtitle || '', author: d.author || '', description: d.description || '',
     thumbnail_url: d.thumbnail_url || '', embed_code: d.embed_code || '', resources: d.resources || [],
+    resource_type: d.resource_type || '', link_url: (d.link_url || '').trim(),
     status: d.status, is_free: !!d.is_free, price_cents: d.is_free ? 0 : cents, ...mediaPatch('video', mediaValue(d, 'video')),
   });
 
@@ -25,6 +26,16 @@ export default function OfferingForm({ offering, saving, onSave, onRemove }) {
         <Field label="Author"><input className="admin-input" value={d.author || ''} onChange={(e) => set({ author: e.target.value })} /></Field>
       </div>
       <Field label="Subtitle"><input className="admin-input" value={d.subtitle || ''} onChange={(e) => set({ subtitle: e.target.value })} /></Field>
+      {d.kind === 'resource' && (
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field label="Resource type" hint="Shown on the card, for example Download or Digital Workbook.">
+            <input className="admin-input" value={d.resource_type || ''} onChange={(e) => set({ resource_type: e.target.value })} />
+          </Field>
+          <Field label="Opens" hint="Optional. A page in this app, like /workbooks, or a full https link.">
+            <input className="admin-input" value={d.link_url || ''} onChange={(e) => set({ link_url: e.target.value })} />
+          </Field>
+        </div>
+      )}
       <Field label="Description"><textarea className="admin-input min-h-28" value={d.description || ''} onChange={(e) => set({ description: e.target.value })} /></Field>
 
       <div className="grid gap-4 sm:grid-cols-3">

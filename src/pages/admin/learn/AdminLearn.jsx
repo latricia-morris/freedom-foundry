@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowUpRight, BookOpen, GraduationCap } from 'lucide-react';
+import { ArrowUpRight, BookOpen, FileDown, GraduationCap } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { priceLabel, STATUS_LABELS } from '@/lib/learn';
 
@@ -26,7 +26,7 @@ export default function AdminLearn() {
   const create = async (kind) => {
     setCreating(true);
     const o = await base44.entities.LearnOffering.create({
-      kind, title: kind === 'book' ? 'Untitled book' : 'Untitled course', status: 'draft', is_free: true, sort_order: (offerings || []).length,
+      kind, title: `Untitled ${kind}`, status: 'draft', is_free: true, sort_order: (offerings || []).length,
     });
     navigate(`/admin/learn/${o.id}`);
   };
@@ -37,7 +37,7 @@ export default function AdminLearn() {
         <div>
           <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">Platform</p>
           <h1 className="mt-1 font-heading text-4xl font-light text-foreground">Courses &amp; <span className="molten-text italic">Books</span></h1>
-          <p className="mt-2 max-w-2xl text-sm text-muted-foreground">Build courses and publish books for the Academy. Only published items show to members.</p>
+          <p className="mt-2 max-w-2xl text-sm text-muted-foreground">Build courses, publish books and add standalone resources for the Academy. Only published items show to members.</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <button type="button" disabled={creating} onClick={() => create('course')} className="btn-forge inline-flex items-center gap-2 rounded-md px-4 py-2.5 text-xs font-semibold uppercase tracking-widest disabled:opacity-50">
@@ -45,6 +45,9 @@ export default function AdminLearn() {
           </button>
           <button type="button" disabled={creating} onClick={() => create('book')} className="inline-flex items-center gap-2 rounded-md border border-border px-4 py-2.5 text-xs font-semibold uppercase tracking-widest text-muted-foreground hover:text-foreground disabled:opacity-50">
             <BookOpen className="h-4 w-4" /> New book
+          </button>
+          <button type="button" disabled={creating} onClick={() => create('resource')} className="inline-flex items-center gap-2 rounded-md border border-border px-4 py-2.5 text-xs font-semibold uppercase tracking-widest text-muted-foreground hover:text-foreground disabled:opacity-50">
+            <FileDown className="h-4 w-4" /> New resource
           </button>
         </div>
       </div>

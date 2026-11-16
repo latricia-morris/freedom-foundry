@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { X } from 'lucide-react';
 import useAuditState from '@/components/brandAudit/useAuditState';
+import useReportNotice from '@/hooks/useReportNotice';
 import AuditStrategyOffer from '@/components/brandAudit/AuditStrategyOffer';
 import { ACTIVE, getStoredBrand, storeBrand } from '@/lib/brandAudit';
 import '@/components/projectRequests/requests.css';
@@ -24,13 +26,24 @@ function cardCopy(state) {
 export default function AuditDashboardCard() {
   const [brandKey, setBrandKey] = useState(getStoredBrand());
   const { data, isPending, error, refetch } = useAuditState(brandKey);
-  const shell = 'dashboard-card project-request rounded-[7px] p-6 sm:p-8';
+  const r = data?.request;
+  const ready = !!data && (r?.status === 'released' || (!r && !!data.legacy_released));
+  const notice = useReportNotice(ready ? (r?.id || `legacy-${data.brand.key}`) : null);
+  const shell = 'dashboard-card project-request relative rounded-[7px] p-6 sm:p-8';
   if (isPending) return <div className={`${shell} min-h-[220px] text-sm text-muted-foreground`} role="status">Checking your Brand Health Index…</div>;
   if (error) return <div className={shell} role="alert"><p className="text-sm">Your Brand Health status could not be loaded. <button className="underline" onClick={() => refetch()}>Try again</button></p></div>;
   const c = cardCopy(data);
+  const hidden = ready && !notice.visible;
+  if (hidden && !r?.strategy_status) return null;
   const pick = (k) => {storeBrand(k);setBrandKey(k);};
   return (
-    <section className={`${shell} min-h-[220px]`} aria-labelledby="audit-card-title" data-testid="audit-invitation">
+    <section className={`${shell} ${hidden ? '' : 'min-h-[220px]'}`} aria-labelledby={hidden ? undefined : 'audit-card-title'} data-testid="audit-invitation">
+      {!hidden && <>
+      {ready && (
+        <button type="button" aria-label="Close this notice" onClick={notice.dismiss} className="absolute right-2 top-2 p-1.5 text-muted-foreground transition-colors hover:text-foreground">
+          <X className="h-4 w-4" />
+        </button>
+      )}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-xs font-semibold tracking-[0.18em] text-primary">{c.eyebrow}</p>
         {data.brands.length > 1 ?
@@ -47,10 +60,11 @@ export default function AuditDashboardCard() {
           <p className="mt-3 text-muted-foreground">{c.body}</p>
         </div>
         <div className="flex shrink-0 flex-col items-start gap-2 lg:items-end">
-          <Link className="request-primary inline-flex items-center justify-center px-6 py-3 capitalize text-center min-h-[31px] text-xs [font-family:'Urbanist',_sans-serif] font-light" to={c.to}>{c.cta}</Link>
+          <Link className="request-primary inline-flex items-center justify-center px-6 py-3 capitalize text-center min-h-[31px] text-xs [font-family:'Urbanist',_sans-serif] font-light" to={c.to} onClick={ready ? notice.dismiss : undefined}>{c.cta}</Link>
           {c.note && <p className="text-sm text-muted-foreground lg:text-right">{c.note}</p>}
         </div>
       </div>
+      </>}
       {data.request?.strategy_status && <AuditStrategyOffer request={data.request} brandKey={data.brand.key} />}
     </section>);
 

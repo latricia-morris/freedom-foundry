@@ -28,8 +28,6 @@ import Privacy from './pages/Privacy';
 
 // Member pages
 import Dashboard from './pages/Dashboard';
-import Vault from './pages/Vault';
-import VaultItemDetail from './pages/VaultItemDetail';
 import Workbooks from './pages/Workbooks';
 import WorkbookPage from './pages/WorkbookPage';
 import ServiceHub from './pages/ServiceHub';
@@ -191,8 +189,6 @@ const AuthenticatedApp = () => {
           <Route path="/learn" element={<LearnLibrary />} />
           <Route path="/learn/:offeringId" element={<LearnOffering />} />
           <Route path="/learn/:offeringId/:lessonId" element={<LearnLesson />} />
-          <Route path="/vault" element={<Vault />} />
-          <Route path="/vault/:id" element={<VaultItemDetail />} />
           <Route path="/workbooks" element={<Workbooks />} />
           <Route path="/workbooks/:id" element={<WorkbookPage />} />
           <Route path="/services" element={<ServiceHub />} />

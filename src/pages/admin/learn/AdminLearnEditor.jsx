@@ -7,7 +7,7 @@ import StructureTree from '@/components/admin/learn/StructureTree';
 import OfferingForm from '@/components/admin/learn/OfferingForm';
 import ModuleForm from '@/components/admin/learn/ModuleForm';
 import LessonForm from '@/components/admin/learn/LessonForm';
-import { STATUS_LABELS } from '@/lib/learn';
+import { kindLabel, STATUS_LABELS } from '@/lib/learn';
 
 const { LearnOffering, LearnModule, LearnLesson } = base44.entities;
 
@@ -119,7 +119,7 @@ export default function AdminLearnEditor() {
       </Link>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">{offering.kind === 'book' ? 'Book' : 'Course'} · {STATUS_LABELS[offering.status]}</p>
+          <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">{kindLabel(offering)} · {STATUS_LABELS[offering.status]}</p>
           <h1 className="mt-1 font-heading text-4xl font-light text-foreground">{offering.title}</h1>
         </div>
         <Link to={`/learn/${id}`} target="_blank" className="inline-flex items-center gap-2 rounded-md border border-border px-4 py-2.5 text-xs font-semibold uppercase tracking-widest text-muted-foreground hover:text-foreground">

@@ -1,13 +1,13 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Activity, LayoutDashboard, Vault as VaultIcon, Palette, Target, ClipboardList, Mic, Shield, LifeBuoy } from 'lucide-react';
+import { Activity, LayoutDashboard, GraduationCap, Palette, Target, ClipboardList, Mic, Shield, LifeBuoy } from 'lucide-react';
 import { useAuth } from '@/lib/AuthContext';
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 const navItems = [
   { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-  { label: 'The Vault', path: '/vault', icon: VaultIcon },
+  { label: 'The Academy', path: '/learn', icon: GraduationCap },
   { label: 'Brand Portal', path: '/brand-portal', icon: Palette },
   { label: 'Big Picture', path: '/brand-portal/big-picture', icon: Target },
   { label: 'Collaborations', path: '/services', icon: ClipboardList },

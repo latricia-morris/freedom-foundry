@@ -6,11 +6,13 @@
       "type": "string",
       "enum": [
         "course",
-        "book"
+        "book",
+        "resource"
       ],
       "enumColors": [
         "blue",
-        "purple"
+        "purple",
+        "yellow"
       ],
       "default": "course"
     },
@@ -25,6 +27,18 @@
     },
     "description": {
       "type": "string"
+    },
+    "resource_type": {
+      "type": "string",
+      "description": "Label for a standalone resource, e.g. Download or Digital Workbook"
+    },
+    "link_url": {
+      "type": "string",
+      "description": "Where a standalone resource opens: an in-app path or an https link"
+    },
+    "vault_item_id": {
+      "type": "string",
+      "description": "The Vault item this was migrated from"
     },
     "thumbnail_url": {
       "type": "string"

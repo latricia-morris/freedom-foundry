@@ -3,6 +3,9 @@ import { base44 } from '@/api/base44Client';
 
 export const STATUS_LABELS = { draft: 'Draft', published: 'Published', archived: 'Archived' };
 
+/** What an offering is called on screen: Course, Book, or the resource's own type. */
+export const kindLabel = (o) => (o.kind === 'resource' ? o.resource_type || 'Resource' : o.kind === 'book' ? 'Book' : 'Course');
+
 export const money = (cents, currency = 'usd') =>
   new Intl.NumberFormat('en-US', { style: 'currency', currency: (currency || 'usd').toUpperCase() }).format((cents || 0) / 100);
 

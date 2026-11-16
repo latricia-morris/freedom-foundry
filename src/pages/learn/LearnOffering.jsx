@@ -6,7 +6,7 @@ import Outline from '@/components/learn/Outline';
 import AccessButton from '@/components/learn/AccessButton';
 import { EmbedBlock, ResourceList, VideoBlock } from '@/components/learn/MediaBlocks';
 import { LearnMissing, LearnSpinner } from '@/components/learn/LearnState';
-import { learnApi, priceLabel } from '@/lib/learn';
+import { kindLabel, learnApi, priceLabel } from '@/lib/learn';
 
 /** A course or book: what it is, what is inside, and the way in. */
 export default function LearnOffering() {
@@ -56,7 +56,7 @@ export default function LearnOffering() {
       <header className={`grid items-center gap-10 ${o.thumbnail_url ? 'lg:grid-cols-[1.1fr_1fr]' : ''}`}>
         <div>
           <p className="text-[10px] uppercase tracking-[0.3em] text-primary">
-            {o.kind === 'book' ? 'Book' : 'Course'}{o.status !== 'published' && ` · ${o.status}`}
+            {kindLabel(o)}{o.status !== 'published' && ` · ${o.status}`}
           </p>
           <h1 className="mt-3 font-heading text-5xl font-light leading-[1.05] text-foreground sm:text-6xl">{o.title}</h1>
           {o.subtitle && <p className="mt-4 text-xl text-muted-foreground">{o.subtitle}</p>}
@@ -77,7 +77,7 @@ export default function LearnOffering() {
           {o.description && <p className="whitespace-pre-line text-lg leading-relaxed text-muted-foreground">{o.description}</p>}
           <VideoBlock video={o.video} poster={o.thumbnail_url} />
           <EmbedBlock code={o.embed_code} />
-          <ResourceList title={o.kind === 'book' ? 'Book resources' : 'Course resources'} items={o.resources} />
+          <ResourceList title={{ book: 'Book resources', resource: 'Downloads' }[o.kind] || 'Course resources'} items={o.resources} />
         </div>
         {groups.length > 0 && (
           <aside>

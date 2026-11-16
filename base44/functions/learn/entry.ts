@@ -30,8 +30,10 @@ export default async function (req: Request): Promise<Response> {
     const card = (o, access) => ({
       id: o.id, kind: o.kind, title: o.title, subtitle: o.subtitle || '', author: o.author || '',
       thumbnail_url: o.thumbnail_url || '', is_free: !isPaid(o), price_cents: o.price_cents || 0,
-      currency: o.currency || 'usd', status: o.status, has_access: access,
+      currency: o.currency || 'usd', status: o.status, has_access: access, resource_type: o.resource_type || '',
     });
+    // Free standalone resources are open to every signed-in member once published.
+    const open = (o) => o.kind === 'resource' && !isPaid(o) && o.status === 'published';
 
     if (action === 'catalog') {
       const [published, ents, progress] = await Promise.all([
@@ -51,7 +53,7 @@ export default async function (req: Request): Promise<Response> {
       const doneCount = Object.fromEntries((progress.rows || []).map((r) => [r.offering_id, r.count]));
       return Response.json({
         offerings: list.map((o) => ({
-          ...card(o, admin || owned.has(o.id)),
+          ...card(o, admin || owned.has(o.id) || open(o)),
           lesson_count: lessonCount[o.id] || 0,
           completed_count: Math.min(doneCount[o.id] || 0, lessonCount[o.id] || 0),
         })),
@@ -60,7 +62,7 @@ export default async function (req: Request): Promise<Response> {
 
     if (!offering_id) return Response.json({ error: 'offering_id is required' }, { status: 400 });
     const offering = await getOrNull(db.LearnOffering, offering_id);
-    const access = offering ? await hasAccess(db, user, offering_id) : false;
+    const access = offering ? (open(offering) || await hasAccess(db, user, offering_id)) : false;
     // Archived offerings stay readable for the people who already own them.
     if (!offering || !(live(offering) || (offering.status === 'archived' && access))) {
       return Response.json({ error: 'Not found' }, { status: 404 });
@@ -91,6 +93,7 @@ export default async function (req: Request): Promise<Response> {
           ...card(offering, access),
           description: offering.description || '',
           purchasable: offering.status === 'published',
+          link_url: access ? (offering.link_url || '') : '',
           video: await media(offering.video_url, offering.video_file_uri),
           embed_code: access ? (offering.embed_code || '') : '',
           resources: access ? await resources(offering.resources) : [],

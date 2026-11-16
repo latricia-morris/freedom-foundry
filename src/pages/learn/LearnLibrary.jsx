@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import OfferingCard from '@/components/learn/OfferingCard';
 import { learnApi } from '@/lib/learn';
 
-const TABS = [['all', 'Everything'], ['course', 'Courses'], ['book', 'Books']];
+const TABS = [['all', 'Everything'], ['course', 'Courses'], ['book', 'Books'], ['resource', 'Resources']];
 
 export default function LearnLibrary() {
   const [offerings, setOfferings] = useState(null);
@@ -21,7 +21,7 @@ export default function LearnLibrary() {
         <h1 className="mt-2 font-heading text-5xl font-light leading-[1.05] text-foreground">
           Read, listen, and <span className="molten-text italic">do the work</span>
         </h1>
-        <p className="mt-4 text-muted-foreground">Courses and books from The Brand Revivalist, with audio and worksheets built in.</p>
+        <p className="mt-4 text-muted-foreground">Courses, books and resources from The Brand Revivalist, with audio and worksheets built in.</p>
       </header>
 
       <div role="tablist" aria-label="Filter library" className="mb-8 flex gap-6 border-b border-border">

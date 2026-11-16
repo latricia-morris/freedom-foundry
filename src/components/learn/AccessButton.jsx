@@ -15,7 +15,10 @@ export default function AccessButton({ offering, firstLessonId, onGranted }) {
   if (o.has_access) {
     return firstLessonId
       ? <Link to={`/learn/${o.id}/${firstLessonId}`} className={CTA}>{o.kind === 'book' ? 'Start reading' : 'Start learning'} <ArrowRight className="h-4 w-4" /></Link>
-      : null;
+      : !o.link_url ? null
+        : o.link_url.startsWith('/')
+          ? <Link to={o.link_url} className={CTA}>Open <ArrowRight className="h-4 w-4" /></Link>
+          : <a href={o.link_url} target="_blank" rel="noopener noreferrer" className={CTA}>Open <ArrowRight className="h-4 w-4" /></a>;
   }
   if (!o.purchasable) return null;
 

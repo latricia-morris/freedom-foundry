@@ -32,6 +32,11 @@
         "light",
         "dark"
       ]
+    },
+    "report_notices": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Per report: how many sessions the ready notice has shown in, and whether it was closed"
     }
   }
 }

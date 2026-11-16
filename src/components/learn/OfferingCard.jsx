@@ -1,13 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, BookOpen, GraduationCap } from 'lucide-react';
+import { ArrowUpRight, BookOpen, FileDown, GraduationCap } from 'lucide-react';
 import { Image } from '@/components/ui/image';
-import { priceLabel } from '@/lib/learn';
+import { kindLabel, priceLabel } from '@/lib/learn';
 
 /** One course or book in the library. Shows only what the offering actually has. */
 export default function OfferingCard({ offering }) {
   const o = offering;
-  const Icon = o.kind === 'book' ? BookOpen : GraduationCap;
+  const Icon = o.kind === 'book' ? BookOpen : o.kind === 'resource' ? FileDown : GraduationCap;
   const pct = o.lesson_count ? Math.round(((o.completed_count || 0) / o.lesson_count) * 100) : 0;
 
   return (
@@ -21,7 +21,7 @@ export default function OfferingCard({ offering }) {
           </div>
         )}
         <span className="smoked-glass absolute left-3 top-3 inline-flex items-center gap-1.5 border border-border/60 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-foreground">
-          <Icon className="h-3 w-3" strokeWidth={1.5} /> {o.kind === 'book' ? 'Book' : 'Course'}
+          <Icon className="h-3 w-3" strokeWidth={1.5} /> {kindLabel(o)}
         </span>
       </div>
       <div className="flex flex-1 flex-col p-5">
@@ -36,7 +36,7 @@ export default function OfferingCard({ offering }) {
           )}
           <div className="flex items-center justify-between">
             <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">{o.has_access ? 'In your library' : priceLabel(o)}</span>
-            <span className="link-warm inline-flex items-center gap-1">{o.has_access ? 'Continue' : 'View'} <ArrowUpRight className="h-3.5 w-3.5 text-primary" /></span>
+            <span className="link-warm inline-flex items-center gap-1">{o.kind === 'resource' ? 'Open' : o.has_access ? 'Continue' : 'View'} <ArrowUpRight className="h-3.5 w-3.5 text-primary" /></span>
           </div>
         </div>
       </div>
