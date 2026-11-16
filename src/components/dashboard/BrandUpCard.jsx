@@ -11,12 +11,12 @@ export default function BrandUpCard() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    apiClient.entities.BrandUpPrompt.filter({ is_active: true }, 'order', 50)
-      .then(p => {
-        setPrompts(p || []);
-        if (p?.length > 0) setCurrentIndex(Math.floor(Math.random() * p.length));
-      })
-      .catch(() => {});
+    apiClient.entities.BrandUpPrompt.filter({ is_active: true }, 'order', 50).
+    then((p) => {
+      setPrompts(p || []);
+      if (p?.length > 0) setCurrentIndex(Math.floor(Math.random() * p.length));
+    }).
+    catch(() => {});
   }, []);
 
   const currentPrompt = prompts[currentIndex];
@@ -24,7 +24,7 @@ export default function BrandUpCard() {
   const handleShuffle = () => {
     if (prompts.length <= 1) return;
     let next;
-    do { next = Math.floor(Math.random() * prompts.length); } while (next === currentIndex);
+    do {next = Math.floor(Math.random() * prompts.length);} while (next === currentIndex);
     setCurrentIndex(next);
     setResponse('');
     setSaved(false);
@@ -37,7 +37,7 @@ export default function BrandUpCard() {
       await apiClient.entities.BrandUpEntry.create({
         prompt_id: currentPrompt.id,
         prompt_text: currentPrompt.prompt_text,
-        response_text: response,
+        response_text: response
       });
       setSaved(true);
       setResponse('');
@@ -58,43 +58,43 @@ export default function BrandUpCard() {
             <BookOpen className="w-3.5 h-3.5" /> My Entries
           </Link>
         </div>
-        {currentPrompt && (
-          <>
-            <h2 className="font-heading text-2xl lg:text-3xl font-light text-foreground leading-tight mb-6">
+        {currentPrompt &&
+        <>
+            <h2 className="text-2xl lg:text-3xl text-foreground leading-tight mb-6 font-normal [font-family:'Cormorant_Garamond',_serif]">
               {currentPrompt.prompt_text}
             </h2>
-            {currentPrompt.type === 'note' ? (
-            <p className="text-sm text-muted-foreground/70 italic mb-4">A note from The Brand Revivalist® team.</p>
-            ) : (
-              <textarea
-                value={response}
-                onChange={e => setResponse(e.target.value)}
-                placeholder="Your response..."
-                rows={3}
-                className="forged-well w-full px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary transition-colors resize-none mb-4"
-              />
-            )}
+            {currentPrompt.type === 'note' ?
+          <p className="text-sm text-muted-foreground/70 italic mb-4">A note from The Brand Revivalist® team.</p> :
+
+          <textarea
+            value={response}
+            onChange={(e) => setResponse(e.target.value)}
+            placeholder="Your response..."
+            rows={3}
+            className="forged-well w-full px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary transition-colors resize-none mb-4" />
+
+          }
             <div className="flex items-center gap-3">
               <button
-                onClick={handleShuffle}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border text-xs uppercase tracking-widest text-muted-foreground/80 hover:text-foreground hover:border-muted-foreground/40 transition-colors"
-              >
+              onClick={handleShuffle}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border text-xs uppercase tracking-widest text-muted-foreground/80 hover:text-foreground hover:border-muted-foreground/40 transition-colors">
+              
                 <Shuffle className="w-4 h-4" /> Shuffle
               </button>
-              {currentPrompt.type !== 'note' && (
-                <button
-                  onClick={handleSave}
-                  disabled={saving || !response.trim()}
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-xs uppercase tracking-widest text-white disabled:opacity-30"
-                  style={{ background: 'linear-gradient(131deg, #e2662c, #9f1f28)' }}
-                >
+              {currentPrompt.type !== 'note' &&
+            <button
+              onClick={handleSave}
+              disabled={saving || !response.trim()}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-xs uppercase tracking-widest text-white disabled:opacity-30"
+              style={{ background: 'linear-gradient(131deg, #e2662c, #9f1f28)' }}>
+              
                   <Save className="w-4 h-4" /> {saved ? 'Saved!' : saving ? 'Saving...' : 'Save Response'}
                 </button>
-              )}
+            }
             </div>
           </>
-        )}
+        }
       </div>
-    </div>
-  );
+    </div>);
+
 }
