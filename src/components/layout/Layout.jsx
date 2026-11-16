@@ -62,7 +62,7 @@ export default function Layout() {
                   }>
                   
                 <Palette className="h-3.5 w-3.5" strokeWidth={1.5} />
-                <span className="hidden sm:inline text-sm">Brand</span>
+                <span className="hidden sm:inline text-sm tracking-[0.2em]">Brand</span>
               </button>
               <button
                   type="button"

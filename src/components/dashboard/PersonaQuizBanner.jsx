@@ -10,7 +10,7 @@ export default function PersonaQuizBanner() {
       className="btn-forge group flex flex-col gap-3 rounded-[5px] px-6 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-8">
       
       <div>
-        <h2 className="leading-tight [font-family:'Adobe_Caslon',_sans-serif] font-normal text-xl sm:text-xl">What's Your Power Persona?</h2>
+        <h2 className="leading-tight [font-family:'Adobe_Caslon',_sans-serif] font-normal text-xl sm:text-xl tracking-[0.1em]">What's Your Power Persona?</h2>
         <p className="mt-1 text-sm opacity-90">Take the Free Quiz to Unlock Your Brand Messaging</p>
       </div>
       <span className="inline-flex shrink-0 items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em]">
