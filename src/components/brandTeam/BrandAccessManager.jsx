@@ -13,13 +13,15 @@ export default function BrandAccessManager({ brandId }) {
   const [role, setRole] = useState('team_member');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [notice, setNotice] = useState('');
   const { data, isLoading } = useQuery({ queryKey: key, queryFn: async () => (await base44.functions.invoke('brandTeam', { action: 'list', agency_client_id: brandId })).data });
 
   const run = async (payload) => {
-    setBusy(true); setError('');
+    setBusy(true); setError(''); setNotice('');
     try {
       const res = await base44.functions.invoke('brandTeam', { agency_client_id: brandId, ...payload });
       qc.setQueryData(key, res.data);
+      setNotice(res.data.notice || '');
       return true;
     } catch (e) {
       setError(e?.response?.data?.error || e.message);
@@ -48,7 +50,8 @@ export default function BrandAccessManager({ brandId }) {
           <UserPlus className="h-4 w-4" /> Add
         </button>
         <p className="w-full text-xs text-muted-foreground">Brand Admins get the full portal for this brand. Team Members see Client Workspace, Ignite OS, brand profiles, Media Kit, Guidelines and Assets only. New people receive an invite.</p>
-        {error && <p className="w-full text-sm text-destructive">{error}</p>}
+        {error && <p className="w-full text-sm text-destructive" role="alert">{error}</p>}
+        {notice && <p className="w-full text-sm text-foreground" role="status">{notice}</p>}
       </form>
       <ul className="divide-y divide-border/40">
         {data.owners.map((o) => <BrandMemberRow key={o} email={o} role="owner" />)}

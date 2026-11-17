@@ -29,16 +29,24 @@ export default async function (req: Request): Promise<Response> {
       return m && m.agency_client_id === agency_client_id ? m : null;
     };
 
+    let notice = '';
     if (action === 'add') {
       const clean = normalizeEmail(email);
       if (!EMAIL_RE.test(clean)) return Response.json({ error: 'Enter a valid email address.' }, { status: 400 });
       if (!ROLES.includes(role)) return Response.json({ error: 'Choose Brand Admin or Team Member.' }, { status: 400 });
-      if (owners.includes(clean)) return Response.json({ error: 'This person is already the brand owner.' }, { status: 400 });
-      const existing = (await db.BrandMembership.filter({ agency_client_id, email: clean }, { limit: 1 })).items[0];
-      if (existing) await db.BrandMembership.update(existing.id, { role });
-      else await db.BrandMembership.create({ agency_client_id, email: clean, role, added_by_email: normalizeEmail(user.email) });
+      const isOwner = owners.includes(clean);
       const users = await db.User.filter({ email: clean });
-      if (!(users?.items || users || []).length) await base44.asServiceRole.users.inviteUser(clean, 'user');
+      const registered = (users?.items || users || []).length > 0;
+      // Invite before saving access, so a failed invite leaves nothing behind.
+      if (!registered) await base44.users.inviteUser(clean, 'user');
+      if (isOwner) {
+        notice = registered ? 'This person is already the brand owner and has an account.' : 'Invite sent. This person already has owner access to this brand.';
+      } else {
+        const existing = (await db.BrandMembership.filter({ agency_client_id, email: clean }, { limit: 1 })).items[0];
+        if (existing) await db.BrandMembership.update(existing.id, { role });
+        else await db.BrandMembership.create({ agency_client_id, email: clean, role, added_by_email: normalizeEmail(user.email) });
+        notice = registered ? 'Access saved. This person already has an account.' : 'Invite sent and access saved.';
+      }
     }
 
     if (action === 'update') {
@@ -55,7 +63,7 @@ export default async function (req: Request): Promise<Response> {
     }
 
     const members = await db.BrandMembership.filter({ agency_client_id }, { sort: 'created_date', limit: 200 });
-    return Response.json({ brand: { id: client.id, name: client.company_name }, owners, members: members.items.map(pick), my_role: myRole });
+    return Response.json({ brand: { id: client.id, name: client.company_name }, owners, members: members.items.map(pick), my_role: myRole, notice });
   } catch (error) {
     console.error('brandTeam failed', error);
     return Response.json({ error: error.message }, { status: 500 });
