@@ -36,7 +36,7 @@ export default function ReportText({ text, className = '' }) {
         }
         if (block.type === 'paragraph') {
           return (
-            <p key={i} className="whitespace-pre-line text-sm leading-relaxed text-muted-foreground [overflow-wrap:anywhere]">
+            <p key={i} className="whitespace-pre-line break-words text-sm leading-relaxed text-muted-foreground">
               <ReportInline text={block.text} />
             </p>
           );
@@ -51,7 +51,7 @@ export default function ReportText({ text, className = '' }) {
               }`}
             >
               {block.items.map((item, j) => (
-                <li key={j} className="pl-0.5 [overflow-wrap:anywhere]">
+                <li key={j} className="break-words pl-0.5">
                   <ReportInline text={item} />
                 </li>
               ))}

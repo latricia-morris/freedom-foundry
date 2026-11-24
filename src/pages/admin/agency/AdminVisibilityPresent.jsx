@@ -247,7 +247,7 @@ export default function AdminVisibilityPresent() {
                 <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-sm border border-primary/40 text-[10px] font-semibold text-primary">
                   {i + 1}
                 </span>
-                <span className="[overflow-wrap:anywhere]">{f}</span>
+                <span className="break-words">{f}</span>
               </li>
             ))}
           </ol>

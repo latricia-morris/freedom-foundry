@@ -28,15 +28,15 @@ export default function ReportTable({ header = [], rows = [], className = '' }) 
         ))}
       </div>
 
-      <div className="hidden min-w-0 sm:block">
-        <table className="w-full table-fixed text-left text-sm">
+      <div className="hidden min-w-0 overflow-x-auto sm:block">
+        <table className="w-full text-left text-[13px]">
           {header.length > 0 && (
             <thead>
               <tr>
                 {header.map((h, i) => (
                   <th
                     key={i}
-                    className="border-b border-border/60 px-3 py-2 align-bottom text-[10px] uppercase tracking-widest text-muted-foreground/70 [overflow-wrap:anywhere]"
+                    className="border-b border-border/60 px-2.5 py-2 align-bottom text-[10px] uppercase tracking-widest text-muted-foreground/70"
                   >
                     <ReportInline text={h} />
                   </th>
@@ -50,7 +50,7 @@ export default function ReportTable({ header = [], rows = [], className = '' }) 
                 {row.map((cell, j) => (
                   <td
                     key={j}
-                    className="px-3 py-2 align-top leading-relaxed text-muted-foreground first:text-foreground [overflow-wrap:anywhere]"
+                    className="break-words px-2.5 py-2 align-top leading-relaxed text-muted-foreground first:text-foreground"
                   >
                     <ReportInline text={cell} />
                   </td>

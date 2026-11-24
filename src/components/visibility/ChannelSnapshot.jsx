@@ -149,7 +149,7 @@ export default function ChannelSnapshot({ channels, onEdit }) {
                 </span>
                 <Label
                   {...(r.url ? { href: r.url, target: '_blank', rel: 'noopener noreferrer', title: r.handle } : {})}
-                  className="block break-all pl-5 text-[10px] leading-tight text-muted-foreground/60 transition-colors group-hover:text-foreground"
+                  className="block break-words pl-5 text-[10px] leading-tight text-muted-foreground/60 transition-colors group-hover:text-foreground"
                 >
                   {r.handle}
                 </Label>
@@ -186,7 +186,7 @@ export default function ChannelSnapshot({ channels, onEdit }) {
                     </span>
                     <Label
                       {...(r.url ? { href: r.url, target: '_blank', rel: 'noopener noreferrer', title: r.handle } : {})}
-                      className="block break-all pl-5 text-[10px] leading-tight text-muted-foreground/50 transition-colors hover:text-foreground"
+                      className="block break-words pl-5 text-[10px] leading-tight text-muted-foreground/50 transition-colors hover:text-foreground"
                     >
                       {r.handle}
                     </Label>
