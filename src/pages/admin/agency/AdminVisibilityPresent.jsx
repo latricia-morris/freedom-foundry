@@ -1,34 +1,52 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Pencil, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import AnchorNav from '@/components/brandHealth/AnchorNav';
+import ProviderIcon from '@/components/brandHealth/ProviderIcon';
 import VisibilityRadarChart from '@/components/visibility/VisibilityRadarChart';
-import { formatDate, scoreLabel } from '@/lib/visibility';
+import VisibilityScoreBreakdown from '@/components/visibility/VisibilityScoreBreakdown';
+import VisibilityBusinessSnapshot from '@/components/visibility/VisibilityBusinessSnapshot';
+import VisibilityAllocation from '@/components/visibility/VisibilityAllocation';
+import AuditSections from '@/components/visibility/AuditSections';
+import ReportFieldEditor from '@/components/visibility/ReportFieldEditor';
 import { cleanLine } from '@/lib/reportText';
+import {
+  categoryRows,
+  formatDate,
+  isConsolidated,
+  primaryReport,
+  scoreLabel,
+} from '@/lib/visibility';
 
 /**
- * Consultation presentation mode: one screen, no scrolling, built for a live
- * screen-share call. Scores, headline findings, and the priority
- * recommendations render for the admin presenting. No export controls.
+ * Consultation presentation: the complete Brand Health Index on one scroll —
+ * composite, every source's scores, findings, recommendations, the full audit
+ * evidence, and the business snapshot. Editing can be turned on mid-call so a
+ * finding or recommendation is corrected in front of the client.
  */
 export default function AdminVisibilityPresent() {
   const { clientId } = useParams();
   const [client, setClient] = useState(null);
-  const [report, setReport] = useState(null);
-  const [missing, setMissing] = useState(false);
+  const [reports, setReports] = useState(null);
+  const [activeId, setActiveId] = useState(null);
+  const [editing, setEditing] = useState(false);
 
   useEffect(() => {
     base44.entities.AgencyClient.get(clientId).then(setClient).catch(() => setClient(null));
     base44.entities.VisibilityReport
-      .filter({ agency_client_id: clientId }, '-report_date', 1)
-      .then((rows) => {
-        if (rows && rows.length) setReport(rows[0]);
-        else setMissing(true);
-      })
-      .catch(() => setMissing(true));
+      .filter({ agency_client_id: clientId }, '-report_date', 100)
+      .then((rows) => setReports(rows || []))
+      .catch(() => setReports([]));
   }, [clientId]);
 
-  if (!report && !missing) {
+  const primary = useMemo(() => primaryReport(reports), [reports]);
+  const active = useMemo(
+    () => (reports || []).find((r) => r.id === activeId) || primary,
+    [reports, activeId, primary]
+  );
+
+  if (!reports) {
     return (
       <div className="flex justify-center py-24">
         <div className="h-10 w-10 animate-spin rounded-full border-2 border-border border-t-primary" />
@@ -36,7 +54,7 @@ export default function AdminVisibilityPresent() {
     );
   }
 
-  if (missing) {
+  if (!reports.length || !primary) {
     return (
       <div className="dashboard-card p-10 text-center">
         <p className="text-sm text-muted-foreground">No published report for this client yet.</p>
@@ -45,65 +63,189 @@ export default function AdminVisibilityPresent() {
     );
   }
 
-  const composite = typeof report.composite_score === 'number' ? report.composite_score : null;
-  const headline = (report.key_findings || []).map(cleanLine).filter(Boolean).slice(0, 4);
+  const composite = typeof primary.composite_score === 'number' ? primary.composite_score : null;
+  const scored = reports.filter((r) => !isConsolidated(r));
+  const rows = categoryRows(primary);
+  const findings = (active.key_findings || []).map(cleanLine).filter(Boolean);
+  const fixes = (active.recommended_fixes || []).map(cleanLine).filter(Boolean);
+  const hasSnapshot =
+    (active.social_channels || []).length > 0 ||
+    Object.values(active.business_snapshot || {}).some(Boolean) ||
+    (active.marketing_allocation || []).length > 0;
+
+  const navItems = [
+    { id: 'overview', label: 'Overview' },
+    { id: 'scores', label: 'Scores' },
+    { id: 'findings', label: 'Findings' },
+    { id: 'recommendations', label: 'Recommendations' },
+    { id: 'evidence', label: 'Evidence' },
+    ...(hasSnapshot ? [{ id: 'snapshot', label: 'Snapshot' }] : []),
+  ];
+
+  const handleSaved = (updated) =>
+    setReports((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));
 
   return (
-    <div className="flex min-h-[calc(100vh-10rem)] animate-fade-in flex-col gap-6 pb-10">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+    <div className="mx-auto max-w-6xl animate-fade-in pb-16">
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">Consultation view · {formatDate(report.report_date)}</p>
-          <h1 className="font-heading text-3xl font-light text-foreground">{client?.company_name || 'Visibility & Credibility Report'}</h1>
+          <p className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
+            Brand Health Index · {formatDate(primary.report_date)}
+          </p>
+          <h1 className="font-heading text-3xl font-light text-foreground sm:text-4xl">
+            {client?.company_name || 'Client'}
+          </h1>
         </div>
-        <Link
-          to={`/admin/agency/visibility/${clientId}`}
-          className="inline-flex items-center gap-1.5 text-xs uppercase tracking-widest text-muted-foreground transition-colors hover:text-foreground"
-        >
-          <ArrowLeft className="h-4 w-4" /> Exit presentation
-        </Link>
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setEditing((v) => !v)}
+            className={`inline-flex items-center gap-2 rounded-md border px-4 py-2 text-xs font-semibold uppercase tracking-widest transition-colors ${
+              editing ? 'btn-forge border-transparent' : 'border-border text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            {editing ? <X className="h-4 w-4" /> : <Pencil className="h-4 w-4" />}
+            {editing ? 'Done editing' : 'Edit live'}
+          </button>
+          <Link
+            to={`/admin/agency/visibility/${clientId}`}
+            className="inline-flex items-center gap-1.5 text-xs uppercase tracking-widest text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <ArrowLeft className="h-4 w-4" /> Exit presentation
+          </Link>
+        </div>
       </div>
 
-      <div className="grid flex-1 gap-6 lg:grid-cols-[2fr_3fr]">
-        <div className="dashboard-card flex flex-col items-center justify-center p-8 text-center">
-          <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">Composite Score</p>
-          <p className="molten-text font-heading text-[9rem] font-light leading-none">
-            {composite === null ? '—' : composite}
-          </p>
-          <p className="mt-2 text-sm uppercase tracking-[0.2em] text-muted-foreground">
-            {composite === null ? 'Out of 100' : `${scoreLabel(composite)} · Out of 100`}
-          </p>
-        </div>
-        <div className="dashboard-card flex flex-col justify-center p-6">
-          <h3 className="mb-2 font-heading text-xl text-foreground">Category Scores</h3>
-          <VisibilityRadarChart series={[{ name: 'This audit', report }]} height={380} />
-        </div>
-      </div>
-
-      {headline.length > 0 && (
-        <div className="grid gap-4 sm:grid-cols-2">
-          {headline.map((f, i) => (
-            <div key={i} className="dashboard-card p-5">
-              <p className="text-xs uppercase tracking-widest text-primary">Finding {i + 1}</p>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{cleanLine(f)}</p>
-            </div>
-          ))}
+      {editing && (
+        <div className="mt-6">
+          <ReportFieldEditor report={active} onSaved={handleSaved} collapsible={false} />
         </div>
       )}
 
-      {(report.recommended_fixes || []).length > 0 && (
+      <div className="mt-6">
+        <AnchorNav items={navItems} />
+      </div>
+
+      <section id="overview" className="mt-6 grid gap-6 lg:grid-cols-[2fr_3fr]">
+        <div className="dashboard-card flex flex-col items-center justify-center p-8 text-center">
+          <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">Composite Score</p>
+          <p className="molten-text font-heading text-[8rem] font-light leading-none">
+            {composite === null ? '—' : composite}
+          </p>
+          <p className="mt-2 text-sm uppercase tracking-[0.2em] text-muted-foreground">
+            {composite === null ? 'Not scored' : `${scoreLabel(composite)} · Out of 100`}
+          </p>
+          <span className="mt-4 inline-flex items-center gap-2 text-[10px] uppercase tracking-widest text-muted-foreground/70">
+            <ProviderIcon label={primary.source_model || ''} size="sm" />
+            {primary.source_model || 'Unlabeled source'}
+          </span>
+        </div>
         <div className="dashboard-card p-6">
-          <h3 className="mb-4 font-heading text-xl text-foreground">Priority Recommendations</h3>
-          <ol className="grid gap-4 sm:grid-cols-2">
-            {(report.recommended_fixes || []).map((f, i) => (
-              <li key={i} className="flex gap-3 text-sm text-muted-foreground">
+          <h3 className="mb-2 font-heading text-xl text-foreground">Category Scores</h3>
+          <VisibilityRadarChart series={[{ name: primary.source_model || 'This audit', report: primary }]} height={340} />
+          <div className="mt-3 grid gap-1.5 sm:grid-cols-2">
+            {rows.map((r) => (
+              <div key={r.key} className="flex items-baseline justify-between gap-3 text-xs">
+                <span className="text-muted-foreground">{r.label}</span>
+                <span className="text-foreground">{r.score === null ? 'Not scored' : `${r.score}/${r.max}`}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="scores" className="dashboard-card mt-6 p-6">
+        <h3 className="font-heading text-xl text-foreground">Scores by Source</h3>
+        <p className="mb-4 mt-1 text-xs text-muted-foreground">
+          Each source scored the categories it could measure. Nothing is averaged across reports.
+        </p>
+        <VisibilityScoreBreakdown reports={scored} />
+      </section>
+
+      <section className="mt-6">
+        <div role="tablist" aria-label="Report sources" className="flex flex-wrap gap-2">
+          {reports.map((r) => {
+            const isActive = active?.id === r.id;
+            return (
+              <button
+                key={r.id}
+                type="button"
+                role="tab"
+                aria-selected={isActive}
+                onClick={() => setActiveId(r.id)}
+                className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs transition-colors ${
+                  isActive
+                    ? 'border-primary/60 bg-primary/10 text-foreground'
+                    : 'border-border text-muted-foreground hover:border-primary/40 hover:text-foreground'
+                }`}
+              >
+                <ProviderIcon label={r.source_model || ''} size="sm" />
+                {isConsolidated(r) ? 'Consolidated' : r.source_model || 'Unlabeled source'}
+              </button>
+            );
+          })}
+        </div>
+      </section>
+
+      <section id="findings" className="dashboard-card mt-6 p-6">
+        <h3 className="font-heading text-xl text-foreground">
+          Key Findings · {isConsolidated(active) ? 'Consolidated' : active.source_model || 'Source'}
+        </h3>
+        {findings.length ? (
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            {findings.map((f, i) => (
+              <div key={i} className="rounded-sm border border-border/60 bg-background/40 p-5">
+                <p className="text-[10px] uppercase tracking-widest text-primary">Finding {i + 1}</p>
+                <p className="mt-2 break-words text-sm leading-relaxed text-foreground/90">{f}</p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="mt-3 text-sm text-muted-foreground">No findings recorded on this snapshot.</p>
+        )}
+      </section>
+
+      <section id="recommendations" className="dashboard-card mt-6 p-6">
+        <h3 className="font-heading text-xl text-foreground">Priority Recommendations</h3>
+        {fixes.length ? (
+          <ol className="mt-4 grid gap-4 sm:grid-cols-2">
+            {fixes.map((f, i) => (
+              <li key={i} className="flex gap-3 text-sm leading-relaxed text-foreground/90">
                 <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-sm border border-primary/40 text-[10px] font-semibold text-primary">
                   {i + 1}
                 </span>
-                {cleanLine(f)}
+                <span className="break-words">{f}</span>
               </li>
             ))}
           </ol>
+        ) : (
+          <p className="mt-3 text-sm text-muted-foreground">No recommendations recorded on this snapshot.</p>
+        )}
+      </section>
+
+      <section id="evidence" className="mt-6">
+        <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
+          <h3 className="font-heading text-2xl font-light text-foreground">
+            Evidence · <span className="molten-text italic">{isConsolidated(active) ? 'Consolidated' : active.source_model || 'Source'}</span>
+          </h3>
+          <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/60">
+            {formatDate(active.report_date)} · full audit, every section open
+          </span>
         </div>
+        <AuditSections report={active} includeAll />
+      </section>
+
+      {hasSnapshot && (
+        <section id="snapshot" className="mt-6 grid gap-6 lg:grid-cols-2">
+          <div className="dashboard-card p-6">
+            <h3 className="mb-4 font-heading text-xl text-foreground">Business Snapshot</h3>
+            <VisibilityBusinessSnapshot report={active} />
+          </div>
+          <div className="dashboard-card p-6">
+            <h3 className="mb-4 font-heading text-xl text-foreground">Suggested Marketing Emphasis</h3>
+            <VisibilityAllocation allocation={active.marketing_allocation} />
+          </div>
+        </section>
       )}
     </div>
   );

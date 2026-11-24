@@ -108,6 +108,22 @@ export function consolidatedReport(reports) {
   return (reports || []).find(isConsolidated) || null;
 }
 
+/**
+ * The snapshot the index presents: the newest report that actually carries a
+ * composite score, never a consolidation. Multi-source imports land on the same
+ * date, so picking by date alone can open an unscored row.
+ */
+export function primaryReport(reports) {
+  const list = reports || [];
+  return (
+    list.find((r) => !isConsolidated(r) && isValidScore(r.composite_score, 0, 100)) ||
+    list.find((r) => !isConsolidated(r) && Object.values(r.category_scores || {}).some((v) => typeof v === 'number')) ||
+    list.find((r) => isValidScore(r.composite_score, 0, 100)) ||
+    list[0] ||
+    null
+  );
+}
+
 /** Latest report per distinct source model, newest first, consolidation excluded. */
 export function latestPerSource(reports) {
   const labels = sourceModelLabels(reports);

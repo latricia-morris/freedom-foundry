@@ -8,12 +8,13 @@ import VisibilityTrendChart from '@/components/visibility/VisibilityTrendChart';
 import VisibilityBusinessSnapshot from '@/components/visibility/VisibilityBusinessSnapshot';
 import VisibilityAllocation from '@/components/visibility/VisibilityAllocation';
 import VisibilitySectionsPanel from '@/components/admin/agency/VisibilitySectionsPanel';
+import ReportFieldEditor from '@/components/visibility/ReportFieldEditor';
 import ReportClientSwitcher from '@/components/visibility/ReportClientSwitcher';
 import ReportText from '@/components/report/ReportText';
 import SourceDataPoints from '@/components/visibility/SourceDataPoints';
 import { cleanLine } from '@/lib/reportText';
 import { useToast } from '@/components/ui/use-toast';
-import { categoryRows, divergenceFlags, formatDate, latestPerSource, scoreLabel, sourceModelLabels } from '@/lib/visibility';
+import { categoryRows, divergenceFlags, formatDate, latestPerSource, primaryReport, scoreLabel, sourceModelLabels } from '@/lib/visibility';
 
 export default function AdminVisibilityClientDetail() {
   const { clientId } = useParams();
@@ -54,8 +55,8 @@ export default function AdminVisibilityClientDetail() {
   }
 
   // Multi-source imports land on the same report date, so open on the snapshot
-  // that carries a composite score rather than an unscored one.
-  const latest = reports.find((r) => typeof r.composite_score === 'number') || reports[0];
+  // that carries a composite score rather than an unscored or consolidated one.
+  const latest = primaryReport(reports);
   const modelLabels = sourceModelLabels(reports);
   const rows = categoryRows(latest);
   const sourceSeries = latestPerSource(reports).map(({ source, report }) => ({ name: source, report }));
@@ -206,6 +207,13 @@ export default function AdminVisibilityClientDetail() {
         ) : (
           <p className="text-sm text-muted-foreground">No notes on this snapshot.</p>
         )}
+      </div>
+
+      <div className="mt-6">
+        <ReportFieldEditor
+          report={latest}
+          onSaved={(updated) => setReports((prev) => prev.map((r) => (r.id === updated.id ? updated : r)))}
+        />
       </div>
 
       <VisibilitySectionsPanel
