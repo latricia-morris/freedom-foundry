@@ -42,16 +42,20 @@ export default function AnchorNav({ items }) {
     <nav aria-label="Section navigation" className="sticky top-20 z-20 mb-2 lg:top-28">
       <div className="flex w-fit max-w-full gap-1 overflow-x-auto rounded-full border border-border/70 bg-card/85 p-1.5 backdrop-blur-md">
         {items.map(({ id, label }) => (
-          <button
+          <a
             key={id}
-            type="button"
-            onClick={() => go(id)}
+            href={`#${id}`}
+            onClick={(e) => {
+              e.preventDefault();
+              go(id);
+            }}
+            aria-current={active === id ? 'true' : undefined}
             className={`whitespace-nowrap rounded-full px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.14em] transition-colors ${
               active === id ? 'bg-primary/15 text-primary' : 'text-muted-foreground hover:text-foreground'
             }`}
           >
             {label}
-          </button>
+          </a>
         ))}
       </div>
     </nav>

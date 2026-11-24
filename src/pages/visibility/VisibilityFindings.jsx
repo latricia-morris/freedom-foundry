@@ -84,12 +84,15 @@ export default function VisibilityFindings() {
         {sources.map(({ source, report }, i) => {
           const isActive = i === activeIndex;
           return (
-            <button
+            <a
               key={report.id || source}
-              type="button"
+              href={`?source=${encodeURIComponent(source)}`}
               role="tab"
               aria-selected={isActive}
-              onClick={() => setSelectedSource(source)}
+              onClick={(e) => {
+                e.preventDefault();
+                setSelectedSource(source);
+              }}
               className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs transition-colors ${
                 isActive
                   ? 'border-primary/60 bg-primary/10 text-foreground'
@@ -98,7 +101,7 @@ export default function VisibilityFindings() {
             >
               <ProviderIcon label={report.source_model || ''} size="sm" />
               {source}
-            </button>
+            </a>
           );
         })}
       </div>
