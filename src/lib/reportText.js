@@ -390,7 +390,8 @@ export function plainReportText(raw) {
 export function stripSectionNumber(title) {
   return stripInline(title)
     .replace(/\s*\(continued(?:\s+\d+)?\)\s*$/i, '')
-    .replace(/^\s*\d{1,2}[.)]\s+/, '')
+    .replace(/^\s*(?:\d{1,2}|[IVX]{1,4})\s*[.)·•]\s+/, '')
+    .replace(/^\s*(?:\d{1,2}|[IVX]{1,4})\s*[:—-]\s+/, '')
     .trim();
 }
 

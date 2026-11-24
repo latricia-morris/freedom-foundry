@@ -2,7 +2,16 @@
 // Each source's audit is stored verbatim: every dimension is scored out of 20,
 // anything the source did not score stays null, and the composite is the
 // source's own stated number.
-import { isContinuationTitle, isCoverSection, plainReportText, stripCoverText } from './reportText';
+import { isContinuationTitle, isCoverSection, plainReportText, stripCoverText, stripSectionNumber } from './reportText';
+
+// Intake preamble: cover, scope note, evidence inventory and identity block.
+// They are reference material for the analyst, not report sections.
+const PREAMBLE_TITLE_RE =
+  /^(report\s+cover|cover(\s+page)?|report\s+scope|scope(\s+of\s+(this\s+)?report)?|evidence\s+sources?(\s+reviewed)?|evidence\s+boundaries|personnel(\s+and\s+business)?\s+identity|business\s+identity|document\s+control|table\s+of\s+contents|contents)$/i;
+
+function isPreambleSection(section) {
+  return PREAMBLE_TITLE_RE.test(stripSectionNumber(section?.title || ''));
+}
 
 export const VISIBILITY_CATEGORIES = [
   {
@@ -280,7 +289,7 @@ export function deriveFindingSummary(body) {
 export function clientSafeSections(report, includeAll = false) {
   const allowed = (report?.audit_sections || [])
     .filter((s) => includeAll || s.client_visible !== false || (s.release_with_recommendations && report.suggestions_client_visible))
-    .filter((s) => !isCoverSection(s))
+    .filter((s) => !isCoverSection(s) && !isPreambleSection(s))
     .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 
   // An imported audit splits long sections into "continued" parts, which cuts

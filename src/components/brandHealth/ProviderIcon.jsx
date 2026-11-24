@@ -27,7 +27,7 @@ export default function ProviderIcon({ label, providerId, size = 'md', className
       alt={provider.name}
       title={provider.name}
       draggable={false}
-      className={cn('inline-block shrink-0 object-contain', SIZES[size], className)}
+      className={cn('inline-block shrink-0 rounded-full object-contain', SIZES[size], className)}
     />
   );
 }

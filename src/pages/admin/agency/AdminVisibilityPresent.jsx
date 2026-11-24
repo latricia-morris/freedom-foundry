@@ -46,6 +46,13 @@ export default function AdminVisibilityPresent() {
     [reports, activeId, primary]
   );
 
+  // The consolidation is the document being presented, so it opens first.
+  useEffect(() => {
+    if (activeId || !reports?.length) return;
+    const consolidated = reports.find(isConsolidated);
+    if (consolidated) setActiveId(consolidated.id);
+  }, [reports, activeId]);
+
   if (!reports) {
     return (
       <div className="flex justify-center py-24">
@@ -63,9 +70,13 @@ export default function AdminVisibilityPresent() {
     );
   }
 
-  const composite = typeof primary.composite_score === 'number' ? primary.composite_score : null;
+  // Point 4 numbers belong to the source that scored them; the consolidated
+  // index is qualitative, so the scored snapshot supplies the figures.
+  const scoredReport = typeof active.composite_score === 'number' ? active : primary;
+  const composite = typeof scoredReport?.composite_score === 'number' ? scoredReport.composite_score : null;
   const scored = reports.filter((r) => !isConsolidated(r));
-  const rows = categoryRows(primary);
+  const rows = categoryRows(scoredReport);
+  const activeLabel = isConsolidated(active) ? 'Consolidated' : active.source_model || 'Source';
   const findings = (active.key_findings || []).map(cleanLine).filter(Boolean);
   const fixes = (active.recommended_fixes || []).map(cleanLine).filter(Boolean);
   const hasSnapshot =
@@ -85,12 +96,20 @@ export default function AdminVisibilityPresent() {
   const handleSaved = (updated) =>
     setReports((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));
 
+  // Switching source swaps the findings and evidence below, so bring the
+  // changed content into view instead of leaving the reader at the pills.
+  const selectSource = (id) => {
+    setActiveId(id);
+    const el = document.getElementById('findings');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   return (
     <div className="mx-auto max-w-6xl animate-fade-in pb-16">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
-            Brand Health Index · {formatDate(primary.report_date)}
+            Brand Health Index · {activeLabel} · {formatDate(active.report_date || primary.report_date)}
           </p>
           <h1 className="font-heading text-3xl font-light text-foreground sm:text-4xl">
             {client?.company_name || 'Client'}
@@ -128,7 +147,9 @@ export default function AdminVisibilityPresent() {
 
       <section id="overview" className="mt-6 grid gap-6 lg:grid-cols-[2fr_3fr]">
         <div className="dashboard-card flex flex-col items-center justify-center p-8 text-center">
-          <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">Composite Score</p>
+          <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">
+            {isConsolidated(active) ? 'Point 4 Score' : 'Composite Score'}
+          </p>
           <p className="molten-text font-heading text-[8rem] font-light leading-none">
             {composite === null ? '—' : composite}
           </p>
@@ -136,13 +157,24 @@ export default function AdminVisibilityPresent() {
             {composite === null ? 'Not scored' : `${scoreLabel(composite)} · Out of 100`}
           </p>
           <span className="mt-4 inline-flex items-center gap-2 text-[10px] uppercase tracking-widest text-muted-foreground/70">
-            <ProviderIcon label={primary.source_model || ''} size="sm" />
-            {primary.source_model || 'Unlabeled source'}
+            {isConsolidated(active) ? (
+              <>Point 4 score · scored by {scoredReport?.source_model || 'the source record'}</>
+            ) : (
+              <>
+                <ProviderIcon label={active.source_model || ''} size="sm" />
+                {active.source_model || 'Unlabeled source'}
+              </>
+            )}
           </span>
         </div>
         <div className="dashboard-card p-6">
           <h3 className="mb-2 font-heading text-xl text-foreground">Category Scores</h3>
-          <VisibilityRadarChart series={[{ name: primary.source_model || 'This audit', report: primary }]} height={340} />
+          {isConsolidated(active) && (
+            <p className="mb-2 text-xs text-muted-foreground">
+              Point 4 dimensions, as scored by {scoredReport?.source_model || 'the scored source'}.
+            </p>
+          )}
+          <VisibilityRadarChart series={[{ name: scoredReport?.source_model || 'This audit', report: scoredReport }]} height={340} />
           <div className="mt-3 grid gap-1.5 sm:grid-cols-2">
             {rows.map((r) => (
               <div key={r.key} className="flex items-baseline justify-between gap-3 text-xs">
@@ -163,6 +195,7 @@ export default function AdminVisibilityPresent() {
       </section>
 
       <section className="mt-6">
+        <p className="mb-2 text-[10px] uppercase tracking-[0.24em] text-muted-foreground/70">Report source</p>
         <div role="tablist" aria-label="Report sources" className="flex flex-wrap gap-2">
           {reports.map((r) => {
             const isActive = active?.id === r.id;
@@ -172,8 +205,8 @@ export default function AdminVisibilityPresent() {
                 type="button"
                 role="tab"
                 aria-selected={isActive}
-                onClick={() => setActiveId(r.id)}
-                className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs transition-colors ${
+                onClick={() => selectSource(r.id)}
+                className={`inline-flex cursor-pointer items-center gap-2 rounded-full border px-4 py-2 text-xs transition-colors ${
                   isActive
                     ? 'border-primary/60 bg-primary/10 text-foreground'
                     : 'border-border text-muted-foreground hover:border-primary/40 hover:text-foreground'
