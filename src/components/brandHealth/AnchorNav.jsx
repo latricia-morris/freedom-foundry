@@ -6,6 +6,8 @@ import React, { useEffect, useState } from 'react';
  */
 export default function AnchorNav({ items }) {
   const [active, setActive] = useState(items?.[0]?.id);
+  // Re-observe only when the set of sections changes, not on every render.
+  const key = (items || []).map((i) => i.id).join('|');
 
   useEffect(() => {
     if (!items?.length) return undefined;
@@ -22,28 +24,18 @@ export default function AnchorNav({ items }) {
       if (el) observer.observe(el);
     }
     return () => observer.disconnect();
-  }, [items]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key]);
 
   if (!items?.length) return null;
 
+  // scrollIntoView follows whichever element actually scrolls (window or an
+  // inner container), and each section's scroll-mt keeps it clear of the nav.
   const go = (id) => {
     setActive(id);
     const el = document.getElementById(id);
     if (!el) return;
-    const offset = window.innerWidth < 1024 ? 140 : 180;
-    const scrollToEl = () => {
-      const top = el.getBoundingClientRect().top + window.scrollY - offset;
-      window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
-    };
-    scrollToEl();
-    // deterministic correction pass — snaps flush under the nav if the
-    // smooth glide was interrupted or the layout settled mid-scroll
-    setTimeout(() => {
-      if (Math.abs(el.getBoundingClientRect().top - offset) > 24) {
-        const top = el.getBoundingClientRect().top + window.scrollY - offset;
-        window.scrollTo({ top: Math.max(0, top), behavior: 'auto' });
-      }
-    }, 600);
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   return (

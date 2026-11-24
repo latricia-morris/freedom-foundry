@@ -11,16 +11,8 @@ import VisibilityBusinessSnapshot from '@/components/visibility/VisibilityBusine
 import SourceDataPoints from '@/components/visibility/SourceDataPoints';
 import ConsolidatedAssessment from '@/components/visibility/ConsolidatedAssessment';
 import GradientActions from '@/components/brandHealth/GradientActions';
-import { consolidatedReport, formatDate, isValidScore, scoreLabel } from '@/lib/visibility';
+import { consolidatedReport, formatDate, isConsolidated, isValidScore, scoreLabel } from '@/lib/visibility';
 import { usePortalBrand } from '@/hooks/usePortalBrand';
-
-const NAV = [
-  { id: 'score-pattern', label: 'Score Pattern' },
-  { id: 'sources', label: 'By Source' },
-  { id: 'priority', label: 'Recommendations' },
-  { id: 'consolidated', label: 'Consolidated' },
-  { id: 'snapshot', label: 'Snapshot' },
-];
 
 /**
  * Client-facing visibility dashboard: big gradient composite score hero,
@@ -116,6 +108,19 @@ export default function VisibilityScorecard() {
     (snapshotReport.social_channels || []).length > 0 ||
     Object.values(snapshotReport.business_snapshot || {}).some(Boolean);
 
+  // The consolidation compares the sources; it is never charted as one of them.
+  const scoredReports = reports.filter((r) => !isConsolidated(r));
+
+  // Only sections actually rendered get a nav pill, in the order they appear.
+  const navItems = [
+    { id: 'score-pattern', label: 'Score Pattern' },
+    { id: 'sources', label: 'By Source' },
+    ...(consolidated ? [{ id: 'consolidated', label: 'Consolidated' }] : []),
+    { id: 'findings', label: 'Findings' },
+    ...(hasSnapshot ? [{ id: 'snapshot', label: 'Snapshot' }] : []),
+    ...(priority.length ? [{ id: 'priority', label: 'Recommendations' }] : []),
+  ];
+
   return (
     <div className="animate-fade-in space-y-6">
       <div>
@@ -136,7 +141,7 @@ export default function VisibilityScorecard() {
           : "Connect measurement sources to calculate a defensible score."}
       />
 
-      <AnchorNav items={NAV} />
+      <AnchorNav items={navItems} />
 
       <DashCard id="score-pattern">
         <h3 className="font-heading text-2xl font-light text-foreground sm:text-3xl">Score Pattern by Dimension</h3>
@@ -144,12 +149,12 @@ export default function VisibilityScorecard() {
           One line per audit source · dashed line is the baseline
         </p>
         <div className="mt-5">
-          <VisibilityComparisonChart reports={reports} />
+          <VisibilityComparisonChart reports={scoredReports} />
         </div>
         <div className="my-8 border-t border-border/50" />
         <h3 className="font-heading text-2xl font-light text-foreground sm:text-3xl">What the Scores Measure</h3>
         <div className="mt-5">
-          <VisibilityScoreBreakdown reports={reports} />
+          <VisibilityScoreBreakdown reports={scoredReports} />
         </div>
       </DashCard>
 
