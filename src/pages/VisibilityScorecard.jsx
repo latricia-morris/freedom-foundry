@@ -1,32 +1,29 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import HeroScore from '@/components/brandHealth/HeroScore';
 import DashCard from '@/components/brandHealth/DashCard';
 import AnchorNav from '@/components/brandHealth/AnchorNav';
-import GradientActions from '@/components/brandHealth/GradientActions';
-import KeyPoints from '@/components/brandHealth/KeyPoints';
 import VisibilityComparisonChart from '@/components/visibility/VisibilityComparisonChart';
 import VisibilityScoreBreakdown from '@/components/visibility/VisibilityScoreBreakdown';
 import VisibilityBusinessSnapshot from '@/components/visibility/VisibilityBusinessSnapshot';
 import VisibilityAllocation from '@/components/visibility/VisibilityAllocation';
-import LockedActionPlan from '@/components/visibility/LockedActionPlan';
-import AuditSections from '@/components/visibility/AuditSections';
-import { clientSafeSections, formatDate, isValidScore, scoreLabel } from '@/lib/visibility';
+import SourceDataPoints from '@/components/visibility/SourceDataPoints';
+import { formatDate, isValidScore, scoreLabel } from '@/lib/visibility';
 import { usePortalBrand } from '@/hooks/usePortalBrand';
 
 const NAV = [
   { id: 'score-pattern', label: 'Score Pattern' },
-  { id: 'findings', label: 'Findings' },
-  { id: 'actions', label: 'Actions' },
+  { id: 'sources', label: 'By Source' },
   { id: 'snapshot', label: 'Snapshot' },
 ];
 
 /**
  * Client-facing visibility dashboard: big gradient composite score hero,
- * then an interactive presentation — score pattern and definitions,
- * every audit finding rendered openly, priority recommendations elevated
- * in a forged-gradient container, and the business snapshot. In-page pill
- * navigation replaces any tab switching or hidden panels.
+ * the score pattern, every source's data points labeled and kept separate,
+ * and the business snapshot. Narrative findings and recommendations live in
+ * their own document so this scorecard stays readable.
  */
 export default function VisibilityScorecard() {
   const { brand, preview } = usePortalBrand();
@@ -96,10 +93,8 @@ export default function VisibilityScorecard() {
   };
 
   const composite = compositeReport ? compositeReport.composite_score : null;
-  const suggestions = latest.recommended_fixes || [];
   const hasSnapshot = (latest.social_channels || []).length > 0 || Object.values(latest.business_snapshot || {}).some(Boolean);
   const allocation = latest.marketing_allocation || [];
-  const findingsSections = clientSafeSections(latest);
 
   return (
     <div className="animate-fade-in space-y-6">
@@ -138,37 +133,34 @@ export default function VisibilityScorecard() {
         </div>
       </DashCard>
 
-      {findingsSections.length > 0 && (
-        <DashCard id="findings">
-          <h3 className="font-heading text-2xl font-light text-foreground sm:text-3xl">Audit Findings</h3>
-          <p className="mt-1 text-sm text-muted-foreground">Every diagnostic from your audit, in full — nothing hidden.</p>
-          {(latest.key_findings || []).filter(Boolean).length > 0 && (
-            <div className="mt-5 rounded-lg border border-border/50 bg-background/40 p-4 sm:p-5">
-              <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/70">At a glance</p>
-              <KeyPoints points={latest.key_findings} max={4} />
-            </div>
-          )}
-          <div className="mt-6">
-            <AuditSections report={latest} />
-          </div>
-        </DashCard>
-      )}
+      <DashCard id="sources">
+        <h3 className="font-heading text-2xl font-light text-foreground sm:text-3xl">Data Points by Source</h3>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Each source's scores, labeled and kept separate. Nothing is blended into a single unattributed number.
+        </p>
+        <div className="mt-6">
+          <SourceDataPoints reports={reports} />
+        </div>
+      </DashCard>
 
-      {suggestions.length > 0 ? (
-        <GradientActions
-          id="actions"
-          title="Priority Recommendations"
-          subtitle="Where to focus next, in order of impact."
-          items={suggestions}
-        />
-      ) : (
-        <DashCard id="actions">
-          <h3 className="font-heading text-2xl font-light text-foreground sm:text-3xl">Recommendations</h3>
-          <div className="mt-5">
-            <LockedActionPlan label="Full action plan available with your engagement" />
+      <DashCard id="findings">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h3 className="font-heading text-2xl font-light text-foreground sm:text-3xl">
+              Findings &amp; Recommendations
+            </h3>
+            <p className="mt-1 max-w-xl text-sm text-muted-foreground">
+              Each source's narrative breakdown lives in its own document, so the scorecard stays readable.
+            </p>
           </div>
-        </DashCard>
-      )}
+          <Link
+            to="/brand-portal/brand-health/findings"
+            className="btn-forge inline-flex items-center gap-2 rounded-md px-4 py-2 text-xs font-semibold uppercase tracking-widest"
+          >
+            Open findings <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+      </DashCard>
 
       {hasSnapshot && (
         <DashCard id="snapshot">

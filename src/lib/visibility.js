@@ -2,7 +2,7 @@
 // Each source's audit is stored verbatim: every dimension is scored out of 20,
 // anything the source did not score stays null, and the composite is the
 // source's own stated number.
-import { isContinuationTitle, plainReportText } from './reportText';
+import { isContinuationTitle, isCoverSection, plainReportText, stripCoverText } from './reportText';
 
 export const VISIBILITY_CATEGORIES = [
   {
@@ -249,10 +249,11 @@ export function deriveFindingSummary(body) {
   return summary.length > 260 ? `${summary.slice(0, 257).trimEnd()}…` : summary;
 }
 
-/** Sections the client is allowed to see: internal-only stays hidden, self-test to-dos wait for the recommendations toggle. */
-export function clientSafeSections(report) {
+/** Findings sections to render: cover pages dropped, gating applied. `includeAll` is for the admin document. */
+export function clientSafeSections(report, includeAll = false) {
   const allowed = (report?.audit_sections || [])
-    .filter((s) => s.client_visible !== false || (s.release_with_recommendations && report.suggestions_client_visible))
+    .filter((s) => includeAll || s.client_visible !== false || (s.release_with_recommendations && report.suggestions_client_visible))
+    .filter((s) => !isCoverSection(s))
     .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 
   // An imported audit splits long sections into "continued" parts, which cuts
@@ -261,10 +262,10 @@ export function clientSafeSections(report) {
   allowed.forEach((section) => {
     const prev = sections[sections.length - 1];
     if (!prev || !isContinuationTitle(section.title)) {
-      sections.push({ ...section });
+      sections.push({ ...section, body: stripCoverText(section.body) });
       return;
     }
-    const body = (section.body || '').trim();
+    const body = stripCoverText(section.body).trim();
     if (body) prev.body = `${(prev.body || '').trimEnd()}\n\n${body}`;
     const rows = section.table?.rows || [];
     if (rows.length) {

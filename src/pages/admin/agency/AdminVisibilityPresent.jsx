@@ -4,6 +4,7 @@ import { ArrowLeft } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import VisibilityRadarChart from '@/components/visibility/VisibilityRadarChart';
 import { formatDate, scoreLabel } from '@/lib/visibility';
+import { cleanLine } from '@/lib/reportText';
 
 /**
  * Consultation presentation mode: one screen, no scrolling, built for a live
@@ -45,7 +46,7 @@ export default function AdminVisibilityPresent() {
   }
 
   const composite = typeof report.composite_score === 'number' ? report.composite_score : null;
-  const headline = (report.key_findings || []).slice(0, 4);
+  const headline = (report.key_findings || []).map(cleanLine).filter(Boolean).slice(0, 4);
 
   return (
     <div className="flex min-h-[calc(100vh-10rem)] animate-fade-in flex-col gap-6 pb-10">
@@ -83,7 +84,7 @@ export default function AdminVisibilityPresent() {
           {headline.map((f, i) => (
             <div key={i} className="dashboard-card p-5">
               <p className="text-xs uppercase tracking-widest text-primary">Finding {i + 1}</p>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{f}</p>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{cleanLine(f)}</p>
             </div>
           ))}
         </div>
@@ -98,7 +99,7 @@ export default function AdminVisibilityPresent() {
                 <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-sm border border-primary/40 text-[10px] font-semibold text-primary">
                   {i + 1}
                 </span>
-                {f}
+                {cleanLine(f)}
               </li>
             ))}
           </ol>

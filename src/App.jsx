@@ -48,6 +48,7 @@ import IgniteOS from './pages/IgniteOS';
 import BrandUp from './pages/BrandUp';
 import BrandChecklist from './pages/BrandChecklist';
 import VisibilityScorecard from './pages/VisibilityScorecard';
+import VisibilityFindings from './pages/visibility/VisibilityFindings';
 import BrandHealthHome from './pages/brandhealth/BrandHealthHome';
 import BrandHealthWebsite from './pages/brandhealth/BrandHealthWebsite';
 import BrandHealthMatrix from './pages/brandhealth/BrandHealthMatrix';
@@ -213,6 +214,7 @@ const AuthenticatedApp = () => {
             <Route path="/brand-portal/team" element={<BrandTeam />} />
             <Route path="/brand-portal/brand-health" element={<BrandHealthHome />} />
             <Route path="/brand-portal/brand-health/visibility" element={<VisibilityScorecard />} />
+            <Route path="/brand-portal/brand-health/findings" element={<VisibilityFindings />} />
             <Route path="/brand-portal/brand-health/website" element={<BrandHealthWebsite />} />
             <Route path="/brand-portal/brand-health/marketing-matrix" element={<BrandHealthMatrix />} />
             <Route path="/brand-portal/visibility" element={<Navigate to="/brand-portal/brand-health/visibility" replace />} />
@@ -249,6 +251,7 @@ const AuthenticatedApp = () => {
             <Route path="/admin/agency/clients/:id" element={<AdminClientDetail />} />
             <Route path="/admin/agency/visibility" element={<AdminVisibilityReports />} />
             <Route path="/admin/agency/visibility/:clientId" element={<AdminVisibilityClientDetail />} />
+            <Route path="/admin/agency/visibility/:clientId/findings" element={<VisibilityFindings />} />
             <Route path="/admin/brand-health" element={<AdminBrandHealth />} />
             <Route path="/admin/brand-health/intake" element={<AdminBrandHealthIntake />} />
             <Route path="/admin/brand-health/:auditId" element={<AdminBrandHealthAuditDetail />} />

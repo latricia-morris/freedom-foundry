@@ -10,6 +10,8 @@ import VisibilityAllocation from '@/components/visibility/VisibilityAllocation';
 import VisibilitySectionsPanel from '@/components/admin/agency/VisibilitySectionsPanel';
 import ReportClientSwitcher from '@/components/visibility/ReportClientSwitcher';
 import ReportText from '@/components/report/ReportText';
+import SourceDataPoints from '@/components/visibility/SourceDataPoints';
+import { cleanLine } from '@/lib/reportText';
 import { useToast } from '@/components/ui/use-toast';
 import { categoryRows, divergenceFlags, formatDate, latestPerSource, scoreLabel, sourceModelLabels } from '@/lib/visibility';
 
@@ -124,6 +126,21 @@ export default function AdminVisibilityClientDetail() {
         </div>
       </div>
 
+      <div className="dashboard-card mt-6 p-6">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h3 className="font-heading text-xl text-foreground">Data Points by Source</h3>
+            <p className="text-xs text-muted-foreground">
+              Each source's scores, labeled and kept separate. Nothing is averaged across reports.
+            </p>
+          </div>
+          <Link to={`/admin/agency/visibility/${clientId}/findings`} className="link-warm">
+            Findings &amp; recommendations
+          </Link>
+        </div>
+        <SourceDataPoints reports={reports} />
+      </div>
+
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         <div className="dashboard-card p-6">
           <h3 className="mb-4 font-heading text-xl text-foreground">Key Findings</h3>
@@ -131,7 +148,7 @@ export default function AdminVisibilityClientDetail() {
             {(latest.key_findings || []).map((f, i) => (
               <li key={i} className="flex gap-3 text-sm text-muted-foreground">
                 <span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-primary" />
-                {f}
+                {cleanLine(f)}
               </li>
             ))}
             {!(latest.key_findings || []).length && <li className="text-sm text-muted-foreground/70">None recorded.</li>}
@@ -160,7 +177,7 @@ export default function AdminVisibilityClientDetail() {
                   <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-sm border border-primary/40 text-[10px] font-semibold text-primary">
                     {i + 1}
                   </span>
-                  {f}
+                  {cleanLine(f)}
                 </li>
               ))}
               {!(latest.recommended_fixes || []).length && <li className="text-sm text-muted-foreground/70">None recorded.</li>}

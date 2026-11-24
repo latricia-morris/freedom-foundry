@@ -11,7 +11,6 @@ const GATED_FIELDS = [
   'competitor_map',
   'analyst_notes',
   'raw_input_text',
-  'source_model',
   'next_checkin_date',
 ];
 

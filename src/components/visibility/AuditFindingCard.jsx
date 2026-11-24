@@ -5,7 +5,7 @@ import {
   METHODOLOGY_BADGE_STYLES,
   METHODOLOGY_LABELS,
 } from '@/lib/visibility';
-import { stripSectionNumber } from '@/lib/reportText';
+import { cleanLine, stripSectionNumber } from '@/lib/reportText';
 import ReportText from '@/components/report/ReportText';
 import ReportTable from '@/components/report/ReportTable';
 import ReportInline from '@/components/report/ReportInline';
@@ -19,10 +19,10 @@ import ReportInline from '@/components/report/ReportInline';
 export default function AuditFindingCard({ section, index }) {
   const s = section;
 
-  const title = stripSectionNumber(s.title);
-  const summary = (s.summary || '').trim() || deriveFindingSummary(s.body);
-  const detail = (s.detail || '').trim();
-  const action = (s.action || '').trim();
+  const title = cleanLine(stripSectionNumber(s.title));
+  const summary = cleanLine(s.summary || '') || deriveFindingSummary(s.body);
+  const detail = cleanLine(s.detail || '');
+  const action = cleanLine(s.action || '');
   const status = (s.status || '').trim();
   const badgeLabel = status || METHODOLOGY_LABELS[s.methodology] || null;
   const badgeClass = status

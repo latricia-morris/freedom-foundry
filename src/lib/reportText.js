@@ -5,7 +5,7 @@
 
 const BULLET_RE = /^\s{0,2}[-*\u2022]\s+(.*)$/;
 const ORDERED_RE = /^\s{0,2}(\d{1,2})[.)]\s+(.*)$/;
-const HEADING_RE = /^\s{0,3}(#{1,6})\s+(.*\S)\s*$/;
+const HEADING_RE = /^\s{0,3}(#{1,6})\s*(.*\S)\s*$/;
 
 /** Runs of dashes/equals on a line, or null when the line is not a rule. */
 function ruleRuns(line) {
@@ -31,11 +31,14 @@ function gapStarts(line) {
 /** PDF extraction turns en/em dashes into double and triple hyphens. */
 function dashFix(text) {
   return String(text || '')
-    .replace(/(\d)--(\d)/g, '$1\u2013$2')
-    .replace(/(\S)---(\S)/g, '$1\u2014$2')
-    .replace(/(\S)--(\S)/g, '$1\u2013$2')
-    .replace(/ +--- +/g, ' \u2014 ')
-    .replace(/ +-- +/g, ' \u2013 ');
+    .replace(/(\d)\s*-{2,4}\s*(\d)/g, '$1\u2013$2')
+    .replace(/(?:\s*-\s*){3,}/g, ' \u2014 ')
+    .replace(/(\S)-{3,}(\S)/g, '$1\u2014$2')
+    .replace(/(\S)-{2,3}(\S)/g, '$1\u2013$2')
+    .replace(/ +-{3,} +/g, ' \u2014 ')
+    .replace(/ +-{2} +/g, ' \u2013 ')
+    .replace(/\u2014(\s*\u2014)+/g, '\u2014')
+    .replace(/\u2013(\s*\u2013)+/g, '\u2013');
 }
 
 function sliceCells(line, bounds) {
@@ -45,7 +48,7 @@ function sliceCells(line, bounds) {
     const to = c + 1 < bounds.length ? bounds[c + 1] : line.length;
     cells.push(line.slice(bounds[c], to).trim());
   }
-  const cleaned = cells.map((c) => dashFix(c.replace(/\s+/g, ' ')));
+  const cleaned = cells.map((c) => dashFix(c.replace(/^#{1,6}\s*/, '').replace(/\s+/g, ' ')));
   while (cleaned.length > 1 && !cleaned[cleaned.length - 1]) cleaned.pop();
   return cleaned;
 }
@@ -147,7 +150,7 @@ function splitPipeRow(line) {
   let t = line.trim();
   if (t.startsWith('|')) t = t.slice(1);
   if (t.endsWith('|')) t = t.slice(0, -1);
-  return t.split('|').map((c) => dashFix(c.replace(/\s+/g, ' ').trim()));
+  return t.split('|').map((c) => dashFix(c.replace(/^#{1,6}\s*/, '').replace(/\s+/g, ' ').trim()));
 }
 
 function tableFromPipes(lines, i) {
@@ -238,7 +241,14 @@ function readParagraph(lines, start, blocks) {
     if (looksLikeTableStart(lines, i)) break;
 
     const hard = /\\\s*$/.test(line);
-    const clean = dashFix(line.replace(/\\\s*$/, '').trim().replace(/\s+/g, ' '));
+    const clean = dashFix(
+      line
+        .replace(/\\\s*$/, '')
+        .replace(/^#{1,6}\s*/, '')
+        .replace(/\s#{1,6}\s+/g, ' ')
+        .trim()
+        .replace(/\s+/g, ' ')
+    );
     if (clean) cur = cur ? `${cur} ${clean}` : clean;
     if (hard) { segments.push(cur); cur = ''; }
     i++;
@@ -301,6 +311,67 @@ export function stripInline(text) {
     .replace(/\*\*|__|`|\*/g, '')
     .replace(/\\(?=\s|$)/g, '')
     .trim();
+}
+
+/**
+ * A single line of report copy with every marker removed: no heading hashes,
+ * no emphasis asterisks, no hyphen artifacts. Used wherever stored report text
+ * reaches the page as a sentence.
+ */
+export function cleanLine(text) {
+  return dashFix(stripInline(String(text || '')))
+    .replace(/^#{1,6}\s*/, '')
+    .replace(/\s#{1,6}\s+/g, ' ')
+    .replace(/^[\s\u2022\-*]+/, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+// Cover pages arrive as their own block of title, client, and date lines. None
+// of it is report content, so it never renders.
+const COVER_LABEL_RE =
+  /^(prepared\s+(for|by)|report\s+date|date\s+of\s+report|assessment\s+date|published|version|confidential|table\s+of\s+contents|contents|page\s+\d+(\s+of\s+\d+)?|client|brand|company|website)\s*[:\u2014-]/i;
+const COVER_TITLE_RE =
+  /^(brand\s+health\s+(index|report)|visibility\s*(&|and)\s*credibility(\s+report)?|ai\s+visibility(\s+(audit|report))?|digital\s+brand\s+health|discoverability\s*(&|and)\s*conversion|marketing\s+matrix|cover(\s+page)?)\b/i;
+
+function isCoverLine(line) {
+  const t = cleanLine(line);
+  if (!t) return true;
+  if (COVER_LABEL_RE.test(t)) return true;
+  if (COVER_TITLE_RE.test(t)) return true;
+  if (/^\d{1,2}\/\d{1,2}\/\d{2,4}$/.test(t)) return true;
+  return false;
+}
+
+/** Drops a leading cover block (title, prepared-for, date, contents) from raw report text. */
+export function stripCoverText(raw) {
+  const lines = String(raw || '')
+    .replace(/\r\n?/g, '\n')
+    .split('\n');
+  let i = 0;
+  while (i < lines.length && (!lines[i].trim() || isCoverLine(lines[i]))) i++;
+  if (i >= lines.length) return '';
+  return lines.slice(i).join('\n');
+}
+
+/**
+ * True when a stored audit section is cover material rather than a finding:
+ * a title-page block with no actual prose behind it.
+ */
+export function isCoverSection(section) {
+  if (section?.table?.rows?.length) return false;
+  const title = stripSectionNumber(section?.title || '');
+  const body = plainReportText(section?.body || '');
+  if (body.length > 320) return false;
+  const hasProse = body.split(/(?<=[.!?])\s+/).some((s) => s.split(/\s+/).length >= 12);
+  if (hasProse) return false;
+  if (COVER_TITLE_RE.test(title)) return true;
+  const lines = String(section?.body || '')
+    .split('\n')
+    .map((l) => l.trim())
+    .filter(Boolean);
+  if (!lines.length) return /^(cover|title\s*page|contents)$/i.test(title);
+  return lines.length <= 8 && lines.every(isCoverLine);
 }
 
 /** One clean sentence-run of a report, for summaries and previews. */

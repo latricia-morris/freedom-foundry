@@ -7,8 +7,8 @@ import AuditFindingCard from './AuditFindingCard';
  * order. Client-safe filtering happens in clientSafeSections; each card
  * renders its full content openly — no hidden disclosures.
  */
-export default function AuditSections({ report }) {
-  const sections = clientSafeSections(report);
+export default function AuditSections({ report, includeAll = false }) {
+  const sections = clientSafeSections(report, includeAll);
   if (!sections.length) return null;
 
   return (
