@@ -2,6 +2,8 @@
 // Each source's audit is stored verbatim: every dimension is scored out of 20,
 // anything the source did not score stays null, and the composite is the
 // source's own stated number.
+import { isContinuationTitle, plainReportText } from './reportText';
+
 export const VISIBILITY_CATEGORIES = [
   {
     key: 'entity_recognition',
@@ -237,7 +239,9 @@ export function findingStatusStyle(status) {
 
 /** First one or two sentences of a stored body, used as the summary when no structured copy exists. */
 export function deriveFindingSummary(body) {
-  const text = String(body || '').replace(/\s+/g, ' ').trim();
+  // Summaries are prose only: tables belong in the card body, and raw markers
+  // must never reach a sentence.
+  const text = plainReportText(body);
   if (!text) return '';
   const stripped = text.replace(/^[A-Z][A-Z\s/-]{3,40}?(?:\s*\([^)]*\))?\s*:\s*/, '');
   const sentences = stripped.match(/[^.!?]+[.!?]+["')\]]*\s*/g) || [stripped];
@@ -247,7 +251,30 @@ export function deriveFindingSummary(body) {
 
 /** Sections the client is allowed to see: internal-only stays hidden, self-test to-dos wait for the recommendations toggle. */
 export function clientSafeSections(report) {
-  return (report?.audit_sections || [])
+  const allowed = (report?.audit_sections || [])
     .filter((s) => s.client_visible !== false || (s.release_with_recommendations && report.suggestions_client_visible))
     .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+
+  // An imported audit splits long sections into "continued" parts, which cuts
+  // tables and paragraphs mid-way. Rejoin them so every section reads whole.
+  const sections = [];
+  allowed.forEach((section) => {
+    const prev = sections[sections.length - 1];
+    if (!prev || !isContinuationTitle(section.title)) {
+      sections.push({ ...section });
+      return;
+    }
+    const body = (section.body || '').trim();
+    if (body) prev.body = `${(prev.body || '').trimEnd()}\n\n${body}`;
+    const rows = section.table?.rows || [];
+    if (rows.length) {
+      prev.table = (prev.table?.rows || []).length
+        ? { header: prev.table.header, rows: [...prev.table.rows, ...rows] }
+        : section.table;
+    }
+    if (!prev.summary && section.summary) prev.summary = section.summary;
+    if (!prev.detail && section.detail) prev.detail = section.detail;
+    if (!prev.action && section.action) prev.action = section.action;
+  });
+  return sections;
 }

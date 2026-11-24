@@ -9,6 +9,7 @@ import VisibilityBusinessSnapshot from '@/components/visibility/VisibilityBusine
 import VisibilityAllocation from '@/components/visibility/VisibilityAllocation';
 import VisibilitySectionsPanel from '@/components/admin/agency/VisibilitySectionsPanel';
 import ReportClientSwitcher from '@/components/visibility/ReportClientSwitcher';
+import ReportText from '@/components/report/ReportText';
 import { useToast } from '@/components/ui/use-toast';
 import { categoryRows, divergenceFlags, formatDate, latestPerSource, scoreLabel, sourceModelLabels } from '@/lib/visibility';
 
@@ -183,7 +184,11 @@ export default function AdminVisibilityClientDetail() {
 
       <div className="dashboard-card mt-6 p-6">
         <h3 className="mb-3 font-heading text-xl text-foreground">Analyst Notes</h3>
-        <p className="whitespace-pre-wrap text-sm text-muted-foreground">{latest.analyst_notes || 'No notes on this snapshot.'}</p>
+        {latest.analyst_notes ? (
+          <ReportText text={latest.analyst_notes} />
+        ) : (
+          <p className="text-sm text-muted-foreground">No notes on this snapshot.</p>
+        )}
       </div>
 
       <VisibilitySectionsPanel
