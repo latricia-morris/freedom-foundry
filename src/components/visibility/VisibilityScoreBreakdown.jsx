@@ -1,5 +1,6 @@
 import React from 'react';
 import { isValidScore, SERIES_COLORS, VISIBILITY_CATEGORIES, reportSeries } from '@/lib/visibility';
+import ProviderIcon from '@/components/brandHealth/ProviderIcon';
 
 /**
  * Structured score breakdown: one stacked row per dimension with a short
@@ -24,8 +25,9 @@ export default function VisibilityScoreBreakdown({ reports }) {
               const pct = score === null ? null : Math.round((score / c.max) * 100);
               return (
                 <div key={s.key} className="flex items-center gap-3">
-                  <span className="w-24 shrink-0 truncate text-[10px] uppercase tracking-wider text-muted-foreground/80 sm:w-32">
-                    {s.label}
+                  <span className="flex w-24 shrink-0 items-center gap-2 sm:w-32">
+                    <ProviderIcon label={s.label} size="sm" />
+                    <span className="truncate text-[10px] uppercase tracking-wider text-muted-foreground/80">{s.label}</span>
                   </span>
                   {score === null ? (
                     <div className="h-2 flex-1" aria-hidden="true" />

@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, Presentation } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import VisibilityRadarChart from '@/components/visibility/VisibilityRadarChart';
+import ProviderIcon from '@/components/brandHealth/ProviderIcon';
 import VisibilityTrendChart from '@/components/visibility/VisibilityTrendChart';
 import VisibilityBusinessSnapshot from '@/components/visibility/VisibilityBusinessSnapshot';
 import VisibilityAllocation from '@/components/visibility/VisibilityAllocation';
@@ -103,7 +104,10 @@ export default function AdminVisibilityClientDetail() {
         <div className="dashboard-card p-6">
           <div className="mb-2 flex items-center justify-between">
             <h3 className="font-heading text-xl text-foreground">Category Scores</h3>
-            <span className="text-xs text-muted-foreground/70">{modelLabels[latest.source_model || 'Unlabeled source'] || 'Unlabeled source'}</span>
+            <span className="inline-flex items-center gap-2 text-xs text-muted-foreground/70">
+              <ProviderIcon label={latest.source_model || ''} size="sm" />
+              {modelLabels[latest.source_model || 'Unlabeled source'] || 'Unlabeled source'}
+            </span>
           </div>
           <VisibilityRadarChart series={[{ name: modelLabels[latest.source_model || 'Unlabeled source'] || 'This audit', report: latest }]} />
         </div>
@@ -246,7 +250,12 @@ export default function AdminVisibilityClientDetail() {
               {reports.map((r) => (
                 <tr key={r.id} className="border-t border-border/30">
                   <td className="py-2.5 text-foreground">{formatDate(r.report_date)}</td>
-                  <td className="py-2.5 text-muted-foreground">{modelLabels[r.source_model || 'Unlabeled source'] || 'Unlabeled source'}</td>
+                  <td className="py-2.5 text-muted-foreground">
+                    <span className="inline-flex items-center gap-2">
+                      <ProviderIcon label={r.source_model || ''} size="sm" />
+                      {modelLabels[r.source_model || 'Unlabeled source'] || 'Unlabeled source'}
+                    </span>
+                  </td>
                   <td className="py-2.5 text-muted-foreground">{r.is_baseline ? 'Baseline' : 'Snapshot'}</td>
                   <td className="py-2.5 text-right text-foreground">
                     {typeof r.composite_score === 'number' ? `${r.composite_score}/100` : '—'}

@@ -3,6 +3,8 @@ import { ArrowLeft, Loader2, Sparkles } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useToast } from '@/components/ui/use-toast';
 import SectionsEditor from '@/components/admin/agency/SectionsEditor';
+import ProviderIcon from '@/components/brandHealth/ProviderIcon';
+import { AI_PROVIDERS } from '@/lib/providers';
 import {
   VISIBILITY_CATEGORIES,
   competitorsToText,
@@ -194,6 +196,30 @@ export default function VisibilityIntake({ client, rawText, sourceName, onSaved,
         )
       ) : (
         <div className="space-y-5">
+          <div>
+            <p className="mb-2 text-[10px] uppercase tracking-widest text-muted-foreground">Report source</p>
+            <div className="flex flex-wrap gap-2">
+              {AI_PROVIDERS.map((p) => {
+                const active = sourceModel.trim().toLowerCase() === p.name.toLowerCase();
+                return (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() => setSourceModel(p.name)}
+                    aria-pressed={active}
+                    className={`inline-flex items-center gap-2 rounded-md border px-3 py-2 text-xs font-medium transition-colors ${
+                      active
+                        ? 'border-primary/60 bg-primary/10 text-foreground'
+                        : 'border-border/70 bg-secondary/30 text-muted-foreground hover:border-primary/40 hover:text-foreground'
+                    }`}
+                  >
+                    <ProviderIcon providerId={p.id} size="sm" />
+                    {p.name}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div>
               <label className="mb-1 block text-[10px] uppercase tracking-widest text-muted-foreground">Source label (internal only)</label>

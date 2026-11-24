@@ -1,6 +1,7 @@
 import React from 'react';
-import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { isValidScore, SERIES_COLORS, VISIBILITY_CATEGORIES, reportSeries } from '@/lib/visibility';
+import ProviderIcon from '@/components/brandHealth/ProviderIcon';
 
 /**
  * Model comparison chart: score scale on the left axis, scored dimensions
@@ -19,7 +20,23 @@ export default function VisibilityComparisonChart({ reports, height = 340 }) {
   });
 
   return (
-    <div style={{ height }} className="w-full min-w-0">
+    <div className="w-full min-w-0">
+      {series.length > 0 && (
+        <div className="mb-3 flex flex-wrap items-center gap-x-4 gap-y-2">
+          {series.map((s, i) => (
+            <span key={s.key} className="inline-flex items-center gap-2 text-[11px] text-muted-foreground">
+              <span
+                className="h-0.5 w-4 rounded-full"
+                style={{ background: SERIES_COLORS[i % SERIES_COLORS.length] }}
+                aria-hidden="true"
+              />
+              <ProviderIcon label={s.label} size="sm" />
+              <span>{s.isBaseline ? `${s.label} · baseline` : s.label}</span>
+            </span>
+          ))}
+        </div>
+      )}
+      <div style={{ height }} className="w-full min-w-0">
       <ResponsiveContainer>
         <LineChart data={data} margin={{ top: 8, right: 12, bottom: 0, left: -18 }}>
           <CartesianGrid stroke="hsl(var(--border))" strokeDasharray="3 3" vertical={false} />
@@ -44,7 +61,6 @@ export default function VisibilityComparisonChart({ reports, height = 340 }) {
             }}
             labelStyle={{ color: 'hsl(var(--popover-foreground))' }}
           />
-          <Legend wrapperStyle={{ fontSize: 11, paddingTop: 8 }} iconType="line" />
           {series.map((s, i) => {
             const color = SERIES_COLORS[i % SERIES_COLORS.length];
             return (
@@ -63,6 +79,7 @@ export default function VisibilityComparisonChart({ reports, height = 340 }) {
           })}
         </LineChart>
       </ResponsiveContainer>
+      </div>
     </div>
   );
 }
