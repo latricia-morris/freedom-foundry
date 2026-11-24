@@ -78,6 +78,12 @@ export default function AdminBrandHealth() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
+          <Link
+            to="/admin/agency/visibility"
+            className="inline-flex items-center gap-1.5 rounded-md border border-border px-4 py-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+          >
+            <ArrowUpRight className="h-4 w-4" /> Brand health index reports
+          </Link>
           <Link to="/admin/brand-health/intake?type=website_discoverability" className="btn-forge inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-xs font-semibold uppercase tracking-widest">
             <Upload className="h-4 w-4" /> Load a report
           </Link>

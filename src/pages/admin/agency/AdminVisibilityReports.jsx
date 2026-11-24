@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Eye, FilePlus2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { formatDate, scoreLabel } from '@/lib/visibility';
+import ReportClientSwitcher from '@/components/visibility/ReportClientSwitcher';
 
 const STATUS_STYLES = {
   active: 'border-emerald-500/40 text-emerald-400',
@@ -67,6 +68,7 @@ export default function AdminVisibilityReports() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
+        <ReportClientSwitcher clients={clients} reports={reports} />
         <span className="text-xs text-muted-foreground">
           {reports.length} snapshot{reports.length === 1 ? '' : 's'} across {rows.filter((r) => r.count > 0).length} client{rows.filter((r) => r.count > 0).length === 1 ? '' : 's'}
         </span>

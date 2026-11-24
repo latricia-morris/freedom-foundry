@@ -8,6 +8,7 @@ import VisibilityTrendChart from '@/components/visibility/VisibilityTrendChart';
 import VisibilityBusinessSnapshot from '@/components/visibility/VisibilityBusinessSnapshot';
 import VisibilityAllocation from '@/components/visibility/VisibilityAllocation';
 import VisibilitySectionsPanel from '@/components/admin/agency/VisibilitySectionsPanel';
+import ReportClientSwitcher from '@/components/visibility/ReportClientSwitcher';
 import { useToast } from '@/components/ui/use-toast';
 import { categoryRows, divergenceFlags, formatDate, latestPerSource, scoreLabel, sourceModelLabels } from '@/lib/visibility';
 
@@ -15,6 +16,8 @@ export default function AdminVisibilityClientDetail() {
   const { clientId } = useParams();
   const [client, setClient] = useState(null);
   const [reports, setReports] = useState(null);
+  const [clients, setClients] = useState([]);
+  const [allReports, setAllReports] = useState([]);
   const [toggling, setToggling] = useState(false);
   const { toast } = useToast();
 
@@ -24,6 +27,8 @@ export default function AdminVisibilityClientDetail() {
       .filter({ agency_client_id: clientId }, '-report_date', 100)
       .then(setReports)
       .catch(() => setReports([]));
+    base44.entities.AgencyClient.filter({}, 'company_name', 300).then(setClients).catch(() => setClients([]));
+    base44.entities.VisibilityReport.filter({}, '-report_date', 500).then(setAllReports).catch(() => setAllReports([]));
   }, [clientId]);
 
   if (!reports) {
@@ -45,7 +50,9 @@ export default function AdminVisibilityClientDetail() {
     );
   }
 
-  const latest = reports[0];
+  // Multi-source imports land on the same report date, so open on the snapshot
+  // that carries a composite score rather than an unscored one.
+  const latest = reports.find((r) => typeof r.composite_score === 'number') || reports[0];
   const modelLabels = sourceModelLabels(reports);
   const rows = categoryRows(latest);
   const sourceSeries = latestPerSource(reports).map(({ source, report }) => ({ name: source, report }));
@@ -82,12 +89,15 @@ export default function AdminVisibilityClientDetail() {
             Full internal view · {formatDate(latest.report_date)} · {scoreLabel(latest.composite_score)}
           </p>
         </div>
-        <Link
-          to={`/admin/agency/visibility/${clientId}/present`}
-          className="btn-forge inline-flex items-center gap-2 rounded-md px-4 py-2 text-xs font-semibold uppercase tracking-widest"
-        >
-          <Presentation className="h-4 w-4" /> Presentation mode
-        </Link>
+        <div className="flex flex-wrap items-center gap-3">
+          <ReportClientSwitcher clients={clients} reports={allReports} currentClientId={clientId} />
+          <Link
+            to={`/admin/agency/visibility/${clientId}/present`}
+            className="btn-forge inline-flex items-center gap-2 rounded-md px-4 py-2 text-xs font-semibold uppercase tracking-widest"
+          >
+            <Presentation className="h-4 w-4" /> Presentation mode
+          </Link>
+        </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[2fr_3fr]">
