@@ -190,7 +190,7 @@ export default function VisibilityScorecard() {
               Findings &amp; Recommendations
             </h3>
             <p className="mt-1 max-w-xl text-sm text-muted-foreground">
-              The consolidated assessment leads that document, with every source report a click away.
+              Every source report in one tabbed document, a click between them.
             </p>
           </div>
           <Link
