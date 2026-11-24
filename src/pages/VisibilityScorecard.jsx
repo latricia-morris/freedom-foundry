@@ -12,6 +12,7 @@ import VisibilityAllocation from '@/components/visibility/VisibilityAllocation';
 import LockedActionPlan from '@/components/visibility/LockedActionPlan';
 import AuditSections from '@/components/visibility/AuditSections';
 import { clientSafeSections, formatDate, isValidScore, scoreLabel } from '@/lib/visibility';
+import { usePortalBrand } from '@/hooks/usePortalBrand';
 
 const NAV = [
   { id: 'score-pattern', label: 'Score Pattern' },
@@ -28,15 +29,17 @@ const NAV = [
  * navigation replaces any tab switching or hidden panels.
  */
 export default function VisibilityScorecard() {
+  const { brand, preview } = usePortalBrand();
+  const brandId = brand?.id;
   const [data, setData] = useState(null);
   const [error, setError] = useState(false);
 
   useEffect(() => {
     base44.functions
-      .invoke('get-visibility-reports', {})
+      .invoke('get-visibility-reports', { client_id: brandId })
       .then((res) => setData(res.data))
       .catch(() => setError(true));
-  }, []);
+  }, [brandId]);
 
   if (!data && !error) {
     return (
@@ -79,7 +82,8 @@ export default function VisibilityScorecard() {
   }
 
   const latest = reports[0];
-  const isAdmin = !!data.is_admin;
+  // While previewing a client's portal, show what the client sees.
+  const isAdmin = !!data.is_admin && !preview;
   const compositeReport = reports.find((r) => isValidScore(r?.composite_score, 0, 100)) || null;
 
   const handleSaveChannels = async (channels) => {

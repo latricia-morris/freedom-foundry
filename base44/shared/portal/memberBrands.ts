@@ -51,5 +51,16 @@ export async function roleForBrand(base44, user, brandId) {
   return brands.find((b) => b.id === brandId)?.role || null;
 }
 
+/**
+ * The brand a request names, when the caller may read it. Admins hold a role on
+ * every brand, which is what lets the agency preview a client's portal; anyone
+ * else only gets brands they actually belong to.
+ */
+export async function brandForRequest(base44, user, brandId) {
+  if (!brandId) return null;
+  const role = await roleForBrand(base44, user, brandId);
+  return role ? { id: brandId, role } : null;
+}
+
 export const canManage = (role) => role === 'owner' || role === 'brand_admin';
 export { norm as normalizeEmail };

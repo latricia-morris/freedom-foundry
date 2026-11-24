@@ -7,13 +7,16 @@ import { Spinner, Panel, Empty } from '@/components/crm/CrmUi';
 import ClientProjectCard from '@/components/crm/client/ClientProjectCard';
 import ClientInvoiceList from '@/components/crm/client/ClientInvoiceList';
 import MessageThread from '@/components/crm/messages/MessageThread';
+import { usePortalBrand } from '@/hooks/usePortalBrand';
 
 export default function ClientWorkspace() {
   const qc = useQueryClient();
+  const { brand, preview } = usePortalBrand();
+  const previewBrandId = preview ? brand?.id : null;
   const [clientId, setClientId] = useState('');
   const { data, isLoading } = useQuery({
-    queryKey: ['client-workspace'],
-    queryFn: async () => (await base44.functions.invoke('crmClient', { action: 'workspace' })).data,
+    queryKey: ['client-workspace', previewBrandId || 'all'],
+    queryFn: async () => (await base44.functions.invoke('crmClient', { action: 'workspace', agency_client_id: previewBrandId || undefined })).data,
     refetchInterval: 30000,
   });
 

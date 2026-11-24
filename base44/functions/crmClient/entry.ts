@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.54';
-import { memberBrands } from '../../shared/portal/memberBrands.ts';
+import { memberBrands, roleForBrand } from '../../shared/portal/memberBrands.ts';
 
 const pickProject = (p) => ({
   id: p.id, client_id: p.client_id, name: p.name, status: p.status, health: p.client_project_health,
@@ -23,7 +23,16 @@ export default async function (req) {
 
     const sr = base44.asServiceRole;
     const brands = await memberBrands(base44, user, 'workspace');
-    const ids = brands.map((b) => b.id);
+    let ids = brands.map((b) => b.id);
+    // Portal preview: an admin may scope the workspace to one client they name.
+    let previewClient = null;
+    if (action === 'workspace' && agency_client_id && !ids.includes(agency_client_id)) {
+      const role = await roleForBrand(base44, user, agency_client_id);
+      if (role) {
+        ids = [agency_client_id];
+        previewClient = await sr.entities.AgencyClient.get(agency_client_id).catch(() => null);
+      }
+    }
 
     if (action === 'send') {
       const text = String(body || '').trim();
@@ -50,7 +59,9 @@ export default async function (req) {
       sr.entities.ClientMessage.filter({ agency_client_id: { $in: ids } }, { sort: '-created_date', limit: 200 }),
     ]);
     return Response.json({
-      clients: brands.map((b) => ({ id: b.id, name: b.company_name })),
+      clients: previewClient
+        ? [{ id: previewClient.id, name: previewClient.company_name }]
+        : brands.map((b) => ({ id: b.id, name: b.company_name })),
       projects: projects.map(pickProject),
       tasks: tasks.items.map(pickTask),
       deliverables: deliverables.items.map(pickDeliverable),

@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
+import { brandForRequest } from '../../shared/portal/memberBrands.ts';
 
 // Client-facing proposal list: resolves the logged-in user to their agency
 // client record(s) by contact email / portal membership and returns their own
@@ -25,13 +26,18 @@ export default async function (req: Request): Promise<Response> {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
     const svc = base44.asServiceRole;
-    const clients = await svc.entities.AgencyClient.filter({}, '-created_date', 300);
+    // Portal preview: an admin names the client whose proposals to read.
+    const { client_id: requestedId } = await req.json().catch(() => ({}));
+    const requested = await brandForRequest(base44, user, requestedId);
     const email = (user.email || '').toLowerCase();
-    const mine = (clients || []).filter(
-      (c) =>
-        (c.primary_contact_email || '').toLowerCase() === email ||
-        (c.portal_member_emails || []).some((e) => (e || '').toLowerCase() === email)
-    );
+    const clients = await svc.entities.AgencyClient.filter({}, '-created_date', 300);
+    const mine = requested
+      ? (clients || []).filter((c) => c.id === requested.id)
+      : (clients || []).filter(
+          (c) =>
+            (c.primary_contact_email || '').toLowerCase() === email ||
+            (c.portal_member_emails || []).some((e) => (e || '').toLowerCase() === email)
+        );
     if (mine.length === 0) {
       return Response.json({ proposals: [] });
     }

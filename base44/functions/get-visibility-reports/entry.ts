@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
+import { brandForRequest } from '../../shared/portal/memberBrands.ts';
 
 // Client-facing visibility reports: resolves the logged-in user to their agency
 // client record by email and returns their own report snapshots. Non-admin
@@ -44,11 +45,15 @@ export default async function (req: Request): Promise<Response> {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
     const svc = base44.asServiceRole;
-    const clients = await svc.entities.AgencyClient.filter({}, '-created_date', 300);
+    // Portal preview: an admin names the client whose snapshot to read.
+    const { client_id: requestedId } = await req.json().catch(() => ({}));
+    const requested = await brandForRequest(base44, user, requestedId);
     const email = (user.email || '').toLowerCase();
-    const client = (clients || []).find(
-      (c) => (c.primary_contact_email || '').toLowerCase() === email
-    );
+    const client = requested
+      ? await svc.entities.AgencyClient.get(requested.id).catch(() => null)
+      : (await svc.entities.AgencyClient.filter({}, '-created_date', 300)).find(
+          (c) => (c.primary_contact_email || '').toLowerCase() === email
+        );
     if (!client) {
       return Response.json({ client: null, reports: [] });
     }

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { fmtDate } from '@/lib/proposalFormat';
 import { ArrowUpRight, ClipboardSignature } from 'lucide-react';
+import { usePortalBrand } from '@/hooks/usePortalBrand';
 
 const PILL_STYLES = {
   'Signed & accepted': 'btn-forge text-[11px] font-semibold uppercase tracking-wider',
@@ -13,16 +14,18 @@ const PILL_STYLES = {
 };
 
 export default function PortalProposals() {
+  const { brand } = usePortalBrand();
+  const brandId = brand?.id;
   const [proposals, setProposals] = useState(null);
   const [error, setError] = useState('');
 
   useEffect(() => {
     let mounted = true;
-    base44.functions.invoke('get-client-proposals')
+    base44.functions.invoke('get-client-proposals', { client_id: brandId })
       .then((res) => { if (mounted) setProposals(res.data?.proposals || []); })
       .catch(() => { if (mounted) setError("We couldn't load your proposals right now. Please try again shortly."); });
     return () => { mounted = false; };
-  }, []);
+  }, [brandId]);
 
   return (
     <div className="max-w-4xl animate-fade-in">

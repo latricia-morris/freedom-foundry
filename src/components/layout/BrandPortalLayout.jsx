@@ -173,7 +173,7 @@ export default function BrandPortalLayout() {
         {/* Preview is view-only: disabling the fieldset blocks every save control
             inside the page, so nothing can be written to the client's portal. */}
         <fieldset disabled={!!preview} className="m-0 min-w-0 w-full border-0 p-0">
-          <Outlet key={brand?.id || 'personal'} context={{ brand, brands, isAdmin }} />
+          <Outlet key={brand?.id || 'personal'} context={{ brand, brands, isAdmin, preview }} />
         </fieldset>
         {pageKey && <PortalContentSection key={pageKey} pageKey={pageKey} />}
       </main>
