@@ -138,7 +138,7 @@ export default function AdminVisibilityClientDetail() {
             Findings &amp; recommendations
           </Link>
         </div>
-        <SourceDataPoints reports={reports} />
+        <SourceDataPoints reports={reports} findingsBase={`/admin/agency/visibility/${clientId}/findings`} />
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">

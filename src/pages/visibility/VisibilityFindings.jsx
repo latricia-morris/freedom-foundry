@@ -18,7 +18,11 @@ export default function VisibilityFindings() {
   const { brand, preview } = usePortalBrand();
   const brandId = clientId || brand?.id || null;
   const [data, setData] = useState(null);
-  const [active, setActive] = useState(0);
+  // A source chosen on the scorecard arrives as ?source=, so the model button
+  // lands on that model's findings rather than the first one loaded.
+  const [selectedSource, setSelectedSource] = useState(
+    () => new URLSearchParams(window.location.search).get('source') || ''
+  );
 
   useEffect(() => {
     base44.functions
@@ -56,7 +60,8 @@ export default function VisibilityFindings() {
     );
   }
 
-  const selected = sources[Math.min(active, sources.length - 1)];
+  const active = Math.max(0, sources.findIndex((s) => s.source === selectedSource));
+  const selected = sources[active];
   const report = selected.report;
   const isAdmin = !!data.is_admin && !preview;
   const composite = typeof report.composite_score === 'number' ? report.composite_score : null;
@@ -88,7 +93,7 @@ export default function VisibilityFindings() {
             <button
               key={r.id || source}
               type="button"
-              onClick={() => setActive(i)}
+              onClick={() => setSelectedSource(source)}
               className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs transition-colors ${
                 isActive
                   ? 'border-primary/60 bg-primary/10 text-foreground'

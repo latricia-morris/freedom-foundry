@@ -10,12 +10,14 @@ import VisibilityScoreBreakdown from '@/components/visibility/VisibilityScoreBre
 import VisibilityBusinessSnapshot from '@/components/visibility/VisibilityBusinessSnapshot';
 import VisibilityAllocation from '@/components/visibility/VisibilityAllocation';
 import SourceDataPoints from '@/components/visibility/SourceDataPoints';
+import ConsolidatedAssessment from '@/components/visibility/ConsolidatedAssessment';
 import { formatDate, isValidScore, scoreLabel } from '@/lib/visibility';
 import { usePortalBrand } from '@/hooks/usePortalBrand';
 
 const NAV = [
   { id: 'score-pattern', label: 'Score Pattern' },
   { id: 'sources', label: 'By Source' },
+  { id: 'consolidated', label: 'Consolidated' },
   { id: 'snapshot', label: 'Snapshot' },
 ];
 
@@ -83,18 +85,33 @@ export default function VisibilityScorecard() {
   const isAdmin = !!data.is_admin && !preview;
   const compositeReport = reports.find((r) => isValidScore(r?.composite_score, 0, 100)) || null;
 
+  // The snapshot card follows whichever report actually carries snapshot data,
+  // so a consolidated assessment never blanks the channels another source listed.
+  const snapshotReport =
+    reports.find(
+      (r) =>
+        (r.social_channels || []).length > 0 ||
+        Object.values(r.business_snapshot || {}).some(Boolean)
+    ) || latest;
+  const consolidated = reports.find((r) => /consolidated/i.test(r.source_model || '')) || null;
+  const findingsBase = '/brand-portal/brand-health/findings';
+
   const handleSaveChannels = async (channels) => {
-    if (!latest?.id) return;
-    await base44.entities.VisibilityReport.update(latest.id, { social_channels: channels });
+    if (!snapshotReport?.id) return;
+    await base44.entities.VisibilityReport.update(snapshotReport.id, { social_channels: channels });
     setData((prev) => ({
       ...prev,
-      reports: prev.reports.map((r, i) => (i === 0 ? { ...r, social_channels: channels } : r)),
+      reports: prev.reports.map((r) =>
+        r.id === snapshotReport.id ? { ...r, social_channels: channels } : r
+      ),
     }));
   };
 
   const composite = compositeReport ? compositeReport.composite_score : null;
-  const hasSnapshot = (latest.social_channels || []).length > 0 || Object.values(latest.business_snapshot || {}).some(Boolean);
-  const allocation = latest.marketing_allocation || [];
+  const hasSnapshot =
+    (snapshotReport.social_channels || []).length > 0 ||
+    Object.values(snapshotReport.business_snapshot || {}).some(Boolean);
+  const allocation = snapshotReport.marketing_allocation || [];
 
   return (
     <div className="animate-fade-in space-y-6">
@@ -139,9 +156,24 @@ export default function VisibilityScorecard() {
           Each source's scores, labeled and kept separate. Nothing is blended into a single unattributed number.
         </p>
         <div className="mt-6">
-          <SourceDataPoints reports={reports} />
+          <SourceDataPoints reports={reports} findingsBase={findingsBase} />
         </div>
       </DashCard>
+
+      {consolidated && (
+        <DashCard id="consolidated">
+          <h3 className="font-heading text-2xl font-light text-foreground sm:text-3xl">
+            Consolidated <span className="molten-text italic">Assessment</span>
+          </h3>
+          <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
+            The full Brand Health Index consolidation, kept whole: its scope, the evidence it rests on,
+            every point it covers, and the priority plan it recommends.
+          </p>
+          <div className="mt-6">
+            <ConsolidatedAssessment report={consolidated} />
+          </div>
+        </DashCard>
+      )}
 
       <DashCard id="findings">
         <div className="flex flex-wrap items-center justify-between gap-4">
@@ -167,7 +199,7 @@ export default function VisibilityScorecard() {
           <h3 className="font-heading text-2xl font-light text-foreground sm:text-3xl">Business Snapshot</h3>
           <p className="mt-1 text-sm text-muted-foreground">A clear view of where your current visibility is concentrated.</p>
           <div className="mt-6">
-            <VisibilityBusinessSnapshot report={latest} editable={isAdmin} onSaveChannels={handleSaveChannels} />
+            <VisibilityBusinessSnapshot report={snapshotReport} editable={isAdmin} onSaveChannels={handleSaveChannels} />
           </div>
           {allocation.length > 0 && (
             <>

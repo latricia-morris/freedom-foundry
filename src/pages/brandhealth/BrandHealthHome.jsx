@@ -3,6 +3,7 @@ import { base44 } from '@/api/base44Client';
 import HeroScore from '@/components/brandHealth/HeroScore';
 import PillarCard from '@/components/brandHealth/PillarCard';
 import { useBrandHealth } from '@/hooks/useBrandHealth';
+import { usePortalBrand } from '@/hooks/usePortalBrand';
 import { PUBLISHED_STATUS, STATUS_LABELS, fmtDate, latestByComponent } from '@/lib/brandHealth';
 import { formatDate } from '@/lib/visibility';
 
@@ -14,12 +15,14 @@ import { formatDate } from '@/lib/visibility';
  */
 export default function BrandHealthHome() {
   const { data, error } = useBrandHealth();
+  const { brand } = usePortalBrand();
+  const brandId = brand?.id;
   const [vis, setVis] = useState(undefined);
 
   useEffect(() => {
     let alive = true;
     base44.functions
-      .invoke('get-visibility-reports', {})
+      .invoke('get-visibility-reports', { client_id: brandId })
       .then((res) => {
         if (alive) setVis(res.data || {});
       })
@@ -29,7 +32,7 @@ export default function BrandHealthHome() {
     return () => {
       alive = false;
     };
-  }, []);
+  }, [brandId]);
 
   const loading = (!data && !error) || vis === undefined;
 
