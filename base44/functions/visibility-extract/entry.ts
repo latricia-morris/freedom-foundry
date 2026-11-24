@@ -56,6 +56,21 @@ const EXTRACTION_SCHEMA = {
         additionalProperties: false,
       },
     },
+    social_channels: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          platform: { type: 'string' },
+          handle: { type: 'string' },
+          url: { type: 'string' },
+          followers: { type: 'string' },
+          notes: { type: 'string' },
+        },
+        required: ['platform'],
+        additionalProperties: false,
+      },
+    },
     report_date_mentioned: { anyOf: [{ type: 'string' }, { type: 'null' }] },
     business_snapshot: {
       type: 'object',
@@ -89,6 +104,7 @@ const EXTRACTION_SCHEMA = {
     'key_findings',
     'recommended_fixes',
     'competitors_mentioned',
+    'social_channels',
     'report_date_mentioned',
     'business_snapshot',
     'marketing_allocation',
@@ -128,6 +144,8 @@ Notes:
 - Audits score each dimension out of 20 points. Sources vary in which dimensions they score (structured data, social channel presence, and off-site category authority are commonly omitted). For any dimension the text does not clearly score, return null for that dimension.
 - key_findings and recommended_fixes must be short plain-language strings taken directly from the text.
 - competitors_mentioned: each object needs a name and a short positioning description. Return an empty array if none are mentioned.
+- social_channels: every social profile, channel, or listing the text names, including ones it only mentions in passing. One entry per profile: platform (Instagram, LinkedIn, Facebook, YouTube, Google Business Profile, a directory, and so on), the handle or username exactly as written, the full URL when given, follower, post, or review counts exactly as stated, and notes (bio, activity, verification, status). Leave a field empty when the text does not state it. Never invent a profile, a handle, or a count. Return an empty array when the report names none.
+- Capture everything the report explicitly states, not only the scored categories. Every named platform, directory, profile, competitor, review count, credential, tool, location, service area, and stated operational fact belongs in the extraction: fill the matching field above, and put anything that fits no field into audit_sections verbatim so nothing in the source is lost. Only omit what the report never says.
 - audit_sections: capture EVERY section of the audit verbatim, in the source's order — methodology notes, every numbered measurement section, any overall credibility assessment, and any closing "what to do next" / self-test list. Translate the source's own evidence label to methodology: measured, observed, requires_self_test, mixed when a section combines labels, or none when unlabeled. body is the section's full verbatim text with line breaks preserved. Capture any table in the section as table_header and table_rows. client_visible is true for every section EXCEPT action-item / "what to do" lists, which get client_visible false and release_with_recommendations true. Return an empty array if the audit contains no such sections.
 - For each audit section, also draft the structured diagnostic fields the client-facing report shows. status is exactly one of: Critical, High, Medium, Low, Gap, Active, Opportunity, Info. summary is ONE plain sentence, at most 25 words, stating the finding. detail is at most two short supporting sentences, or an empty string when the summary already says it all. action is a short imperative recommended action, at most 15 words, or an empty string when the section has none. Base every field strictly on what the source says. Write in direct strategic language. Do not use em dashes in any of these fields.
 - business_snapshot: operational facts stated in the audit about the business (email platform used, how often they send email, whether marketing blasts or drip campaigns exist, key funnel assets such as lead magnets or landing pages, and use of events, launches, or campaign-based activity). Return null for anything the text does not state.

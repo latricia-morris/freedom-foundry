@@ -8,15 +8,16 @@ import AnchorNav from '@/components/brandHealth/AnchorNav';
 import VisibilityComparisonChart from '@/components/visibility/VisibilityComparisonChart';
 import VisibilityScoreBreakdown from '@/components/visibility/VisibilityScoreBreakdown';
 import VisibilityBusinessSnapshot from '@/components/visibility/VisibilityBusinessSnapshot';
-import VisibilityAllocation from '@/components/visibility/VisibilityAllocation';
 import SourceDataPoints from '@/components/visibility/SourceDataPoints';
 import ConsolidatedAssessment from '@/components/visibility/ConsolidatedAssessment';
-import { formatDate, isValidScore, scoreLabel } from '@/lib/visibility';
+import GradientActions from '@/components/brandHealth/GradientActions';
+import { consolidatedReport, formatDate, isValidScore, scoreLabel } from '@/lib/visibility';
 import { usePortalBrand } from '@/hooks/usePortalBrand';
 
 const NAV = [
   { id: 'score-pattern', label: 'Score Pattern' },
   { id: 'sources', label: 'By Source' },
+  { id: 'priority', label: 'Recommendations' },
   { id: 'consolidated', label: 'Consolidated' },
   { id: 'snapshot', label: 'Snapshot' },
 ];
@@ -93,8 +94,11 @@ export default function VisibilityScorecard() {
         (r.social_channels || []).length > 0 ||
         Object.values(r.business_snapshot || {}).some(Boolean)
     ) || latest;
-  const consolidated = reports.find((r) => /consolidated/i.test(r.source_model || '')) || null;
+  const consolidated = consolidatedReport(reports);
   const findingsBase = '/brand-portal/brand-health/findings';
+  // Priority recommendations come from the consolidation alone: it is the one
+  // document that has weighed every source, so nothing here is blended.
+  const priority = (consolidated?.recommended_fixes || []).filter(Boolean);
 
   const handleSaveChannels = async (channels) => {
     if (!snapshotReport?.id) return;
@@ -111,7 +115,6 @@ export default function VisibilityScorecard() {
   const hasSnapshot =
     (snapshotReport.social_channels || []).length > 0 ||
     Object.values(snapshotReport.business_snapshot || {}).some(Boolean);
-  const allocation = snapshotReport.marketing_allocation || [];
 
   return (
     <div className="animate-fade-in space-y-6">
@@ -182,7 +185,7 @@ export default function VisibilityScorecard() {
               Findings &amp; Recommendations
             </h3>
             <p className="mt-1 max-w-xl text-sm text-muted-foreground">
-              Each source's narrative breakdown lives in its own document, so the scorecard stays readable.
+              The consolidated assessment leads that document, with every source report a click away.
             </p>
           </div>
           <Link
@@ -201,19 +204,16 @@ export default function VisibilityScorecard() {
           <div className="mt-6">
             <VisibilityBusinessSnapshot report={snapshotReport} editable={isAdmin} onSaveChannels={handleSaveChannels} />
           </div>
-          {allocation.length > 0 && (
-            <>
-              <div className="my-8 border-t border-border/50" />
-              <h3 className="font-heading text-2xl font-light text-foreground sm:text-3xl">Suggested Marketing Emphasis</h3>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Where emphasis earns the most visibility next, based on your score pattern.
-              </p>
-              <div className="mt-5">
-                <VisibilityAllocation allocation={allocation} />
-              </div>
-            </>
-          )}
         </DashCard>
+      )}
+
+      {priority.length > 0 && (
+        <GradientActions
+          id="priority"
+          title="Priority Recommendations"
+          subtitle="Every gap the consolidated assessment found, turned into the next move."
+          items={priority}
+        />
       )}
     </div>
   );

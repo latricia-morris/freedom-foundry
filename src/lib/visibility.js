@@ -98,11 +98,22 @@ export function sourceModelLabels(reports) {
   return labels;
 }
 
-/** Latest report per distinct source model, newest first, labeled "Model N". */
+/** A consolidation blends every source, so it is never listed as a source of its own. */
+export function isConsolidated(report) {
+  return /consolidated/i.test(report?.source_model || '');
+}
+
+/** The consolidated Brand Health Index for a set of reports, when one exists. */
+export function consolidatedReport(reports) {
+  return (reports || []).find(isConsolidated) || null;
+}
+
+/** Latest report per distinct source model, newest first, consolidation excluded. */
 export function latestPerSource(reports) {
   const labels = sourceModelLabels(reports);
   const bySource = new Map();
   for (const r of reports || []) {
+    if (isConsolidated(r)) continue;
     const key = r.source_model || 'Unlabeled source';
     if (!bySource.has(key)) bySource.set(key, r);
   }

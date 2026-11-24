@@ -38,6 +38,7 @@ Rules:
 - Keep every heading exactly as written and in this order.
 - Scores are whole numbers. If something was not assessed, write "Not assessed". Never estimate a score to fill a gap.
 - One idea per bullet. Write in plain language the client can read.
+- Report everything you found, not only the scored categories: every social profile, directory listing, review count, credential, platform, and stated fact. Never leave a finding out because it fits no heading; add it to the closest section.
 - Replace everything in [brackets] and remove the brackets.`;
 
 const SHARED_CLOSE = `## Consultant Summary
@@ -77,6 +78,11 @@ ${VISIBILITY_CATEGORIES.map((c) => `- ${c.label}: [score] / ${c.max}`).join('\n'
 
 ## Competitors
 - [Name]: [how they are positioned]
+
+## Social Channels
+- [Platform]: [handle] — [full URL] — [followers, posts, or reviews as stated] — [bio, activity, or status]
+
+[List every profile the audit found, including Google Business Profile and directory listings. Repeat the line for each one.]
 
 ## Business Snapshot
 - Email platform: [value]

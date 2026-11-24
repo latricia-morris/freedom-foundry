@@ -11,6 +11,7 @@ import {
   parseCompetitors,
   parseLines,
   parseSocialChannels,
+  socialChannelsToText,
   toLineText,
 } from '@/lib/visibility';
 
@@ -68,6 +69,7 @@ export default function VisibilityIntake({ client, rawText, sourceName, onSaved,
       setFindingsText(toLineText(draft.key_findings));
       setFixesText(toLineText(draft.recommended_fixes));
       setCompetitorsText(competitorsToText(draft.competitors_mentioned));
+      setSocialText(socialChannelsToText(draft.social_channels));
       const draftSnap = draft.business_snapshot || {};
       setSnap(Object.fromEntries(SNAPSHOT_FIELDS.map(([key]) => [key, draftSnap[key] || ''])));
       setAllocation(
