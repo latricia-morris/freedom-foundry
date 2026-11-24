@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Bot, Loader2, Send, Sparkles, UserPlus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Bot, Eye, Loader2, Send, Sparkles, UserPlus } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useToast } from '@/components/ui/use-toast';
+import { startPortalPreview } from '@/lib/portalPreview';
 import PortalAiDraftCard from '@/components/admin/agency/clientDetail/PortalAiDraftCard';
 import { applyPortalChanges, loadPortalSnapshot, resolvePortalUser } from '@/lib/clientPortalData';
 
@@ -64,6 +66,7 @@ const AI_CHANGE_SCHEMA = {
 
 export default function ClientPortalAiTab({ client }) {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [user, setUser] = useState(undefined); // undefined = resolving, null = no member linked
   const [snapshot, setSnapshot] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -144,6 +147,31 @@ export default function ClientPortalAiTab({ client }) {
     }
   };
 
+  const openPreview = () => {
+    startPortalPreview(client.id);
+    navigate('/brand-portal');
+  };
+
+  const previewCard = (
+    <div className="dashboard-card flex flex-wrap items-center justify-between gap-4 p-5">
+      <div className="min-w-0">
+        <h3 className="font-heading text-lg text-foreground">View the full portal</h3>
+        <p className="mt-1 max-w-xl text-xs leading-relaxed text-muted-foreground">
+          Open {client.company_name}&apos;s brand portal exactly as{' '}
+          {client.primary_contact_name || client.primary_contact_email || 'the primary contact'} sees it.
+          Every page opens in a view-only preview, so nothing saves while you look.
+        </p>
+      </div>
+      <button
+        type="button"
+        onClick={openPreview}
+        className="btn-forge inline-flex items-center gap-2 rounded-md px-4 py-2 text-xs font-semibold uppercase tracking-widest"
+      >
+        <Eye className="h-4 w-4" /> Preview brand portal
+      </button>
+    </div>
+  );
+
   if (user === undefined) {
     return <div className="flex justify-center py-16"><div className="h-10 w-10 animate-spin rounded-full border-2 border-border border-t-primary" /></div>;
   }
@@ -178,7 +206,9 @@ export default function ClientPortalAiTab({ client }) {
       }
     };
     return (
-      <div className="dashboard-card p-8 text-center">
+      <div className="space-y-6">
+        {previewCard}
+        <div className="dashboard-card p-8 text-center">
         <Sparkles className="mx-auto mb-3 h-6 w-6 icon-warm" strokeWidth={1.5} />
         {client.primary_contact_email ? (
           <>
@@ -212,12 +242,14 @@ export default function ClientPortalAiTab({ client }) {
             Add a contact email on the client profile first — the portal is matched by that email.
           </p>
         )}
+        </div>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
+      {previewCard}
       <div className="dashboard-card flex h-[28rem] flex-col p-0">
         <div className="flex items-center gap-3 border-b border-border/50 px-5 py-4">
           <div className="icon-tile h-9 w-9">

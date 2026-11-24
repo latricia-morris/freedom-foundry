@@ -1,7 +1,8 @@
 import React from 'react';
-import { Outlet, NavLink, Navigate } from 'react-router-dom';
-import { ChevronDown, Flame, Send, FolderOpen, Users } from 'lucide-react';
+import { Outlet, NavLink, Navigate, useNavigate } from 'react-router-dom';
+import { ChevronDown, Eye, Flame, Send, FolderOpen, Users } from 'lucide-react';
 import { useBrandAccess, useSelectedBrand, teamCanOpen } from '@/hooks/useBrandAccess';
+import { endPortalPreview } from '@/lib/portalPreview';
 import PortalBrandSelector from '@/components/layout/PortalBrandSelector';
 import { Spinner } from '@/components/crm/CrmUi';
 import { useState } from 'react';
@@ -80,8 +81,9 @@ function NavItem({ item }) {
 
 export default function BrandPortalLayout() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { brands, isAdmin, isLoading } = useBrandAccess();
+  const { brands, isAdmin, isLoading, preview } = useBrandAccess();
   const [brand, selectBrand] = useSelectedBrand(brands);
   // Navigation follows the role on the selected brand.
   const restricted = !isAdmin && brand?.role === 'team_member';
@@ -99,7 +101,33 @@ export default function BrandPortalLayout() {
 
   const renderItems = (items) => items.map((item) => <NavItem key={item.path} item={item} />);
 
+  const exitPreview = () => {
+    const clientId = preview?.client_id;
+    endPortalPreview();
+    navigate(clientId ? `/admin/agency/clients/${clientId}` : '/admin/agency/clients');
+  };
+
   return (
+    <div className="animate-fade-in">
+      {preview && (
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-md border border-primary/40 bg-primary/10 px-4 py-3">
+          <div className="flex min-w-0 items-center gap-2.5">
+            <Eye className="h-4 w-4 flex-shrink-0 text-primary" />
+            <p className="text-sm text-foreground">
+              Previewing <span className="font-medium">{preview.company_name}</span> as{' '}
+              {preview.contact_name || preview.contact_email || 'the primary contact'}
+              <span className="ml-2 text-xs uppercase tracking-widest text-muted-foreground">View only</span>
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={exitPreview}
+            className="inline-flex items-center gap-2 rounded-md border border-border bg-card px-4 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+          >
+            Exit preview
+          </button>
+        </div>
+      )}
     <div className="flex min-h-[calc(100vh-10rem)] flex-col gap-6 lg:flex-row lg:gap-10">
       <svg width="0" height="0" style={{ position: 'absolute' }} aria-hidden="true">
         <defs>
@@ -114,14 +142,14 @@ export default function BrandPortalLayout() {
         <p className="mb-3 px-3 text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
           Brand Portal
         </p>
-        {selector}
+        {!preview && selector}
         <nav aria-label="Brand Portal pages" className="flex flex-col gap-1">
           {renderItems(nav)}
         </nav>
       </aside>
 
       <div className="lg:hidden">
-        <PortalBrandSelector brands={brands} brand={brand} onSelect={selectBrand} id="portal-brand-mobile" />
+        {!preview && <PortalBrandSelector brands={brands} brand={brand} onSelect={selectBrand} id="portal-brand-mobile" />}
         <button
           type="button"
           onClick={() => setMobileOpen((open) => !open)}
@@ -142,9 +170,14 @@ export default function BrandPortalLayout() {
       </div>
 
       <main className="min-w-0 flex-1 lg:py-2">
-        <Outlet key={brand?.id || 'personal'} context={{ brand, brands, isAdmin }} />
+        {/* Preview is view-only: disabling the fieldset blocks every save control
+            inside the page, so nothing can be written to the client's portal. */}
+        <fieldset disabled={!!preview} className="m-0 min-w-0 w-full border-0 p-0">
+          <Outlet key={brand?.id || 'personal'} context={{ brand, brands, isAdmin }} />
+        </fieldset>
         {pageKey && <PortalContentSection key={pageKey} pageKey={pageKey} />}
       </main>
+    </div>
     </div>
   );
 }
