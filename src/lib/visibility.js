@@ -84,8 +84,8 @@ export function scoreLabel(score) {
 
 /**
  * Display labels for audit sources. Each report carries the name of the AI
- * model that produced it (Claude, Gemini, ChatGPT), and that name is what the
- * client sees — no anonymized "Model N" placeholders.
+ * model that produced it (ChatGPT, Gemini, Grok, Perplexity), and that name is
+ * what the client sees — no anonymized "Model N" placeholders.
  */
 export function sourceModelLabels(reports) {
   const labels = {};
