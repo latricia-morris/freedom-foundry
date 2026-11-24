@@ -17,7 +17,7 @@ export default function ReportText({ text, className = '' }) {
   if (!blocks.length) return null;
 
   return (
-    <div className={`space-y-3 ${className}`}>
+    <div className={`min-w-0 space-y-3 ${className}`}>
       {blocks.map((block, i) => {
         if (block.type === 'heading') {
           const major = MAJOR_HEADING[block.level];
@@ -36,7 +36,7 @@ export default function ReportText({ text, className = '' }) {
         }
         if (block.type === 'paragraph') {
           return (
-            <p key={i} className="whitespace-pre-line break-words text-sm leading-relaxed text-muted-foreground">
+            <p key={i} className="whitespace-pre-line text-sm leading-relaxed text-muted-foreground [overflow-wrap:anywhere]">
               <ReportInline text={block.text} />
             </p>
           );
@@ -51,7 +51,7 @@ export default function ReportText({ text, className = '' }) {
               }`}
             >
               {block.items.map((item, j) => (
-                <li key={j} className="break-words pl-0.5">
+                <li key={j} className="pl-0.5 [overflow-wrap:anywhere]">
                   <ReportInline text={item} />
                 </li>
               ))}

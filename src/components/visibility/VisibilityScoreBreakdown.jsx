@@ -25,23 +25,23 @@ export default function VisibilityScoreBreakdown({ reports }) {
               const pct = score === null ? null : Math.round((score / c.max) * 100);
               return (
                 <div key={s.key} className="flex items-center gap-3">
-                  <span className="flex w-24 shrink-0 items-center gap-2 sm:w-32">
+                  <span className="flex w-28 min-w-0 shrink-0 items-center gap-2 sm:w-36">
                     <ProviderIcon label={s.label} size="sm" />
-                    <span className="truncate text-[10px] uppercase tracking-wider text-muted-foreground/80">{s.label}</span>
+                    <span className="min-w-0 break-words text-[10px] uppercase leading-tight tracking-wider text-muted-foreground/80">{s.label}</span>
                   </span>
                   {score === null ? (
                     <div className="h-2 flex-1" aria-hidden="true" />
                   ) : (
-                    <div className="well-track h-2 flex-1">
+                    <div className="well-track h-2 min-w-0 flex-1">
                       <div
                         className="h-full rounded-full transition-all"
                         style={{ width: `${pct}%`, background: SERIES_COLORS[i % SERIES_COLORS.length] }}
                       />
                     </div>
                   )}
-                  <span className="w-24 shrink-0 text-right text-xs text-muted-foreground">
+                  <span className="w-20 shrink-0 text-right text-xs text-muted-foreground">
                     {score === null ? (
-                      <span className="inline-flex items-center justify-end gap-1.5"><span>—</span><span className="text-[10px] text-muted-foreground/60">Not measured</span></span>
+                      <span className="block break-words text-[10px] leading-tight text-muted-foreground/60">Not measured</span>
                     ) : `${score}/${c.max}`}
                   </span>
                 </div>

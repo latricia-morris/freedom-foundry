@@ -32,12 +32,12 @@ export default function AuditFindingCard({ section, index }) {
   const hasTable = !!(s.table && s.table.rows && s.table.rows.length);
 
   return (
-    <article className="bh-card p-5 sm:p-7">
+    <article className="bh-card min-w-0 p-5 sm:p-7">
       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-2">
-        <span className="molten-text font-heading text-2xl font-light leading-none">
+        <span className="molten-text shrink-0 font-heading text-2xl font-light leading-none">
           {String(index + 1).padStart(2, '0')}
         </span>
-        <h4 className="font-heading text-xl font-light leading-tight text-foreground sm:text-2xl">{title}</h4>
+        <h4 className="min-w-0 break-words font-heading text-xl font-light leading-tight text-foreground sm:text-2xl">{title}</h4>
         {badgeLabel && (
           <span className={`ml-auto rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] ${badgeClass}`}>
             {badgeLabel}

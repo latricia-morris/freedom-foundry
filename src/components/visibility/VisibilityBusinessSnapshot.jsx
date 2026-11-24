@@ -54,7 +54,7 @@ export default function VisibilityBusinessSnapshot({ report, editable, onSaveCha
             {snapRows.map(([key, label]) => (
               <div key={key} className="rounded-sm border border-border/60 bg-background/40 px-4 py-2.5">
                 <dt className="text-[10px] uppercase tracking-widest text-muted-foreground/70">{label}</dt>
-                <dd className="mt-0.5 break-words text-sm text-foreground">{snap[key]}</dd>
+                <dd className="mt-0.5 text-sm text-foreground [overflow-wrap:anywhere]">{snap[key]}</dd>
               </div>
             ))}
           </dl>

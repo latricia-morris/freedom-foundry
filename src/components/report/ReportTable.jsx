@@ -9,7 +9,7 @@ export default function ReportTable({ header = [], rows = [], className = '' }) 
   if (!rows.length) return null;
 
   return (
-    <div className={className}>
+    <div className={`min-w-0 ${className}`}>
       <div className="space-y-2 sm:hidden">
         {rows.map((row, i) => (
           <div key={i} className="rounded-lg border border-border/60 bg-background/40 px-3 py-2">
@@ -28,15 +28,15 @@ export default function ReportTable({ header = [], rows = [], className = '' }) 
         ))}
       </div>
 
-      <div className="hidden overflow-x-auto sm:block">
-        <table className="w-full text-left text-sm">
+      <div className="hidden min-w-0 sm:block">
+        <table className="w-full table-fixed text-left text-sm">
           {header.length > 0 && (
             <thead>
               <tr>
                 {header.map((h, i) => (
                   <th
                     key={i}
-                    className="border-b border-border/60 px-3 py-2 align-bottom text-[10px] uppercase tracking-widest text-muted-foreground/70"
+                    className="border-b border-border/60 px-3 py-2 align-bottom text-[10px] uppercase tracking-widest text-muted-foreground/70 [overflow-wrap:anywhere]"
                   >
                     <ReportInline text={h} />
                   </th>
@@ -50,7 +50,7 @@ export default function ReportTable({ header = [], rows = [], className = '' }) 
                 {row.map((cell, j) => (
                   <td
                     key={j}
-                    className="break-words px-3 py-2 align-top leading-relaxed text-muted-foreground first:text-foreground"
+                    className="px-3 py-2 align-top leading-relaxed text-muted-foreground first:text-foreground [overflow-wrap:anywhere]"
                   >
                     <ReportInline text={cell} />
                   </td>

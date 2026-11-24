@@ -105,13 +105,13 @@ export default function AdminVisibilityPresent() {
   };
 
   return (
-    <div className="mx-auto max-w-6xl animate-fade-in pb-16">
+    <div className="mx-auto w-full min-w-0 max-w-6xl animate-fade-in overflow-x-clip pb-16">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
             Brand Health Index · {activeLabel} · {formatDate(active.report_date || primary.report_date)}
           </p>
-          <h1 className="font-heading text-3xl font-light text-foreground sm:text-4xl">
+          <h1 className="break-words font-heading text-3xl font-light text-foreground sm:text-4xl">
             {client?.company_name || 'Client'}
           </h1>
         </div>
@@ -146,11 +146,11 @@ export default function AdminVisibilityPresent() {
       </div>
 
       <section id="overview" className="mt-6 grid gap-6 lg:grid-cols-[2fr_3fr]">
-        <div className="dashboard-card flex flex-col items-center justify-center p-8 text-center">
+        <div className="dashboard-card flex min-w-0 flex-col items-center justify-center p-8 text-center">
           <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">
             {isConsolidated(active) ? 'Point 4 Score' : 'Composite Score'}
           </p>
-          <p className="molten-text font-heading text-[8rem] font-light leading-none">
+          <p className="molten-text max-w-full font-heading text-6xl font-light leading-none sm:text-[8rem]">
             {composite === null ? '—' : composite}
           </p>
           <p className="mt-2 text-sm uppercase tracking-[0.2em] text-muted-foreground">
@@ -167,7 +167,7 @@ export default function AdminVisibilityPresent() {
             )}
           </span>
         </div>
-        <div className="dashboard-card p-6">
+        <div className="dashboard-card min-w-0 p-6">
           <h3 className="mb-2 font-heading text-xl text-foreground">Category Scores</h3>
           {isConsolidated(active) && (
             <p className="mb-2 text-xs text-muted-foreground">
@@ -186,7 +186,7 @@ export default function AdminVisibilityPresent() {
         </div>
       </section>
 
-      <section id="scores" className="dashboard-card mt-6 p-6">
+      <section id="scores" className="dashboard-card mt-6 min-w-0 p-6">
         <h3 className="font-heading text-xl text-foreground">Scores by Source</h3>
         <p className="mb-4 mt-1 text-xs text-muted-foreground">
           Each source scored the categories it could measure. Nothing is averaged across reports.
@@ -220,14 +220,14 @@ export default function AdminVisibilityPresent() {
         </div>
       </section>
 
-      <section id="findings" className="dashboard-card mt-6 p-6">
+      <section id="findings" className="dashboard-card mt-6 min-w-0 p-6">
         <h3 className="font-heading text-xl text-foreground">
           Key Findings · {isConsolidated(active) ? 'Consolidated' : active.source_model || 'Source'}
         </h3>
         {findings.length ? (
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             {findings.map((f, i) => (
-              <div key={i} className="rounded-sm border border-border/60 bg-background/40 p-5">
+              <div key={i} className="min-w-0 rounded-sm border border-border/60 bg-background/40 p-5">
                 <p className="text-[10px] uppercase tracking-widest text-primary">Finding {i + 1}</p>
                 <p className="mt-2 break-words text-sm leading-relaxed text-foreground/90">{f}</p>
               </div>
@@ -238,7 +238,7 @@ export default function AdminVisibilityPresent() {
         )}
       </section>
 
-      <section id="recommendations" className="dashboard-card mt-6 p-6">
+      <section id="recommendations" className="dashboard-card mt-6 min-w-0 p-6">
         <h3 className="font-heading text-xl text-foreground">Priority Recommendations</h3>
         {fixes.length ? (
           <ol className="mt-4 grid gap-4 sm:grid-cols-2">
@@ -247,7 +247,7 @@ export default function AdminVisibilityPresent() {
                 <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-sm border border-primary/40 text-[10px] font-semibold text-primary">
                   {i + 1}
                 </span>
-                <span className="break-words">{f}</span>
+                <span className="[overflow-wrap:anywhere]">{f}</span>
               </li>
             ))}
           </ol>
@@ -256,7 +256,7 @@ export default function AdminVisibilityPresent() {
         )}
       </section>
 
-      <section id="evidence" className="mt-6">
+      <section id="evidence" className="mt-6 min-w-0">
         <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
           <h3 className="font-heading text-2xl font-light text-foreground">
             Evidence · <span className="molten-text italic">{isConsolidated(active) ? 'Consolidated' : active.source_model || 'Source'}</span>
@@ -270,11 +270,11 @@ export default function AdminVisibilityPresent() {
 
       {hasSnapshot && (
         <section id="snapshot" className="mt-6 grid gap-6 lg:grid-cols-2">
-          <div className="dashboard-card p-6">
+          <div className="dashboard-card min-w-0 p-6">
             <h3 className="mb-4 font-heading text-xl text-foreground">Business Snapshot</h3>
             <VisibilityBusinessSnapshot report={active} />
           </div>
-          <div className="dashboard-card p-6">
+          <div className="dashboard-card min-w-0 p-6">
             <h3 className="mb-4 font-heading text-xl text-foreground">Suggested Marketing Emphasis</h3>
             <VisibilityAllocation allocation={active.marketing_allocation} />
           </div>

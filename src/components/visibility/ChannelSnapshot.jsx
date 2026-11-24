@@ -140,15 +140,20 @@ export default function ChannelSnapshot({ channels, onEdit }) {
           const Label = r.url ? 'a' : 'div';
           return (
             <div key={r.key} className="group flex items-center gap-3 px-4 py-2.5 transition-colors hover:bg-white/[0.02] sm:gap-4 sm:px-5">
-              <Label
-                {...(r.url ? { href: r.url, target: '_blank', rel: 'noopener noreferrer', title: r.handle } : {})}
-                className="flex w-[7rem] shrink-0 items-center gap-2 sm:w-44"
-              >
-                <r.def.icon className="icon-warm h-4 w-4 shrink-0" strokeWidth={1.75} />
-                <span className="truncate text-xs text-muted-foreground transition-colors group-hover:text-foreground sm:text-[13px]">
-                  {r.handle}
+              <div className="flex w-24 min-w-0 shrink-0 flex-col gap-0.5 sm:w-40">
+                <span className="flex min-w-0 items-center gap-1.5">
+                  <r.def.icon className="icon-warm h-4 w-4 shrink-0" strokeWidth={1.75} />
+                  <span className="min-w-0 break-words text-[11px] font-medium leading-tight text-foreground/85">
+                    {r.def.label}
+                  </span>
                 </span>
-              </Label>
+                <Label
+                  {...(r.url ? { href: r.url, target: '_blank', rel: 'noopener noreferrer', title: r.handle } : {})}
+                  className="block break-all pl-5 text-[10px] leading-tight text-muted-foreground/60 transition-colors group-hover:text-foreground"
+                >
+                  {r.handle}
+                </Label>
+              </div>
               <div className="h-1.5 min-w-0 flex-1 rounded-full" style={{ background: TRACK_GRADIENT }}>
                 <div
                   className="h-full rounded-full transition-[width] duration-[900ms] group-hover:shadow-[0_0_14px_rgba(226,110,60,0.35)]"
@@ -160,7 +165,7 @@ export default function ChannelSnapshot({ channels, onEdit }) {
                   }}
                 />
               </div>
-              <span className="w-16 shrink-0 text-right text-xs tabular-nums text-foreground">{compactNumber(r.count)}</span>
+              <span className="w-12 shrink-0 text-right text-xs tabular-nums text-foreground">{compactNumber(r.count)}</span>
             </div>
           );
         })}
@@ -174,15 +179,20 @@ export default function ChannelSnapshot({ channels, onEdit }) {
               const Label = r.url ? 'a' : 'div';
               return (
                 <div key={r.key} className="flex items-center gap-3 sm:gap-4">
-                  <Label
-                    {...(r.url ? { href: r.url, target: '_blank', rel: 'noopener noreferrer', title: r.handle } : {})}
-                    className="flex w-[7rem] shrink-0 items-center gap-2 sm:w-44"
-                  >
-                    <r.def.icon className="h-4 w-4 shrink-0 text-muted-foreground/40" strokeWidth={1.75} />
-                    <span className="truncate text-xs text-muted-foreground/60 sm:text-[13px]">{r.handle}</span>
-                  </Label>
+                  <div className="flex w-24 min-w-0 shrink-0 flex-col gap-0.5 sm:w-40">
+                    <span className="flex min-w-0 items-center gap-1.5">
+                      <r.def.icon className="h-4 w-4 shrink-0 text-muted-foreground/40" strokeWidth={1.75} />
+                      <span className="min-w-0 break-words text-[11px] leading-tight text-muted-foreground/70">{r.def.label}</span>
+                    </span>
+                    <Label
+                      {...(r.url ? { href: r.url, target: '_blank', rel: 'noopener noreferrer', title: r.handle } : {})}
+                      className="block break-all pl-5 text-[10px] leading-tight text-muted-foreground/50 transition-colors hover:text-foreground"
+                    >
+                      {r.handle}
+                    </Label>
+                  </div>
                   <div className="h-1.5 min-w-0 flex-1 rounded-full" style={{ background: TRACK_MUTED }} />
-                  <span className="w-16 shrink-0 text-right text-[10px] uppercase tracking-wider text-muted-foreground/50">Unavailable</span>
+                  <span className="w-12 shrink-0 text-right text-[10px] text-muted-foreground/40" title="Follower count not published">—</span>
                 </div>
               );
             })}
